@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记分类 | 学习笔记网站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6baf;
+            --secondary-color: #5c8d89;
+            --accent-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+            --text-color: #333;
+            --light-text: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .current {
+            color: var(--primary-color) !important;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        /* 页面标题部分 */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .page-header p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        /* 分类页面样式 */
+        .categories-section {
+            margin-bottom: 60px;
+        }
+        
+        .categories-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            width: 300px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            padding-left: 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 107, 175, 0.2);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            color: #999;
+        }
+        
+        .categories-view-options {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .view-btn {
+            padding: 8px 12px;
+            background-color: var(--light-bg);
+            border: none;
+            border-radius: 5px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .view-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .view-btn:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+        
+        /* 网格视图 */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .category-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-card-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .category-card-img:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6));
+        }
+        
+        .category-count {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .category-card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .category-card-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .category-card-desc {
+            color: #666;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .category-card-link {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .category-card-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* 列表视图 */
+        .categories-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .category-list-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .category-list-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-list-img {
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .category-list-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .category-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .category-list-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .category-list-count {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .category-list-desc {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .category-list-link {
+            align-self: flex-start;
+            padding: 6px 12px;
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .category-list-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* 页脚 */
+        footer {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background-color: #585e65;
+            color: var(--light-text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #484e56;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .categories-tools {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .category-list-item {
+                flex-direction: column;
+            }
+            
+            .category-list-img {
+                width: 100%;
+                height: 180px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 显示隐藏的视图 */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">我的学习笔记</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="notes.html">笔记列表</a></li>
+                    <li><a href="categories.html" class="current">分类</a></li>
+                    <li><a href="about.html">关于</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>笔记分类</h1>
+            <p>浏览不同主题领域的学习笔记，探索你感兴趣的知识内容</p>
+        </div>
+    </section>
+
+    <section class="categories-section">
+        <div class="container">
+            <div class="categories-tools">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="搜索分类...">
+                </div>
+                <div class="categories-view-options">
+                    <button class="view-btn active" id="grid-view-btn"><i class="fas fa-th"></i> 网格视图</button>
+                    <button class="view-btn" id="list-view-btn"><i class="fas fa-list"></i> 列表视图</button>
+                </div>
+            </div>
+            
+            <!-- 网格视图 -->
+            <div class="categories-grid" id="grid-view">
+                <div class="category-card">
+                    <div class="category-card-img" style="background-image: url('https://source.unsplash.com/random/600x400?coding');">
+                        <span class="category-count">24篇笔记</span>
+                    </div>
+                    <div class="category-card-content">
+                        <h3 class="category-card-title">编程</h3>
+                        <p class="category-card-desc">包括各种编程语言、开发框架、算法和数据结构等相关学习笔记</p>
+                        <a href="#" class="category-card-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-card-img" style="background-image: url('https://source.unsplash.com/random/600x400?math');">
+                        <span class="category-count">18篇笔记</span>
+                    </div>
+                    <div class="category-card-content">
+                        <h3 class="category-card-title">数学</h3>
+                        <p class="category-card-desc">涵盖高等数学、线性代数、概率论、离散数学等方面的知识总结</p>
+                        <a href="#" class="category-card-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-card-img" style="background-image: url('https://source.unsplash.com/random/600x400?physics');">
+                        <span class="category-count">15篇笔记</span>
+                    </div>
+                    <div class="category-card-content">
+                        <h3 class="category-card-title">物理</h3>
+                        <p class="category-card-desc">经典力学、电磁学、热力学、量子力学等物理学基础知识学习笔记</p>
+                        <a href="#" class="category-card-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-card-img" style="background-image: url('https://source.unsplash.com/random/600x400?machine-learning');">
+                        <span class="category-count">21篇笔记</span>
+                    </div>
+                    <div class="category-card-content">
+                        <h3 class="category-card-title">机器学习</h3>
+                        <p class="category-card-desc">机器学习算法、深度学习、神经网络、自然语言处理等相关笔记</p>
+                        <a href="#" class="category-card-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-card-img" style="background-image: url('https://source.unsplash.com/random/600x400?language');">
+                        <span class="category-count">12篇笔记</span>
+                    </div>
+                    <div class="category-card-content">
+                        <h3 class="category-card-title">语言学习</h3>
+                        <p class="category-card-desc">英语、日语、法语等外语学习方法和经验总结</p>
+                        <a href="#" class="category-card-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-card-img" style="background-image: url('https://source.unsplash.com/random/600x400?database');">
+                        <span class="category-count">9篇笔记</span>
+                    </div>
+                    <div class="category-card-content">
+                        <h3 class="category-card-title">数据库</h3>
+                        <p class="category-card-desc">关系型与非关系型数据库、SQL语言、数据库优化等知识</p>
+                        <a href="#" class="category-card-link">查看笔记</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 列表视图 -->
+            <div class="categories-list hidden" id="list-view">
+                <div class="category-list-item">
+                    <div class="category-list-img" style="background-image: url('https://source.unsplash.com/random/600x400?coding');"></div>
+                    <div class="category-list-content">
+                        <div class="category-list-header">
+                            <h3 class="category-list-title">编程</h3>
+                            <span class="category-list-count">24篇笔记</span>
+                        </div>
+                        <p class="category-list-desc">包括各种编程语言、开发框架、算法和数据结构等相关学习笔记</p>
+                        <a href="#" class="category-list-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-list-item">
+                    <div class="category-list-img" style="background-image: url('https://source.unsplash.com/random/600x400?math');"></div>
+                    <div class="category-list-content">
+                        <div class="category-list-header">
+                            <h3 class="category-list-title">数学</h3>
+                            <span class="category-list-count">18篇笔记</span>
+                        </div>
+                        <p class="category-list-desc">涵盖高等数学、线性代数、概率论、离散数学等方面的知识总结</p>
+                        <a href="#" class="category-list-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-list-item">
+                    <div class="category-list-img" style="background-image: url('https://source.unsplash.com/random/600x400?physics');"></div>
+                    <div class="category-list-content">
+                        <div class="category-list-header">
+                            <h3 class="category-list-title">物理</h3>
+                            <span class="category-list-count">15篇笔记</span>
+                        </div>
+                        <p class="category-list-desc">经典力学、电磁学、热力学、量子力学等物理学基础知识学习笔记</p>
+                        <a href="#" class="category-list-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-list-item">
+                    <div class="category-list-img" style="background-image: url('https://source.unsplash.com/random/600x400?machine-learning');"></div>
+                    <div class="category-list-content">
+                        <div class="category-list-header">
+                            <h3 class="category-list-title">机器学习</h3>
+                            <span class="category-list-count">21篇笔记</span>
+                        </div>
+                        <p class="category-list-desc">机器学习算法、深度学习、神经网络、自然语言处理等相关笔记</p>
+                        <a href="#" class="category-list-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-list-item">
+                    <div class="category-list-img" style="background-image: url('https://source.unsplash.com/random/600x400?language');"></div>
+                    <div class="category-list-content">
+                        <div class="category-list-header">
+                            <h3 class="category-list-title">语言学习</h3>
+                            <span class="category-list-count">12篇笔记</span>
+                        </div>
+                        <p class="category-list-desc">英语、日语、法语等外语学习方法和经验总结</p>
+                        <a href="#" class="category-list-link">查看笔记</a>
+                    </div>
+                </div>
+                
+                <div class="category-list-item">
+                    <div class="category-list-img" style="background-image: url('https://source.unsplash.com/random/600x400?database');"></div>
+                    <div class="category-list-content">
+                        <div class="category-list-header">
+                            <h3 class="category-list-title">数据库</h3>
+                            <span class="category-list-count">9篇笔记</span>
+                        </div>
+                        <p class="category-list-desc">关系型与非关系型数据库、SQL语言、数据库优化等知识</p>
+                        <a href="#" class="category-list-link">查看笔记</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于网站</h3>
+                    <p>这是我的个人学习笔记网站，记录了我在各个领域的学习心得和知识总结。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="notes.html">笔记列表</a></li>
+                        <li><a href="categories.html">分类</a></li>
+                        <li><a href="about.html">关于</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>笔记分类</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">编程</a></li>
+                        <li><a href="#">数学</a></li>
+                        <li><a href="#">科学</a></li>
+                        <li><a href="#">语言</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>联系我</h3>
+                    <p>邮箱：example@email.com</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-weibo"></i></a>
+                        <a href="#"><i class="fab fa-zhihu"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2024 学习笔记网站 | 保留所有权利
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 视图切换功能
+        const gridViewBtn = document.getElementById('grid-view-btn');
+        const listViewBtn = document.getElementById('list-view-btn');
+        const gridView = document.getElementById('grid-view');
+        const listView = document.getElementById('list-view');
+        
+        gridViewBtn.addEventListener('click', function() {
+            gridView.classList.remove('hidden');
+            listView.classList.add('hidden');
+            gridViewBtn.classList.add('active');
+            listViewBtn.classList.remove('active');
+        });
+        
+        listViewBtn.addEventListener('click', function() {
+            gridView.classList.add('hidden');
+            listView.classList.remove('hidden');
+            gridViewBtn.classList.remove('active');
+            listViewBtn.classList.add('active');
+        });
+        
+        // 搜索功能
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            const categoryCards = document.querySelectorAll('.category-card');
+            const categoryListItems = document.querySelectorAll('.category-list-item');
+            
+            // 搜索网格视图
+            categoryCards.forEach(card => {
+                const title = card.querySelector('.category-card-title').textContent.toLowerCase();
+                const desc = card.querySelector('.category-card-desc').textContent.toLowerCase();
+                
+                if (title.includes(searchValue) || desc.includes(searchValue)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // 搜索列表视图
+            categoryListItems.forEach(item => {
+                const title = item.querySelector('.category-list-title').textContent.toLowerCase();
+                const desc = item.querySelector('.category-list-desc').textContent.toLowerCase();
+                
+                if (title.includes(searchValue) || desc.includes(searchValue)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

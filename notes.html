@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记列表 | 学习笔记网站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6baf;
+            --secondary-color: #5c8d89;
+            --accent-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+            --text-color: #333;
+            --light-text: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .current {
+            color: var(--primary-color) !important;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        /* 页面标题部分 */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .page-header p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        /* 搜索和筛选部分 */
+        .notes-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .search-box {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            padding-left: 45px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 107, 175, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .filter-select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .filter-select:focus {
+            border-color: var(--primary-color);
+        }
+        
+        /* 笔记列表 */
+        .notes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .note-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .note-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .note-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .note-card-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .note-card-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .note-card-title a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .note-card-meta {
+            font-size: 0.8rem;
+            color: #777;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .note-card-meta span {
+            display: flex;
+            align-items: center;
+        }
+        
+        .note-card-meta i {
+            margin-right: 5px;
+        }
+        
+        .note-card-excerpt {
+            color: #666;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+            flex: 1;
+        }
+        
+        .note-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+        
+        .tag {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .tag:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* 分页部分 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-item {
+            margin: 0 5px;
+        }
+        
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid #ddd;
+        }
+        
+        .page-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .page-item.disabled .page-link {
+            color: #aaa;
+            pointer-events: none;
+        }
+        
+        /* 页脚 */
+        footer {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background-color: #585e65;
+            color: var(--light-text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #484e56;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .notes-tools {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .filter-options {
+                justify-content: space-between;
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .filter-options {
+                flex-wrap: wrap;
+            }
+            
+            .filter-select {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .notes-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">我的学习笔记</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="notes.html" class="current">笔记列表</a></li>
+                    <li><a href="categories.html">分类</a></li>
+                    <li><a href="about.html">关于</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>笔记列表</h1>
+            <p>浏览所有学习笔记，按照分类、时间或关键词查找你感兴趣的内容</p>
+        </div>
+    </section>
+
+    <section class="notes-section">
+        <div class="container">
+            <div class="notes-tools">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="搜索笔记..." class="search-input">
+                </div>
+                <div class="filter-options">
+                    <select class="filter-select">
+                        <option value="">所有分类</option>
+                        <option value="programming">编程</option>
+                        <option value="math">数学</option>
+                        <option value="science">科学</option>
+                        <option value="language">语言学习</option>
+                    </select>
+                    <select class="filter-select">
+                        <option value="">排序方式</option>
+                        <option value="date-desc">最新发布</option>
+                        <option value="date-asc">最早发布</option>
+                        <option value="title-asc">标题 A-Z</option>
+                        <option value="title-desc">标题 Z-A</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="notes-list">
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?code" alt="Python编程" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="notes/python-basics.html">Python基础知识：从零开始学习Python</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-10-15</span>
+                            <span><i class="far fa-folder"></i> 编程</span>
+                            <span><i class="far fa-eye"></i> 1245</span>
+                        </div>
+                        <p class="note-card-excerpt">Python是一种易于学习且功能强大的编程语言。它拥有高效的高级数据结构和简单但有效的面向对象编程方法。本文介绍Python的基础语法、数据类型和常用操作。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">Python</a>
+                            <a href="#" class="tag">编程基础</a>
+                            <a href="#" class="tag">入门教程</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?math" alt="数学知识" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="#">线性代数基础：矩阵运算详解</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-09-22</span>
+                            <span><i class="far fa-folder"></i> 数学</span>
+                            <span><i class="far fa-eye"></i> 857</span>
+                        </div>
+                        <p class="note-card-excerpt">矩阵是线性代数中的核心概念，广泛应用于数据科学、机器学习和图形计算。本笔记详细介绍矩阵的基本运算和应用场景，帮助理解复杂的矩阵变换。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">数学</a>
+                            <a href="#" class="tag">线性代数</a>
+                            <a href="#" class="tag">矩阵</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?javascript" alt="前端开发" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="#">JavaScript异步编程：Promise和Async/Await</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-08-30</span>
+                            <span><i class="far fa-folder"></i> Web开发</span>
+                            <span><i class="far fa-eye"></i> 962</span>
+                        </div>
+                        <p class="note-card-excerpt">异步编程是JavaScript中的重要概念，帮助开发者处理非阻塞操作。本笔记探讨Promise对象的使用方法及Async/Await语法糖，提升代码可读性和可维护性。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">JavaScript</a>
+                            <a href="#" class="tag">异步编程</a>
+                            <a href="#" class="tag">前端</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?algorithm" alt="算法" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="#">常见排序算法比较与优化</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-08-15</span>
+                            <span><i class="far fa-folder"></i> 计算机科学</span>
+                            <span><i class="far fa-eye"></i> 723</span>
+                        </div>
+                        <p class="note-card-excerpt">排序算法是计算机科学中的基础问题，本笔记比较了冒泡排序、插入排序、选择排序、快速排序、归并排序等经典算法的时间复杂度、空间复杂度和适用场景。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">算法</a>
+                            <a href="#" class="tag">排序</a>
+                            <a href="#" class="tag">复杂度分析</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?database" alt="数据库" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="#">SQL基础：关系型数据库查询语言详解</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-07-28</span>
+                            <span><i class="far fa-folder"></i> 数据库</span>
+                            <span><i class="far fa-eye"></i> 635</span>
+                        </div>
+                        <p class="note-card-excerpt">SQL是与关系型数据库交互的标准语言，本笔记覆盖了SQL的基本语法、数据操作、表格创建、复杂查询以及连接操作，适合数据库初学者参考。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">SQL</a>
+                            <a href="#" class="tag">数据库</a>
+                            <a href="#" class="tag">MySQL</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?physics" alt="物理学" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="#">经典力学核心概念与公式推导</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-07-10</span>
+                            <span><i class="far fa-folder"></i> 物理</span>
+                            <span><i class="far fa-eye"></i> 489</span>
+                        </div>
+                        <p class="note-card-excerpt">经典力学是物理学的基础分支，本笔记整理了牛顿运动定律、能量守恒、动量守恒等核心概念，并通过实例和图表展示了相关公式的推导过程。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">物理</a>
+                            <a href="#" class="tag">力学</a>
+                            <a href="#" class="tag">公式推导</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?machine-learning" alt="机器学习" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="#">机器学习基础：监督学习算法概述</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-06-25</span>
+                            <span><i class="far fa-folder"></i> 人工智能</span>
+                            <span><i class="far fa-eye"></i> 1105</span>
+                        </div>
+                        <p class="note-card-excerpt">监督学习是机器学习的主要范式之一，本笔记介绍了常见的监督学习算法，包括线性回归、逻辑回归、决策树、随机森林和支持向量机等，并讨论它们的优缺点。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">机器学习</a>
+                            <a href="#" class="tag">监督学习</a>
+                            <a href="#" class="tag">算法</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?english" alt="英语学习" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="#">英语高级语法：时态与语态全解析</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-06-12</span>
+                            <span><i class="far fa-folder"></i> 语言学习</span>
+                            <span><i class="far fa-eye"></i> 754</span>
+                        </div>
+                        <p class="note-card-excerpt">英语时态和语态是语法中较为复杂的部分，本笔记系统地梳理了英语的16种时态以及主动语态与被动语态的用法，配合大量实例帮助读者理解和记忆。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">英语</a>
+                            <a href="#" class="tag">语法</a>
+                            <a href="#" class="tag">时态</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-card">
+                    <img src="https://source.unsplash.com/random/600x400?docker" alt="容器化" class="note-img">
+                    <div class="note-card-content">
+                        <h3 class="note-card-title"><a href="#">Docker入门：容器化应用部署实践</a></h3>
+                        <div class="note-card-meta">
+                            <span><i class="far fa-calendar-alt"></i> 2023-05-30</span>
+                            <span><i class="far fa-folder"></i> DevOps</span>
+                            <span><i class="far fa-eye"></i> 882</span>
+                        </div>
+                        <p class="note-card-excerpt">Docker是流行的容器化平台，本笔记介绍了Docker的基本概念、常用命令、Dockerfile编写以及多容器应用的编排，帮助开发者快速掌握容器化部署技术。</p>
+                        <div class="note-card-tags">
+                            <a href="#" class="tag">Docker</a>
+                            <a href="#" class="tag">容器</a>
+                            <a href="#" class="tag">DevOps</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <div class="page-item disabled">
+                    <a href="#" class="page-link"><i class="fas fa-chevron-left"></i></a>
+                </div>
+                <div class="page-item active">
+                    <a href="#" class="page-link">1</a>
+                </div>
+                <div class="page-item">
+                    <a href="#" class="page-link">2</a>
+                </div>
+                <div class="page-item">
+                    <a href="#" class="page-link">3</a>
+                </div>
+                <div class="page-item">
+                    <a href="#" class="page-link"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于网站</h3>
+                    <p>这是我的个人学习笔记网站，记录了我在各个领域的学习心得和知识总结。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="notes.html">笔记列表</a></li>
+                        <li><a href="categories.html">分类</a></li>
+                        <li><a href="about.html">关于</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>笔记分类</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">编程</a></li>
+                        <li><a href="#">数学</a></li>
+                        <li><a href="#">科学</a></li>
+                        <li><a href="#">语言</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>联系我</h3>
+                    <p>邮箱：example@email.com</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-weibo"></i></a>
+                        <a href="#"><i class="fab fa-zhihu"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2024 学习笔记网站 | 保留所有权利
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 
