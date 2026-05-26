@@ -11,6 +11,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- cayley-transform-ring-polymer.html
 |   `-- technical-note-template.html
 |-- assets
+|   |-- code
+|   |   `-- cayley_dt_scan.py
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
