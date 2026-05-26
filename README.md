@@ -8,12 +8,14 @@ This is a lightweight static website for technical articles, designed for GitHub
 .
 |-- index.html
 |-- posts
+|   |-- cayley-transform-ring-polymer.html
 |   `-- technical-note-template.html
 |-- assets
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
-|   |   `-- favicon.svg
+|   |   |-- favicon.svg
+|   |   `-- cayley/
 |   `-- js
 |       `-- main.js
 `-- README.md
@@ -25,6 +27,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 2. Update the title, date, tags, description, and body in the new file.
 3. Add the new link to the "Latest Articles" and "Archive" sections in `index.html`.
 4. Commit and push to GitHub. GitHub Pages will update automatically.
+
+Keep raw source materials, notebooks, PDFs, and drafts in the local `articles/` folder. That folder is ignored by Git so working materials do not get published accidentally.
 
 ## Deploy to GitHub Pages
 

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A technical note on Cayley modification for stabilizing free ring-polymer propagation in RPMD.">
+    <title>Stabilizing Ring-Polymer Free Motion with a Cayley Transform | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [["\\[", "\\]"]]
+        }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../index.html#archive">Archive</a>
+        <a href="mailto:23110190022@m.fudan.edu.cn">Contact</a>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Numerical Methods</p>
+          <h1>Stabilizing Ring-Polymer Free Motion with a Cayley Transform</h1>
+          <p class="post-meta">2026.05.26 - RPMD / Cayley Transform / Symplectic Stability</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            This note organizes my benchmark experiments around the Cayley modification for path-integral and ring-polymer molecular dynamics. The main question is narrow: why can the standard exact normal-mode propagation of the free ring polymer become numerically fragile, and why does replacing it with a Cayley transform help?
+          </p>
+
+          <p>
+            The discussion follows the paper <em>Cayley modification for strongly stable path-integral and ring-polymer molecular dynamics</em> by Korol, Bou-Rabee, and Miller, J. Chem. Phys. 151, 124103 (2019), together with a few small Python benchmarks.
+          </p>
+
+          <h2>The splitting where the issue appears</h2>
+          <p>
+            In a standard microcanonical RPMD integrator, the Liouvillian is split into an external-potential part and a free ring-polymer part:
+          </p>
+
+          <div class="math-block">
+            \[
+            e^{\Delta t L}
+            =
+            e^{\frac{\Delta t}{2}L_V}
+            e^{\Delta t L_0}
+            e^{\frac{\Delta t}{2}L_V}
+            +
+            O(\Delta t^3).
+            \]
+          </div>
+
+          <p>
+            The middle step, \(e^{\Delta t L_0}\), is usually solved exactly in the ring-polymer normal-mode representation. That choice is accurate for the isolated harmonic motion, but the paper's point is that exactness of this substep does not automatically imply good numerical behavior for the whole timestep map.
+          </p>
+
+          <figure>
+            <img src="../assets/img/cayley/free-ring-polymer-step.png" alt="Schematic of the free ring-polymer propagation step">
+            <figcaption>Free ring-polymer propagation is the substep where the standard normal-mode evolution can be replaced by the Cayley map.</figcaption>
+          </figure>
+
+          <h2>A minimal oscillator model</h2>
+          <p>
+            The instability can already be seen in a two-dimensional harmonic system:
+          </p>
+
+          <div class="math-block">
+            \[
+            \begin{bmatrix}
+            \dot q \\
+            \dot v
+            \end{bmatrix}
+            =
+            A
+            \begin{bmatrix}
+            q \\
+            v
+            \end{bmatrix},
+            \qquad
+            A =
+            \begin{bmatrix}
+            0 & 1 \\
+            -\omega^2 & 0
+            \end{bmatrix}.
+            \]
+          </div>
+
+          <p>
+            Exact propagation over one timestep gives
+          </p>
+
+          <div class="math-block">
+            \[
+            \begin{bmatrix}
+            q(\Delta t) \\
+            v(\Delta t)
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            \cos(\omega \Delta t) & \frac{\sin(\omega \Delta t)}{\omega} \\
+            -\omega \sin(\omega \Delta t) & \cos(\omega \Delta t)
+            \end{bmatrix}
+            \begin{bmatrix}
+            q(0) \\
+            v(0)
+            \end{bmatrix}.
+            \]
+          </div>
+
+          <p>
+            The eigenvalues are \(e^{\pm i\omega\Delta t}\). They collide when
+          </p>
+
+          <div class="math-block">
+            \[
+            \Delta t = \frac{\pi k}{\omega}, \qquad k \geq 1.
+            \]
+          </div>
+
+          <p>
+            In a ring polymer, every normal-mode frequency \(\omega_k\) contributes its own set of dangerous timesteps. For a bead number \(P\), this creates a discrete set of resonance points that depend only on the ring-polymer frequencies.
+          </p>
+
+          <h2>The Cayley replacement</h2>
+          <p>
+            The Cayley modification keeps the same normal-mode workflow, but replaces the exact exponential by
+          </p>
+
+          <div class="math-block">
+            \[
+            \operatorname{cay}(\Delta t A)
+            =
+            \left(I-\frac{1}{2}\Delta t A\right)^{-1}
+            \left(I+\frac{1}{2}\Delta t A\right).
+            \]
+          </div>
+
+          <p>
+            This is still a second-order approximation to the exact exponential, which is enough for the surrounding second-order splitting. More importantly, for the harmonic oscillator it avoids the eigenvalue collision mechanism that causes the loss of strong symplectic stability.
+          </p>
+
+          <figure>
+            <img src="../assets/img/cayley/eigenvalue-distribution.png" alt="Eigenvalue distributions for exact propagation and Cayley propagation">
+            <figcaption>The exact exponential can place eigenvalues on top of each other at resonance points. The Cayley map avoids that collision pattern.</figcaption>
+          </figure>
+
+          <h2>A small implementation sketch</h2>
+          <p>
+            For a single normal mode, the replacement can be written directly as a small matrix solve:
+          </p>
+
+          <pre><code>import numpy as np
+
+def cayley_matrix(omega, dt):
+    A = np.array([[0.0, 1.0], [-omega**2, 0.0]])
+    I = np.eye(2)
+    return np.linalg.solve(I - 0.5 * dt * A, I + 0.5 * dt * A)</code></pre>
+
+          <p>
+            In the full ring-polymer step, this matrix is applied mode by mode after the FFT into normal-mode coordinates, then transformed back to bead coordinates.
+          </p>
+
+          <h2>Benchmark setup</h2>
+          <p>
+            I used a small test case with \(P=6\) beads and \(m=\hbar=\beta=1\). The ring-polymer frequencies are
+          </p>
+
+          <div class="math-block">
+            \[
+            \omega_k = 2\omega_P \sin(k\pi/P), \qquad \omega_P = \frac{P}{m\beta}.
+            \]
+          </div>
+
+          <p>
+            The benchmark scans \(\Delta t\) from 0 to 1, marks the predicted resonance positions with red dashed lines, and monitors the final-to-initial energy ratio. Each timestep point is evolved for 300 steps, with a safety break when the energy ratio becomes extremely large.
+          </p>
+
+          <div class="figure-grid">
+            <figure>
+              <img src="../assets/img/cayley/exact-dt-scan.png" alt="Energy ratio scan for exact normal-mode propagation">
+              <figcaption>Exact normal-mode propagation shows sharp energy spikes near the predicted resonance timesteps.</figcaption>
+            </figure>
+            <figure>
+              <img src="../assets/img/cayley/cayley-dt-scan.png" alt="Energy ratio scan for Cayley propagation">
+              <figcaption>The Cayley version remains bounded across the same scanned range.</figcaption>
+            </figure>
+          </div>
+
+          <p>
+            A more direct comparison at \(\Delta t=0.3\) makes the contrast even clearer. With exact normal-mode propagation, the bead trajectories and normal-mode energy grow rapidly. With the Cayley map, the trajectory remains bounded over the same number of steps.
+          </p>
+
+          <div class="figure-grid">
+            <figure>
+              <img src="../assets/img/cayley/exact-dt-0-3.png" alt="Exact propagation at dt equals 0.3">
+              <figcaption>Exact propagation at \(\Delta t=0.3\): bead motion and normal-mode energy grow quickly.</figcaption>
+            </figure>
+            <figure>
+              <img src="../assets/img/cayley/cayley-dt-0-3.png" alt="Cayley propagation at dt equals 0.3">
+              <figcaption>Cayley propagation at \(\Delta t=0.3\): the trajectory remains bounded in this benchmark.</figcaption>
+            </figure>
+          </div>
+
+          <h2>Side note: symplectic does not mean unconditionally stable</h2>
+          <p>
+            I also checked the familiar leapfrog update for a one-dimensional harmonic oscillator. Leapfrog is symplectic, but its eigenvalues leave the unit circle once \(\Delta t > 2/\omega\). So the lesson is not simply "use a symplectic method"; the timestep map also needs the right stability structure.
+          </p>
+
+          <figure>
+            <img src="../assets/img/cayley/leapfrog-critical-dt.png" alt="Leapfrog instability near the critical timestep">
+            <figcaption>Near the leapfrog stability boundary, a tiny timestep increase can produce visible divergence.</figcaption>
+          </figure>
+
+          <h2>Takeaways</h2>
+          <ul>
+            <li>Exact normal-mode propagation of the free ring polymer can create resonance instabilities at specific timesteps.</li>
+            <li>The problematic timesteps are determined by the ring-polymer frequencies, not by detailed chemistry of the external potential.</li>
+            <li>The Cayley transform is a local replacement for the free ring-polymer step: same workflow, same second-order accuracy in the full splitting, better strong stability behavior.</li>
+            <li>In the small benchmarks here, the Cayley version removes the sharp resonance spikes seen with exact propagation.</li>
+          </ul>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
