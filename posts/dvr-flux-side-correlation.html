@@ -130,7 +130,27 @@
 
 def flux_operator(hamiltonian, side, hbar=1.0):
     return 1j / hbar * (hamiltonian @ side - side @ hamiltonian)</code></pre>
-          <p>These definitions are in <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a>. The same file also contains the shared Kubo kernel used in the previous note.</p>
+          <p>The flux-side calculation is the endpoint of the series: Part I establishes the finite Hamiltonian, Part II identifies the side and flux matrices, Parts III-IV describe pure-state and density-matrix propagation, and Part V supplies the thermal Kubo spectral kernel.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/dvr/dvr_kubo_minimal.py">dvr_kubo_minimal.py</a> contains the shared side projector, flux commutator, and Kubo kernel.</li>
+            <li><a href="../assets/code/dvr/source/flux-side-kubo/utils/quantum.py">source/flux-side-kubo/utils/quantum.py</a> preserves the flux-side quantum utility routines from the working code folder.</li>
+            <li><a href="../assets/code/dvr/source/flux-side-kubo/utils/classical.py">source/flux-side-kubo/utils/classical.py</a> contains the matching classical helper routines used for comparison tests.</li>
+            <li><a href="../assets/code/dvr/source/flux-side-kubo/reference-data/Cfs_real_data.txt">source/flux-side-kubo/reference-data/Cfs_real_data.txt</a>, <a href="../assets/code/dvr/source/flux-side-kubo/reference-data/Cfs_real_data_adi.txt">Cfs_real_data_adi.txt</a>, and <a href="../assets/code/dvr/source/flux-side-kubo/reference-data/Cfs_real_data_dia.txt">Cfs_real_data_dia.txt</a> are the small reference datasets used while checking the flux-side curves.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="dvr-series-map">
+            <h2 id="dvr-series-map">DVR series map</h2>
+            <ol class="series-list">
+              <li><a href="dvr-wavepacket-methods.html">Part I: Wavepacket Dynamics Methods</a> - discretization choices and the harmonic-oscillator benchmark.</li>
+              <li><a href="dvr-operator-matrices.html">Part II: Operator Matrices in the DVR Basis</a> - matrix structure behind kinetic, side, and flux operators.</li>
+              <li><a href="dvr-wavepacket-dynamics.html">Part III: Wavepacket Dynamics with DVR</a> - exact finite-dimensional propagation of a prepared wavepacket.</li>
+              <li><a href="dvr-ensemble-evolution.html">Part IV: Density-Matrix Ensemble Evolution</a> - thermal ensembles, filtering, and absorber bookkeeping.</li>
+              <li><a href="dvr-kubo-correlation.html">Part V: Kubo-Transformed Position Correlation</a> - spectral thermal correlation functions.</li>
+              <li><a href="dvr-flux-side-correlation.html">Part VI: Flux-Side Kubo Correlation</a> - rate-like observables from side and flux operators.</li>
+            </ol>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>

@@ -22,7 +22,10 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- code
 |   |   |-- cayley_dt_scan.py
 |   |   `-- dvr
-|   |       `-- dvr_kubo_minimal.py
+|   |       |-- dvr_fd_benchmark.py
+|   |       |-- dvr_ensemble_demo.py
+|   |       |-- dvr_kubo_minimal.py
+|   |       `-- source
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
@@ -52,6 +55,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 4. Commit and push to GitHub. GitHub Pages will update automatically.
 
 Keep raw source materials, notebooks, PDFs, and drafts in the local `articles/` folder. That folder is ignored by Git so working materials do not get published accidentally.
+
+For published computational notes, prefer compact executable scripts under `assets/code/`. Large notebooks and binary dumps should stay local unless they are deliberately cleaned and documented.
 
 ## Deploy to GitHub Pages
 

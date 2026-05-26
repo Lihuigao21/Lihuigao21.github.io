@@ -39,10 +39,19 @@
             After the DVR Hamiltonian is built, the next step is a real-time wavepacket calculation. The initial state is a Gaussian nuclear packet placed on one electronic state, then propagated by the full product-basis Hamiltonian.
           </p>
 
-          <figure>
-            <img src="../assets/img/dvr-series/dvr2-wavepacket/1.png" alt="Workflow sketch for DVR wavepacket dynamics">
-            <figcaption>Workflow sketch from the source notes. The loop is: choose a potential model, assemble the DVR Hamiltonian, prepare the initial packet, propagate in time, then read out populations and nuclear density.</figcaption>
-          </figure>
+          <h2>What the propagation is</h2>
+          <p>The calculation is not an iterative DVR solver for the Schrodinger equation. DVR first turns the continuous coordinate problem into one finite Hamiltonian matrix. For the time-independent models here, the evolution at any requested time is then evaluated directly from the spectral decomposition of that matrix:</p>
+          <div class="algorithm-table">
+            <div>Build the product-basis Hamiltonian</div>
+            <div>\(H_{(i,a),(j,b)}=\delta_{ab}T_{ij}+\delta_{ij}V_{ab}(x_i)\)</div>
+            <div>Diagonalize once</div>
+            <div>\(H=C\,\mathrm{diag}(E_\alpha)C^\dagger\)</div>
+            <div>Evaluate an arbitrary saved time</div>
+            <div>\(\psi(t)=C\,\mathrm{diag}(e^{-iE_\alpha t/\hbar})C^\dagger\psi(0)\)</div>
+            <div>Read observables</div>
+            <div>Sum \(|\psi_a(x_i,t)|^2\Delta x\) for populations, densities, and packet diagnostics.</div>
+          </div>
+          <p>Loops in the plotting code are therefore loops over requested output times. They are not Euler, Runge-Kutta, or finite-difference time steps approximating the time derivative.</p>
 
           <h2>Product basis</h2>
           <p>For \(N_x\) DVR grid points and \(n_{\mathrm{state}}\) electronic states, the working basis is</p>
@@ -73,7 +82,7 @@
           <div class="figure-grid">
             <figure>
               <img src="../assets/img/dvr-series/dvr2-wavepacket/4.png" alt="Tully extended coupling reflection potential">
-              <figcaption>Example two-state potential. The black curves are local adiabatic energy surfaces. The colored curves show diabatic components and coupling used to assemble \(V_{ab}(x)\). The avoided-crossing region is where population transfer becomes possible.</figcaption>
+              <figcaption>Example two-state potential. The blue curve is \(V_{11}(x)\), the orange curve is \(V_{22}(x)\), and the green dashed curve is the diabatic coupling \(V_{12}(x)\). The black and gray solid curves are the local adiabatic surfaces \(E_1(x)\) and \(E_2(x)\), read on the left energy axis. The red dotted curve is the nonadiabatic derivative coupling magnitude \(|d_{12}(x)|\), read on the right axis; its peak marks the region where state transfer is strongest.</figcaption>
             </figure>
             <figure>
               <img src="../assets/img/dvr-series/dvr2-wavepacket/2.png" alt="Population dynamics from DVR wavepacket propagation">
@@ -96,19 +105,38 @@
           <div class="math-block">\[
             P_a(t)=\sum_i |\psi_a(x_i,t)|^2\Delta x.
           \]</div>
+          <p>Within the chosen finite basis, this spectral propagation is exact up to diagonalization and floating-point roundoff. The approximation enters earlier: in the finite coordinate basis, the box size, the grid spacing, and the potential model.</p>
 
           <h2>Density heatmaps</h2>
           <figure>
             <img src="../assets/img/dvr-series/dvr2-wavepacket/5.png" alt="Nuclear density heatmap from wavepacket propagation">
-            <figcaption>Nuclear density heatmap. The horizontal axis is nuclear coordinate \(x\); the vertical axis is time or saved propagation step. Color represents \(|\psi(x,t)|^2\). Bright bands trace where the packet is concentrated as it moves through the coupling region.</figcaption>
+            <figcaption>Nuclear density heatmap. The horizontal axis is nuclear coordinate \(x\); the vertical axis is saved time \(t\). Color represents \(\rho(x,t)=|\psi(x,t)|^2\), with dark purple near zero and yellow at high density. Bright bands trace where the packet is concentrated as it moves through the coupling region.</figcaption>
           </figure>
           <figure>
             <img src="../assets/img/dvr-series/dvr2-wavepacket/7.png" alt="Long-time nuclear density heatmap showing boundary effects">
-            <figcaption>Longer propagation diagnostic. The horizontal axis is coordinate and the vertical axis is time. The overlaid curve tracks the mean position. The turning and return of density near the finite-box edge show why boundary handling becomes important in later calculations.</figcaption>
+            <figcaption>Longer propagation diagnostic. The horizontal axis is coordinate and the vertical axis is time. The color scale is \(\log_{10}\rho(x,t)\), so yellow indicates larger density and purple indicates very small density. The blue overlaid line tracks the mean position \(\langle x\rangle(t)\). Its turn near the finite-box edge shows why boundary handling becomes important in later calculations.</figcaption>
           </figure>
 
-          <h2>Executable hook</h2>
-          <p>The shared Python file <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a> includes the same Hamiltonian assembly pattern. It is intentionally compact so the matrix layout can be inspected without notebook state.</p>
+          <h2>From wavepackets to ensembles</h2>
+          <p>The single-packet calculation prepares a pure state. Part IV keeps the same finite Hamiltonian idea but replaces \(\psi(t)\) with a density matrix \(\rho(t)\), which makes thermal ensembles and incoming momentum filters natural.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/dvr/dvr_kubo_minimal.py">dvr_kubo_minimal.py</a> includes the two-state Tully Hamiltonian constructor, Gaussian packet initializer, and spectral propagation routine used for this note.</li>
+            <li><a href="../assets/code/dvr/source/README.md">source/README.md</a> describes the cleaned code attachments and what was kept out of the published site.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="dvr-series-map">
+            <h2 id="dvr-series-map">DVR series map</h2>
+            <ol class="series-list">
+              <li><a href="dvr-wavepacket-methods.html">Part I: Wavepacket Dynamics Methods</a> - discretization choices and the harmonic-oscillator benchmark.</li>
+              <li><a href="dvr-operator-matrices.html">Part II: Operator Matrices in the DVR Basis</a> - matrix structure behind kinetic, side, and flux operators.</li>
+              <li><a href="dvr-wavepacket-dynamics.html">Part III: Wavepacket Dynamics with DVR</a> - exact finite-dimensional propagation of a prepared wavepacket.</li>
+              <li><a href="dvr-ensemble-evolution.html">Part IV: Density-Matrix Ensemble Evolution</a> - thermal ensembles, filtering, and absorber bookkeeping.</li>
+              <li><a href="dvr-kubo-correlation.html">Part V: Kubo-Transformed Position Correlation</a> - spectral thermal correlation functions.</li>
+              <li><a href="dvr-flux-side-correlation.html">Part VI: Flux-Side Kubo Correlation</a> - rate-like observables from side and flux operators.</li>
+            </ol>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>

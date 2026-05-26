@@ -78,6 +78,14 @@
           \]</div>
           <p>The finite-difference stencil is local and easy to scale. The DVR kinetic operator is nonlocal, but it retains a spectral character that is valuable for small quantum benchmark problems.</p>
 
+          <h2>A small benchmark</h2>
+          <p>As a first check, compare both discretizations on the harmonic oscillator with \(\hbar=m=\omega=1\). The exact energies are \(E_n=n+1/2\), so the numerical error can be read directly from the eigenvalues of the finite Hamiltonian.</p>
+          <figure>
+            <img src="../assets/img/dvr-series/dvr0-methods/dvr-fd-benchmark.png" alt="Harmonic oscillator energy benchmark comparing sinc DVR and finite difference">
+            <figcaption>Harmonic-oscillator benchmark on the same coordinate interval. In the left panel, blue circles are the sinc DVR absolute energy errors and orange squares are the second-order finite-difference errors for the first fourteen states on a fixed grid. In the right panel, the blue and orange curves show the ground-state error as the grid spacing \(\Delta x\) is reduced. The DVR errors sit near floating-point precision for this smooth bound-state problem, while the finite-difference stencil converges more slowly because its derivative approximation is only local and second order.</figcaption>
+          </figure>
+          <p>This benchmark is not a claim that DVR always wins. It says something narrower and more useful: for smooth low-dimensional reference problems, the dense sinc kinetic matrix can reach spectral accuracy with modest grid sizes. That is why it is a good basis for the later operator and correlation-function notes.</p>
+
           <h2>Exact finite-dimensional evolution</h2>
           <p>After a DVR Hamiltonian matrix has been assembled, real-time evolution can be performed by diagonalization, matrix exponentiation, or a stable Krylov method. A simple explicit finite-difference update, for comparison, has the recurrence form</p>
           <div class="math-block">\[
@@ -91,7 +99,25 @@
 
           <h2>Practical takeaway</h2>
           <p>I use DVR in the later notes because the target systems are small enough for dense matrices, and the desired outputs are reference-quality quantum wavepacket dynamics and Kubo correlation functions. The cost is larger memory and matrix algebra; the gain is a transparent operator representation.</p>
-          <p>The shared executable code for the series is available at <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a>.</p>
+          <p>The next note zooms in on the matrix objects themselves: kinetic blocks, local potentials, side projectors, and flux commutators.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/dvr/dvr_fd_benchmark.py">dvr_fd_benchmark.py</a> builds the harmonic-oscillator benchmark and regenerates the figure above.</li>
+            <li><a href="../assets/code/dvr/dvr_kubo_minimal.py">dvr_kubo_minimal.py</a> collects the shared sinc DVR, finite-difference, wavepacket, Kubo, side, and flux routines used across the series.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="dvr-series-map">
+            <h2 id="dvr-series-map">DVR series map</h2>
+            <ol class="series-list">
+              <li><a href="dvr-wavepacket-methods.html">Part I: Wavepacket Dynamics Methods</a> - discretization choices and the harmonic-oscillator benchmark.</li>
+              <li><a href="dvr-operator-matrices.html">Part II: Operator Matrices in the DVR Basis</a> - matrix structure behind kinetic, side, and flux operators.</li>
+              <li><a href="dvr-wavepacket-dynamics.html">Part III: Wavepacket Dynamics with DVR</a> - exact finite-dimensional propagation of a prepared wavepacket.</li>
+              <li><a href="dvr-ensemble-evolution.html">Part IV: Density-Matrix Ensemble Evolution</a> - thermal ensembles, filtering, and absorber bookkeeping.</li>
+              <li><a href="dvr-kubo-correlation.html">Part V: Kubo-Transformed Position Correlation</a> - spectral thermal correlation functions.</li>
+              <li><a href="dvr-flux-side-correlation.html">Part VI: Flux-Side Kubo Correlation</a> - rate-like observables from side and flux operators.</li>
+            </ol>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>

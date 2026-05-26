@@ -122,7 +122,25 @@
             </figure>
           </div>
 
-          <p>The matrix constructors used in these notes are collected in <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a>.</p>
+          <p>These matrix pictures are the bridge between the method comparison in Part I and the concrete propagation in Part III. Once the block Hamiltonian is assembled, the wavepacket calculation is an application of the finite-dimensional unitary \(e^{-iHt/\hbar}\).</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/dvr/dvr_kubo_minimal.py">dvr_kubo_minimal.py</a> contains the sinc kinetic matrix, multi-state Hamiltonian constructor, side projector, and flux commutator.</li>
+            <li><a href="../assets/code/dvr/source/flux-side-kubo/utils/quantum.py">source/flux-side-kubo/utils/quantum.py</a> preserves the flux-side utility routines used while preparing the matrix diagnostics.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="dvr-series-map">
+            <h2 id="dvr-series-map">DVR series map</h2>
+            <ol class="series-list">
+              <li><a href="dvr-wavepacket-methods.html">Part I: Wavepacket Dynamics Methods</a> - discretization choices and the harmonic-oscillator benchmark.</li>
+              <li><a href="dvr-operator-matrices.html">Part II: Operator Matrices in the DVR Basis</a> - matrix structure behind kinetic, side, and flux operators.</li>
+              <li><a href="dvr-wavepacket-dynamics.html">Part III: Wavepacket Dynamics with DVR</a> - exact finite-dimensional propagation of a prepared wavepacket.</li>
+              <li><a href="dvr-ensemble-evolution.html">Part IV: Density-Matrix Ensemble Evolution</a> - thermal ensembles, filtering, and absorber bookkeeping.</li>
+              <li><a href="dvr-kubo-correlation.html">Part V: Kubo-Transformed Position Correlation</a> - spectral thermal correlation functions.</li>
+              <li><a href="dvr-flux-side-correlation.html">Part VI: Flux-Side Kubo Correlation</a> - rate-like observables from side and flux operators.</li>
+            </ol>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
