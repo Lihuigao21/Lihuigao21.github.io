@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Lihui Gao 的学术科研与技术分享网站，记录研究方向、论文、项目和技术文章。">
-    <title>Lihui Gao | Research & Notes</title>
+    <meta name="description" content="Lihui Gao 的技术文章与实践笔记，记录编程、工程实践、工具链和学习总结。">
+    <title>Lihui Gao | 技术文章</title>
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="assets/css/styles.css">
   </head>
@@ -22,165 +22,69 @@
       </button>
 
       <nav class="site-nav" id="site-nav" aria-label="主导航">
-        <a href="#research">Research</a>
-        <a href="#publications">Publications</a>
-        <a href="#projects">Projects</a>
-        <a href="#notes">Notes</a>
-        <a href="#contact">Contact</a>
+        <a href="#articles">文章</a>
+        <a href="#archive">归档</a>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
     </header>
 
     <main id="top">
       <section class="hero">
-        <div class="hero-copy">
-          <p class="section-label">Academic Homepage</p>
-          <h1>Lihui Gao</h1>
-          <p class="subtitle">Research, engineering, and technical writing.</p>
-          <p class="intro">
-            这里可以写你的研究身份与方向，例如：关注机器学习、科学计算、材料信息学或软件工程中的可靠系统。这个网站用于整理研究进展、项目记录和技术分享。
-          </p>
-          <div class="profile-links" aria-label="个人链接">
-            <a href="mailto:Lihuigao21@gmail.com">Email</a>
-            <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="#" target="_blank" rel="noreferrer">Google Scholar</a>
-            <a href="#" target="_blank" rel="noreferrer">CV</a>
-          </div>
-        </div>
-
-        <aside class="profile-card" aria-label="个人信息">
-          <img src="assets/img/profile-photo.svg" alt="Lihui Gao 的头像占位图">
-          <dl>
-            <div>
-              <dt>Affiliation</dt>
-              <dd>University / Lab Name</dd>
-            </div>
-            <div>
-              <dt>Fields</dt>
-              <dd>AI, Data, Scientific Computing</dd>
-            </div>
-            <div>
-              <dt>Location</dt>
-              <dd>China / Remote</dd>
-            </div>
-          </dl>
-        </aside>
-      </section>
-
-      <section class="section" id="research">
-        <div class="section-heading">
-          <p class="section-label">Research</p>
-          <h2>研究方向</h2>
-        </div>
-        <div class="interest-grid">
-          <article>
-            <h3>Machine Learning for Science</h3>
-            <p>用机器学习方法建模复杂科学问题，关注模型可解释性、泛化能力和实验验证。</p>
-          </article>
-          <article>
-            <h3>Computational Materials</h3>
-            <p>结合计算模拟、数据驱动方法和自动化流程，加速材料性质预测与筛选。</p>
-          </article>
-          <article>
-            <h3>Reliable Engineering Systems</h3>
-            <p>构建可复现、可维护的研究代码与工程工具，减少从原型到应用之间的摩擦。</p>
-          </article>
+        <p class="section-label">Technical Notes</p>
+        <h1>Lihui Gao 的技术文章</h1>
+        <p class="intro">
+          这里用于整理编程实践、工程工具、学习笔记和问题复盘。文章会尽量保持可复现、可验证，并记录清楚背景、思路和取舍。
+        </p>
+        <div class="profile-links" aria-label="个人链接">
+          <a href="mailto:Lihuigao21@gmail.com">Email</a>
+          <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
         </div>
       </section>
 
-      <section class="section" id="publications">
+      <section class="section" id="articles">
         <div class="section-heading">
-          <p class="section-label">Publications</p>
-          <h2>论文与预印本</h2>
+          <p class="section-label">Latest</p>
+          <h2>最新文章</h2>
         </div>
-        <ol class="publication-list">
-          <li>
-            <p>
-              <strong>Paper Title: A concise description of the research contribution.</strong>
-              <span>Lihui Gao, Coauthor Name. Journal / Conference, 2026.</span>
-            </p>
-            <div class="item-links">
-              <a href="#">PDF</a>
-              <a href="#">Code</a>
-              <a href="#">BibTeX</a>
-            </div>
-          </li>
-          <li>
-            <p>
-              <strong>Preprint Title: Technical method, dataset, or benchmark.</strong>
-              <span>Lihui Gao, Coauthor Name. arXiv preprint, 2025.</span>
-            </p>
-            <div class="item-links">
-              <a href="#">PDF</a>
-              <a href="#">Project</a>
-            </div>
-          </li>
-        </ol>
-      </section>
 
-      <section class="section" id="projects">
-        <div class="section-heading">
-          <p class="section-label">Projects</p>
-          <h2>研究与工程项目</h2>
-        </div>
-        <div class="project-list">
-          <article>
+        <div class="article-list">
+          <article class="article-item">
+            <time datetime="2026-05-26">2026.05.26</time>
             <div>
-              <h3>Research Toolkit</h3>
-              <p>用于实验管理、数据处理或模型评估的工具。这里写清问题、方法和你的贡献。</p>
+              <h3><a href="posts/technical-note-template.html">技术文章模板：如何组织一篇实践笔记</a></h3>
+              <p>一篇可以复制后改写的文章模板，包含问题背景、环境、步骤、结果和复盘结构。</p>
+              <div class="tags" aria-label="文章标签">
+                <span>Writing</span>
+                <span>Workflow</span>
+              </div>
             </div>
-            <a href="#">Repository</a>
           </article>
-          <article>
-            <div>
-              <h3>Reproducible Experiment</h3>
-              <p>一个论文复现、实验平台或 benchmark 项目，突出复现步骤、结果和经验总结。</p>
-            </div>
-            <a href="#">Details</a>
-          </article>
-          <article>
-            <div>
-              <h3>Technical Prototype</h3>
-              <p>把研究想法做成可运行原型的记录，可以放 demo、数据说明和后续计划。</p>
-            </div>
-            <a href="#">Demo</a>
-          </article>
-        </div>
-      </section>
 
-      <section class="section" id="notes">
-        <div class="section-heading">
-          <p class="section-label">Notes</p>
-          <h2>技术文章</h2>
-        </div>
-        <div class="note-list">
-          <a class="note-item" href="#">
+          <article class="article-item is-placeholder">
             <time datetime="2026-05">2026.05</time>
-            <span>如何组织一个可复现的科研代码仓库</span>
-          </a>
-          <a class="note-item" href="#">
-            <time datetime="2026-04">2026.04</time>
-            <span>从实验日志到技术博客：研究记录的轻量流程</span>
-          </a>
-          <a class="note-item" href="#">
-            <time datetime="2026-03">2026.03</time>
-            <span>机器学习项目中的数据版本管理实践</span>
-          </a>
+            <div>
+              <h3><a href="#">下一篇文章标题</a></h3>
+              <p>把这里替换成真实文章摘要。建议用一两句话说明问题、技术点和读者能获得什么。</p>
+              <div class="tags" aria-label="文章标签">
+                <span>Topic</span>
+                <span>Notes</span>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
 
-      <section class="section contact" id="contact">
+      <section class="section" id="archive">
         <div class="section-heading">
-          <p class="section-label">Contact</p>
-          <h2>联系</h2>
+          <p class="section-label">Archive</p>
+          <h2>归档</h2>
         </div>
-        <div>
-          <p>
-            欢迎围绕研究合作、技术交流或开源项目联系我。请将这里替换成你真实的联系方式和简短说明。
-          </p>
-          <address>
-            <a href="mailto:Lihuigao21@gmail.com">Lihuigao21@gmail.com</a>
-            <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">github.com/Lihuigao21</a>
-          </address>
+
+        <div class="archive-list">
+          <a href="posts/technical-note-template.html">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <span>技术文章模板：如何组织一篇实践笔记</span>
+          </a>
         </div>
       </section>
     </main>
