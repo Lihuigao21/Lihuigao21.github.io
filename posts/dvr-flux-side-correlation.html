@@ -33,6 +33,7 @@
             <a href="dvr-ensemble-evolution.html">IV. Ensembles</a>
             <a href="dvr-kubo-correlation.html">V. Kubo</a>
             <a href="dvr-flux-side-correlation.html">VI. Flux-side</a>
+            <a href="dvr-excited-ground-kubo.html">VII. Population Kubo</a>
           </nav>
 
           <p class="lead">
@@ -130,7 +131,7 @@
 
 def flux_operator(hamiltonian, side, hbar=1.0):
     return 1j / hbar * (hamiltonian @ side - side @ hamiltonian)</code></pre>
-          <p>The flux-side calculation is the endpoint of the series: Part I establishes the finite Hamiltonian, Part II identifies the side and flux matrices, Parts III-IV describe pure-state and density-matrix propagation, and Part V supplies the thermal Kubo spectral kernel.</p>
+          <p>The flux-side calculation combines the pieces built earlier in the series: Part I establishes the finite Hamiltonian, Part II identifies the side and flux matrices, Parts III-IV describe pure-state and density-matrix propagation, and Part V supplies the thermal Kubo spectral kernel. Part VII reuses this machinery with local adiabatic projectors to form a population-resolved transfer diagnostic.</p>
 
           <h2>Code used in this note</h2>
           <ul class="code-list">
@@ -149,6 +150,7 @@ def flux_operator(hamiltonian, side, hbar=1.0):
               <li><a href="dvr-ensemble-evolution.html">Part IV: Density-Matrix Ensemble Evolution</a> - thermal ensembles, filtering, and absorber bookkeeping.</li>
               <li><a href="dvr-kubo-correlation.html">Part V: Kubo-Transformed Position Correlation</a> - spectral thermal correlation functions.</li>
               <li><a href="dvr-flux-side-correlation.html">Part VI: Flux-Side Kubo Correlation</a> - rate-like observables from side and flux operators.</li>
+              <li><a href="dvr-excited-ground-kubo.html">Part VII: Excited-Ground Kubo Population Correlation</a> - local adiabatic projectors and population-resolved transfer diagnostics.</li>
             </ol>
           </section>
         </div>

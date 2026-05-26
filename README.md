@@ -17,6 +17,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- dvr-ensemble-evolution.html
 |   |-- dvr-kubo-correlation.html
 |   |-- dvr-flux-side-correlation.html
+|   |-- dvr-excited-ground-kubo.html
 |   `-- technical-note-template.html
 |-- assets
 |   |-- code
@@ -24,6 +25,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   `-- dvr
 |   |       |-- dvr_fd_benchmark.py
 |   |       |-- dvr_ensemble_demo.py
+|   |       |-- dvr_excited_ground_kubo.py
 |   |       |-- dvr_kubo_minimal.py
 |   |       `-- source
 |   |-- css
@@ -46,6 +48,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `posts/dvr-ensemble-evolution.html`
 - `posts/dvr-kubo-correlation.html`
 - `posts/dvr-flux-side-correlation.html`
+- `posts/dvr-excited-ground-kubo.html`
 
 ## Add a New Article
 

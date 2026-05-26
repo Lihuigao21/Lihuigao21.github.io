@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="DVR series part VII: excited-ground Kubo population correlation with local adiabatic projectors, flux projection, CAP propagation, and convergence checks.">
+    <title>DVR VII: Excited-Ground Kubo Population Correlation | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><a href="mailto:23110190022@m.fudan.edu.cn">Contact</a><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">DVR Series - Part VII</p>
+          <h1>Excited-Ground Kubo Population Correlation</h1>
+          <p class="post-meta">2026.05.26 - Kubo Transform / Adiabatic Projectors / Population Correlation</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="DVR series navigation">
+            <a href="dvr-wavepacket-methods.html">I. Methods</a>
+            <a href="dvr-operator-matrices.html">II. Operators</a>
+            <a href="dvr-wavepacket-dynamics.html">III. Wavepacket DVR</a>
+            <a href="dvr-ensemble-evolution.html">IV. Ensembles</a>
+            <a href="dvr-kubo-correlation.html">V. Kubo</a>
+            <a href="dvr-flux-side-correlation.html">VI. Flux-side</a>
+            <a href="dvr-excited-ground-kubo.html">VII. Population Kubo</a>
+          </nav>
+
+          <p class="lead">
+            The previous note built a rate-like flux-side correlation. This note adds electronic resolution: the initial operator is restricted to the excited adiabatic channel, while the later observation asks whether the system occupies the ground adiabatic channel. The result is a population-resolved Kubo benchmark for a two-state scattering model.
+          </p>
+
+          <h2>Why another Kubo observable?</h2>
+          <p>A single trajectory population curve is not a thermal quantum benchmark. A Kubo-transformed correlation starts from the ensemble and then asks a real-time question. Here the question is: after an excited-channel incoming flux event, how much ground-channel population is seen at time \(t\)?</p>
+          <p>This calculation is direct once the DVR Hamiltonian is assembled. The saved times are evaluated by finite-dimensional matrix propagation, not by iterating an approximate time-step rule.</p>
+
+          <h2>Product DVR Hamiltonian</h2>
+          <p>The two-state DVR space is a product of a coordinate grid and a two-dimensional electronic space:</p>
+          <div class="math-block">\[
+            \mathcal H=\mathcal H_x\otimes \mathcal H_{\mathrm{el}}.
+          \]</div>
+          <p>With state-major ordering, \(|x_1\rangle\otimes |1\rangle,\ldots,|x_N\rangle\otimes |1\rangle,|x_1\rangle\otimes |2\rangle,\ldots\), the Hamiltonian used in the source code has the block form</p>
+          <div class="math-block">\[
+            H=
+            \begin{pmatrix}
+              T+V_{11}(x) & V_{12}(x)\\
+              V_{12}(x) & T+V_{22}(x)
+            \end{pmatrix}.
+          \]</div>
+          <p>The numerical example uses the simple avoided crossing potential,</p>
+          <div class="math-block">\[
+            V_{11}(x)=A(1-e^{-B|x|})\operatorname{sgn}(x),
+            \qquad
+            V_{22}(x)=-V_{11}(x),
+            \qquad
+            V_{12}(x)=C e^{-D x^2}.
+          \]</div>
+
+          <h2>Local adiabatic projectors</h2>
+          <p>At each grid point, diagonalize the local \(2\times2\) potential matrix,</p>
+          <div class="math-block">\[
+            U^\dagger(x_j)V(x_j)U(x_j)=
+            \begin{pmatrix}
+              E_g(x_j)&0\\
+              0&E_e(x_j)
+            \end{pmatrix}.
+          \]</div>
+          <p>The corresponding local electronic eigenvectors define the ground and excited projectors,</p>
+          <div class="math-block">\[
+            P_g(x_j)=|g(x_j)\rangle\langle g(x_j)|,
+            \qquad
+            P_e(x_j)=|e(x_j)\rangle\langle e(x_j)|.
+          \]</div>
+          <p>Embedding these local projectors back into the DVR grid gives</p>
+          <div class="math-block">\[
+            \hat P_g=\sum_j |x_j\rangle\langle x_j|\otimes |g(x_j)\rangle\langle g(x_j)|,
+          \]</div>
+          <div class="math-block">\[
+            \hat P_e=\sum_j |x_j\rangle\langle x_j|\otimes |e(x_j)\rangle\langle e(x_j)|.
+          \]</div>
+          <p>They satisfy \(P_g^2=P_g\), \(P_e^2=P_e\), and \(P_g+P_e=I\) up to numerical roundoff. This is why the implementation can construct \(P_e\) either explicitly or as \(I-P_g\).</p>
+
+          <h2>Population Kubo formula</h2>
+          <p>Let \(h_1=\Theta(\hat x-s_1)\otimes I_{\mathrm{el}}\) be a side operator and</p>
+          <div class="math-block">\[
+            F_1=\frac{i}{\hbar}[H,h_1]
+          \]</div>
+          <p>be the associated flux operator. The source note uses an excited-channel projected flux as the initial operator,</p>
+          <div class="math-block">\[
+            A=P_e F_1 P_e,
+            \qquad
+            B=P_g.
+          \]</div>
+          <p>The two-sided projection around \(F_1\) matters because the flux is itself an operator with incoming and outgoing matrix elements. The later \(P_g\) is the population-like observation operator.</p>
+          <div class="math-block">\[
+            C_{\mathrm{pop}}^{\mathrm{Kubo}}(t;\beta)=
+            \frac{1}{\beta}\int_0^\beta d\lambda\,
+            \operatorname{Tr}\!\left[
+            e^{(\lambda-\beta)H}
+            P_e F_1 P_e
+            e^{(-\lambda+it/\hbar)H}
+            P_g
+            e^{-iHt/\hbar}
+            \right].
+          \]</div>
+          <p>Read literally, this is not the ordinary \(x-x\) Kubo correlation from Part V and not exactly the flux-side plateau from Part VI. It is a channel-resolved transfer diagnostic: thermal weighting first, excited-channel flux selection second, and ground-channel population observation last.</p>
+
+          <h2>Spectral Kubo dressing</h2>
+          <p>The imaginary-time integral is handled with the same energy-basis kernel used earlier in the series. If \(H|n\rangle=E_n|n\rangle\), define</p>
+          <div class="math-block">\[
+            W_{mn}=
+            \begin{cases}
+            \dfrac{e^{-\beta E_n}-e^{-\beta E_m}}{\beta(E_m-E_n)},&m\ne n,\\
+            e^{-\beta E_m},&m=n.
+            \end{cases}
+          \]</div>
+          <p>The implementation first Kubo-dresses \(P_eF_1P_e\) with this kernel, then evaluates the real-time trace. This keeps the thermal part tied to the Hermitian physical Hamiltonian.</p>
+
+          <h2>Absorber and Schur propagation</h2>
+          <p>As in the flux-side note, a complex absorbing potential is used only for the real-time propagation:</p>
+          <div class="math-block">\[
+            H_{\mathrm{abs}}=H-i\eta W(x).
+          \]</div>
+          <p>The absorber prevents boundary reflections from returning to the physical region during long propagation. Since \(H_{\mathrm{abs}}\) is non-Hermitian, the code uses a complex Schur form \(H_{\mathrm{abs}}=ZTZ^\dagger\) and propagates with \(e^{-iTt}\). This avoids depending on unstable eigenvectors of a non-normal matrix.</p>
+
+          <h2>Numerical setup</h2>
+          <p>The production run behind the figures uses \(m=2000\), \(T=300\) K, \(A=0.01\), \(B=1.6\), \(C=0.002\), \(D=1.0\), a displaced dividing surface with \(d=10\), and a dense sinc-DVR grid. In the convergence table below, \(N_p\) denotes the half-grid count in the source code, so the coordinate grid has \(2N_p\) points before the two electronic states are added.</p>
+
+          <h2>Results</h2>
+          <figure>
+            <img src="../assets/img/dvr-series/dvr6-population-kubo/population-kubo-cpop.png" alt="Real part of excited-ground Kubo population correlation">
+            <figcaption>Real part of \(C_{\mathrm{pop}}^{\mathrm{Kubo}}(t;\beta)\). The horizontal axis is time \(t\) in the source-code time units. The vertical axis is the unnormalized \(C_{\mathrm{pop}}\), with the plot using a \(10^{-9}\) scale factor indicated at the upper left. The blue solid curve is \(\operatorname{Re} C_{\mathrm{pop}}\): it starts near zero, rises as the excited-channel incoming flux reaches the coupling region, peaks around \(t\approx 1.2\times10^4\), and then decays as the selected transfer event leaves the observation window.</figcaption>
+          </figure>
+
+          <figure>
+            <img src="../assets/img/dvr-series/dvr6-population-kubo/population-kubo-integral.png" alt="Accumulated flux-side-like signal for the excited-ground Kubo calculation">
+            <figcaption>Accumulated signal from the companion flux expression. The horizontal axis is time \(t\); the vertical axis is labelled \(C_{fs}\) in the source plot and uses a \(10^{-5}\) scale factor. The blue solid curve is the real accumulated correlation. Its plateau near \(1.8\times10^{-5}\) is the rate-like summary obtained after the transient transfer contribution has been integrated.</figcaption>
+          </figure>
+
+          <h2>Convergence checks</h2>
+          <p>The rate proxy \(k_{\mathrm{rate}}\) is stable near \(0.725\) across the useful grid and time settings:</p>
+          <pre><code>total propagation time = 80000
+
+Ntgrid      k_rate
+20          0.6949789
+40          0.7232080
+50          0.7252554
+80          0.7229343
+100         0.7272080
+
+dx      Np      k_rate
+0.02    1500    0.7250877
+0.03    1000    0.7251283
+0.05    600     0.7252554
+0.06    500     0.7240988
+0.10    300     0.7273803
+
+cap_eta     k_rate
+0.01        0.7286199
+0.03        0.7270159
+0.05        0.7252554
+0.07        0.7237397
+0.09        0.7224113</code></pre>
+          <p>The \(dx=0.05\) result is already close to the denser-grid values. The CAP scan is more delicate: increasing \(\eta\) changes the plateau monotonically because the absorber is part of the finite computational box, not part of the physical Hamiltonian. A useful benchmark therefore needs both a moderate absorber and enough empty space that absorption does not contaminate the interaction region.</p>
+
+          <h2>Code used in this note</h2>
+          <p>The compact implementation below is a cleaned version of the corresponding flux-side Kubo working code. It keeps the full executable path from Hamiltonian construction to projector construction, Kubo dressing, Schur propagation, and plotting.</p>
+          <pre><code>pg, pe = local_adiabatic_projectors(v11, v22, v12)
+side = side_operator(x, flux_surface)
+flux = flux_operator(hamiltonian, side)
+
+excited_flux = pe @ flux @ pe
+dressed_excited_flux = kubo_dress_operator(hamiltonian, excited_flux, beta)
+
+c_pop = schur_correlation(hamiltonian_abs, dressed_excited_flux, pg, time)
+ground_flux = flux_operator(hamiltonian, pg)
+c_flux = schur_correlation(hamiltonian_abs, dressed_excited_flux, ground_flux, time)
+c_integrated = cumulative_trapezoid(c_flux, time)</code></pre>
+          <ul class="code-list">
+            <li><a href="../assets/code/dvr/dvr_excited_ground_kubo.py">dvr_excited_ground_kubo.py</a> is the complete executable script for this note. The default settings are intentionally smaller than the production run so it can be used as a laptop-scale smoke test.</li>
+            <li><a href="../assets/code/dvr/dvr_kubo_minimal.py">dvr_kubo_minimal.py</a> contains the shared DVR, side, flux, and Kubo routines used earlier in the series.</li>
+            <li><a href="../assets/code/dvr/source/flux-side-kubo/utils/quantum.py">source/flux-side-kubo/utils/quantum.py</a> preserves the flux-side quantum utility routines from the original working folder.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="dvr-series-map">
+            <h2 id="dvr-series-map">DVR series map</h2>
+            <ol class="series-list">
+              <li><a href="dvr-wavepacket-methods.html">Part I: Wavepacket Dynamics Methods</a> - discretization choices and the harmonic-oscillator benchmark.</li>
+              <li><a href="dvr-operator-matrices.html">Part II: Operator Matrices in the DVR Basis</a> - matrix structure behind kinetic, side, and flux operators.</li>
+              <li><a href="dvr-wavepacket-dynamics.html">Part III: Wavepacket Dynamics with DVR</a> - exact finite-dimensional propagation of a prepared wavepacket.</li>
+              <li><a href="dvr-ensemble-evolution.html">Part IV: Density-Matrix Ensemble Evolution</a> - thermal ensembles, filtering, and absorber bookkeeping.</li>
+              <li><a href="dvr-kubo-correlation.html">Part V: Kubo-Transformed Position Correlation</a> - spectral thermal correlation functions.</li>
+              <li><a href="dvr-flux-side-correlation.html">Part VI: Flux-Side Kubo Correlation</a> - rate-like observables from side and flux operators.</li>
+              <li><a href="dvr-excited-ground-kubo.html">Part VII: Excited-Ground Kubo Population Correlation</a> - local adiabatic projectors and population-resolved transfer diagnostics.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
