@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="DVR series part III: building and propagating Gaussian wavepackets on multi-state DVR Hamiltonians.">
+    <title>DVR III: Wavepacket Dynamics with DVR | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><a href="mailto:23110190022@m.fudan.edu.cn">Contact</a><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">DVR Series - Part III</p>
+          <h1>Wavepacket Dynamics with DVR</h1>
+          <p class="post-meta">2026.05.26 - Wavepacket Propagation / Tully Models / Population Dynamics</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="DVR series navigation">
+            <a href="dvr-wavepacket-methods.html">I. Methods</a>
+            <a href="dvr-operator-matrices.html">II. Operators</a>
+            <a href="dvr-wavepacket-dynamics.html">III. Wavepacket DVR</a>
+            <a href="dvr-ensemble-evolution.html">IV. Ensembles</a>
+            <a href="dvr-kubo-correlation.html">V. Kubo</a>
+            <a href="dvr-flux-side-correlation.html">VI. Flux-side</a>
+          </nav>
+
+          <p class="lead">
+            After the DVR Hamiltonian is built, the next step is a real-time wavepacket calculation. The initial state is a Gaussian nuclear packet placed on one electronic state, then propagated by the full product-basis Hamiltonian.
+          </p>
+
+          <figure>
+            <img src="../assets/img/dvr-series/dvr2-wavepacket/1.png" alt="Workflow sketch for DVR wavepacket dynamics">
+            <figcaption>Workflow sketch from the source notes. The loop is: choose a potential model, assemble the DVR Hamiltonian, prepare the initial packet, propagate in time, then read out populations and nuclear density.</figcaption>
+          </figure>
+
+          <h2>Product basis</h2>
+          <p>For \(N_x\) DVR grid points and \(n_{\mathrm{state}}\) electronic states, the working basis is</p>
+          <div class="math-block">\[
+            |x_i,a\rangle,\qquad
+            i=1,\ldots,N_x,\quad a=1,\ldots,n_{\mathrm{state}}.
+          \]</div>
+          <p>The Hamiltonian has the same block form as in the previous note:</p>
+          <div class="math-block">\[
+            H_{(i,a),(j,b)}=\delta_{ab}T_{ij}+\delta_{ij}V_{ab}(x_i).
+          \]</div>
+          <p>The diabatic potential \(V(x_i)\) is evaluated independently at every grid point. Local adiabatic surfaces are obtained by diagonalizing this \(n_{\mathrm{state}}\times n_{\mathrm{state}}\) matrix at each \(x_i\).</p>
+
+          <h2>Initial Gaussian packet</h2>
+          <p>The nuclear part of the initial wavefunction is</p>
+          <div class="math-block">\[
+            \chi(x,0)=A
+            \exp\!\left[ik_0(x-x_0)\right]
+            \exp\!\left[-\sigma(x-x_0)^2\right],
+          \]</div>
+          <p>where \(x_0\) fixes the packet center, \(k_0\) fixes the mean momentum, and \(\sigma\) controls the spatial width. On the DVR grid it becomes a vector, normalized by</p>
+          <div class="math-block">\[
+            \sum_i |\chi(x_i,0)|^2\Delta x=1.
+          \]</div>
+          <p>If the packet is prepared on the lower local adiabatic state, the source notes transform it into the diabatic product basis before propagation.</p>
+
+          <h2>Potential model and state populations</h2>
+          <div class="figure-grid">
+            <figure>
+              <img src="../assets/img/dvr-series/dvr2-wavepacket/4.png" alt="Tully extended coupling reflection potential">
+              <figcaption>Example two-state potential. The black curves are local adiabatic energy surfaces. The colored curves show diabatic components and coupling used to assemble \(V_{ab}(x)\). The avoided-crossing region is where population transfer becomes possible.</figcaption>
+            </figure>
+            <figure>
+              <img src="../assets/img/dvr-series/dvr2-wavepacket/2.png" alt="Population dynamics from DVR wavepacket propagation">
+              <figcaption>Population dynamics from the propagation. The blue curve is state 1 population and the orange curve is state 2 population. The horizontal axis is time in atomic units; the vertical axis is total probability on each electronic state.</figcaption>
+            </figure>
+          </div>
+
+          <h2>Propagation by spectral decomposition</h2>
+          <p>For a time-independent Hamiltonian, the finite-dimensional evolution is</p>
+          <div class="math-block">\[
+            \psi(t)=U(t)\psi(0),\qquad
+            U(t)=e^{-iHt/\hbar}.
+          \]</div>
+          <p>After diagonalizing \(H=C\,\mathrm{diag}(E_\alpha)C^\dagger\), this becomes</p>
+          <div class="math-block">\[
+            \psi(t)=
+            C\,\mathrm{diag}\!\left(e^{-iE_\alpha t/\hbar}\right)C^\dagger\psi(0).
+          \]</div>
+          <p>Electronic-state populations are then simple sums over grid points:</p>
+          <div class="math-block">\[
+            P_a(t)=\sum_i |\psi_a(x_i,t)|^2\Delta x.
+          \]</div>
+
+          <h2>Density heatmaps</h2>
+          <figure>
+            <img src="../assets/img/dvr-series/dvr2-wavepacket/5.png" alt="Nuclear density heatmap from wavepacket propagation">
+            <figcaption>Nuclear density heatmap. The horizontal axis is nuclear coordinate \(x\); the vertical axis is time or saved propagation step. Color represents \(|\psi(x,t)|^2\). Bright bands trace where the packet is concentrated as it moves through the coupling region.</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/img/dvr-series/dvr2-wavepacket/7.png" alt="Long-time nuclear density heatmap showing boundary effects">
+            <figcaption>Longer propagation diagnostic. The horizontal axis is coordinate and the vertical axis is time. The overlaid curve tracks the mean position. The turning and return of density near the finite-box edge show why boundary handling becomes important in later calculations.</figcaption>
+          </figure>
+
+          <h2>Executable hook</h2>
+          <p>The shared Python file <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a> includes the same Hamiltonian assembly pattern. It is intentionally compact so the matrix layout can be inspected without notebook state.</p>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

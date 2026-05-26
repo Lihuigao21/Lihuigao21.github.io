@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="DVR series part I: why DVR and finite-difference methods discretize wavepacket dynamics in different ways.">
+    <title>DVR I: Wavepacket Dynamics Methods | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><a href="mailto:23110190022@m.fudan.edu.cn">Contact</a><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">DVR Series - Part I</p>
+          <h1>Wavepacket Dynamics Methods</h1>
+          <p class="post-meta">2026.05.26 - DVR / Finite Difference / Time Evolution</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="DVR series navigation">
+            <a href="dvr-wavepacket-methods.html">I. Methods</a>
+            <a href="dvr-operator-matrices.html">II. Operators</a>
+            <a href="dvr-wavepacket-dynamics.html">III. Wavepacket DVR</a>
+            <a href="dvr-ensemble-evolution.html">IV. Ensembles</a>
+            <a href="dvr-kubo-correlation.html">V. Kubo</a>
+            <a href="dvr-flux-side-correlation.html">VI. Flux-side</a>
+          </nav>
+
+          <p class="lead">
+            This series starts from a numerical question: when a continuous Schrodinger equation becomes a finite matrix problem, what has actually been approximated? DVR and finite difference can both converge to the same continuum physics, but their finite-dimensional pictures are very different.
+          </p>
+
+          <h2>The common target</h2>
+          <p>All notes in this series are organized around the time-dependent Schrodinger equation</p>
+          <div class="math-block">\[
+            i\hbar\frac{d}{dt}\psi(t)=\hat H\psi(t),\qquad
+            \hat H=-\frac{\hbar^2}{2m}\partial_x^2+V(x),
+          \]</div>
+          <p>with initial condition \(\psi(0)=\psi_0\). If \(\hat H\) is time independent, the exact formal solution is</p>
+          <div class="math-block">\[
+            \psi(t)=\exp\!\left(-\frac{i}{\hbar}\hat Ht\right)\psi_0.
+          \]</div>
+          <p>The numerical task has two layers: approximate the continuous coordinate Hilbert space, then apply the exponential time-evolution operator accurately enough for the observable of interest.</p>
+
+          <h2>Continuous operator viewpoint</h2>
+          <p>In the continuum, the Hamiltonian is an unbounded self-adjoint operator on a domain inside \(L^2(\mathbb{R})\). That statement sounds abstract, but it carries a practical warning: the true object is infinite dimensional and may contain both bound and scattering parts of the spectrum.</p>
+          <p>A numerical method replaces this operator by a finite one. The relevant question is not whether the matrix is "the Hamiltonian"; it is which limiting process makes the matrix approach the continuum Hamiltonian.</p>
+
+          <h2>DVR as projection</h2>
+          <p>A discrete variable representation can be understood as a projection of the continuous Hamiltonian onto a finite basis:</p>
+          <div class="math-block">\[
+            P_N=\sum_{k=1}^N|\phi_k\rangle\langle\phi_k|,\qquad
+            H_N=P_N\hat H P_N.
+          \]</div>
+          <p>When \(P_N\) approaches the identity strongly and the chosen finite subspace becomes dense enough in the Hamiltonian domain, the projected dynamics approximates the continuum dynamics. In computation this translates to a more concrete rule: the grid must cover the physically visited region and resolve the shortest wavelength that matters.</p>
+
+          <h2>Finite difference as an auxiliary lattice</h2>
+          <p>Finite difference starts from a local derivative stencil. For the second derivative, the standard central stencil is</p>
+          <div class="math-block">\[
+            (D_{\Delta x}u)_j=\frac{u_{j+1}-2u_j+u_{j-1}}{\Delta x^2}.
+          \]</div>
+          <p>This produces a tridiagonal kinetic matrix. In a sinc DVR, by contrast, the kinetic matrix is dense but structured:</p>
+          <div class="math-block">\[
+            T_{ij}=\frac{\hbar^2}{2m\Delta x^2}(-1)^{i-j}
+            \begin{cases}
+            \pi^2/3,& i=j,\\
+            2/(i-j)^2,& i\ne j.
+            \end{cases}
+          \]</div>
+          <p>The finite-difference stencil is local and easy to scale. The DVR kinetic operator is nonlocal, but it retains a spectral character that is valuable for small quantum benchmark problems.</p>
+
+          <h2>Exact finite-dimensional evolution</h2>
+          <p>After a DVR Hamiltonian matrix has been assembled, real-time evolution can be performed by diagonalization, matrix exponentiation, or a stable Krylov method. A simple explicit finite-difference update, for comparison, has the recurrence form</p>
+          <div class="math-block">\[
+            i\hbar\frac{\psi_j^{n+1}-\psi_j^n}{\Delta t}
+            =
+            -\frac{\hbar^2}{2m}
+            \frac{\psi_{j+1}^n-2\psi_j^n+\psi_{j-1}^n}{(\Delta x)^2}
+            +V_j\psi_j^n.
+          \]</div>
+          <p>Its accuracy is tied simultaneously to \(\Delta x\) and \(\Delta t\). DVR is not automatically cheaper, but it gives a clean finite Hamiltonian whose spectral structure can be inspected directly.</p>
+
+          <h2>Practical takeaway</h2>
+          <p>I use DVR in the later notes because the target systems are small enough for dense matrices, and the desired outputs are reference-quality quantum wavepacket dynamics and Kubo correlation functions. The cost is larger memory and matrix algebra; the gain is a transparent operator representation.</p>
+          <p>The shared executable code for the series is available at <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a>.</p>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

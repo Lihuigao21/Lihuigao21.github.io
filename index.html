@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Technical notes by Lihui Gao on programming, engineering practice, tooling, and lessons learned.">
+    <meta name="description" content="Technical notes by Lihui Gao on numerical methods, quantum dynamics, programming, and reproducible research notes.">
     <title>Lihui Gao | Technical Notes</title>
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -34,7 +34,7 @@
         <p class="section-label">Technical Notes</p>
         <h1>Lihui Gao's Technical Notes</h1>
         <p class="intro">
-          A small place for programming practice, engineering tools, study notes, and technical retrospectives. I try to keep the writing reproducible, concrete, and honest about tradeoffs.
+          A small place for numerical methods, quantum dynamics, programming practice, and technical study notes. I try to keep the writing reproducible, concrete, and honest about tradeoffs.
         </p>
         <div class="profile-links" aria-label="Profile links">
           <a href="mailto:23110190022@m.fudan.edu.cn">Contact me</a>
@@ -49,6 +49,78 @@
         </div>
 
         <div class="article-list">
+          <article class="article-item">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <div>
+              <h3><a href="posts/dvr-wavepacket-methods.html">DVR I: Wavepacket Dynamics Methods</a></h3>
+              <p>Why DVR and finite-difference methods discretize the same wavepacket problem in different finite-dimensional ways.</p>
+              <div class="tags" aria-label="Article tags">
+                <span>DVR</span>
+                <span>Quantum Dynamics</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="article-item">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <div>
+              <h3><a href="posts/dvr-operator-matrices.html">DVR II: Operator Matrices in the DVR Basis</a></h3>
+              <p>Matrix-level intuition for kinetic, Hamiltonian, side, flux, and thermalized flux operators.</p>
+              <div class="tags" aria-label="Article tags">
+                <span>DVR</span>
+                <span>Operators</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="article-item">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <div>
+              <h3><a href="posts/dvr-wavepacket-dynamics.html">DVR III: Wavepacket Dynamics with DVR</a></h3>
+              <p>Building a multi-state DVR Hamiltonian, initializing a Gaussian packet, and reading populations and density maps.</p>
+              <div class="tags" aria-label="Article tags">
+                <span>DVR</span>
+                <span>Wavepacket</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="article-item">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <div>
+              <h3><a href="posts/dvr-ensemble-evolution.html">DVR IV: Density-Matrix Ensemble Evolution</a></h3>
+              <p>Thermal initialization, positive-momentum filtering, density-matrix propagation, and absorber bookkeeping.</p>
+              <div class="tags" aria-label="Article tags">
+                <span>DVR</span>
+                <span>Density Matrix</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="article-item">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <div>
+              <h3><a href="posts/dvr-kubo-correlation.html">DVR V: Kubo-Transformed Position Correlation</a></h3>
+              <p>A spectral derivation of the Kubo-transformed x-x correlation and its DVR matrix implementation.</p>
+              <div class="tags" aria-label="Article tags">
+                <span>Kubo</span>
+                <span>Correlation</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="article-item">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <div>
+              <h3><a href="posts/dvr-flux-side-correlation.html">DVR VI: Flux-Side Kubo Correlation</a></h3>
+              <p>Side projectors, commutator-defined flux operators, CAP handling, and flux-flux integration for rate-like diagnostics.</p>
+              <div class="tags" aria-label="Article tags">
+                <span>Kubo</span>
+                <span>Flux-Side</span>
+              </div>
+            </div>
+          </article>
+
           <article class="article-item">
             <time datetime="2026-05-26">2026.05.26</time>
             <div>
@@ -71,6 +143,30 @@
         </div>
 
         <div class="archive-list">
+          <a href="posts/dvr-wavepacket-methods.html">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <span>DVR I: Wavepacket Dynamics Methods</span>
+          </a>
+          <a href="posts/dvr-operator-matrices.html">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <span>DVR II: Operator Matrices in the DVR Basis</span>
+          </a>
+          <a href="posts/dvr-wavepacket-dynamics.html">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <span>DVR III: Wavepacket Dynamics with DVR</span>
+          </a>
+          <a href="posts/dvr-ensemble-evolution.html">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <span>DVR IV: Density-Matrix Ensemble Evolution</span>
+          </a>
+          <a href="posts/dvr-kubo-correlation.html">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <span>DVR V: Kubo-Transformed Position Correlation</span>
+          </a>
+          <a href="posts/dvr-flux-side-correlation.html">
+            <time datetime="2026-05-26">2026.05.26</time>
+            <span>DVR VI: Flux-Side Kubo Correlation</span>
+          </a>
           <a href="posts/cayley-transform-ring-polymer.html">
             <time datetime="2026-05-26">2026.05.26</time>
             <span>Cayley Modification for Ring-Polymer Free Motion</span>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="DVR series part IV: density-matrix ensemble propagation with thermal initialization, momentum filtering, and absorbing masks.">
+    <title>DVR IV: Density-Matrix Ensemble Evolution | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><a href="mailto:23110190022@m.fudan.edu.cn">Contact</a><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">DVR Series - Part IV</p>
+          <h1>Density-Matrix Ensemble Evolution</h1>
+          <p class="post-meta">2026.05.26 - Thermal State / Positive Momentum Filtering / Absorbers</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="DVR series navigation">
+            <a href="dvr-wavepacket-methods.html">I. Methods</a>
+            <a href="dvr-operator-matrices.html">II. Operators</a>
+            <a href="dvr-wavepacket-dynamics.html">III. Wavepacket DVR</a>
+            <a href="dvr-ensemble-evolution.html">IV. Ensembles</a>
+            <a href="dvr-kubo-correlation.html">V. Kubo</a>
+            <a href="dvr-flux-side-correlation.html">VI. Flux-side</a>
+          </nav>
+
+          <p class="lead">
+            A single wavepacket is useful for visualizing dynamics. Thermal rate and correlation calculations need an ensemble. This note reorganizes the density-matrix workflow: thermal initialization, momentum filtering, multi-state propagation, and absorber-based population accounting.
+          </p>
+
+          <h2>Hilbert space and density matrix</h2>
+          <p>The full space is a product of the nuclear DVR space and a finite electronic space:</p>
+          <div class="math-block">\[
+            \mathcal{H}=\mathcal{H}_{\mathrm{nuc}}\otimes\mathcal{H}_{\mathrm{el}}.
+          \]</div>
+          <p>The propagated object is the density matrix \(\rho(t)\), not a single wavefunction. This naturally supports thermal initial states and mixed incoming ensembles.</p>
+
+          <h2>DVR and FFT operators</h2>
+          <p>In the ensemble source note, the coordinate grid is uniform and the momentum operator is built through a discrete Fourier transform:</p>
+          <div class="math-block">\[
+            F_{jk}=\frac{1}{\sqrt{N_x}}\exp\!\left(-\frac{2\pi i}{N_x}jk\right),
+            \qquad
+            p_\alpha=\hbar\,2\pi\,\mathrm{fftfreq}(N_x,d=\Delta x).
+          \]</div>
+          <div class="math-block">\[
+            P=F^\dagger\mathrm{diag}(p_\alpha)F,\qquad
+            P^2=F^\dagger\mathrm{diag}(p_\alpha^2)F.
+          \]</div>
+          <p>The FFT form is convenient for constructing thermal states and momentum filters on a uniform grid.</p>
+
+          <h2>Thermal initialization</h2>
+          <p>A harmonic reference Hamiltonian can define the incoming nuclear thermal state:</p>
+          <div class="math-block">\[
+            H_{\mathrm{ho}}=\frac{P^2}{2m}
+            +\frac{1}{2}m\omega_{\mathrm{init}}^2(X-x_{\mathrm{init}})^2,
+            \qquad
+            \rho_{\mathrm{nuc}}=\frac{e^{-\beta H_{\mathrm{ho}}}}{\mathrm{Tr}(e^{-\beta H_{\mathrm{ho}}})}.
+          \]</div>
+          <p>Diagonalizing \(H_{\mathrm{ho}}\) gives a stable way to evaluate the matrix exponential.</p>
+
+          <h2>Positive-momentum filtering</h2>
+          <p>To represent an incoming ensemble from left to right, the thermal density can be filtered in momentum space. The sharp version is</p>
+          <div class="math-block">\[
+            f(p)=
+            \begin{cases}
+            1,& p>0,\\
+            1/2,& p=0,\\
+            0,& p<0,
+            \end{cases}
+            \qquad
+            P_f=F^\dagger\mathrm{diag}(f(p_\alpha))F.
+          \]</div>
+          <p>A smoother alternative is \(f(p)=\frac{1}{2}[1+\tanh(p/dp)]\). The filtered density is</p>
+          <div class="math-block">\[
+            \rho_{\mathrm{nuc}}^{(+)}
+            =
+            \frac{P_f\rho_{\mathrm{nuc}}P_f}
+            {\mathrm{Tr}(P_f\rho_{\mathrm{nuc}}P_f)}.
+          \]</div>
+
+          <h2>Multi-state lift</h2>
+          <p>The diabatic Hamiltonian is</p>
+          <div class="math-block">\[
+            \hat H=
+            \frac{\hat P^2}{2m}\otimes I
+            +
+            \sum_{a,b}|a\rangle V_{ab}(\hat X)\langle b|.
+          \]</div>
+          <p>On the product basis this is again</p>
+          <div class="math-block">\[
+            H_{(i,a),(j,b)}=\delta_{ab}T_{ij}+\delta_{ij}V_{ab}(x_i).
+          \]</div>
+          <p>The source note also tracks local adiabatic populations by diagonalizing \(V(x_i)\) at each grid point and using the resulting local eigenvectors as projectors.</p>
+
+          <h2>Time propagation</h2>
+          <p>For a Hermitian Hamiltonian, the density matrix evolves as</p>
+          <div class="math-block">\[
+            \rho(t+\Delta t)=
+            e^{-iH\Delta t/\hbar}\rho(t)e^{+iH\Delta t/\hbar},
+          \]</div>
+          <p>which is the finite-dimensional form of the Liouville-von Neumann equation \(i\hbar\,d\rho/dt=[H,\rho]\).</p>
+
+          <h2>Absorber bookkeeping</h2>
+          <p>Instead of treating the final population as only what remains inside the numerical box, the source workflow records a ledger. A left keep-mask can be written as</p>
+          <div class="math-block">\[
+            M_L(x)=
+            \begin{cases}
+            0,& x\le x_1,\\
+            \sin^2\!\left[\frac{\pi}{2}\frac{x-x_1}{x_2-x_1}\right],& x_1<x<x_2,\\
+            1,& x\ge x_2,
+            \end{cases}
+          \]</div>
+          <p>and a right keep-mask as</p>
+          <div class="math-block">\[
+            M_R(x)=
+            \begin{cases}
+            1,& x\le x_1,\\
+            \cos^2\!\left[\frac{\pi}{2}\frac{x-x_1}{x_2-x_1}\right],& x_1<x<x_2,\\
+            0,& x\ge x_2.
+            \end{cases}
+          \]</div>
+          <p>The useful reported quantity is therefore</p>
+          <div class="math-block">\[
+            P_k^{\mathrm{total}}(t)=
+            P_k^{\mathrm{remain}}(t)
+            +P_{k,\mathrm{left\ out}}(t)
+            +P_{k,\mathrm{right\ out}}(t),
+          \]</div>
+          <p>so transmitted, reflected, and still-inside probability are counted consistently.</p>
+
+          <h2>Four core formulas</h2>
+          <ul>
+            <li>Thermal state: \(\rho_{\mathrm{nuc}}=e^{-\beta H_{\mathrm{ho}}}/Z\).</li>
+            <li>Full Hamiltonian: \(\hat H=\hat P^2/(2m)\otimes I+\sum_{ab}|a\rangle V_{ab}(\hat X)\langle b|\).</li>
+            <li>Density propagation: \(\rho(t+\Delta t)=U\rho(t)U^\dagger\).</li>
+            <li>Population ledger: remain plus left-absorbed plus right-absorbed probability.</li>
+          </ul>
+
+          <p>The next notes reuse this operator bookkeeping for equilibrium Kubo correlation functions.</p>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lihuigao21.github.io/sitemap.xml

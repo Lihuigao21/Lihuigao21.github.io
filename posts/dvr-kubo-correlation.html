@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="DVR series part V: spectral derivation and DVR implementation of the Kubo-transformed position autocorrelation function.">
+    <title>DVR V: Kubo-Transformed Position Correlation | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><a href="mailto:23110190022@m.fudan.edu.cn">Contact</a><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">DVR Series - Part V</p>
+          <h1>Kubo-Transformed Position Correlation</h1>
+          <p class="post-meta">2026.05.26 - Kubo Transform / Spectral Sum / Position Autocorrelation</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="DVR series navigation">
+            <a href="dvr-wavepacket-methods.html">I. Methods</a>
+            <a href="dvr-operator-matrices.html">II. Operators</a>
+            <a href="dvr-wavepacket-dynamics.html">III. Wavepacket DVR</a>
+            <a href="dvr-ensemble-evolution.html">IV. Ensembles</a>
+            <a href="dvr-kubo-correlation.html">V. Kubo</a>
+            <a href="dvr-flux-side-correlation.html">VI. Flux-side</a>
+          </nav>
+
+          <p class="lead">
+            Wavepacket dynamics fixes a particular initial packet. A Kubo-transformed correlation function instead asks for thermal real-time memory. The example here is the position-position correlation \(K_{xx}(t)\), computed by combining DVR eigenstates with a spectral Kubo weight.
+          </p>
+
+          <h2>Definition</h2>
+          <p>For two operators \(A\) and \(B\),</p>
+          <div class="math-block">\[
+            K_{AB}(t)=
+            \frac{1}{\beta Z}
+            \int_0^\beta d\lambda\,
+            \mathrm{Tr}\!\left(
+            e^{-(\beta-\lambda)H}
+            A
+            e^{-\lambda H}
+            B(t)
+            \right),
+          \]</div>
+          <div class="math-block">\[
+            B(t)=e^{iHt}B e^{-iHt},
+            \qquad
+            Z=\mathrm{Tr}(e^{-\beta H}).
+          \]</div>
+          <p>For \(A=B=x\), the function measures how much a thermal position fluctuation at time zero is remembered at time \(t\).</p>
+
+          <h2>Energy-basis derivation</h2>
+          <p>Insert energy eigenstates \(H|n\rangle=E_n|n\rangle\) into the trace. The time dependence gives</p>
+          <div class="math-block">\[
+            \langle j|B(t)|i\rangle
+            =
+            e^{-i(E_i-E_j)t}B_{ji}.
+          \]</div>
+          <p>The imaginary-time integral contains the energy gap \(\Delta_{ij}=E_i-E_j\):</p>
+          <div class="math-block">\[
+            \frac{1}{\beta}e^{-\beta E_i}
+            \int_0^\beta e^{\lambda(E_i-E_j)}\,d\lambda.
+          \]</div>
+          <p>For \(i\ne j\), this becomes</p>
+          <div class="math-block">\[
+            \frac{e^{-\beta E_j}-e^{-\beta E_i}}
+            {\beta(E_i-E_j)}.
+          \]</div>
+          <p>For \(i=j\), the limit is \(e^{-\beta E_i}\). Define</p>
+          <div class="math-block">\[
+            W_{ij}=
+            \begin{cases}
+            \dfrac{e^{-\beta E_j}-e^{-\beta E_i}}{\beta(E_i-E_j)},& i\ne j,\\
+            e^{-\beta E_i},& i=j.
+            \end{cases}
+          \]</div>
+
+          <h2>Spectral formula</h2>
+          <p>The Kubo-transformed correlation is then</p>
+          <div class="math-block">\[
+            K_{AB}(t)=
+            \frac{1}{Z}
+            \sum_{ij}
+            W_{ij}A_{ij}B_{ji}e^{-i(E_i-E_j)t}.
+          \]</div>
+          <p>For position autocorrelation, \(x_{ji}=x_{ij}^\ast\), so</p>
+          <div class="math-block">\[
+            K_{xx}(t)=
+            \frac{1}{Z}
+            \sum_{ij}W_{ij}|x_{ij}|^2
+            \cos\!\left[(E_i-E_j)t\right].
+          \]</div>
+          <p>The expression is explicitly real and even in time.</p>
+
+          <h2>DVR matrix elements</h2>
+          <p>After solving the one-dimensional DVR eigenproblem, the position matrix is approximated by</p>
+          <div class="math-block">\[
+            x_{mn}\approx
+            \sum_i c_m(x_i)\,x_i\,c_n(x_i)\,\Delta x.
+          \]</div>
+          <p>Only a finite number of low-energy states are retained in the code. That is a temperature-dependent truncation: as \(\beta\) decreases, higher-energy states matter more.</p>
+
+          <figure>
+            <img src="../assets/img/dvr-series/dvr4-kubo/1.png" alt="Position-position Kubo correlation curve">
+            <figcaption>Example \(x-x\) Kubo correlation. The horizontal axis is time and the vertical axis is \(K_{xx}(t)\). The black curve is the real spectral-sum result for the chosen one-dimensional anharmonic potential; its oscillation frequencies come from energy-level gaps \(E_i-E_j\).</figcaption>
+          </figure>
+
+          <h2>Executable hook</h2>
+          <p>The implementation is in <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a>. The routine <code>kubo_correlation</code> follows the spectral formula above and fills the diagonal \(i=j\) limit explicitly to avoid a division-by-zero artifact.</p>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

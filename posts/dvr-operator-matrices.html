@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="DVR series part II: matrix-level intuition for kinetic, Hamiltonian, side, flux, and thermalized flux operators.">
+    <title>DVR II: Operator Matrices in the DVR Basis | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><a href="mailto:23110190022@m.fudan.edu.cn">Contact</a><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">DVR Series - Part II</p>
+          <h1>Operator Matrices in the DVR Basis</h1>
+          <p class="post-meta">2026.05.26 - DVR / Matrix Structure / Flux Operator</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="DVR series navigation">
+            <a href="dvr-wavepacket-methods.html">I. Methods</a>
+            <a href="dvr-operator-matrices.html">II. Operators</a>
+            <a href="dvr-wavepacket-dynamics.html">III. Wavepacket DVR</a>
+            <a href="dvr-ensemble-evolution.html">IV. Ensembles</a>
+            <a href="dvr-kubo-correlation.html">V. Kubo</a>
+            <a href="dvr-flux-side-correlation.html">VI. Flux-side</a>
+          </nav>
+
+          <p class="lead">
+            The useful thing about DVR is that the important quantum operators become inspectable matrices. Kinetic energy is dense and structured, local potentials are diagonal, side operators are projectors, and flux operators appear as commutators around a dividing surface.
+          </p>
+
+          <h2>Kinetic energy</h2>
+          <p>For the infinite-domain sinc DVR convention used in the code,</p>
+          <div class="math-block">\[
+            T_{ii'}=\frac{\hbar^2}{2m\Delta x^2}(-1)^{i-i'}
+            \begin{cases}
+            \pi^2/3,& i=i',\\
+            2/(i-i')^2,& i\ne i'.
+            \end{cases}
+          \]</div>
+          <figure>
+            <img src="../assets/img/dvr-series/dvr1-operators/1.png" alt="Sinc DVR kinetic matrix heat map">
+            <figcaption>Sinc DVR kinetic-energy matrix. Both axes are DVR grid indices. The color scale is logarithmic in the signed matrix value: the diagonal is dominant, and off-diagonal elements alternate sign while decaying away from the diagonal. This is the visual fingerprint of a nonlocal spectral kinetic operator.</figcaption>
+          </figure>
+
+          <h2>Multi-state Hamiltonian blocks</h2>
+          <p>For a diabatic model with electronic indices \(a,b\), the product-basis Hamiltonian is</p>
+          <div class="math-block">\[
+            H_{(i,a),(j,b)}=\delta_{ab}T_{ij}+\delta_{ij}V_{ab}(x_i).
+          \]</div>
+          <p>The first term repeats the same nuclear kinetic matrix on each electronic-state block. The second term is diagonal in the DVR grid but may couple different electronic states at the same grid point.</p>
+          <div class="figure-grid">
+            <figure>
+              <img src="../assets/img/dvr-series/dvr1-operators/7.png" alt="Kinetic blocks in a two-state DVR matrix">
+              <figcaption>Two-state kinetic block structure. The upper-left and lower-right blocks are copies of the same nuclear kinetic matrix. The blank off-diagonal state blocks show that the kinetic operator does not itself change the electronic state.</figcaption>
+            </figure>
+            <figure>
+              <img src="../assets/img/dvr-series/dvr1-operators/5.png" alt="Full Hamiltonian heat map">
+              <figcaption>Full Hamiltonian matrix. The two diagonal blocks contain \(T+V_{11}(x)\) and \(T+V_{22}(x)\). The smaller off-diagonal features come from the local diabatic coupling \(V_{12}(x)\), which appears only at equal grid indices.</figcaption>
+            </figure>
+          </div>
+
+          <h2>Projectors and side operators</h2>
+          <p>A side operator marks whether the nuclear coordinate lies to one side of a chosen dividing surface \(s\):</p>
+          <div class="math-block">\[
+            h=\Theta(\hat x-s)\otimes I_{\mathrm{el}}.
+          \]</div>
+          <div class="figure-grid">
+            <figure>
+              <img src="../assets/img/dvr-series/dvr1-operators/2.png" alt="Adiabatic ground-state projector matrix">
+              <figcaption>Ground-state projector in a two-state calculation. The nonzero pattern follows the selected local adiabatic component rather than a simple coordinate step. It is useful for separating electronic-state-resolved population.</figcaption>
+            </figure>
+            <figure>
+              <img src="../assets/img/dvr-series/dvr1-operators/3.png" alt="Side operator matrix">
+              <figcaption>Side operator matrix. It is diagonal in the nuclear grid and repeated across electronic sectors. Entries switch from 0 to 1 across the selected dividing surface, so the heat map shows two diagonal active regions.</figcaption>
+            </figure>
+          </div>
+
+          <h2>Flux operator</h2>
+          <p>The flux through the dividing surface is the time derivative of the side operator. In operator form,</p>
+          <div class="math-block">\[
+            F=\frac{i}{\hbar}[H,h].
+          \]</div>
+          <p>Because \(h\) is a function of position, local potential terms commute with it. The visible structure mainly comes from \([T,h]\).</p>
+          <figure>
+            <img src="../assets/img/dvr-series/dvr1-operators/4.png" alt="Flux operator matrix">
+            <figcaption>Flux matrix. Nonzero elements concentrate between grid points that lie on opposite sides of the dividing surface. The two electronic-state sectors repeat this pattern because the side operator does not distinguish electronic labels.</figcaption>
+          </figure>
+
+          <h2>Thermalized flux</h2>
+          <p>For Kubo-transformed rate formulas, a thermally dressed flux appears:</p>
+          <div class="math-block">\[
+            F_{\mathrm{Kubo}}=
+            \frac{1}{\beta}\int_0^\beta d\lambda\,
+            e^{-(\beta-\lambda)H}F e^{-\lambda H}.
+          \]</div>
+          <figure>
+            <img src="../assets/img/dvr-series/dvr1-operators/8.png" alt="Thermalized flux matrix">
+            <figcaption>Thermalized flux matrix. The raw commutator structure is still visible, but imaginary-time Boltzmann factors suppress high-energy matrix components. This is why the matrix is more localized and lower amplitude than the bare flux matrix.</figcaption>
+          </figure>
+
+          <h2>Time evolution and absorbing boundaries</h2>
+          <p>Finite DVR boxes reflect wavepackets unless the boundary is treated. A complex absorbing potential or mask damps boundary-region amplitude and reduces artificial recurrences.</p>
+          <div class="figure-grid">
+            <figure>
+              <img src="../assets/img/dvr-series/dvr1-operators/13.png" alt="Time-evolved flux-related matrix with CAP">
+              <figcaption>Time-evolved flux-related matrix with a complex absorbing potential at \(t=2500\). Both axes are product-basis indices. Boundary-region matrix elements are damped, leaving compact interior structures.</figcaption>
+            </figure>
+            <figure>
+              <img src="../assets/img/dvr-series/dvr1-operators/14.png" alt="Time-evolved flux-related matrix without CAP">
+              <figcaption>The corresponding no-CAP case at the same time. Boundary-region structure remains stronger, which is the matrix-level sign of reflections in a finite simulation box.</figcaption>
+            </figure>
+          </div>
+
+          <p>The matrix constructors used in these notes are collected in <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a>.</p>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="DVR series part VI: flux-side Kubo correlation functions, side and flux operators, CAP handling, and flux-flux integration.">
+    <title>DVR VI: Flux-Side Kubo Correlation | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><a href="mailto:23110190022@m.fudan.edu.cn">Contact</a><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">DVR Series - Part VI</p>
+          <h1>Flux-Side Kubo Correlation</h1>
+          <p class="post-meta">2026.05.26 - Reaction Rate / Flux Operator / Side Operator</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="DVR series navigation">
+            <a href="dvr-wavepacket-methods.html">I. Methods</a>
+            <a href="dvr-operator-matrices.html">II. Operators</a>
+            <a href="dvr-wavepacket-dynamics.html">III. Wavepacket DVR</a>
+            <a href="dvr-ensemble-evolution.html">IV. Ensembles</a>
+            <a href="dvr-kubo-correlation.html">V. Kubo</a>
+            <a href="dvr-flux-side-correlation.html">VI. Flux-side</a>
+          </nav>
+
+          <p class="lead">
+            The flux-side correlation function is a rate-like observable. It asks how much probability crosses a dividing surface and later remains on the product side. In DVR, that idea becomes a side projector, a commutator-defined flux operator, and a thermal Kubo weight.
+          </p>
+
+          <h2>Classical picture</h2>
+          <p>The classical flux-side form is</p>
+          <div class="math-block">\[
+            C_{fs}(t)=\langle F(0)h(t)\rangle,
+            \qquad
+            h(t)=\Theta(x(t)-s),
+            \qquad
+            F(0)=\delta(x(0)-s)\dot x(0).
+          \]</div>
+          <p>For free motion \(x(t)=x_0+vt\), the delta function selects trajectories starting at the dividing surface and the side function checks whether they are on the product side at time \(t\).</p>
+
+          <h2>Quantum side and flux operators</h2>
+          <p>The side operator is</p>
+          <div class="math-block">\[
+            \hat h=\Theta(\hat x-s)\otimes I_{\mathrm{el}}.
+          \]</div>
+          <p>The flux operator follows from the Heisenberg time derivative of \(h(t)\):</p>
+          <div class="math-block">\[
+            \hat F=\frac{d\hat h(t)}{dt}\bigg|_{t=0}
+            =
+            \frac{i}{\hbar}[\hat H,\hat h].
+          \]</div>
+          <p>In an energy basis, this also implies \(F_{nm}=\frac{i}{\hbar}(E_n-E_m)h_{nm}\) when the same Hamiltonian defines the basis.</p>
+
+          <h2>Kubo flux-side formula</h2>
+          <p>The Kubo-transformed flux-side expression used in the source notes is</p>
+          <div class="math-block">\[
+            C_{\mathrm{fs}}^{\mathrm{Kubo}}(t;\beta)=
+            \frac{1}{\beta}\int_0^\beta d\lambda\,
+            \mathrm{Tr}\!\left[
+            e^{(\lambda-\beta)H}F_1
+            e^{(-\lambda+it/\hbar)H}h_2
+            e^{-iHt/\hbar}
+            \right].
+          \]</div>
+          <p>Inserting energy eigenstates gives the same thermal kernel as the position Kubo note:</p>
+          <div class="math-block">\[
+            C_{\mathrm{fs}}^{\mathrm{Kubo}}(t;\beta)=
+            \sum_{mn}W_{mn}F_{mn}h_{2,nm}
+            e^{i(E_n-E_m)t/\hbar},
+          \]</div>
+          <div class="math-block">\[
+            W_{mn}=
+            \begin{cases}
+            \dfrac{e^{-\beta E_n}-e^{-\beta E_m}}{\beta(E_m-E_n)},& m\ne n,\\
+            e^{-\beta E_m},& m=n.
+            \end{cases}
+          \]</div>
+
+          <h2>Why compute flux-flux first?</h2>
+          <p>The direct \(C_{fs}\) calculation can decay when a complex absorbing potential removes amplitude after the packet reaches the absorbing region. A more stable route is to compute the flux-flux correlation and then integrate:</p>
+          <div class="math-block">\[
+            \frac{d}{dt}C_{fs}(t)=C_{ff}(t),
+            \qquad
+            C_{fs}(t)=\int_0^t C_{ff}(\tau)\,d\tau.
+          \]</div>
+          <p>The source note uses the real Hamiltonian for the thermal Kubo weighting and the absorbing Hamiltonian only for real-time propagation. This keeps the Boltzmann kernel physical while damping boundary reflections during the real-time part.</p>
+
+          <h2>CAP and Schur propagation</h2>
+          <p>With a complex absorbing potential, the propagation Hamiltonian is non-Hermitian:</p>
+          <div class="math-block">\[
+            H_{\mathrm{abs}}=H-i\Gamma W(x).
+          \]</div>
+          <p>The source workflow uses a complex Schur decomposition,</p>
+          <div class="math-block">\[
+            H_{\mathrm{abs}}=ZTZ^\dagger,
+          \]</div>
+          <p>so real-time factors can be evaluated with the triangular matrix \(T\). This is numerically safer than relying directly on ill-conditioned eigenvectors of a non-normal matrix.</p>
+
+          <h2>Numerical results</h2>
+          <div class="figure-grid">
+            <figure>
+              <img src="../assets/img/dvr-series/dvr5-flux-side/1.png" alt="Flux-side correlation plateau for small coupling">
+              <figcaption>Flux-side signal for one parameter set. The horizontal axis is time and the vertical axis is the real part of \(C_{fs}\). The black curve rises from near zero and approaches a plateau, which is the rate-like long-time value after successful crossings have been accumulated.</figcaption>
+            </figure>
+            <figure>
+              <img src="../assets/img/dvr-series/dvr5-flux-side/2.png" alt="Flux-side Kubo correlation plateau for SAC model">
+              <figcaption>DVR flux-side Kubo result for the simple avoided crossing setup. The black curve again reaches a stable plateau. Compared with the first panel, the scale is larger because the parameter set and thermal weighting differ.</figcaption>
+            </figure>
+          </div>
+          <figure>
+            <img src="../assets/img/dvr-series/dvr5-flux-side/3.png" alt="Direct flux-side correlation curve">
+            <figcaption>Direct \(C_{fs}\) diagnostic. The red dashed curve is localized in time instead of approaching a stable plateau. This illustrates the practical problem: after the wavepacket reaches the absorbing region, the side expectation can decay even though the crossing event has already occurred.</figcaption>
+          </figure>
+
+          <h2>Operator implementation</h2>
+          <pre><code>def side_projector(x, dividing_surface=0.0):
+    return np.diag((x > dividing_surface).astype(float))
+
+def flux_operator(hamiltonian, side, hbar=1.0):
+    return 1j / hbar * (hamiltonian @ side - side @ hamiltonian)</code></pre>
+          <p>These definitions are in <a href="../assets/code/dvr/dvr_kubo_minimal.py">assets/code/dvr/dvr_kubo_minimal.py</a>. The same file also contains the shared Kubo kernel used in the previous note.</p>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

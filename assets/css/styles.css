@@ -172,8 +172,8 @@ h3 {
 h1 {
   max-width: 720px;
   margin-bottom: 18px;
-  font-size: clamp(2.35rem, 6vw, 4.2rem);
-  line-height: 1.08;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.12;
 }
 
 h2 {
@@ -437,6 +437,28 @@ h3 {
   overflow-x: auto;
   margin: 18px 0;
   padding: 4px 0;
+}
+
+.series-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.series-nav a {
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.series-nav a:hover {
+  background: var(--surface);
+  text-decoration: none;
 }
 
 .post-nav {
