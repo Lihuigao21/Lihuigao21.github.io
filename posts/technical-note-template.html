@@ -1,76 +1,77 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="技术文章模板：如何组织一篇实践笔记。">
-    <title>技术文章模板：如何组织一篇实践笔记 | Lihui Gao</title>
+    <meta name="description" content="Technical note template for structuring a practical write-up.">
+    <title>Technical Note Template: How to Structure a Practical Write-up | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="../index.html" aria-label="返回首页">
+      <a class="brand" href="../index.html" aria-label="Back to home">
         <span class="brand-mark">LG</span>
         <span class="brand-name">Lihui Gao</span>
       </a>
 
-      <button class="nav-toggle" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="site-nav">
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
         <span></span>
         <span></span>
         <span></span>
       </button>
 
-      <nav class="site-nav" id="site-nav" aria-label="主导航">
-        <a href="../index.html#articles">文章</a>
-        <a href="../index.html#archive">归档</a>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../index.html#archive">Archive</a>
+        <a href="mailto:23110190022@m.fudan.edu.cn">Contact</a>
         <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
     </header>
 
-    <main>
+    <main id="top">
       <article class="post">
         <header class="post-header">
           <p class="section-label">Template</p>
-          <h1>技术文章模板：如何组织一篇实践笔记</h1>
-          <p class="post-meta">2026.05.26 · Writing / Workflow</p>
+          <h1>Technical Note Template: How to Structure a Practical Write-up</h1>
+          <p class="post-meta">2026.05.26 - Writing / Workflow</p>
         </header>
 
         <div class="post-content">
           <p>
-            这是一篇占位模板。写新文章时，可以复制本文件并重命名，然后把首页中的链接指向新文件。
+            This is a placeholder article template. To publish a new note, copy this file, rename it, and point the article links on the homepage to the new file.
           </p>
 
-          <h2>背景</h2>
-          <p>说明为什么要写这篇文章：遇到了什么问题、目标是什么、读者需要哪些前置知识。</p>
+          <h2>Context</h2>
+          <p>Explain why the article exists: what problem you ran into, what you wanted to achieve, and what the reader should know before starting.</p>
 
-          <h2>环境</h2>
+          <h2>Environment</h2>
           <ul>
-            <li>操作系统：Windows / macOS / Linux</li>
-            <li>语言或框架：例如 Python、JavaScript、React、PyTorch</li>
-            <li>关键版本：把影响复现的版本写清楚</li>
+            <li>Operating system: Windows, macOS, or Linux</li>
+            <li>Language or framework: for example Python, JavaScript, React, or PyTorch</li>
+            <li>Important versions: record anything that affects reproducibility</li>
           </ul>
 
-          <h2>步骤</h2>
-          <p>把操作拆成可以复现的步骤。需要命令时，可以使用代码块：</p>
+          <h2>Steps</h2>
+          <p>Break the work into reproducible steps. Use code blocks when commands matter:</p>
           <pre><code>git status
 npm run build</code></pre>
 
-          <h2>结果</h2>
-          <p>说明最终结果、截图、指标、性能变化或实际解决的问题。</p>
+          <h2>Result</h2>
+          <p>Describe the final result: screenshots, metrics, performance changes, or the actual problem that was solved.</p>
 
-          <h2>复盘</h2>
-          <p>记录踩坑点、替代方案和下次会怎么做。技术文章最有价值的部分，经常就在这里。</p>
+          <h2>Lessons Learned</h2>
+          <p>Record mistakes, alternatives, and what you would do differently next time. This is often the most useful part of a technical note.</p>
         </div>
 
-        <nav class="post-nav" aria-label="文章导航">
-          <a href="../index.html">← 返回文章列表</a>
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
         </nav>
       </article>
     </main>
 
     <footer class="site-footer">
-      <p>© <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
       <a href="#top">Back to top</a>
     </footer>
 

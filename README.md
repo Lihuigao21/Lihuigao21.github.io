@@ -1,34 +1,34 @@
-# 技术文章网站框架
+# Technical Notes Website
 
-这是一个适合部署到 GitHub Pages 的轻量静态技术文章网站。当前版本不依赖构建工具，直接打开 `index.html` 或推送到 `username.github.io` 仓库即可访问。
+This is a lightweight static website for technical articles, designed for GitHub Pages. It does not require a build step: open `index.html` locally or push the repository to `username.github.io`.
 
-## 目录结构
+## Structure
 
 ```text
 .
-├── index.html
-├── posts
-│   └── technical-note-template.html
-├── assets
-│   ├── css
-│   │   └── styles.css
-│   ├── img
-│   │   └── favicon.svg
-│   └── js
-│       └── main.js
-└── README.md
+|-- index.html
+|-- posts
+|   `-- technical-note-template.html
+|-- assets
+|   |-- css
+|   |   `-- styles.css
+|   |-- img
+|   |   `-- favicon.svg
+|   `-- js
+|       `-- main.js
+`-- README.md
 ```
 
-## 写新文章
+## Add a New Article
 
-1. 复制 `posts/technical-note-template.html`，改成新的英文文件名，例如 `posts/my-first-note.html`。
-2. 修改新文件里的标题、日期、标签和正文。
-3. 在 `index.html` 的“最新文章”和“归档”里添加链接。
-4. 提交并推送到 GitHub，GitHub Pages 会自动更新。
+1. Copy `posts/technical-note-template.html` and rename it, for example `posts/my-first-note.html`.
+2. Update the title, date, tags, description, and body in the new file.
+3. Add the new link to the "Latest Articles" and "Archive" sections in `index.html`.
+4. Commit and push to GitHub. GitHub Pages will update automatically.
 
-## 部署到 GitHub Pages
+## Deploy to GitHub Pages
 
-1. 仓库名使用 `你的GitHub用户名.github.io`。
-2. 将本目录内容提交并推送到仓库默认分支。
-3. 打开仓库的 `Settings -> Pages`，确认 Source 选择默认分支根目录。
-4. 等待 GitHub Pages 构建完成后，访问 `https://你的GitHub用户名.github.io`。
+1. Use a repository named `your-github-username.github.io`.
+2. Commit this directory and push it to the default branch.
+3. In `Settings -> Pages`, make sure the source is the default branch root.
+4. Visit `https://your-github-username.github.io` after GitHub Pages finishes deploying.
