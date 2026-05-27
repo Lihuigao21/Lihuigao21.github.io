@@ -10,6 +10,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- spcf-rpmd-water-ir-spectrum.html
 |   |-- allegro-mlpes-mapbi3-workflow.html
 |   |-- cayley-transform-ring-polymer.html
 |   |-- dvr-wavepacket-methods.html
@@ -22,6 +23,9 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- assets
 |   |-- code
+|   |   |-- rpmd-ir
+|   |   |   |-- compute_ir_spectrum_mudot.py
+|   |   |   `-- run_mudot_analysis.sh
 |   |   |-- allegro
 |   |   |   |-- collect_nve_samples.py
 |   |   |   |-- formal_nve970.yaml
@@ -39,6 +43,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
+|   |   |-- rpmd-ir
 |   |   |-- allegro
 |   |   |-- cayley
 |   |   |-- dvr-series
@@ -50,6 +55,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/spcf-rpmd-water-ir-spectrum.html`
 - `posts/allegro-mlpes-mapbi3-workflow.html`
 - `posts/cayley-transform-ring-polymer.html`
 - `posts/dvr-wavepacket-methods.html`

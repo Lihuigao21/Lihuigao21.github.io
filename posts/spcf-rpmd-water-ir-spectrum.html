@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A reproducible SPC/F fallback workflow for calculating a water infrared absorption spectrum with RPMD, using i-PI/LAMMPS trajectories and a dipole-derivative autocorrelation analysis.">
+    <title>RPMD Water IR Spectrum with SPC/F | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [["\\[", "\\]"]]
+        }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Molecular Dynamics</p>
+          <h1>RPMD Water IR Spectrum with SPC/F</h1>
+          <p class="post-meta">2026.05.27 - RPMD / Infrared Spectrum / Water / i-PI</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            This note records a reproducible fallback calculation inspired by the RPMD water infrared spectrum benchmark of Habershon, Fanourgakis, and Manolopoulos. The original target was Fig. 1 of their TTM3-F liquid-water study at 300 K. Because a convenient periodic TTM3-F implementation was not available in my i-PI/LAMMPS stack, I used the flexible fixed-charge SPC/F model and focused on reproducing the workflow, the spectral estimator, and the numerical diagnostics rather than claiming an exact TTM3-F reproduction.
+          </p>
+
+          <h2>Background</h2>
+          <p>
+            Infrared absorption spectra are a useful test for approximate quantum dynamics because they probe both intermolecular librations and intramolecular vibrations. The reference work compared RPMD and partially adiabatic CMD for liquid water with the flexible, polarizable TTM3-F potential. It found similar behavior below about \(2500\ \mathrm{cm^{-1}}\), but also reported that the RPMD O-H stretching region can be contaminated by internal ring-polymer modes.
+          </p>
+          <p>
+            My calculation keeps the same spirit: liquid water at 300 K, 128 molecules, 32 beads, short NVE RPMD branches, and an infrared spectrum from dipole time correlations. The important deviation is the force field. SPC/F is flexible but fixed-charge, so the cell dipole is a direct charge-weighted molecular dipole rather than the polarizable TTM3-F dipole used in the paper.
+          </p>
+
+          <h2>Principle</h2>
+          <p>
+            The absorption coefficient is commonly written in terms of a Kubo-transformed total-dipole autocorrelation function:
+          </p>
+          <div class="math-block">
+            \[
+            n(\omega)\alpha(\omega)
+            =
+            \frac{\pi\beta\omega^2}{3\epsilon_0 V c}
+            \int_{-\infty}^{\infty}
+            e^{-i\omega t}
+            \langle \boldsymbol{\mu}(0)\cdot\boldsymbol{\mu}(t)\rangle_K
+            \,dt .
+            \]
+          </div>
+          <p>
+            RPMD approximates the Kubo-transformed real-time correlation by evolving the ring-polymer Hamiltonian and averaging over independent microcanonical branches sampled from a path-integral equilibrium distribution. In practice, the absolute prefactor is often less important than the spectral shape, especially for a workflow test; the spectra below are therefore normalized to their maximum intensity between 0 and \(4000\ \mathrm{cm^{-1}}\).
+          </p>
+          <p>
+            The same spectrum can be estimated from the dipole-derivative autocorrelation. If boundary terms vanish,
+          </p>
+          <div class="math-block">
+            \[
+            C_{\dot{\mu}\dot{\mu}}(t)
+            =
+            \langle \dot{\boldsymbol{\mu}}(0)\cdot\dot{\boldsymbol{\mu}}(t)\rangle
+            =
+            -\frac{d^2 C_{\mu\mu}(t)}{dt^2},
+            \qquad
+            \mathcal{F}\{C_{\dot{\mu}\dot{\mu}}\}(\omega)
+            =
+            \omega^2\mathcal{F}\{C_{\mu\mu}\}(\omega).
+            \]
+          </div>
+          <p>
+            This identity explains why multiplying a dipole ACF spectrum by \(\omega^2\) and Fourier transforming a dipole-derivative ACF target the same physical response. Numerically, however, they behave differently. The direct \(C_{\mu\mu}\) route is sensitive to finite-trajectory offsets, slow residual drift, and noisy long-lag tails; multiplying by \(\omega^2\) can turn those small errors into a rising high-frequency baseline. The \(\dot{\mu}\)-ACF estimator removes constant dipole offsets before the correlation is formed and is much less sensitive to the low-frequency drift that caused the first trial spectrum to tilt upward.
+          </p>
+
+          <h2>Workflow</h2>
+          <p>
+            The production workflow used i-PI as the path-integral driver and LAMMPS as the force engine. The simulation cell contained 128 water molecules at \(0.997\ \mathrm{g\,cm^{-3}}\), represented by 32 beads at 300 K. After a 150 ps NVT equilibration, I launched independent 21 ps RPMD/NVE branches with momenta resampled between branches. The timestep was \(0.25\ \mathrm{fs}\). To make the run practical, the production branches were split into four parallel batches and later frozen into a 100-trajectory analysis set.
+          </p>
+          <p>
+            For each trajectory, the total dipole vector was written as a CSV time series. The analysis then followed these steps:
+          </p>
+          <ol>
+            <li>Read the dipole vector \(\boldsymbol{\mu}(t)\) for each branch.</li>
+            <li>Compute \(\dot{\boldsymbol{\mu}}(t)\) by a centered finite difference using \(\Delta t=0.25\ \mathrm{fs}\).</li>
+            <li>Compute the vector autocorrelation \(C_{\dot{\mu}\dot{\mu}}(t)\) by FFT for each trajectory.</li>
+            <li>Average the autocorrelation over 100 trajectories.</li>
+            <li>Apply a Gaussian time window with a 2 ps width for the recommended spectrum.</li>
+            <li>Fourier transform, normalize the 0 to \(4000\ \mathrm{cm^{-1}}\) region, and estimate uncertainty from ten 10-trajectory blocks.</li>
+          </ol>
+
+          <h2>Result</h2>
+          <p>
+            The recommended SPC/F spectrum uses the dipole-derivative ACF with a 2 ps Gaussian window. The three visible bands are centered at about \(597\ \mathrm{cm^{-1}}\), \(1558\ \mathrm{cm^{-1}}\), and \(3657\ \mathrm{cm^{-1}}\). These are useful workflow diagnostics, not a claim of quantitative agreement with TTM3-F or experiment.
+          </p>
+
+          <figure>
+            <img src="../assets/img/rpmd-ir/spcf-100traj-mudot-gaussian2ps.png" alt="SPC/F RPMD infrared spectrum from 100 trajectories using the dipole-derivative autocorrelation">
+            <figcaption>
+              SPC/F water RPMD infrared spectrum from 100 independent 21 ps trajectories. The horizontal axis is wavenumber in \(\mathrm{cm^{-1}}\). The vertical axis is normalized intensity in arbitrary units, scaled so the maximum between 0 and \(4000\ \mathrm{cm^{-1}}\) is one. The green curve is the mean spectrum from \(C_{\dot{\mu}\dot{\mu}}(t)\) with a 2 ps Gaussian window; the shaded band is the standard error of the mean from ten 10-trajectory blocks.
+            </figcaption>
+          </figure>
+
+          <p>
+            The main numerical issue in the first analysis was not the RPMD internal-mode artifact itself, but an artificial baseline drift produced by the direct dipole-ACF route. The comparison below shows the practical difference. The \(\omega^2\mathcal{F}\{C_{\mu\mu}\}\) estimator has a rising high-frequency tail, while the \(C_{\dot{\mu}\dot{\mu}}\) estimator produces a flatter baseline and cleaner bands.
+          </p>
+
+          <figure>
+            <img src="../assets/img/rpmd-ir/spcf-100traj-mu-vs-mudot.png" alt="Comparison of direct dipole autocorrelation and dipole-derivative autocorrelation spectra">
+            <figcaption>
+              Direct dipole-ACF route versus dipole-derivative-ACF route for the same 100 SPC/F RPMD trajectories. The horizontal axis is wavenumber in \(\mathrm{cm^{-1}}\), and each curve is independently normalized in arbitrary units over 0 to \(4000\ \mathrm{cm^{-1}}\). The direct \(C_{\mu\mu}\) spectrum multiplied by \(\omega^2\) retains a high-frequency baseline rise; the \(C_{\dot{\mu}\dot{\mu}}\) estimator suppresses that numerical drift.
+            </figcaption>
+          </figure>
+
+          <p>
+            I also checked the effect of the window. With no window, the dipole-derivative estimator no longer shows the monotonic drift that affected the direct dipole-ACF estimator, but it has stronger ringing and rougher peak shapes. The Gaussian, Hann, cosine, and longer Gaussian windows keep the same main spectral regions while trading resolution for smoother tails.
+          </p>
+
+          <figure>
+            <img src="../assets/img/rpmd-ir/spcf-100traj-mudot-window-compare.png" alt="Window comparison for SPC/F dipole-derivative infrared spectra">
+            <figcaption>
+              Window sensitivity of the SPC/F dipole-derivative spectrum. The horizontal axis is wavenumber in \(\mathrm{cm^{-1}}\), and the vertical axis is normalized intensity in arbitrary units. The unwindowed curve keeps the main bands but has more ringing; the 2 ps Gaussian window is used as the default compromise between resolution and smoothness.
+            </figcaption>
+          </figure>
+
+          <h2>Code</h2>
+          <p>
+            The published analysis scripts are intentionally small. The main Python script reads dipole CSV files, computes the centered finite-difference dipole derivative, forms FFT autocorrelations, applies a selectable window, writes spectra, and optionally writes block-SEM data and a PNG plot. The shell script is the driver used on the analysis directory.
+          </p>
+          <ul class="code-list">
+            <li><a href="../assets/code/rpmd-ir/compute_ir_spectrum_mudot.py"><code>compute_ir_spectrum_mudot.py</code></a></li>
+            <li><a href="../assets/code/rpmd-ir/run_mudot_analysis.sh"><code>run_mudot_analysis.sh</code></a></li>
+          </ul>
+          <pre><code>WINDOW=gaussian WINDOW_WIDTH_PS=2.0 BLOCK_SIZE=10 \
+bash paper_analysis/run_mudot_analysis.sh \
+  paper_analysis/avg100_20260527_115757/dipole_file_list.txt \
+  paper_analysis/mudot_avg100</code></pre>
+
+          <h2>Takeaways</h2>
+          <ul>
+            <li>The calculation is a reproducible SPC/F fallback, not an exact TTM3-F reproduction of the published figure.</li>
+            <li>The physically motivated target quantity is \(n(\omega)\alpha(\omega)\), but the present plots report normalized spectral shape in arbitrary units.</li>
+            <li>The \(C_{\dot{\mu}\dot{\mu}}\) estimator is numerically preferable for this data because it removes the artificial high-frequency baseline drift seen in the direct \(C_{\mu\mu}\) route.</li>
+            <li>Windowing is a numerical smoothing choice. It reduces finite-time ringing, but it is not a cure for the physical RPMD high-frequency internal-mode contamination discussed in the reference paper.</li>
+          </ul>
+
+          <h2>Reference</h2>
+          <p>
+            S. Habershon, G. S. Fanourgakis, and D. E. Manolopoulos, "Comparison of path integral molecular dynamics methods for the infrared absorption spectrum of liquid water," <em>J. Chem. Phys.</em> <strong>129</strong>, 074501 (2008). DOI: <a href="https://doi.org/10.1063/1.2968555" target="_blank" rel="noreferrer">10.1063/1.2968555</a>.
+          </p>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
