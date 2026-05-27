@@ -93,7 +93,7 @@
           <h2>Normal-mode EOM workflow</h2>
           <p>A practical PIMD trajectory usually does not integrate the stiff spring force directly in bead coordinates. One standard second-order step splits the physical potential from the free ring-polymer Hamiltonian:</p>
           <ol>
-            <li>Apply a half kick in bead coordinates, \(p_j\leftarrow p_j-\frac{\Delta t}{2}\partial V(q_j)/\partial q_j\).</li>
+            <li>Apply a half kick from the physical or external potential in bead coordinates, \(p_j\leftarrow p_j-\frac{\Delta t}{2}\partial V(q_j)/\partial q_j\), using the current bead positions.</li>
             <li>Transform bead positions and momenta to normal modes, \(Q=Cq\) and \(P=Cp\), using an orthogonal ring-polymer transform.</li>
             <li>Propagate each free normal mode analytically. For \(\omega_k\ne0\),</li>
           </ol>
@@ -114,7 +114,13 @@
             \qquad
             \theta_k=\omega_k\Delta t .
           \]</div>
-          <p>For the centroid mode, where \(\omega_k=0\), this reduces to the free drift \(Q_0\leftarrow Q_0+\Delta t\,P_0/m'\). The step is completed by transforming back to bead coordinates, applying the second half kick, and then applying the chosen thermostat step for NVT sampling. This is the normal-mode workflow behind the sampling equations; the benchmark below uses the same normal-mode structure but evaluates the harmonic equilibrium covariance directly, so it has no timestep error.</p>
+          <p>For the centroid mode, where \(\omega_k=0\), this reduces to the free drift \(Q_0\leftarrow Q_0+\Delta t\,P_0/m'\).</p>
+          <ol start="4">
+            <li>Transform the updated normal modes back to bead coordinates, \(q=C^TQ\) and \(p=C^TP\).</li>
+            <li>Apply the second half kick from the physical or external potential, now evaluated at the updated bead positions: \(p_j\leftarrow p_j-\frac{\Delta t}{2}\partial V(q_j)/\partial q_j\).</li>
+            <li>For NVT sampling, apply the thermostat step in the chosen splitting order, often in normal-mode coordinates; then accumulate estimators only after equilibration.</li>
+          </ol>
+          <p>Thus the deterministic core is a symmetric external-force half step, full free-ring-polymer normal-mode step, and external-force half step. The benchmark below uses the same normal-mode structure but evaluates the harmonic equilibrium covariance directly, so it has no timestep error.</p>
 
           <h2>Static estimators</h2>
           <p>For a position-only observable \(O(q)\), the standard bead estimator is</p>
