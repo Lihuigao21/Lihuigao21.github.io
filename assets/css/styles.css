@@ -99,7 +99,8 @@ main,
   font-size: 0.94rem;
 }
 
-.site-nav a {
+.site-nav a,
+.site-nav .contact-text {
   color: var(--muted);
 }
 
@@ -201,9 +202,14 @@ h3 {
 }
 
 .profile-links a,
+.profile-links .contact-text,
 .article-item a,
 .archive-list a {
   font-weight: 600;
+}
+
+.profile-links .contact-text {
+  color: var(--muted);
 }
 
 .section {
@@ -507,7 +513,8 @@ h3 {
     background: var(--surface);
   }
 
-  .site-nav a {
+  .site-nav a,
+  .site-nav .contact-text {
     width: 100%;
     padding: 10px 0;
   }
