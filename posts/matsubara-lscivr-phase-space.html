@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Matsubara series part I: Kubo time-correlation functions, Weyl representation, LSC-IVR, and a harmonic/quartic benchmark.">
+    <title>Matsubara I: From Kubo to LSC-IVR | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Matsubara Series - Part I</p>
+          <h1>From Kubo to LSC-IVR</h1>
+          <p class="post-meta">2026.05.27 - Kubo Transform / Weyl Representation / LSC-IVR</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Matsubara series navigation">
+            <a href="matsubara-lscivr-phase-space.html">I. Kubo to LSC-IVR</a>
+            <a href="matsubara-modes-and-phase.html">II. Modes and Phase</a>
+            <a href="matsubara-quartic-benchmark.html">III. Quartic Benchmark</a>
+          </nav>
+
+          <p class="lead">
+            Matsubara dynamics starts from a problem that looks almost classical: how can we compute real-time equilibrium correlation functions while retaining the quantum Boltzmann distribution? The first useful stop is LSC-IVR, where the exact Kubo expression is mapped into phase space and then propagated with a classical Liouvillian.
+          </p>
+
+          <h2>Background</h2>
+          <p>The Kubo-transformed correlation function for two operators \(A\) and \(B\) can be written as</p>
+          <div class="math-block">\[
+            C_{AB}(t)=
+            \operatorname{Tr}\left[
+            K_\beta(A)e^{iHt/\hbar}B e^{-iHt/\hbar}
+            \right],
+            \qquad
+            K_\beta(A)=\frac{1}{\beta}\int_0^\beta
+            e^{-\lambda H}A e^{-(\beta-\lambda)H}\,d\lambda .
+          \]</div>
+          <p>The imaginary-time smearing in \(K_\beta(A)\) is what makes this object compatible with path-integral statistics. A direct classical correlation has the right phase-space intuition, but it does not in general conserve the quantum Boltzmann distribution.</p>
+
+          <h2>Weyl representation</h2>
+          <p>The Weyl transform maps an operator to a phase-space function:</p>
+          <div class="math-block">\[
+            A_W(q,p)=
+            \int d\Delta\,
+            \left\langle q-\frac{\Delta}{2}\right|A
+            \left|q+\frac{\Delta}{2}\right\rangle
+            e^{ip\Delta/\hbar}.
+          \]</div>
+          <p>After inserting the corresponding Fourier identity into the exact correlation function, one obtains a formally exact phase-space expression involving \([K_\beta(A)]_W\) and \([B(t)]_W\).</p>
+
+          <h2>LSC-IVR approximation</h2>
+          <p>The exact quantum Liouvillian contains the Moyal series,</p>
+          <div class="math-block">\[
+            \hat L=
+            \frac{p}{m}\frac{\partial}{\partial q}
+            -
+            \sum_{\lambda=1,\mathrm{odd}}^\infty
+            \frac{1}{\lambda!}
+            \left(\frac{i\hbar}{2}\right)^{\lambda-1}
+            \frac{\partial^\lambda V}{\partial q^\lambda}
+            \frac{\partial^\lambda}{\partial p^\lambda}.
+          \]</div>
+          <p>LSC-IVR truncates this to the classical Liouvillian,</p>
+          <div class="math-block">\[
+            \mathcal L=
+            \frac{p}{m}\frac{\partial}{\partial q}
+            -
+            \frac{\partial V}{\partial q}\frac{\partial}{\partial p},
+          \]</div>
+          <p>and estimates the Kubo correlation with classical phase-space propagation. This is exact for a harmonic oscillator but no longer exact for nonlinear potentials.</p>
+
+          <h2>Workflow</h2>
+          <ol>
+            <li>Use an exact analytic Kubo expression for the harmonic oscillator.</li>
+            <li>Use sinc-DVR diagonalization as the quantum Kubo reference for \(V(q)=q^4/4\).</li>
+            <li>Sample the classical Boltzmann phase-space density on a deterministic grid.</li>
+            <li>Propagate each phase-space point with velocity-Verlet under the classical force.</li>
+            <li>Compare \(C_{qq}(t)=\langle q(0)q(t)\rangle\) against the quantum Kubo reference.</li>
+          </ol>
+
+          <h2>Result</h2>
+          <figure>
+            <img src="../assets/img/matsubara-series/lscivr-benchmark.png" alt="Harmonic and quartic benchmark for LSC-IVR-style phase-space propagation">
+            <figcaption>LSC-IVR-style benchmark. Left: harmonic oscillator with horizontal axis time \(t\) and vertical axis \(C_{qq}(t)\). The black solid Kubo curve and red dashed classical-Liouvillian curve overlap; the maximum absolute error is \(4.3\times10^{-6}\). Right: quartic oscillator \(V(q)=q^4/4\), with the black solid curve computed by sinc-DVR Kubo summation and the red dashed curve computed by the same phase-space approximation. The RMS difference is \(1.55\times10^{-1}\), showing that the classical Liouvillian truncation is not a controlled replacement for nonlinear quantum dynamics.</figcaption>
+          </figure>
+
+          <h2>Why this sets up Matsubara dynamics</h2>
+          <p>The central weakness is not that phase space is useless; the harmonic test shows that it can be exactly right. The weakness is the way the quantum Liouvillian is truncated. Matsubara dynamics changes the truncation: instead of cutting the Moyal series directly in powers of \(\hbar^2\), it keeps the smooth low-frequency imaginary-time normal modes. Part II develops that mode-space picture.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/matsubara/matsubara_lscivr_benchmark.py">matsubara_lscivr_benchmark.py</a> builds the harmonic and quartic benchmark figure and prints the error diagnostics.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Hele, Willatt, Muolo, and Althorpe, <em>J. Chem. Phys.</em> 142, 134103 (2015).</li>
+            <li>Prada, Pos, and Althorpe, <em>J. Chem. Phys.</em> 158, 114106 (2023).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="matsubara-series-map">
+            <h2 id="matsubara-series-map">Matsubara series map</h2>
+            <ol class="series-list">
+              <li><a href="matsubara-lscivr-phase-space.html">Part I: From Kubo to LSC-IVR</a> - phase-space representation and the harmonic/quartic benchmark.</li>
+              <li><a href="matsubara-modes-and-phase.html">Part II: Low Modes and the Matsubara Phase</a> - smooth imaginary-time paths, Matsubara truncation, and phase conservation.</li>
+              <li><a href="matsubara-quartic-benchmark.html">Part III: Quartic Benchmark and Phase Reweighting</a> - practical estimator, phase problem, and noisy higher-mode convergence.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

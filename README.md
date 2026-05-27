@@ -10,6 +10,9 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- matsubara-lscivr-phase-space.html
+|   |-- matsubara-modes-and-phase.html
+|   |-- matsubara-quartic-benchmark.html
 |   |-- spcf-rpmd-water-ir-spectrum.html
 |   |-- allegro-mlpes-mapbi3-workflow.html
 |   |-- cayley-transform-ring-polymer.html
@@ -23,6 +26,10 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- assets
 |   |-- code
+|   |   |-- matsubara
+|   |   |   |-- matsubara_lscivr_benchmark.py
+|   |   |   |-- matsubara_mode_filter.py
+|   |   |   `-- matsubara_quartic_benchmark.py
 |   |   |-- rpmd-ir
 |   |   |   |-- compute_ir_spectrum_mudot.py
 |   |   |   `-- run_mudot_analysis.sh
@@ -43,6 +50,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
+|   |   |-- matsubara-series
 |   |   |-- rpmd-ir
 |   |   |-- allegro
 |   |   |-- cayley
@@ -55,6 +63,9 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/matsubara-lscivr-phase-space.html`
+- `posts/matsubara-modes-and-phase.html`
+- `posts/matsubara-quartic-benchmark.html`
 - `posts/spcf-rpmd-water-ir-spectrum.html`
 - `posts/allegro-mlpes-mapbi3-workflow.html`
 - `posts/cayley-transform-ring-polymer.html`

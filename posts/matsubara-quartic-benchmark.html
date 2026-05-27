@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Matsubara series part III: quartic oscillator benchmark, HMC sampling, phase reweighting, and the practical phase problem.">
+    <title>Matsubara III: Quartic Benchmark and Phase Reweighting | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Matsubara Series - Part III</p>
+          <h1>Quartic Benchmark and Phase Reweighting</h1>
+          <p class="post-meta">2026.05.27 - Quartic Oscillator / HMC / Phase Reweighting</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Matsubara series navigation">
+            <a href="matsubara-lscivr-phase-space.html">I. Kubo to LSC-IVR</a>
+            <a href="matsubara-modes-and-phase.html">II. Modes and Phase</a>
+            <a href="matsubara-quartic-benchmark.html">III. Quartic Benchmark</a>
+          </nav>
+
+          <p class="lead">
+            Parts I-II introduced the phase-space problem and the low-mode Matsubara construction. This note turns that structure into a small executable benchmark: the Kubo \(q-q\) correlation for the one-dimensional quartic oscillator \(V(q)=q^4/4\), comparing a sinc-DVR quantum reference with \(M=1,3,5\) Matsubara estimators.
+          </p>
+
+          <h2>Benchmark definition</h2>
+          <p>The target observable is</p>
+          <div class="math-block">\[
+            C_{qq}(t)=
+            \frac{1}{\beta}\int_0^\beta d\lambda\,
+            \operatorname{Tr}\left[
+            e^{-(\beta-\lambda)H}q e^{-\lambda H}q(t)
+            \right],
+            \qquad
+            V(q)=\frac{q^4}{4},
+          \]</div>
+          <p>with \(m=1\), \(\hbar=1\), and \(\beta=2\). The quantum reference is computed by sinc-DVR diagonalization and the spectral Kubo sum.</p>
+
+          <h2>Matsubara estimator</h2>
+          <p>The Matsubara estimator samples the positive Hamiltonian part and reweights the observable by the real part of the phase:</p>
+          <div class="math-block">\[
+            C_{qq}^{[M]}(t)\approx
+            \frac{
+            \left\langle
+            \cos(\beta\theta_M)\,
+            Q_0(0)Q_0(t)
+            \right\rangle_{\mathrm{pos}}
+            }{
+            \left\langle
+            \cos(\beta\theta_M)
+            \right\rangle_{\mathrm{pos}}
+            },
+            \qquad
+            \theta_M=\sum_k\omega_k Q_{-k}P_k .
+          \]</div>
+          <p>The \(Q\) coordinates are sampled by HMC from \(e^{-\beta U_M(Q)}\), momenta are drawn from the Gaussian kinetic distribution, and the retained Matsubara modes are propagated with velocity-Verlet.</p>
+
+          <h2>Why use \(P\) and \(-P\) pairs?</h2>
+          <p>The Hamiltonian part is even under \(P\to -P\), while the phase changes sign. For even observables, the imaginary part cancels, leaving a cosine reweighting. Pairing \(P\) with \(-P\) is a simple antithetic estimator that reduces odd-in-momentum noise without changing the target expression.</p>
+
+          <h2>Workflow</h2>
+          <ol>
+            <li>Compute the quantum \(C_{qq}(t)\) by DVR as a black reference curve.</li>
+            <li>Build Matsubara Fourier bases for \(M=1,3,5\).</li>
+            <li>Evaluate \(U_M(Q)=\langle V(q(\tau))\rangle_\tau\) and its gradient by quadrature.</li>
+            <li>Sample \(Q\) with HMC and sample \(P\) from the Gaussian kinetic factor.</li>
+            <li>Propagate the Matsubara modes and reweight by \(\cos(\beta\theta_M)\).</li>
+          </ol>
+
+          <h2>Result</h2>
+          <figure>
+            <img src="../assets/img/matsubara-series/quartic-matsubara-benchmark.png" alt="Quartic oscillator Kubo correlation compared with Matsubara estimators">
+            <figcaption>Quartic oscillator benchmark. The horizontal axis is time \(t\), and the vertical axis is \(C_{qq}(t)\). The black solid curve is the sinc-DVR Kubo reference. Red curves are Matsubara estimators: dotted for \(M=1\), dashed for \(M=3\), and dash-dotted for \(M=5\). The low-mode estimators reproduce the early oscillation scale but become increasingly noisy as the phase denominator decreases. This is the practical phase problem, not a failure of the deterministic mode propagation itself.</figcaption>
+          </figure>
+
+          <p>The run printed the following sampling diagnostics:</p>
+          <pre><code>curve      HMC acceptance     &lt;cos(beta theta)&gt;
+M1         0.99853659         1.00000000
+M3         0.99401274         0.13184848
+M5_noisy   0.99339350         0.01705449</code></pre>
+          <p>The acceptance rates are high, so the HMC proposal is not the bottleneck. The phase average collapses as \(M\) increases; numerator and denominator then become differences of noisy signed contributions. A few thousand samples can give the right qualitative trend while still being far from converged for \(M=5\).</p>
+
+          <h2>Relation to CMD, QCMD, and RPMD</h2>
+          <p>The same literature explains why practical descendants modify the exact Matsubara structure. CMD keeps the centroid-like mean-field motion but can suffer curvature problems when the ring-polymer distribution bends around a curved valley. QCMD changes coordinates to make the constrained distribution more compact. RPMD can be viewed as retaining the spring structure that emerges after manipulating the phase, while dropping the imaginary terms that would make direct sampling impractical.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/matsubara/matsubara_quartic_benchmark.py">matsubara_quartic_benchmark.py</a> computes the DVR reference, samples the Matsubara estimators, generates the benchmark figure, and writes the phase diagnostics.</li>
+            <li><a href="../assets/img/matsubara-series/quartic-matsubara-meta.csv">quartic-matsubara-meta.csv</a> contains the HMC acceptance and phase-average values printed above.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Willatt, <em>Matsubara Dynamics and its Practical Implementation</em>, PhD thesis, University of Cambridge (2017).</li>
+            <li>Trenins and Althorpe, <em>J. Chem. Phys.</em> 149, 014102 (2018).</li>
+            <li>Prada, Pos, and Althorpe, <em>J. Chem. Phys.</em> 158, 114106 (2023).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="matsubara-series-map">
+            <h2 id="matsubara-series-map">Matsubara series map</h2>
+            <ol class="series-list">
+              <li><a href="matsubara-lscivr-phase-space.html">Part I: From Kubo to LSC-IVR</a> - phase-space representation and the harmonic/quartic benchmark.</li>
+              <li><a href="matsubara-modes-and-phase.html">Part II: Low Modes and the Matsubara Phase</a> - smooth imaginary-time paths, Matsubara truncation, and phase conservation.</li>
+              <li><a href="matsubara-quartic-benchmark.html">Part III: Quartic Benchmark and Phase Reweighting</a> - practical estimator, phase problem, and noisy higher-mode convergence.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

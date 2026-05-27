@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Matsubara series part II: low Matsubara modes, smooth imaginary-time paths, the Matsubara Hamiltonian, and the phase term.">
+    <title>Matsubara II: Low Modes and the Matsubara Phase | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Matsubara Series - Part II</p>
+          <h1>Low Modes and the Matsubara Phase</h1>
+          <p class="post-meta">2026.05.27 - Path Integrals / Normal Modes / Phase Problem</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Matsubara series navigation">
+            <a href="matsubara-lscivr-phase-space.html">I. Kubo to LSC-IVR</a>
+            <a href="matsubara-modes-and-phase.html">II. Modes and Phase</a>
+            <a href="matsubara-quartic-benchmark.html">III. Quartic Benchmark</a>
+          </nav>
+
+          <p class="lead">
+            Part I showed that replacing the exact quantum Liouvillian by a classical one is too blunt for nonlinear systems. Matsubara dynamics keeps a more structured classical limit: only the smooth low-frequency normal modes of the imaginary-time path are propagated.
+          </p>
+
+          <h2>From beads to modes</h2>
+          <p>A discretized Kubo path can be viewed as a periodic imaginary-time loop. Expanding that loop in normal modes gives</p>
+          <div class="math-block">\[
+            q(\tau)\approx \sum_{k=-K}^{K} Q_k \phi_k(\tau),
+            \qquad
+            M=2K+1.
+          \]</div>
+          <p>The real basis used in the code is</p>
+          <div class="math-block">\[
+            \phi_0(x)=1,\qquad
+            \phi_k(x)=\sqrt 2\sin(2\pi kx),\qquad
+            \phi_{-k}(x)=\sqrt 2\cos(2\pi kx),
+          \]</div>
+          <p>where \(x=\tau/\beta\). The low modes change smoothly along imaginary time; the high modes contain rapid bead-to-bead roughness.</p>
+
+          <h2>Matsubara Hamiltonian</h2>
+          <p>After truncating to the \(M\) smooth modes, the effective Hamiltonian has the form</p>
+          <div class="math-block">\[
+            H_M(P,Q)=\sum_{k=-K}^{K}\frac{P_k^2}{2m}+U_M(Q),
+          \]</div>
+          <p>with an averaged path potential</p>
+          <div class="math-block">\[
+            U_M(Q)=\frac{1}{\beta}\int_0^\beta
+            V\!\left(\sum_{k=-K}^{K}Q_k\phi_k(\tau)\right)\,d\tau .
+          \]</div>
+          <p>For the quartic benchmark, the code evaluates this integral by quadrature over \(q(\tau)\) and computes the gradient directly in mode space.</p>
+
+          <h2>The phase term</h2>
+          <p>The Matsubara distribution is not merely \(e^{-\beta H_M}\). A complex phase appears:</p>
+          <div class="math-block">\[
+            \rho_M(P,Q)\propto
+            e^{-\beta H_M(P,Q)}
+            e^{i\beta\theta_M(P,Q)},
+            \qquad
+            \theta_M(P,Q)=\sum_{k=-K}^{K}\omega_k Q_{-k}P_k .
+          \]</div>
+          <p>This phase is the conserved quantity associated with imaginary-time translation symmetry. Keeping it is what lets Matsubara dynamics conserve the quantum Boltzmann distribution. It is also the source of the sign or phase problem that appears in practical calculations.</p>
+
+          <h2>Workflow</h2>
+          <ol>
+            <li>Generate a periodic path from many Fourier components.</li>
+            <li>Keep only the \(M=11\) lowest Matsubara modes.</li>
+            <li>Reconstruct the low-mode path and compare it with the full path.</li>
+            <li>Compute the retained spectral power and RMS high-frequency component.</li>
+          </ol>
+
+          <h2>Result</h2>
+          <figure>
+            <img src="../assets/img/matsubara-series/matsubara-mode-filter.png" alt="Low-mode Matsubara filtering of an imaginary-time path">
+            <figcaption>Matsubara low-mode filtering. Left: the horizontal axis is normalized imaginary time \(\tau/\beta\), and the vertical axis is the path value \(q(\tau)\). The blue solid curve uses all \(N=101\) Fourier modes, while the orange solid curve keeps only \(M=11\) low modes. Right: the horizontal axis is Fourier index \(k\), and the vertical log-scale axis is mode power. Dark bars are retained modes and pale bars are discarded modes. In this reproducible path, the retained power fraction is 0.573 and the RMS removed high-frequency component is 0.529, illustrating that the Matsubara subspace is a low-pass projection rather than an arbitrary bead subset.</figcaption>
+          </figure>
+
+          <h2>Connection to CMD and RPMD</h2>
+          <p>When only the centroid mode is retained, the construction points toward centroid molecular dynamics. When the phase is analytically continued and the resulting spring term is retained while the imaginary pieces are discarded, one recovers the logic behind RPMD-like dynamics. These are practical descendants, not exact replacements: they simplify the phase structure that makes full Matsubara dynamics hard.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/matsubara/matsubara_mode_filter.py">matsubara_mode_filter.py</a> generates the Fourier path, applies the \(M=11\) low-mode truncation, and prints the retained-power diagnostics.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Hele, Willatt, Muolo, and Althorpe, <em>J. Chem. Phys.</em> 142, 134103 (2015).</li>
+            <li>Willatt, <em>Matsubara Dynamics and its Practical Implementation</em>, PhD thesis, University of Cambridge (2017).</li>
+            <li>Royer, <em>J. Math. Phys.</em> 25, 2873 (1984).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="matsubara-series-map">
+            <h2 id="matsubara-series-map">Matsubara series map</h2>
+            <ol class="series-list">
+              <li><a href="matsubara-lscivr-phase-space.html">Part I: From Kubo to LSC-IVR</a> - phase-space representation and the harmonic/quartic benchmark.</li>
+              <li><a href="matsubara-modes-and-phase.html">Part II: Low Modes and the Matsubara Phase</a> - smooth imaginary-time paths, Matsubara truncation, and phase conservation.</li>
+              <li><a href="matsubara-quartic-benchmark.html">Part III: Quartic Benchmark and Phase Reweighting</a> - practical estimator, phase problem, and noisy higher-mode convergence.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
