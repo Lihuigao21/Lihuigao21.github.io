@@ -1,0 +1,5 @@
+relative_error_tolerance,first_converged_P,actual_relative_error
+0.1,9,8.6020266114e-02
+0.01,29,9.3619418409e-03
+0.002,64,1.9439309635e-03
+0.001,90,9.8442747346e-04

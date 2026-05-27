@@ -60,6 +60,7 @@
             \gamma_k\approx 2\Omega_k.
           \]</div>
           <p>The centroid mode is usually handled more gently because it is the physically meaningful low-frequency component; the internal modes are sampling variables and can be thermostatted aggressively.</p>
+          <p>The useful diagnostic is the dimensionless ratio \(\gamma_k/(2\Omega_k)\). A single friction can be reasonable for one frequency band but mismatched for the rest of the ring-polymer spectrum. A PILE-like choice keeps this ratio near unity for the internal modes, so each artificial mode is damped on its own natural timescale. This changes how quickly the canonical finite-\(P\) distribution is sampled; it does not remove the finite-\(P\) discretization bias.</p>
 
           <h2>GLE and PIGLET</h2>
           <p>A generalized Langevin equation introduces auxiliary momenta so that a non-Markovian memory kernel becomes a Markovian system in an enlarged space:</p>
@@ -82,29 +83,31 @@
             k_BT\left(\mathbf A_p+\mathbf A_p^T\right).
           \]</div>
           <p>The extra freedom in \(\mathbf A_p\) makes the thermostat frequency-selective. PIGLET uses this freedom in the path-integral normal modes: instead of merely accelerating equilibration, it fits colored-noise matrices so that finite-\(P\) bead fluctuations reproduce selected quantum fluctuations much better than canonical finite-\(P\) PIMD. This is useful for equilibrium structural and kinetic-energy observables, but it should not be read as an exact real-time dynamics method.</p>
+          <p>In the harmonic test below, this idea is reduced to its simplest transparent form. For each bead number, the canonical finite-\(P\) value has a known bias. A toy PIGLET-style target asks what configurational covariance scale \(s_P=\langle V\rangle_{\mathrm{exact}}/\langle V_P\rangle\) would be needed to remove that one-observable bias. Real PIGLET does this with fitted colored-noise matrices rather than a scalar rescaling, but the diagnostic makes the role of covariance shaping explicit.</p>
 
           <h2>Workflow</h2>
           <ol>
             <li>Use the same harmonic oscillator as Part I: \(m=\hbar=1\), \(\beta=2\), \(\omega_0=4\).</li>
-            <li>Run a \(P=32\) normal-mode BAOAB Langevin sampler with one white friction and with a PILE-like mode-dependent friction.</li>
-            <li>Track the running absolute error of the potential estimator \(\overline{V}\).</li>
-            <li>Build a toy covariance-shaping calculation that rescales finite-\(P\) normal-mode fluctuations to match one target observable, \(\langle V\rangle\).</li>
-            <li>Use the toy result only as a transparent illustration of the PIGLET idea, not as a production PIGLET parameterization.</li>
+            <li>For \(P=32\), compute the normal-mode frequencies \(\Omega_k\) and compare the thermostat matching ratio \(\gamma_k/(2\Omega_k)\) for one fixed white friction and for \(\gamma_k=2\Omega_k\).</li>
+            <li>For \(P=1,\ldots,64\), compute the canonical finite-\(P\) bias of the harmonic potential estimator.</li>
+            <li>Compute the one-observable covariance scale \(s_P=\langle V\rangle_{\mathrm{exact}}/\langle V_P\rangle\) that would remove that bias in a toy PIGLET-style target.</li>
+            <li>Interpret the two diagnostics separately: PILE explains sampling efficiency; PIGLET explains deliberate finite-\(P\) covariance shaping.</li>
           </ol>
 
           <h2>Result</h2>
           <figure>
             <img src="../assets/img/pimd-series/pimd-gle-thermostats.png" alt="NVT and GLE thermostat diagnostics for a PIMD harmonic oscillator">
-            <figcaption>NVT and GLE/PIGLET-style diagnostics. Left: horizontal axis is the number of post-burn-in samples on a log scale; vertical axis is the absolute error \(|\overline V-\langle V\rangle_{\mathrm{exact}}|\). The gray curve uses one white-noise friction for all \(P=32\) modes, while the red curve uses a PILE-like local choice \(\gamma_k=2\Omega_k\) for internal modes. Right: horizontal axis is bead number \(P\); vertical axis is \(\langle V\rangle\). The black line is the exact quantum value \(1.000671\), red circles are canonical finite-\(P\) PIMD, and blue squares are a toy GLE/PIGLET target-covariance correction for this one observable. The \(P=6\) toy covariance scale is \(1.20133\), illustrating how frequency-shaped thermostats can reduce finite-bead bias when their target is chosen carefully.</figcaption>
+            <figcaption>NVT and GLE/PIGLET-style diagnostics. Left: horizontal axis is normal-mode index \(k\) for a \(P=32\) ring polymer; vertical axis is the dimensionless matching ratio \(\gamma_k/(2\Omega_k)\) on a log scale. The gray curve uses one fixed white friction, \(\gamma=2\omega_0\), which is matched only to the physical oscillator scale and becomes too weak for much of the internal spectrum. The red curve uses the PILE-like choice \(\gamma_k=2\Omega_k\), keeping every mode at ratio 1. Right: horizontal axis is bead number \(P\); vertical axis is a dimensionless magnitude on a log scale. Red circles show the canonical finite-\(P\) relative bias of \(\langle V\rangle\). Blue squares show the required toy covariance boost \(s_P-1\), where \(s_P=\langle V\rangle_{\mathrm{exact}}/\langle V_P\rangle\). At \(P=6\), canonical PIMD still has a 16.8% bias, while a one-observable covariance target would need a 20.1% boost. Thus PILE addresses mode sampling timescales, whereas PIGLET-style GLE targets selected finite-\(P\) fluctuation errors.</figcaption>
           </figure>
 
           <h2>Interpretation</h2>
-          <p>The PILE-like curve is not magic: it still samples the same canonical finite-\(P\) distribution, but it couples each internal mode to a friction scale matched to that mode. GLE/PIGLET changes the situation more deeply by using colored noise to impose selected non-classical fluctuations at finite bead number. The price is specificity: a fitted GLE matrix is designed for a target frequency window and target observables, so one should check the observable being reported.</p>
+          <p>The figure should be read as two different answers to two different problems. PILE says: if the ring polymer has many artificial normal-mode frequencies, thermostat them with mode-local frictions so the trajectory decorrelates efficiently. PIGLET says: if canonical finite-\(P\) PIMD still underestimates a selected quantum fluctuation, use a fitted colored-noise covariance to compensate for that finite-bead error. The price is specificity: a fitted GLE matrix is designed for a target frequency window and target observables, so one should check the observable being reported.</p>
 
           <h2>Code used in this note</h2>
           <ul class="code-list">
-            <li><a href="../assets/code/pimd/pimd_gle_piglet_toy.py">pimd_gle_piglet_toy.py</a> runs the normal-mode NVT sampler and the toy covariance-shaping benchmark.</li>
-            <li><a href="../assets/img/pimd-series/pimd-gle-thermostats.csv">pimd-gle-thermostats.csv</a> stores the canonical and covariance-shaped values used in the right panel.</li>
+            <li><a href="../assets/code/pimd/pimd_gle_piglet_toy.py">pimd_gle_piglet_toy.py</a> computes the mode-friction diagnostic and the toy covariance-shaping benchmark.</li>
+            <li><a href="../assets/img/pimd-series/pimd-gle-mode-diagnostics.csv">pimd-gle-mode-diagnostics.csv</a> stores the mode frequencies, friction choices, and matching ratios used in the left panel.</li>
+            <li><a href="../assets/img/pimd-series/pimd-gle-thermostats.csv">pimd-gle-thermostats.csv</a> stores the canonical finite-\(P\) bias and toy covariance-boost values used in the right panel.</li>
           </ul>
 
           <h2>References</h2>

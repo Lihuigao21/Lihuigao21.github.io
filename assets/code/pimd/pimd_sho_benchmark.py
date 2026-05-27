@@ -24,12 +24,14 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[3]
 FIGURE_PATH = ROOT / "assets" / "img" / "pimd-series" / "pimd-sho-benchmark.png"
 META_PATH = ROOT / "assets" / "img" / "pimd-series" / "pimd-sho-benchmark.csv"
+THRESHOLD_PATH = ROOT / "assets" / "img" / "pimd-series" / "pimd-sho-convergence-thresholds.csv"
 
 BETA = 2.0
 HBAR = 1.0
 MASS = 1.0
 OMEGA_0 = 4.0
 N_SAMPLE = 60000
+CONVERGENCE_TOLERANCES = (0.10, 0.01, 0.002, 0.001)
 
 
 def normal_mode_frequencies(n_beads: int, beta: float = BETA, hbar: float = HBAR) -> np.ndarray:
@@ -70,11 +72,23 @@ def sample_potential(
     return float(estimator.mean()), float(estimator.std(ddof=1) / np.sqrt(n_sample))
 
 
+def first_converged_p(tolerance: float, *, max_beads: int = 512) -> tuple[int, float]:
+    """Return the first integer P whose finite-P error is below tolerance."""
+    exact = exact_quantum_potential()
+    for n_beads in range(1, max_beads + 1):
+        error = abs(finite_p_potential(n_beads) - exact) / exact
+        if error <= tolerance:
+            return n_beads, float(error)
+    raise ValueError(f"no convergence below {tolerance} by P={max_beads}")
+
+
 def main() -> None:
-    n_values = np.array([1, 2, 4, 8, 16, 32, 64])
+    n_values = np.array([1, 2, 4, 8, 16, 32, 64, 128])
+    dense_p = np.arange(1, 129)
     exact = exact_quantum_potential()
     classical = 0.5 / BETA
     finite = np.array([finite_p_potential(int(n)) for n in n_values])
+    finite_dense = np.array([finite_p_potential(int(n)) for n in dense_p])
     sampled = []
     stderr = []
 
@@ -86,6 +100,11 @@ def main() -> None:
     sampled = np.array(sampled)
     stderr = np.array(stderr)
     rel_error = np.abs(finite - exact) / exact
+    rel_error_dense = np.abs(finite_dense - exact) / exact
+    threshold_rows = [
+        (tol, *first_converged_p(tol))
+        for tol in CONVERGENCE_TOLERANCES
+    ]
 
     FIGURE_PATH.parent.mkdir(parents=True, exist_ok=True)
     plt.rcParams.update({"font.size": 10})
@@ -93,7 +112,7 @@ def main() -> None:
 
     axes[0].axhline(exact, color="black", lw=2.0, label="exact quantum")
     axes[0].axhline(classical, color="0.5", lw=1.3, ls="--", label="classical P = 1 limit")
-    axes[0].plot(n_values, finite, color="#d62728", marker="o", lw=1.8, label="finite-P formula")
+    axes[0].plot(dense_p, finite_dense, color="#d62728", lw=1.8, label="finite-P formula")
     axes[0].errorbar(
         n_values,
         sampled,
@@ -112,7 +131,21 @@ def main() -> None:
     axes[0].grid(True, alpha=0.25)
     axes[0].legend(frameon=False)
 
-    axes[1].plot(n_values, rel_error, color="#d62728", marker="o", lw=1.8)
+    axes[1].plot(dense_p, rel_error_dense, color="#d62728", lw=1.8)
+    axes[1].scatter(n_values, rel_error, color="#d62728", s=22, zorder=3)
+    for tol, p_required, _ in threshold_rows:
+        if tol not in (0.01, 0.002):
+            continue
+        label = "1%" if tol == 0.01 else "0.2%"
+        axes[1].axhline(tol, color="0.45", lw=1.0, ls=":")
+        axes[1].axvline(p_required, color="0.45", lw=1.0, ls=":")
+        axes[1].text(
+            p_required * 1.04,
+            tol * 1.15,
+            f"{label}: P={p_required}",
+            color="0.25",
+            fontsize=9,
+        )
     axes[1].set_xscale("log", base=2)
     axes[1].set_yscale("log")
     axes[1].set_xlabel("number of beads P")
@@ -131,12 +164,24 @@ def main() -> None:
         encoding="utf-8",
         newline="\n",
     )
+    THRESHOLD_PATH.write_text(
+        "relative_error_tolerance,first_converged_P,actual_relative_error\n"
+        + "\n".join(
+            f"{tol:.6g},{int(p_required)},{actual:.10e}"
+            for tol, p_required, actual in threshold_rows
+        )
+        + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
 
     print(f"wrote {FIGURE_PATH}")
     print(f"wrote {META_PATH}")
+    print(f"wrote {THRESHOLD_PATH}")
     print(f"exact quantum <V> = {exact:.10f}")
     print(f"classical <V> = {classical:.10f}")
-    print(f"P=64 finite-P relative error = {rel_error[-1]:.6e}")
+    for tol, p_required, actual in threshold_rows:
+        print(f"first P below {tol:.3g} relative error = {p_required} ({actual:.6e})")
 
 
 if __name__ == "__main__":
