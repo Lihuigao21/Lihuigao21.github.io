@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A practical Allegro/NequIP workflow: data generation, extxyz packaging, training, deployment, LAMMPS/ASE interface, and MAPbI3 validation.">
-    <title>Allegro MLPES 实战：从 VASP 数据集到训练、部署与动力学验证 | Lihui Gao</title>
+    <meta name="description" content="A compact Allegro workflow for building a VASP-labeled MAPbI3 machine-learning potential, exporting it, and checking short molecular dynamics stability.">
+    <title>Allegro MLPES Workflow for MAPbI3 | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
   </head>
@@ -33,69 +33,68 @@
       <article class="post">
         <header class="post-header">
           <p class="section-label">Machine Learning Potentials</p>
-          <h1>Allegro MLPES 实战：从 VASP 数据集到训练、部署与动力学验证</h1>
-          <p class="post-meta">2026.05.27 - Allegro / NequIP / LAMMPS / MAPbI3</p>
+          <h1>Allegro MLPES Workflow for MAPbI3</h1>
+          <p class="post-meta">2026.05.27 - Allegro / NequIP / LAMMPS / Molecular Dynamics</p>
         </header>
 
         <div class="post-content">
           <p class="lead">
-            这篇笔记记录一次完整的 Allegro 势能面排查与重建流程。目标不是只跑通一个训练命令，而是把从 VASP 数据、NequIP/Allegro 训练、模型导出，到 ASE/LAMMPS 动力学接口的关键环节串起来，并解释之前训练势能面容易崩溃的主要原因。
+            This note records a practical workflow for training an Allegro machine-learning potential from VASP molecular-dynamics data. The example is a 48-atom H/Pb/C/I/N perovskite cell, but the checks are meant to be reusable: make the DFT labels consistent, sample configurations from the target thermodynamic region, train with a conservative Allegro configuration, and validate the potential with both test-set errors and short MD diagnostics.
           </p>
 
-          <h2>1. Allegro 是什么</h2>
+          <h2>Background</h2>
           <p>
-            Allegro 是一种 E(3)-等变的机器学习原子间势模型，核心思想是用局域、等变的表示学习原子环境到能量和力的映射。当前官方实现作为 <a href="https://github.com/mir-group/nequip" target="_blank" rel="noreferrer">NequIP framework</a> 的扩展包发布，包名为 <code>nequip-allegro</code>。相比传统非等变描述符，Allegro 的优势在于它天然尊重三维旋转、平移和反演相关的对称性；相比全局 message-passing 模型，Allegro 的严格局域形式更适合大体系和并行分子动力学。
+            Allegro is an E(3)-equivariant interatomic potential implemented as an extension of the NequIP framework. The model learns local, symmetry-respecting atomic representations and maps them to energies and forces. Its locality makes it attractive for larger molecular-dynamics simulations, especially when deployed through the <code>pair_allegro</code> LAMMPS interface.
           </p>
           <p>
-            官方仓库和文档中需要特别注意版本：NequIP 在 2025-04-23 之后进入新的 0.7+ 配置体系，Allegro 对应 0.4+ 之后的写法也随之变化。本文使用的环境为 PyTorch 2.7.1、NequIP 0.11.1、Allegro 0.6.3。
+            The main lesson from this workflow is not a new hyperparameter trick. Most unstable potentials I encountered were caused by ordinary engineering mismatches: DFT labels generated with inconsistent settings, sampling trajectories that did not represent the intended temperature window, unit mismatches in optional short-range terms, and deploying a final checkpoint instead of the best validation checkpoint.
           </p>
 
-          <h2>2. 安装与环境</h2>
+          <h2>Principle</h2>
           <p>
-            Allegro 依赖 NequIP。最小安装方式是先准备 PyTorch 环境，然后安装 PyPI 包 <code>nequip-allegro</code>。实际 HPC 环境中最好固定 Python、PyTorch、CUDA 和 NequIP/Allegro 版本，避免训练与部署阶段 ABI 或配置写法不一致。
+            A machine-learning potential only learns the distribution it sees. For a finite-temperature MD potential, the useful dataset should therefore combine consistent DFT labels with configurations drawn from the temperature and structural region in which the model will be used. Before training, I check four quantities in the assembled <code>extxyz</code> file: number of frames, species counts, finite energies and forces, and the minimum pair distance distribution.
+          </p>
+          <p>
+            I also keep the first training pass simple. Optional pair potentials such as ZBL are useful for high-energy close-contact events, but they introduce another unit and mapping surface. For the first stable model, I train Allegro without ZBL, validate the learned potential, and only then decide whether an explicit short-range term is needed.
+          </p>
+
+          <h2>Installation</h2>
+          <p>
+            Allegro is distributed on PyPI as <code>nequip-allegro</code>. It depends on NequIP, PyTorch, e3nn, and Lightning. On a cluster, I prefer an explicit conda environment and fixed versions, then call the console scripts by absolute path inside Slurm jobs.
           </p>
           <pre><code>conda create -n allegro python=3.10
 conda activate allegro
 
-# 按本机 CUDA/PyTorch 版本安装 torch，下面只是示意
+# Install a PyTorch build appropriate for the local CUDA driver first.
 pip install torch
 
-# Allegro 在 PyPI 上的包名
+# Allegro is published as nequip-allegro on PyPI.
 pip install nequip-allegro
 
-# 检查命令是否可用
-which nequip-train
-which nequip-compile
-which nequip-package</code></pre>
+nequip-train --help
+nequip-compile --help
+nequip-package --help</code></pre>
+          <p>The environment used here contained PyTorch 2.7.1, e3nn 0.5.6, NequIP 0.11.1, and Allegro 0.6.3.</p>
 
-          <p>本次 4090 服务器上实际使用的环境路径为：</p>
-          <pre><code>/data/home/lhgao/.conda/envs/allergo</code></pre>
-          <p>可用命令包括：</p>
-          <ul>
-            <li><code>nequip-train</code>: 训练和测试 NequIP/Allegro 模型。</li>
-            <li><code>nequip-package</code>: 把 checkpoint 打成 <code>.nequip.zip</code> 包。</li>
-            <li><code>nequip-compile</code>: 编译成 ASE 或 LAMMPS 可加载的 <code>.nequip.pth</code> 或 <code>.nequip.pt2</code>。</li>
-            <li><code>ase</code>: 用 ASE 读写结构和跑动力学。</li>
-          </ul>
-
-          <h2>3. 与 LAMMPS 的接口</h2>
+          <h2>LAMMPS Interface</h2>
           <p>
-            Allegro 与 LAMMPS 的官方接口是 <a href="https://github.com/mir-group/pair_nequip_allegro" target="_blank" rel="noreferrer"><code>pair_nequip_allegro</code></a>。这个仓库提供两个 pair styles：<code>pair_nequip</code> 面向 NequIP message-passing 模型，<code>pair_allegro</code> 面向 Allegro 严格局域模型，并支持 MPI/Kokkos 并行。
+            Allegro models are used in LAMMPS through the <a href="https://github.com/mir-group/pair_nequip_allegro" target="_blank" rel="noreferrer"><code>pair_nequip_allegro</code></a> plugin. For Allegro specifically, the LAMMPS pair style is <code>allegro</code>. The model must first be compiled from a checkpoint or packaged model.
           </p>
-          <p>模型需要先编译再给 LAMMPS 使用。TorchScript 路线：</p>
-          <pre><code>nequip-compile \
+          <pre><code># TorchScript model for LAMMPS or other inference targets.
+nequip-compile \
   best_epoch_0999.ckpt \
   formal_nve970_lammps.nequip.pth \
   --device cuda \
-  --mode torchscript</code></pre>
-          <p>AOTInductor 路线用于 LAMMPS 时要指定 <code>--target pair_allegro</code>：</p>
-          <pre><code>nequip-compile \
+  --mode torchscript
+
+# AOTInductor export for the Allegro LAMMPS pair style.
+nequip-compile \
   best_epoch_0999.ckpt \
   formal_nve970_lammps.nequip.pt2 \
   --device cuda \
   --mode aotinductor \
   --target pair_allegro</code></pre>
-          <p>典型 LAMMPS 输入片段如下。<code>pair_coeff</code> 后面的元素顺序必须与 LAMMPS data 文件中的 atom type 顺序一一对应，而不是随便写训练集里的元素顺序。</p>
+          <p>A minimal LAMMPS fragment is:</p>
           <pre><code>units metal
 atom_style atomic
 read_data mapbi3.data
@@ -107,72 +106,39 @@ timestep 0.00025
 thermo 100
 run 10000</code></pre>
           <p>
-            官方 FAQ 也特别提醒：如果 LAMMPS 动力学一开始就不稳定，首先检查 <code>pair_coeff</code> 里的 LAMMPS atom type 到模型 type name 的映射，以及训练数据和 LAMMPS 运行时的单位是否一致。这一点和本文后面定位到的旧失败原因完全吻合。
+            The order after <code>pair_coeff * *</code> maps LAMMPS atom types to model type names. This mapping, together with the LAMMPS unit system, should be checked before interpreting any MD instability as a model failure.
           </p>
 
-          <h2>4. 数据集生成：NVT -> NVE -> 隔帧采样</h2>
-          <p>
-            本项目的体系是含 H/Pb/C/I/N 的 MAPbI3 相关体系，单帧 48 个原子。原始设想是先跑 330 K NVT，从 NVT 轨迹中抽取若干构型作为 NVE 分支初态，再从每条 NVE 轨迹中隔帧取样，最后用这些 DFT 标注的能量和力训练 Allegro。
-          </p>
-          <p>旧流程的关键坑有三个：</p>
-          <ul>
-            <li><code>INCAR</code> 里把 <code>ENCUT=600</code> 写成了 <code>ENCAT=600</code>，VASP 不识别，旧 <code>data_set</code> 标签实际按 400 eV 跑。</li>
-            <li>旧 <code>POSCAR_step*</code> 没有 velocity block，NVE 分支实际从接近 0 K 开始，和目标 330 K 动力学分布不一致。</li>
-            <li>旧 Allegro 配置里 ZBL 使用 <code>units: real</code>，但 VASP 训练数据是 eV 和 eV/Angstrom，应使用 <code>metal</code> 或先关闭 ZBL。</li>
-          </ul>
-
-          <p>修正后的数据策略：</p>
+          <h2>Workflow</h2>
+          <p>The dataset used here follows an NVT -> NVE -> stride sampling protocol.</p>
           <ol>
-            <li>确认 root NVT 的 <code>OUTCAR</code> 使用 <code>ENCUT = 600 eV</code>。</li>
-            <li>选 NVT 的第 3000、3500、4000、4500、5000 步构型作为 5 条 NVE 分支初态。</li>
-            <li>NVE 分支使用 <code>SMASS=-3</code>，<code>NSW=3000</code>，<code>POTIM=1.0</code>，<code>TEBEG=TEEND=330</code>。由于旧 POSCAR 不含真实速度，这一步用 330 K 初始化速度，避免旧流程中的近 0 K 初态。</li>
-            <li>每条 NVE 丢弃前 100 步，再每 15 步采样一帧。</li>
-            <li>汇总为 ASE 可读的 <code>extxyz</code> 文件。</li>
+            <li>Run an equilibrated finite-temperature NVT trajectory with the same DFT settings intended for labeling.</li>
+            <li>Select representative NVT snapshots as starting structures for several short NVE branches.</li>
+            <li>Run each NVE branch with consistent VASP settings and a conservative timestep.</li>
+            <li>Discard the initial transient part of each branch and sample every fixed number of frames.</li>
+            <li>Collect all sampled frames into one ASE-readable <code>extxyz</code> file and audit it before training.</li>
           </ol>
+          <p>For this run, five NVE branches were started from late NVT snapshots. Each branch used 3000 MD steps; the first 100 steps were discarded, and every 15th frame was collected. The final training dataset contained 970 frames with 48 atoms per frame.</p>
 
-          <p>最终数据集：</p>
-          <pre><code>nve5_encut600_stride15_discard100.extxyz
-frames: 970
-natoms: 48
-species: H, Pb, C, I, N
-ENCUT metadata: 600 eV
-sampling: NVT -> 5 NVE branches -> discard 100 -> stride 15</code></pre>
+          <pre><code>python3 prepare_nve_branches.py
 
-          <p>后处理的核心命令如下：</p>
-          <pre><code>python3 scripts/collect_nve_samples.py \
+python3 collect_nve_samples.py \
   --job-root nve5_encut600_330K_20260526 \
   --output nve5_encut600_stride15_discard100.extxyz \
   --discard 100 \
-  --stride 15
+  --stride 15</code></pre>
+          <p>The corresponding published helper scripts are:</p>
+          <ul>
+            <li><a href="../assets/code/allegro/prepare_nve_branches.py"><code>prepare_nve_branches.py</code></a></li>
+            <li><a href="../assets/code/allegro/collect_nve_samples.py"><code>collect_nve_samples.py</code></a></li>
+          </ul>
 
-python3 scripts/audit_extxyz.py \
-  nve5_encut600_stride15_discard100.extxyz \
-  --json-out nve5_encut600_stride15_discard100.report.json
-
-sha256sum \
-  nve5_encut600_stride15_discard100.extxyz \
-  nve5_encut600_stride15_discard100.report.json \
-  nve5_encut600_stride15_discard100.collect_report.json \
-  > nve5_encut600_stride15_discard100.MANIFEST.sha256</code></pre>
-
-          <h2>5. Allegro 训练数据格式</h2>
+          <h2>Training Configuration</h2>
           <p>
-            在 NequIP/Allegro 0.11/0.6 体系下，训练数据可以直接使用 ASE 可读格式。这里使用 <code>extxyz</code>，每帧包含晶胞、PBC、元素、坐标、能量、力和 stress。训练配置里通过 <code>ASEDataModule</code> 读取：
+            The model was trained with a single RTX 4090 GPU. The split was 80/10/10 for train/validation/test. The cutoff radius was 6 Angstrom, the scalar feature width was 128, and the model used two Allegro layers. ZBL was disabled for this first stable potential.
           </p>
-          <pre><code>data:
-  _target_: nequip.data.datamodule.ASEDataModule
-  split_dataset:
-    file_path: /data/home/lhgao/allegro-main/test/MAPBI3/nve5_encut600_stride15_discard100.extxyz
-    train: 0.8
-    val: 0.1
-    test: 0.1</code></pre>
           <p>
-            注意这里所谓“打包成 Allegro 格式”有两个层次：训练前的数据格式是 <code>extxyz</code>；训练后的模型归档格式是 <code>.nequip.zip</code>，部署/推理格式是由 <code>nequip-compile</code> 生成的 <code>.nequip.pth</code> 或 <code>.nequip.pt2</code>。
-          </p>
-
-          <h2>6. 正式训练参数文件</h2>
-          <p>
-            先用 200 帧小数据和 64 hidden features 做 smoke test，确认数据可读且不会 NaN。正式训练使用 970 帧 NVE 数据，128 scalar features、64 tensor features，关闭 ZBL，保存 best checkpoint。完整 YAML 如下。
+            The full configuration is available as <a href="../assets/code/allegro/formal_nve970.yaml"><code>formal_nve970.yaml</code></a>. The essential parts are:
           </p>
           <pre><code>run: [train, test]
 
@@ -192,34 +158,13 @@ data:
       r_max: ${cutoff_radius}
     - _target_: nequip.data.transforms.ChemicalSpeciesToAtomTypeMapper
       chemical_symbols: ${chemical_symbols}
-  seed: 123
-  train_dataloader:
-    _target_: torch.utils.data.DataLoader
-    batch_size: 4
-    num_workers: 4
-  val_dataloader:
-    _target_: torch.utils.data.DataLoader
-    batch_size: 4
-    num_workers: 4
-  test_dataloader: ${data.val_dataloader}
-  stats_manager:
-    _target_: nequip.data.CommonDataStatisticsManager
-    type_names: ${model_type_names}
 
 trainer:
   _target_: lightning.Trainer
   max_epochs: 1000
-  check_val_every_n_epoch: 1
-  log_every_n_steps: 20
   devices: 1
   num_nodes: 1
-  logger:
-    _target_: lightning.pytorch.loggers.TensorBoardLogger
-    version: formal_nve970_20260527
-    save_dir: outputs/tensorboard_logs
   callbacks:
-    - _target_: lightning.pytorch.callbacks.LearningRateMonitor
-      logging_interval: epoch
     - _target_: lightning.pytorch.callbacks.ModelCheckpoint
       monitor: val0_epoch/weighted_sum
       mode: min
@@ -227,11 +172,6 @@ trainer:
       save_last: true
       auto_insert_metric_name: false
       filename: best_epoch_{epoch:04d}
-    - _target_: lightning.pytorch.callbacks.EarlyStopping
-      monitor: val0_epoch/weighted_sum
-      mode: min
-      patience: 120
-      min_delta: 0.00002
 
 num_scalar_features: 128
 
@@ -243,93 +183,29 @@ training_module:
     coeffs:
       total_energy: 1.0
       forces: 1.0
-  val_metrics:
-    _target_: nequip.train.EnergyForceMetrics
-    coeffs:
-      per_atom_energy_mae: 1.0
-      forces_mae: 1.0
-  test_metrics: ${training_module.val_metrics}
   optimizer:
     _target_: torch.optim.Adam
     lr: 0.0005
-  lr_scheduler:
-    scheduler:
-      _target_: torch.optim.lr_scheduler.CosineAnnealingLR
-      T_max: ${trainer.max_epochs}
-      eta_min: 1e-5
-    interval: epoch
-    frequency: 1
-    strict: true
   model:
     _target_: allegro.model.AllegroModel
     compile_mode: compile
-    seed: 456
     model_dtype: float32
-    type_names: ${model_type_names}
     r_max: ${cutoff_radius}
-
-    radial_chemical_embed:
-      _target_: allegro.nn.TwoBodyBesselScalarEmbed
-      num_bessels: 8
-      bessel_trainable: false
-      polynomial_cutoff_p: 6
-    radial_chemical_embed_dim: ${num_scalar_features}
-
-    scalar_embed_mlp_hidden_layers_depth: 3
-    scalar_embed_mlp_hidden_layers_width: ${num_scalar_features}
-    scalar_embed_mlp_nonlinearity: silu
-
     l_max: 2
     num_layers: 2
     num_scalar_features: ${num_scalar_features}
-    num_tensor_features: 64
+    num_tensor_features: 64</code></pre>
+          <p>The Slurm driver that trains, packages, compiles, and launches the first MD smoke test is linked here: <a href="../assets/code/allegro/run_train_then_md.slurm"><code>run_train_then_md.slurm</code></a>.</p>
 
-    allegro_mlp_hidden_layers_depth: 3
-    allegro_mlp_hidden_layers_width: ${num_scalar_features}
-    allegro_mlp_nonlinearity: silu
-
-    parity: true
-    tp_path_channel_coupling: true
-
-    readout_mlp_hidden_layers_depth: 1
-    readout_mlp_hidden_layers_width: ${num_scalar_features}
-    readout_mlp_nonlinearity: silu
-
-    avg_num_neighbors: ${training_data_stats:num_neighbors_mean}
-    per_type_energy_shifts: ${training_data_stats:per_atom_energy_mean}
-    per_type_energy_scales: ${training_data_stats:forces_rms}
-    per_type_energy_scales_trainable: false
-    per_type_energy_shifts_trainable: false
-
-global_options:
-  allow_tf32: false</code></pre>
-
-          <p>Slurm 脚本的关键部分：</p>
-          <pre><code>#!/bin/bash
-#SBATCH -p 8-4090
-#SBATCH -N 1
-#SBATCH --ntasks-per-node 1
-#SBATCH --cpus-per-task 8
-#SBATCH --gres=gpu:1
-#SBATCH -t 48:00:00
-#SBATCH -J allegro_formal_md
-
-export PYTHONUNBUFFERED=1
-export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK}
-
-srun /data/home/lhgao/.conda/envs/allergo/bin/nequip-train -cn formal_nve970.yaml</code></pre>
-
-          <h2>7. 训练后打包与 ASE/MLPES 验证</h2>
-          <p>训练完成后，使用 best checkpoint，而不是盲目使用最后一个 checkpoint。本次 best checkpoint 是：</p>
-          <pre><code>outputs/tensorboard_logs/lightning_logs/formal_nve970_20260527/checkpoints/best_epoch_0999.ckpt</code></pre>
-
-          <p>打包模型：</p>
+          <h2>Packaging and ASE Validation</h2>
+          <p>
+            After training, I use the best validation checkpoint rather than the final checkpoint by habit. The selected checkpoint was <code>best_epoch_0999.ckpt</code>.
+          </p>
           <pre><code>nequip-package build \
   best_epoch_0999.ckpt \
-  formal_nve970.nequip.zip</code></pre>
+  formal_nve970.nequip.zip
 
-          <p>编译成 ASE 可加载模型：</p>
-          <pre><code>nequip-compile \
+nequip-compile \
   best_epoch_0999.ckpt \
   formal_nve970_ase_cuda.nequip.pth \
   --device cuda \
@@ -338,71 +214,50 @@ srun /data/home/lhgao/.conda/envs/allergo/bin/nequip-train -cn formal_nve970.yam
   --data-path nve5_encut600_stride15_discard100.extxyz \
   --num-frames static \
   --num-nodes static</code></pre>
-
-          <p>ASE 侧加载模型：</p>
-          <pre><code>from ase.io import read
-from nequip.ase import NequIPCalculator
-
-atoms = read("nve5_encut600_stride15_discard100.extxyz", index=-1)
-atoms.calc = NequIPCalculator.from_compiled_model(
-    "formal_nve970_ase_cuda.nequip.pth",
-    device="cuda",
-    chemical_symbols=["H", "Pb", "C", "I", "N"],
-)
-
-energy = atoms.get_potential_energy()
-forces = atoms.get_forces()</code></pre>
-
-          <h2>8. 验证结果</h2>
-          <p>正式训练跑满 1000 epoch，Slurm job 状态为 <code>COMPLETED 0:0</code>。测试集指标：</p>
+          <p>
+            The ASE calculator is loaded through <code>NequIPCalculator.from_compiled_model</code>. The scripts used for the NVT and NVE diagnostics are linked here:
+          </p>
           <ul>
-            <li><code>test0_epoch/forces_mae = 0.0188637 eV/Angstrom</code></li>
-            <li><code>test0_epoch/per_atom_energy_mae = 0.000543379 eV/atom</code></li>
-            <li><code>test0_epoch/total_energy_mae = 0.0260822 eV</code></li>
-            <li><code>test0_epoch/weighted_sum = 0.00970355</code></li>
+            <li><a href="../assets/code/allegro/run_mlpes_md.py"><code>run_mlpes_md.py</code></a></li>
+            <li><a href="../assets/code/allegro/run_mlpes_nve.py"><code>run_mlpes_nve.py</code></a></li>
           </ul>
 
-          <p>动力学上做了四个 smoke/diagnostic 测试：</p>
+          <h2>Result</h2>
+          <p>The formal training job completed normally after 1000 epochs. The test-set metrics were:</p>
           <ul>
-            <li>NVT, 1.0 fs, 5 ps: 不崩，但温度偏热，平均约 498 K。</li>
-            <li>NVT, 0.5 fs, 5 ps: 不崩，温度仍偏热，平均约 492 K。</li>
-            <li>NVT, 0.5 fs, Langevin friction 0.10 fs^-1, 5 ps: 不崩，末温约 385 K，但平均温度仍偏高。</li>
-            <li>NVE, 0.25 fs, 2 ps: 总能量守恒很好，温度回到 330 K 附近，是判断 PES 积分稳定性的主要证据。</li>
+            <li><code>forces_mae = 0.0188637 eV/Angstrom</code></li>
+            <li><code>per_atom_energy_mae = 0.000543379 eV/atom</code></li>
+            <li><code>total_energy_mae = 0.0260822 eV</code></li>
+            <li><code>weighted_sum = 0.00970355</code></li>
           </ul>
+          <p>
+            I then ran short dynamics tests. Weakly coupled Langevin NVT runs were stable but hotter than the 330 K target, so I did not treat them as production MD. A conservative NVE check was more diagnostic: 0.25 fs timestep, 2 ps total time, 48 atoms, and initial temperature 330 K.
+          </p>
 
           <figure>
             <img src="../assets/img/allegro/nve_E_T.png" alt="NVE total energy and temperature curves">
-            <figcaption>NVE 诊断：0.25 fs、2 ps、48 atoms。总能量漂移约 0.000218 eV，即 0.00455 meV/atom over 2 ps；温度均值 316.3 K，最后 333.3 K。</figcaption>
+            <figcaption>
+              NVE diagnostic for the compiled Allegro model. Top: total energy in eV, with the red axis showing drift in meV per atom relative to the initial total energy. Bottom: instantaneous temperature in K; the dashed line is 330 K. Over 2 ps, the total-energy drift is 0.000218 eV, or 0.00455 meV per atom, while the final temperature is 333.3 K. This indicates stable short-time integration for the learned potential under a conservative timestep.
+            </figcaption>
           </figure>
 
-          <h2>9. 失败原因复盘</h2>
-          <p>
-            这次排查说明，之前 Allegro 势能面经常崩溃，主要不是 Allegro 方法本身失败，而是工程链条中几个小错误叠加后放大到了 MD 里：
-          </p>
-          <ol>
-            <li><strong>标签不一致：</strong><code>ENCAT=600</code> 拼写错误导致旧数据实际是 400 eV 标签，却被当作 600 eV 数据使用。</li>
-            <li><strong>采样分布不对：</strong>旧 NVE 初态没有继承 NVT 速度，NVE 从接近 0 K 开始，和目标 330 K 动力学分布不一致。</li>
-            <li><strong>ZBL 单位错误：</strong>旧配置使用 <code>pair_potential.units: real</code>，而 VASP 数据和 LAMMPS <code>metal</code> 单位都是 eV/Angstrom 体系。</li>
-            <li><strong>使用 last checkpoint 的风险：</strong>长训练中最后一个 checkpoint 未必是验证集最优，部署时应该优先用 best checkpoint。</li>
-          </ol>
-
-          <h2>10. 可复用检查清单</h2>
+          <h2>Practical Lessons</h2>
           <ul>
-            <li>每个 VASP 分支检查 <code>OUTCAR</code> 中真实 <code>ENCUT</code>，不要只看模板 INCAR。</li>
-            <li>训练前审计 <code>extxyz</code>：帧数、原子数、元素统计、能量/力有限性、最小原子间距、metadata。</li>
-            <li>先用小模型 smoke test，再上正式模型。</li>
-            <li>初次训练先关闭 ZBL；若需要 ZBL，确认单位使用 <code>metal</code>。</li>
-            <li>部署时用 best checkpoint，并记录 test metrics。</li>
-            <li>动力学验证优先做 NVE 能量守恒，再调 NVT thermostat。</li>
-            <li>LAMMPS 中检查 <code>pair_coeff</code> 的 atom type 到 model type name 映射。</li>
+            <li>Check the actual DFT output used for labels, not only the input templates. The training set should not mix label levels unless this is intentional and documented.</li>
+            <li>Sample from the intended thermodynamic region. Structures from a nominal trajectory are not enough if velocities, temperatures, or equilibration windows are inconsistent.</li>
+            <li>Audit the final <code>extxyz</code> file before training: frame count, species count, finite energies and forces, cell/PBC fields, stress fields, and close contacts.</li>
+            <li>Start with a no-ZBL model unless the dataset and deployment units have been checked carefully. If ZBL is added later for VASP/LAMMPS metal units, the unit setting should be consistent with eV and Angstrom.</li>
+            <li>Deploy the best validation checkpoint, not automatically the last checkpoint.</li>
+            <li>Use NVE energy conservation as an early MD diagnostic. Thermostat behavior can obscure whether the learned PES itself is stable.</li>
+            <li>For LAMMPS, check both the <code>pair_coeff</code> atom-type mapping and the unit system before debugging the neural network.</li>
           </ul>
 
           <h2>References</h2>
           <ul>
-            <li><a href="https://github.com/mir-group/allegro" target="_blank" rel="noreferrer">Allegro official GitHub repository</a></li>
+            <li><a href="https://github.com/mir-group/allegro" target="_blank" rel="noreferrer">Allegro official repository</a></li>
             <li><a href="https://nequip.readthedocs.io/projects/allegro/en/latest/" target="_blank" rel="noreferrer">Allegro documentation</a></li>
-            <li><a href="https://github.com/mir-group/pair_nequip_allegro" target="_blank" rel="noreferrer">pair_nequip_allegro LAMMPS pair styles</a></li>
             <li><a href="https://github.com/mir-group/nequip" target="_blank" rel="noreferrer">NequIP framework</a></li>
+            <li><a href="https://github.com/mir-group/pair_nequip_allegro" target="_blank" rel="noreferrer">pair_nequip_allegro LAMMPS plugin</a></li>
           </ul>
         </div>
 

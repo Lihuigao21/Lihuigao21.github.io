@@ -10,6 +10,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- allegro-mlpes-mapbi3-workflow.html
 |   |-- cayley-transform-ring-polymer.html
 |   |-- dvr-wavepacket-methods.html
 |   |-- dvr-operator-matrices.html
@@ -21,6 +22,13 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- assets
 |   |-- code
+|   |   |-- allegro
+|   |   |   |-- collect_nve_samples.py
+|   |   |   |-- formal_nve970.yaml
+|   |   |   |-- prepare_nve_branches.py
+|   |   |   |-- run_mlpes_md.py
+|   |   |   |-- run_mlpes_nve.py
+|   |   |   `-- run_train_then_md.slurm
 |   |   |-- cayley_dt_scan.py
 |   |   `-- dvr
 |   |       |-- dvr_fd_benchmark.py
@@ -31,6 +39,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
+|   |   |-- allegro
 |   |   |-- cayley
 |   |   |-- dvr-series
 |   |   `-- favicon.svg
@@ -41,6 +50,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/allegro-mlpes-mapbi3-workflow.html`
 - `posts/cayley-transform-ring-polymer.html`
 - `posts/dvr-wavepacket-methods.html`
 - `posts/dvr-operator-matrices.html`
