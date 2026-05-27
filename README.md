@@ -29,7 +29,10 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |-- matsubara
 |   |   |   |-- matsubara_lscivr_benchmark.py
 |   |   |   |-- matsubara_mode_filter.py
-|   |   |   `-- matsubara_quartic_benchmark.py
+|   |   |   |-- matsubara_quartic_benchmark.py
+|   |   |   |-- willatt_fig39_partial_repro.csv
+|   |   |   |-- willatt_fig39_partial_repro_meta.csv
+|   |   |   `-- willatt_fig39_partial_repro.png
 |   |   |-- rpmd-ir
 |   |   |   |-- compute_ir_spectrum_mudot.py
 |   |   |   `-- run_mudot_analysis.sh

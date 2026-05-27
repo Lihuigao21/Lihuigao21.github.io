@@ -33,7 +33,7 @@
           </nav>
 
           <p class="lead">
-            Parts I-II introduced the phase-space problem and the low-mode Matsubara construction. This note turns that structure into a small executable benchmark: the Kubo \(q-q\) correlation for the one-dimensional quartic oscillator \(V(q)=q^4/4\), comparing a sinc-DVR quantum reference with \(M=1,3,5\) Matsubara estimators.
+            Parts I-II introduced the phase-space problem and the low-mode Matsubara construction. This note turns that structure into a partial reproduction of the quartic benchmark: the Kubo \(q-q\) correlation for the one-dimensional quartic oscillator \(V(q)=q^4/4\), comparing a sinc-DVR quantum reference with \(M=1,3,5\) Matsubara estimators.
           </p>
 
           <h2>Benchmark definition</h2>
@@ -83,22 +83,23 @@
           <h2>Result</h2>
           <figure>
             <img src="../assets/img/matsubara-series/quartic-matsubara-benchmark.png" alt="Quartic oscillator Kubo correlation compared with Matsubara estimators">
-            <figcaption>Quartic oscillator benchmark. The horizontal axis is time \(t\), and the vertical axis is \(C_{qq}(t)\). The black solid curve is the sinc-DVR Kubo reference. Red curves are Matsubara estimators: dotted for \(M=1\), dashed for \(M=3\), and dash-dotted for \(M=5\). The low-mode estimators reproduce the early oscillation scale but become increasingly noisy as the phase denominator decreases. This is the practical phase problem, not a failure of the deterministic mode propagation itself.</figcaption>
+            <figcaption>Quartic oscillator benchmark. The horizontal axis is time \(t\) in atomic units, and the vertical axis is the normalized Matsubara/Kubo correlation \(C_{qq}^{[M]}(t)/Z\). The black solid curve is the quantum sinc-DVR reference. Red curves are Matsubara estimators: dotted for \(M=1\), dashed for \(M=3\), and dash-dotted for \(M=5\). The \(M=1\) and \(M=3\) curves track the first oscillation but damp relative to the quantum reference at later times; the \(M=5\) curve is visibly noisy because the cosine phase denominator is already close to zero.</figcaption>
           </figure>
 
           <p>The run printed the following sampling diagnostics:</p>
           <pre><code>curve      HMC acceptance     &lt;cos(beta theta)&gt;
-M1         0.99853659         1.00000000
-M3         0.99401274         0.13184848
-M5_noisy   0.99339350         0.01705449</code></pre>
-          <p>The acceptance rates are high, so the HMC proposal is not the bottleneck. The phase average collapses as \(M\) increases; numerator and denominator then become differences of noisy signed contributions. A few thousand samples can give the right qualitative trend while still being far from converged for \(M=5\).</p>
+M1         0.99843750         1.00000000
+M3         0.99018519         0.14547552
+M5_noisy   0.98037037        -0.02066674</code></pre>
+          <p>The acceptance rates are high, so the HMC proposal is not the bottleneck. The phase average collapses as \(M\) increases and can even change sign in a finite run; numerator and denominator then become differences of noisy signed contributions. This is why a stochastic rerun of the \(M=5\) curve can look different even when the deterministic Matsubara propagation is unchanged.</p>
 
           <h2>Relation to CMD, QCMD, and RPMD</h2>
           <p>The same literature explains why practical descendants modify the exact Matsubara structure. CMD keeps the centroid-like mean-field motion but can suffer curvature problems when the ring-polymer distribution bends around a curved valley. QCMD changes coordinates to make the constrained distribution more compact. RPMD can be viewed as retaining the spring structure that emerges after manipulating the phase, while dropping the imaginary terms that would make direct sampling impractical.</p>
 
           <h2>Code used in this note</h2>
           <ul class="code-list">
-            <li><a href="../assets/code/matsubara/matsubara_quartic_benchmark.py">matsubara_quartic_benchmark.py</a> computes the DVR reference, samples the Matsubara estimators, generates the benchmark figure, and writes the phase diagnostics.</li>
+            <li><a href="../assets/code/matsubara/matsubara_quartic_benchmark.py">matsubara_quartic_benchmark.py</a> preserves the checked reproduction figure by default and can regenerate the stochastic benchmark with <code>--recompute</code>.</li>
+            <li><a href="../assets/code/matsubara/willatt_fig39_partial_repro.csv">willatt_fig39_partial_repro.csv</a> stores the archived time-series data from the local partial reproduction.</li>
             <li><a href="../assets/img/matsubara-series/quartic-matsubara-meta.csv">quartic-matsubara-meta.csv</a> contains the HMC acceptance and phase-average values printed above.</li>
           </ul>
 

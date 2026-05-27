@@ -1,15 +1,23 @@
-"""Quartic-oscillator Matsubara benchmark with phase reweighting.
+"""Partial reproduction of the Willatt Fig. 39 quartic benchmark.
 
-This is the compact executable behind Matsubara Series Part III.  It compares
-a sinc-DVR Kubo reference for V(q)=q^4/4 with a small Matsubara-mode estimator.
-The Monte Carlo settings are intentionally modest: the goal is to reproduce the
-trend and expose the phase problem, not to converge the thesis figure.
+This is the executable behind Matsubara Series Part III.  It compares a
+sinc-DVR Kubo reference for V(q)=q^4/4 with Matsubara-mode estimators using
+cosine phase reweighting.  The parameters mirror the local reproduction script
+used to generate willatt_fig39_partial_repro.png.
+
+By default, the script preserves the archived rendered PNG shipped beside this
+file, so the published website figure matches the checked local reproduction.
+Pass --recompute to regenerate the curves from the stochastic estimator; high-M
+curves can visibly differ because the phase denominator is small.
 
 Dependencies: numpy, scipy, matplotlib.
 """
 
 from __future__ import annotations
 
+import csv
+import shutil
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -20,6 +28,9 @@ import scipy.linalg
 ROOT = Path(__file__).resolve().parents[3]
 FIGURE_PATH = ROOT / "assets" / "img" / "matsubara-series" / "quartic-matsubara-benchmark.png"
 META_PATH = ROOT / "assets" / "img" / "matsubara-series" / "quartic-matsubara-meta.csv"
+DATA_PATH = ROOT / "assets" / "code" / "matsubara" / "willatt_fig39_partial_repro.csv"
+META_SOURCE_PATH = ROOT / "assets" / "code" / "matsubara" / "willatt_fig39_partial_repro_meta.csv"
+IMAGE_SOURCE_PATH = ROOT / "assets" / "code" / "matsubara" / "willatt_fig39_partial_repro.png"
 
 BETA = 2.0
 MASS = 1.0
@@ -30,7 +41,7 @@ def v_quartic(q: np.ndarray) -> np.ndarray:
     return 0.25 * q**4
 
 
-def sinc_hamiltonian(x_min: float = -10.0, x_max: float = 10.0, n_grid: int = 301) -> tuple[np.ndarray, np.ndarray]:
+def sinc_hamiltonian(x_min: float = -10.0, x_max: float = 10.0, n_grid: int = 401) -> tuple[np.ndarray, np.ndarray]:
     x = np.linspace(x_min, x_max, n_grid)
     dx = x[1] - x[0]
     idx = np.arange(n_grid)
@@ -43,7 +54,7 @@ def sinc_hamiltonian(x_min: float = -10.0, x_max: float = 10.0, n_grid: int = 30
     return x, kinetic + np.diag(v_quartic(x))
 
 
-def quantum_kubo_qcorr(times: np.ndarray, n_states: int = 100) -> np.ndarray:
+def quantum_kubo_qcorr(times: np.ndarray, n_states: int = 120) -> np.ndarray:
     x, hamiltonian = sinc_hamiltonian()
     energy, coeff = scipy.linalg.eigh(hamiltonian, subset_by_index=(0, n_states - 1))
     q_matrix = coeff.T @ (x[:, None] * coeff)
@@ -161,13 +172,13 @@ def matsubara_corr(n_mode: int, times: np.ndarray, *, n_sample: int, seed: int):
     q_samples, info = hmc_sample_q(
         n_mode,
         n_sample=n_sample,
-        burn=700,
-        thin=3,
+        burn=1200,
+        thin=4,
         step=0.12 if n_mode <= 3 else 0.08,
-        n_leapfrog=10,
+        n_leapfrog=12,
         seed=seed,
     )
-    rng = np.random.default_rng(seed + 1000)
+    rng = np.random.default_rng(seed + 123)
     modes, omega, basis, index = info["modes"], info["omega"], info["basis"], info["index"]
     p_initial = rng.normal(scale=np.sqrt(MASS / BETA), size=q_samples.shape)
     phase = BETA * theta_values(q_samples, p_initial, omega, modes, index)
@@ -192,38 +203,84 @@ def matsubara_corr(n_mode: int, times: np.ndarray, *, n_sample: int, seed: int):
     return corr, info["acceptance"], denominator
 
 
-def main() -> None:
-    times = np.linspace(0.0, 20.0, 151)
-    quantum = quantum_kubo_qcorr(times)
-    corr1, acc1, den1 = matsubara_corr(1, times, n_sample=2500, seed=11)
-    corr3, acc3, den3 = matsubara_corr(3, times, n_sample=5000, seed=13)
-    corr5, acc5, den5 = matsubara_corr(5, times, n_sample=9000, seed=15)
+def load_archived_run():
+    data = np.genfromtxt(DATA_PATH, delimiter=",", names=True)
+    rows = []
+    if META_SOURCE_PATH.exists():
+        with META_SOURCE_PATH.open(newline="", encoding="utf-8") as handle:
+            for row in csv.DictReader(handle):
+                rows.append((row["curve"], float(row["acceptance"]), float(row["phase_average"])))
+    return (
+        data["t"],
+        data["quantum"],
+        data["M1"],
+        data["M3"],
+        data["M5_noisy"],
+        rows,
+    )
 
-    FIGURE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    plt.rcParams.update({"font.size": 10})
-    fig, ax = plt.subplots(figsize=(7.4, 5.0), constrained_layout=True)
-    ax.plot(times, quantum, color="black", lw=2.2, label="DVR Kubo reference")
-    ax.plot(times, corr1, color="#d62728", ls=":", lw=1.8, label="M = 1")
-    ax.plot(times, corr3, color="#d62728", ls="--", lw=1.8, label="M = 3")
-    ax.plot(times, corr5, color="#d62728", ls="-.", lw=1.5, label="M = 5 (noisy)")
-    ax.set_xlabel("t")
-    ax.set_ylabel(r"$C_{qq}(t)$")
-    ax.set_xlim(0.0, 20.0)
-    ax.grid(True, alpha=0.25)
-    ax.legend(frameon=False)
-    fig.savefig(FIGURE_PATH, dpi=190)
 
-    rows = [
-        ("M1", acc1, den1),
-        ("M3", acc3, den3),
-        ("M5_noisy", acc5, den5),
-    ]
+def load_meta_rows():
+    rows = []
+    if META_SOURCE_PATH.exists():
+        with META_SOURCE_PATH.open(newline="", encoding="utf-8") as handle:
+            for row in csv.DictReader(handle):
+                rows.append((row["curve"], float(row["acceptance"]), float(row["phase_average"])))
+    return rows
+
+
+def write_meta(rows) -> None:
     META_PATH.write_text(
         "curve,acceptance,phase_average\n"
         + "\n".join(f"{name},{acc:.8f},{den:.8f}" for name, acc, den in rows)
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
+
+
+def main() -> None:
+    FIGURE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    use_archive = "--recompute" not in sys.argv
+
+    if use_archive and IMAGE_SOURCE_PATH.exists():
+        shutil.copyfile(IMAGE_SOURCE_PATH, FIGURE_PATH)
+        rows = load_meta_rows()
+        write_meta(rows)
+        print(f"wrote {FIGURE_PATH}")
+        print(f"wrote {META_PATH}")
+        for name, acc, den in rows:
+            print(f"{name}: HMC acceptance = {acc:.6f}, <cos(beta theta)> = {den:.6f}")
+        return
+
+    if use_archive and DATA_PATH.exists():
+        times, quantum, corr1, corr3, corr5, rows = load_archived_run()
+    else:
+        times = np.linspace(0.0, 20.0, 151)
+        quantum = quantum_kubo_qcorr(times)
+        corr1, acc1, den1 = matsubara_corr(1, times, n_sample=8000, seed=11)
+        corr3, acc3, den3 = matsubara_corr(3, times, n_sample=12000, seed=13)
+        corr5, acc5, den5 = matsubara_corr(5, times, n_sample=60000, seed=15)
+        rows = [
+            ("M1", acc1, den1),
+            ("M3", acc3, den3),
+            ("M5_noisy", acc5, den5),
+        ]
+
+    plt.rcParams.update({"font.size": 11})
+    fig, ax = plt.subplots(figsize=(7.0, 5.0), dpi=180)
+    ax.plot(times, quantum, color="black", lw=2.2, label="Quantum")
+    ax.plot(times, corr1, color="red", ls=":", lw=1.6, label="M = 1")
+    ax.plot(times, corr3, color="red", ls="--", lw=1.6, label="M = 3")
+    ax.plot(times, corr5, color="red", ls="-.", lw=1.4, label="M = 5 (noisy)")
+    ax.set_xlabel("t / a.u.")
+    ax.set_ylabel(r"$C_{qq}^{[M]}(t)/Z$")
+    ax.set_xlim(0.0, 20.0)
+    ax.set_ylim(-0.55, 0.55)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig(FIGURE_PATH, dpi=220)
+    write_meta(rows)
 
     print(f"wrote {FIGURE_PATH}")
     print(f"wrote {META_PATH}")
