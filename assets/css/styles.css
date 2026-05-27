@@ -345,6 +345,7 @@ h3 {
 .post-content p,
 .post-content li {
   color: var(--muted);
+  overflow-wrap: break-word;
 }
 
 .post-content pre {
@@ -452,9 +453,16 @@ h3 {
 }
 
 .math-block {
+  max-width: 100%;
   overflow-x: auto;
   margin: 18px 0;
   padding: 4px 0;
+}
+
+.math-block mjx-container[display="true"] {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .series-nav {

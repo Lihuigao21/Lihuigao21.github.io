@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A technical note on Cayley modification for stabilizing free ring-polymer propagation in RPMD.">
-    <title>Cayley Modification for Ring-Polymer Free Motion | Lihui Gao</title>
+    <meta name="description" content="PIMD series part III: Cayley modification for stabilizing free ring-polymer propagation in PIMD and RPMD.">
+    <title>PIMD III: Cayley Stability | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script>
@@ -41,14 +41,20 @@
     <main id="top">
       <article class="post">
         <header class="post-header">
-          <p class="section-label">Numerical Methods</p>
-          <h1>Cayley Modification for Ring-Polymer Free Motion</h1>
-          <p class="post-meta">2026.05.26 - RPMD / Cayley Transform / Symplectic Stability</p>
+          <p class="section-label">PIMD Series - Part III</p>
+          <h1>Cayley Stability</h1>
+          <p class="post-meta">2026.05.27 - RPMD / Cayley Transform / Symplectic Stability</p>
         </header>
 
         <div class="post-content">
+          <nav class="series-nav" aria-label="PIMD series navigation">
+            <a href="pimd-ring-polymer-basics.html">I. Ring-Polymer Basics</a>
+            <a href="pimd-nvt-gle-piglet.html">II. NVT and GLE</a>
+            <a href="cayley-transform-ring-polymer.html">III. Cayley Stability</a>
+          </nav>
+
           <p class="lead">
-            This note reorganizes my benchmark experiments on the Cayley modification for path-integral and ring-polymer molecular dynamics. The central issue is that the standard exact normal-mode propagation of the free ring polymer can be numerically fragile at special timesteps. The Cayley transform changes only this free ring-polymer substep, but removes the eigenvalue-collision mechanism behind the instability.
+            Parts I-II built the ring-polymer sampling problem and its NVT thermostat layer. This final note focuses on a separate numerical issue: the standard exact normal-mode propagation of the free ring polymer can be fragile at special timesteps. The Cayley transform changes only this free ring-polymer substep, but removes the eigenvalue-collision mechanism behind the instability.
           </p>
 
           <p>
@@ -524,6 +530,15 @@ if __name__ == "__main__":
             <li>The Cayley map replaces the exact rotation angle \(\omega\Delta t\) by \(2\arctan(\omega\Delta t/2)\), avoiding the finite-timestep collision at \(-1\).</li>
             <li>In the \(P=6\) benchmark, the exact free step produces energy spikes near the predicted red lines, while the Cayley step remains bounded over the same scan.</li>
           </ul>
+
+          <section class="series-footer" aria-labelledby="pimd-series-map">
+            <h2 id="pimd-series-map">PIMD series map</h2>
+            <ol class="series-list">
+              <li><a href="pimd-ring-polymer-basics.html">Part I: Ring-Polymer Basics</a> - path-integral isomorphism, normal modes, estimators, and the SHO convergence test.</li>
+              <li><a href="pimd-nvt-gle-piglet.html">Part II: NVT Thermostats and GLE</a> - PILE, GLE, PIGLET-style covariance shaping, and sampling diagnostics.</li>
+              <li><a href="cayley-transform-ring-polymer.html">Part III: Cayley Stability</a> - why exact free ring-polymer propagation can be unstable and how the Cayley step fixes it.</li>
+            </ol>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="Article navigation">

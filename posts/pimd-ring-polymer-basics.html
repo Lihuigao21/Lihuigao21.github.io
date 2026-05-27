@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="PIMD series part I: path-integral isomorphism, ring-polymer Hamiltonian, normal modes, estimators, and a harmonic-oscillator benchmark.">
+    <title>PIMD I: Ring-Polymer Basics | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">PIMD Series - Part I</p>
+          <h1>Ring-Polymer Basics</h1>
+          <p class="post-meta">2026.05.27 - Path Integrals / Ring Polymer / SHO Benchmark</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="PIMD series navigation">
+            <a href="pimd-ring-polymer-basics.html">I. Ring-Polymer Basics</a>
+            <a href="pimd-nvt-gle-piglet.html">II. NVT and GLE</a>
+            <a href="cayley-transform-ring-polymer.html">III. Cayley Stability</a>
+          </nav>
+
+          <p class="lead">
+            Path-integral molecular dynamics turns an equilibrium quantum Boltzmann problem into a classical sampling problem over a ring polymer. This first note keeps the scope deliberately static: it derives the ring-polymer Hamiltonian, writes the sampling equations of motion, and tests the bead-number convergence of a harmonic-oscillator potential estimator.
+          </p>
+
+          <h2>Quantum Boltzmann trace</h2>
+          <p>For a one-dimensional Hamiltonian</p>
+          <div class="math-block">\[
+            \hat H=\frac{\hat p^2}{2m}+V(\hat q),
+          \]</div>
+          <p>the canonical partition function is</p>
+          <div class="math-block">\[
+            Z=\operatorname{Tr}\left[e^{-\beta \hat H}\right]
+            =\int dq\,\langle q|e^{-\beta\hat H}|q\rangle .
+          \]</div>
+          <p>The path-integral construction applies the Trotter factorization with \(P\) imaginary-time slices, \(\beta_P=\beta/P\), and closes the path by setting \(q_{P+1}=q_1\). Integrating out the short-time momentum kernels gives</p>
+          <div class="math-block">\[
+            Z_P \propto
+            \int dq_1\cdots dq_P\,
+            \exp\left[
+            -\beta_P\sum_{j=1}^{P}
+            \left\{
+            \frac{1}{2}m\omega_P^2(q_{j+1}-q_j)^2+V(q_j)
+            \right\}
+            \right],
+            \qquad
+            \omega_P=\frac{1}{\beta_P\hbar}.
+          \]</div>
+          <p>The quantum particle is therefore represented by \(P\) classical beads connected by harmonic springs. Increasing \(P\) resolves shorter imaginary-time structure, but also introduces high-frequency internal modes.</p>
+
+          <h2>Ring-polymer Hamiltonian</h2>
+          <p>To sample the configurational distribution with molecular dynamics, fictitious bead momenta are introduced:</p>
+          <div class="math-block">\[
+            H_P(q,p)=
+            \sum_{j=1}^{P}
+            \left[
+            \frac{p_j^2}{2m'}
+            +\frac{1}{2}m\omega_P^2(q_{j+1}-q_j)^2
+            +V(q_j)
+            \right].
+          \]</div>
+          <p>The mass \(m'\) and the MD time are sampling devices; they do not define the real-time quantum motion. The corresponding sampling equations are</p>
+          <div class="math-block">\[
+            \dot q_j=\frac{p_j}{m'},
+            \qquad
+            \dot p_j=
+            -m\omega_P^2(2q_j-q_{j+1}-q_{j-1})
+            -\frac{\partial V(q_j)}{\partial q_j}.
+          \]</div>
+          <p>In practice these equations are usually combined with thermostats, because the free ring-polymer modes are stiff and can be poorly ergodic. Part II focuses on that NVT layer.</p>
+
+          <h2>Normal modes</h2>
+          <p>The spring matrix is diagonal in ring-polymer normal modes. For the free ring polymer, the mode frequencies are</p>
+          <div class="math-block">\[
+            \omega_k=2\omega_P\sin\left(\frac{k\pi}{P}\right),
+            \qquad k=0,\ldots,P-1.
+          \]</div>
+          <p>The \(k=0\) mode is the centroid. The remaining modes describe internal imaginary-time fluctuations. Splitting algorithms exploit this diagonal form by treating the free ring-polymer substep analytically or with a stable approximation.</p>
+
+          <h2>Static estimators</h2>
+          <p>For a position-only observable \(O(q)\), the standard bead estimator is</p>
+          <div class="math-block">\[
+            O_P(q)=\frac{1}{P}\sum_{j=1}^{P}O(q_j),
+            \qquad
+            \langle \hat O\rangle
+            =
+            \lim_{P\to\infty}
+            \left\langle O_P(q)\right\rangle_{H_P}.
+          \]</div>
+          <p>For a harmonic oscillator \(V(q)=m\omega_0^2q^2/2\), the exact quantum potential energy is</p>
+          <div class="math-block">\[
+            \langle V\rangle_{\mathrm{exact}}
+            =
+            \frac{\hbar\omega_0}{4}
+            \coth\left(\frac{\beta\hbar\omega_0}{2}\right).
+          \]</div>
+          <p>The finite-\(P\) ring-polymer result can also be evaluated directly in normal modes:</p>
+          <div class="math-block">\[
+            \langle V_P\rangle
+            =
+            \frac{1}{2\beta}
+            \sum_{k=0}^{P-1}
+            \frac{\omega_0^2}{\omega_k^2+\omega_0^2}.
+          \]</div>
+
+          <h2>Workflow</h2>
+          <ol>
+            <li>Set \(m=\hbar=1\), \(\beta=2\), and \(\omega_0=4\).</li>
+            <li>Compute the exact quantum value of \(\langle V\rangle\).</li>
+            <li>Evaluate the finite-\(P\) normal-mode formula for \(P=1,\ldots,64\).</li>
+            <li>Draw independent normal-mode Gaussian samples from the finite-\(P\) equilibrium distribution.</li>
+            <li>Compare the estimator against the exact quantum value and the classical \(P=1\) limit.</li>
+          </ol>
+
+          <h2>Result</h2>
+          <figure>
+            <img src="../assets/img/pimd-series/pimd-sho-benchmark.png" alt="PIMD harmonic oscillator potential estimator convergence">
+            <figcaption>Harmonic-oscillator PIMD benchmark. Left: horizontal axis is bead number \(P\) on a base-2 log scale; vertical axis is \(\langle V\rangle\). The black line is the exact quantum value \(1.000671\), the gray dashed line is the classical \(P=1\) value \(0.25\), the red curve is the finite-\(P\) normal-mode formula, and blue squares are direct normal-mode samples with two-standard-error bars. Right: relative error of the finite-\(P\) estimator. At \(P=64\), the relative error is \(1.94\times10^{-3}\), showing systematic convergence to the quantum Boltzmann result.</figcaption>
+          </figure>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/pimd/pimd_sho_benchmark.py">pimd_sho_benchmark.py</a> computes the finite-\(P\) formula, draws normal-mode samples, writes the figure, and saves the numerical table.</li>
+            <li><a href="../assets/img/pimd-series/pimd-sho-benchmark.csv">pimd-sho-benchmark.csv</a> stores the finite-\(P\), sampled, and relative-error values.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Feynman and Hibbs, <em>Quantum Mechanics and Path Integrals</em>.</li>
+            <li>Tuckerman, Berne, Martyna, and Klein, <em>J. Chem. Phys.</em> 99, 2796 (1993).</li>
+            <li>Ceriotti, Parrinello, Markland, and Manolopoulos, <em>J. Chem. Phys.</em> 133, 124104 (2010).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="pimd-series-map">
+            <h2 id="pimd-series-map">PIMD series map</h2>
+            <ol class="series-list">
+              <li><a href="pimd-ring-polymer-basics.html">Part I: Ring-Polymer Basics</a> - path-integral isomorphism, normal modes, estimators, and the SHO convergence test.</li>
+              <li><a href="pimd-nvt-gle-piglet.html">Part II: NVT Thermostats and GLE</a> - PILE, GLE, PIGLET-style covariance shaping, and sampling diagnostics.</li>
+              <li><a href="cayley-transform-ring-polymer.html">Part III: Cayley Stability</a> - why exact free ring-polymer propagation can be unstable and how the Cayley step fixes it.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

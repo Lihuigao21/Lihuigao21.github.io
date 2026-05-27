@@ -10,6 +10,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- pimd-ring-polymer-basics.html
+|   |-- pimd-nvt-gle-piglet.html
 |   |-- matsubara-lscivr-phase-space.html
 |   |-- matsubara-modes-and-phase.html
 |   |-- matsubara-quartic-benchmark.html
@@ -26,6 +28,9 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- assets
 |   |-- code
+|   |   |-- pimd
+|   |   |   |-- pimd_sho_benchmark.py
+|   |   |   `-- pimd_gle_piglet_toy.py
 |   |   |-- matsubara
 |   |   |   |-- matsubara_lscivr_benchmark.py
 |   |   |   |-- matsubara_mode_filter.py
@@ -53,6 +58,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
+|   |   |-- pimd-series
 |   |   |-- matsubara-series
 |   |   |-- rpmd-ir
 |   |   |-- allegro
@@ -66,12 +72,14 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/pimd-ring-polymer-basics.html`
+- `posts/pimd-nvt-gle-piglet.html`
+- `posts/cayley-transform-ring-polymer.html`
 - `posts/matsubara-lscivr-phase-space.html`
 - `posts/matsubara-modes-and-phase.html`
 - `posts/matsubara-quartic-benchmark.html`
 - `posts/spcf-rpmd-water-ir-spectrum.html`
 - `posts/allegro-mlpes-mapbi3-workflow.html`
-- `posts/cayley-transform-ring-polymer.html`
 - `posts/dvr-wavepacket-methods.html`
 - `posts/dvr-operator-matrices.html`
 - `posts/dvr-wavepacket-dynamics.html`

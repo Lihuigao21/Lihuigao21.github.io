@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="PIMD series part II: NVT sampling, PILE, generalized Langevin equations, PIGLET-style covariance shaping, and harmonic-oscillator diagnostics.">
+    <title>PIMD II: NVT Thermostats and GLE | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">PIMD Series - Part II</p>
+          <h1>NVT Thermostats and GLE</h1>
+          <p class="post-meta">2026.05.27 - NVT / PILE / GLE / PIGLET</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="PIMD series navigation">
+            <a href="pimd-ring-polymer-basics.html">I. Ring-Polymer Basics</a>
+            <a href="pimd-nvt-gle-piglet.html">II. NVT and GLE</a>
+            <a href="cayley-transform-ring-polymer.html">III. Cayley Stability</a>
+          </nav>
+
+          <p class="lead">
+            Part I built the ring-polymer Hamiltonian. The next practical question is how to sample it efficiently. This note separates three related ideas: ordinary NVT Langevin sampling, PILE-style normal-mode thermostats, and GLE/PIGLET-style covariance control for reducing the bead count needed for selected quantum observables.
+          </p>
+
+          <h2>Why NVT is not optional</h2>
+          <p>The ring polymer contains a broad band of internal frequencies,</p>
+          <div class="math-block">\[
+            \omega_k=2\omega_P\sin\left(\frac{k\pi}{P}\right),
+            \qquad
+            \omega_P=\frac{P}{\beta\hbar}.
+          \]</div>
+          <p>As \(P\) grows, the highest internal modes become stiff. Microcanonical propagation can conserve the extended Hamiltonian while still sampling slowly or non-ergodically. A thermostat is therefore not just a temperature-control accessory; it is part of the sampling algorithm.</p>
+
+          <h2>PILE in normal modes</h2>
+          <p>For a harmonic physical potential, each ring-polymer normal mode has an effective frequency</p>
+          <div class="math-block">\[
+            \Omega_k=\sqrt{\omega_k^2+\omega_0^2}.
+          \]</div>
+          <p>A simple white-noise Langevin thermostat uses one friction for all modes. PILE instead thermostats the normal modes locally, often choosing a friction of order the mode frequency:</p>
+          <div class="math-block">\[
+            \dot Q_k=\frac{P_k}{m},
+            \qquad
+            \dot P_k=-m\Omega_k^2Q_k-\gamma_k P_k
+            +\sqrt{\frac{2m\gamma_k}{\beta_P}}\,\eta_k(t),
+            \qquad
+            \gamma_k\approx 2\Omega_k.
+          \]</div>
+          <p>The centroid mode is usually handled more gently because it is the physically meaningful low-frequency component; the internal modes are sampling variables and can be thermostatted aggressively.</p>
+
+          <h2>GLE and PIGLET</h2>
+          <p>A generalized Langevin equation introduces auxiliary momenta so that a non-Markovian memory kernel becomes a Markovian system in an enlarged space:</p>
+          <div class="math-block">\[
+            \dot q=\frac{p}{m},
+            \qquad
+            \begin{bmatrix}\dot p\\ \dot{\mathbf s}\end{bmatrix}
+            =
+            \begin{bmatrix}-\nabla V(q)\\ \mathbf 0\end{bmatrix}
+            -
+            \mathbf A_p
+            \begin{bmatrix}p\\ \mathbf s\end{bmatrix}
+            +
+            \mathbf B_p\boldsymbol\xi(t).
+          \]</div>
+          <p>For canonical sampling, the fluctuation-dissipation constraint fixes the noise covariance, commonly written as</p>
+          <div class="math-block">\[
+            \mathbf B_p\mathbf B_p^T
+            =
+            k_BT\left(\mathbf A_p+\mathbf A_p^T\right).
+          \]</div>
+          <p>The extra freedom in \(\mathbf A_p\) makes the thermostat frequency-selective. PIGLET uses this freedom in the path-integral normal modes: instead of merely accelerating equilibration, it fits colored-noise matrices so that finite-\(P\) bead fluctuations reproduce selected quantum fluctuations much better than canonical finite-\(P\) PIMD. This is useful for equilibrium structural and kinetic-energy observables, but it should not be read as an exact real-time dynamics method.</p>
+
+          <h2>Workflow</h2>
+          <ol>
+            <li>Use the same harmonic oscillator as Part I: \(m=\hbar=1\), \(\beta=2\), \(\omega_0=4\).</li>
+            <li>Run a \(P=32\) normal-mode BAOAB Langevin sampler with one white friction and with a PILE-like mode-dependent friction.</li>
+            <li>Track the running absolute error of the potential estimator \(\overline{V}\).</li>
+            <li>Build a toy covariance-shaping calculation that rescales finite-\(P\) normal-mode fluctuations to match one target observable, \(\langle V\rangle\).</li>
+            <li>Use the toy result only as a transparent illustration of the PIGLET idea, not as a production PIGLET parameterization.</li>
+          </ol>
+
+          <h2>Result</h2>
+          <figure>
+            <img src="../assets/img/pimd-series/pimd-gle-thermostats.png" alt="NVT and GLE thermostat diagnostics for a PIMD harmonic oscillator">
+            <figcaption>NVT and GLE/PIGLET-style diagnostics. Left: horizontal axis is the number of post-burn-in samples on a log scale; vertical axis is the absolute error \(|\overline V-\langle V\rangle_{\mathrm{exact}}|\). The gray curve uses one white-noise friction for all \(P=32\) modes, while the red curve uses a PILE-like local choice \(\gamma_k=2\Omega_k\) for internal modes. Right: horizontal axis is bead number \(P\); vertical axis is \(\langle V\rangle\). The black line is the exact quantum value \(1.000671\), red circles are canonical finite-\(P\) PIMD, and blue squares are a toy GLE/PIGLET target-covariance correction for this one observable. The \(P=6\) toy covariance scale is \(1.20133\), illustrating how frequency-shaped thermostats can reduce finite-bead bias when their target is chosen carefully.</figcaption>
+          </figure>
+
+          <h2>Interpretation</h2>
+          <p>The PILE-like curve is not magic: it still samples the same canonical finite-\(P\) distribution, but it couples each internal mode to a friction scale matched to that mode. GLE/PIGLET changes the situation more deeply by using colored noise to impose selected non-classical fluctuations at finite bead number. The price is specificity: a fitted GLE matrix is designed for a target frequency window and target observables, so one should check the observable being reported.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/pimd/pimd_gle_piglet_toy.py">pimd_gle_piglet_toy.py</a> runs the normal-mode NVT sampler and the toy covariance-shaping benchmark.</li>
+            <li><a href="../assets/img/pimd-series/pimd-gle-thermostats.csv">pimd-gle-thermostats.csv</a> stores the canonical and covariance-shaped values used in the right panel.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Ceriotti, Bussi, and Parrinello, <em>Phys. Rev. Lett.</em> 102, 020601 (2009).</li>
+            <li>Ceriotti, Bussi, and Parrinello, <em>Phys. Rev. Lett.</em> 103, 030603 (2009).</li>
+            <li>Ceriotti, Parrinello, Markland, and Manolopoulos, <em>J. Chem. Phys.</em> 133, 124104 (2010).</li>
+            <li>Ceriotti and Manolopoulos, <em>Phys. Rev. Lett.</em> 109, 100604 (2012).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="pimd-series-map">
+            <h2 id="pimd-series-map">PIMD series map</h2>
+            <ol class="series-list">
+              <li><a href="pimd-ring-polymer-basics.html">Part I: Ring-Polymer Basics</a> - path-integral isomorphism, normal modes, estimators, and the SHO convergence test.</li>
+              <li><a href="pimd-nvt-gle-piglet.html">Part II: NVT Thermostats and GLE</a> - PILE, GLE, PIGLET-style covariance shaping, and sampling diagnostics.</li>
+              <li><a href="cayley-transform-ring-polymer.html">Part III: Cayley Stability</a> - why exact free ring-polymer propagation can be unstable and how the Cayley step fixes it.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
