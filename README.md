@@ -12,6 +12,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- pmatrix-decoherence-balance.html
 |   |-- ehrenfest-tully-benchmark.html
 |   |-- fssh-tully-benchmark.html
 |   |-- mqc-background.html
@@ -41,7 +42,10 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |   |-- tully_common.py
 |   |   |   |-- dvr_tully_sac_reference.py
 |   |   |   |-- fssh_tully_sac.py
-|   |   |   `-- ehrenfest_tully_sac.py
+|   |   |   |-- ehrenfest_tully_sac.py
+|   |   |   |-- p_matrix.py
+|   |   |   |-- pmatrix_sac_comparison.py
+|   |   |   `-- pmatrix_decoherence_balance_demo.py
 |   |   |-- pimd
 |   |   |   |-- pimd_sho_benchmark.py
 |   |   |   |-- pimd_gle_piglet_toy.py
@@ -102,6 +106,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/pmatrix-decoherence-balance.html`
 - `posts/ehrenfest-tully-benchmark.html`
 - `posts/fssh-tully-benchmark.html`
 - `posts/mqc-background.html`

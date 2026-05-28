@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="MQC series part III: P-Matrix density-matrix dynamics, pairwise decoherence, detailed balance, and toy-model diagnostics against FSSH, Ehrenfest, and DVR.">
+    <title>MQC III: P-Matrix Decoherence and Detailed Balance | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">MQC Series - Part III</p>
+          <h1>P-Matrix Decoherence and Detailed Balance</h1>
+          <p class="post-meta">2026.05.28 - Density Matrix / Decoherence / Detailed Balance</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="MQC series navigation">
+            <a href="mqc-background.html">0. Background</a>
+            <a href="fssh-tully-benchmark.html">I. FSSH</a>
+            <a href="ehrenfest-tully-benchmark.html">II. Ehrenfest</a>
+            <a href="pmatrix-decoherence-balance.html">III. P-Matrix</a>
+          </nav>
+
+          <p class="lead">
+            Parts I and II compared two standard mixed quantum-classical closures: stochastic active surfaces in FSSH and one mean-field path in Ehrenfest dynamics. This note adds a density-matrix alternative, the P-Matrix method, and asks a narrower question: can a compact toy model expose the two corrections for which the method was designed, namely pairwise decoherence and detailed balance?
+          </p>
+
+          <h2>Why Another MQC Method?</h2>
+          <p>Standard MQC methods are useful because they make nonadiabatic dynamics affordable, but they leave two related problems exposed. The first is electronic overcoherence. Ehrenfest dynamics propagates one electronic density matrix on one nuclear trajectory, so off-diagonal elements can survive long after different nuclear wavepacket components should have separated. FSSH partly avoids this by assigning each trajectory an active surface, but the auxiliary electronic wavefunction is still coherent unless an extra decoherence correction is added.</p>
+          <p>The second problem is detailed balance. A method used for carrier cooling, charge relaxation, or long-time state populations should not heat the electronic subsystem indefinitely; at thermal equilibrium, upward and downward transitions must satisfy a Boltzmann ratio. Mean-field dynamics has no built-in mechanism enforcing that ratio. Surface hopping can reject energetically forbidden upward hops through velocity rescaling, but once decoherence corrections, NBRA trajectories, or wavefunction-collapse rules are added, detailed balance becomes a separate practical constraint rather than a simple consequence of the equations.</p>
+          <p>The P-Matrix method was proposed to address these two issues in one deterministic density-matrix framework. It keeps the convenience of density matrices, where each pair of states can have its own decoherence time \(\tau_{ij}\), but rewrites the off-diagonal element into directed components so that energy-increasing and energy-decreasing population flow can be treated differently. This directed bookkeeping is what makes it possible to damp pairwise coherence and apply a Boltzmann penalty to upward transfer without introducing a new stochastic collapse event for every trajectory.</p>
+          <p>In practical terms, the method is most attractive for problems where the nuclear motion is supplied by an external or reference trajectory, as in NBRA-style carrier dynamics, and the main observable is electronic relaxation rather than chemical branching. The toy calculations below are not meant to replace full molecular benchmarks. They isolate the two design goals: whether \(|\rho_{ij}|\) decays when a finite \(\tau_{ij}\) is supplied, and whether the high-energy-state population approaches the Boltzmann target when detailed balance is enabled.</p>
+
+          <h2>Project Summary</h2>
+          <p>The implementation was added to the local <code>toymodel</code> package as a new <code>PMatrix</code> method. It shares the same model, distribution, recorder, and plotting workflow used by the FSSH and Ehrenfest notes, so the method can be placed into the existing MQC test matrix without changing the Tully models or the DVR reference code. Two scripts were used:</p>
+          <ul>
+            <li>a Tully simple avoided-crossing comparison against FSSH, Ehrenfest, and DVR;</li>
+            <li>a controlled constant-gap two-state diagnostic that isolates decoherence and detailed balance.</li>
+          </ul>
+          <p>The first calculation is a workflow check on a familiar scattering problem. The second is the sharper test: it deliberately removes geometric complications and asks whether the long-time high-energy-state population approaches the Boltzmann target when detailed balance is enabled.</p>
+
+          <h2>P-Matrix Principle</h2>
+          <p>For adiabatic states \(\phi_i(R(t))\), the ordinary electronic density matrix obeys</p>
+          <div class="math-block">\[
+            \dot D=-i[V,D],
+            \qquad
+            V_{ij}=\delta_{ij}\epsilon_i-i\langle\phi_i|\dot\phi_j\rangle .
+          \]</div>
+          <p>A direct density matrix can damp coherences through \(-D_{ij}/\tau_{ij}\), but it does not distinguish the two transition directions hidden inside one off-diagonal element. The P-Matrix construction rewrites</p>
+          <div class="math-block">\[
+            D_{ij}=P_{ij}+P_{ji}^{*},\qquad D_{ii}=2P_{ii}.
+          \]</div>
+          <p>Here \(P_{ij}\) is a directed object: it represents the part of the coherence associated with pumping population from state \(j\) toward state \(i\). For \(i\ne j\), the implementation uses the Kang-Wang form</p>
+          <div class="math-block">\[
+            \dot P_{ij}
+            =
+            -i[V,P]_{ij}
+            -iV_{ij}(P_{ii}+P_{jj}^{*})
+            -\frac{P_{ij}}{\tau_{ij}} .
+          \]</div>
+          <p>The diagonal equation keeps the original coherent population flow and adds a Boltzmann correction to the energy-increasing part. In the electron convention used here, upward transitions are multiplied by \(\exp[-|\Delta E|/(k_BT)]\). This is the step that makes the long-time population ratio approach</p>
+          <div class="math-block">\[
+            \frac{P_{\mathrm{high}}}{P_{\mathrm{low}}}
+            =
+            \exp\!\left[-\frac{\Delta E}{k_BT}\right].
+          \]</div>
+          <p>The implementation also keeps a nuclear-force switch. The default <code>density</code> option uses a density-matrix mean force for ordinary toy-model back reaction. The <code>free</code> and <code>reference</code> options are closer to the NBRA spirit of the original paper, where the electronic density matrix is propagated along a prescribed nuclear trajectory.</p>
+
+          <h2>SAC Workflow Check</h2>
+          <p>The first test reuses Tully's simple avoided crossing from Parts I and II. The initial condition is \(q_0=-10\), \(p_0=10\), \(M=2000\), and the initial adiabatic state is the upper state. P-Matrix, FSSH, and Ehrenfest use the same classical starting point; DVR propagates a finite-width Gaussian wavepacket on the two-channel grid Hamiltonian. The P-Matrix run uses \(\tau=200\), \(T=300\) K, \(\Delta t=5\), and ten electronic substeps per nuclear step.</p>
+          <figure>
+            <img src="../assets/img/mqc-series/pmatrix-sac-comparison.png" alt="P-Matrix, FSSH, Ehrenfest, and DVR population comparison on the Tully simple avoided crossing">
+            <figcaption>Tully simple avoided crossing population comparison. The horizontal axis is time in atomic units. The upper panel shows the upper adiabatic population, and the lower panel shows the lower adiabatic population. Blue is P-Matrix with \(\tau=200\), red is FSSH averaged over 64 trajectories, green is Ehrenfest, and black is the finite-grid DVR wavepacket reference. This benchmark checks that the new method runs in the same workflow as the earlier MQC and DVR tools; it is not the decisive detailed-balance test because a single avoided-crossing scattering event is not a thermal equilibration problem.</figcaption>
+          </figure>
+          <p>At the final time, the upper-state populations are 0.561 for P-Matrix, 0.594 for FSSH, 0.774 for Ehrenfest, and 0.731 for DVR. The spread is useful as a workflow comparison, but it also shows why a separate diagnostic is needed: DVR is a coherent closed-system reference, while P-Matrix is designed to add decoherence and detailed balance.</p>
+
+          <h2>Pairwise Decoherence Diagnostic</h2>
+          <p>The decoherence test removes population transfer by setting the derivative coupling to zero and initializes a pure coherent superposition,</p>
+          <div class="math-block">\[
+            D(0)=
+            \begin{pmatrix}
+            1/2 & 1/2\\
+            1/2 & 1/2
+            \end{pmatrix}.
+          \]</div>
+          <p>With \(\tau=\infty\), both P-Matrix and Ehrenfest retain \(|\rho_{01}|=0.5\). With \(\tau=100\), P-Matrix damps the off-diagonal element exponentially while keeping the diagonal population normalized.</p>
+          <figure>
+            <img src="../assets/img/mqc-series/pmatrix-decoherence-rho01.png" alt="Pairwise decoherence diagnostic for the P-Matrix method">
+            <figcaption>Pairwise decoherence diagnostic. The horizontal axis is time in atomic units, and the vertical axis is \(|\rho_{01}|\), the magnitude of the off-diagonal density-matrix element. Blue is P-Matrix with \(\tau=100\), red is P-Matrix with \(\tau=\infty\), and green dashed is Ehrenfest. The finite-\(\tau\) P-Matrix curve decays from 0.5 to \(1.68\times10^{-4}\) by \(t=800\), while the no-decoherence and Ehrenfest references remain at 0.5.</figcaption>
+          </figure>
+
+          <h2>Detailed Balance Diagnostic</h2>
+          <p>The detailed-balance test uses a two-state adiabatic model with a constant energy gap \(\Delta E=0.002\), constant derivative coupling, fixed nuclear velocity, and \(T=300\) K. It is intentionally artificial: the goal is to isolate whether the electronic dynamics reaches the correct thermal ratio. The Boltzmann target for the high-energy population is</p>
+          <div class="math-block">\[
+            P_{\mathrm{high}}^{\mathrm{eq}}
+            =
+            \frac{\exp[-\Delta E/(k_BT)]}
+            {1+\exp[-\Delta E/(k_BT)]}
+            =
+            0.108596 .
+          \]</div>
+          <figure>
+            <img src="../assets/img/mqc-series/pmatrix-detailed-balance-time.png" alt="Detailed-balance time trace comparing P-Matrix, FSSH, Ehrenfest, and the Boltzmann target">
+            <figcaption>Detailed-balance time trace for the constant-gap model. The horizontal axis is time in atomic units, and the vertical axis is the population of the high-energy adiabatic state. Blue is P-Matrix with detailed balance enabled, red dashed is P-Matrix with the Boltzmann correction disabled, green stepped is FSSH averaged over 32 trajectories, purple dash-dot is Ehrenfest, and the black dotted line is the Boltzmann target. The detailed-balance P-Matrix converges to 0.108673, while the no-DB variant tends to 0.500000 and the FSSH/Ehrenfest traces remain strongly oscillatory for this continuously coupled model.</figcaption>
+          </figure>
+
+          <h2>Model Sweep</h2>
+          <p>The same diagnostic was repeated for four constant-gap cases. Each row in the figure below is one model, and the black diamond is the Boltzmann target. The blue P-Matrix detailed-balance point nearly overlaps the target in every case. The no-DB P-Matrix point stays near 0.5, as expected for a symmetric continuously coupled two-state problem. FSSH and Ehrenfest are included on the same plot to show that this particular diagnostic is not a scattering benchmark; without an explicit detailed-balance correction, neither method is forced to relax to the thermal ratio.</p>
+          <figure>
+            <img src="../assets/img/mqc-series/pmatrix-detailed-balance-sweep.png" alt="Detailed-balance sweep over constant-gap toy models">
+            <figcaption>Detailed-balance sweep over constant-gap toy models. The horizontal axis is the final high-energy-state population. Rows differ by energy gap \(\Delta E\) and temperature \(T\). Black diamonds are Boltzmann targets, blue circles are P-Matrix with detailed balance, red squares are P-Matrix without detailed balance, green triangles are FSSH with 32 trajectories, and purple inverted triangles are Ehrenfest. Gray horizontal guide lines show the span between the target and the farthest method value in each row. The key conclusion is that the detailed-balance P-Matrix tracks the thermal target across gaps and temperatures, while the other closures are not constrained to do so.</figcaption>
+          </figure>
+
+          <h2>Numerical Values</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Boltzmann</th>
+                <th>P-Matrix DB</th>
+                <th>P-Matrix no DB</th>
+                <th>FSSH</th>
+                <th>Ehrenfest</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>\(\Delta E=0.001, T=300\)</td><td>0.258729</td><td>0.258734</td><td>0.500000</td><td>0.156250</td><td>0.094054</td></tr>
+              <tr><td>\(\Delta E=0.002, T=300\)</td><td>0.108596</td><td>0.108673</td><td>0.500000</td><td>0.906250</td><td>0.896005</td></tr>
+              <tr><td>\(\Delta E=0.003, T=300\)</td><td>0.040787</td><td>0.041068</td><td>0.500000</td><td>1.000000</td><td>0.988677</td></tr>
+              <tr><td>\(\Delta E=0.002, T=600\)</td><td>0.258729</td><td>0.258737</td><td>0.500000</td><td>0.812500</td><td>0.896005</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Interpretation</h2>
+          <p>The results separate three claims. First, the P-Matrix implementation can be inserted into the existing <code>toymodel</code> MQC workflow and compared with FSSH, Ehrenfest, and DVR on Tully SAC. Second, finite \(\tau_{ij}\) produces the intended pairwise decay of off-diagonal density-matrix elements. Third, the directed \(P_{ij}\) variables make it possible to apply a Boltzmann penalty to energy-increasing transfer and recover the correct two-state thermal ratio in a controlled diagnostic.</p>
+          <p>The constant-gap diagnostic should not be read as a universal ranking of FSSH or Ehrenfest. It is constructed to expose detailed balance under continuous coupling, not to reproduce a physical scattering experiment. Its value is that it cleanly shows what the P-Matrix correction enforces and what the uncorrected closures do not enforce by themselves.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/mqc/p_matrix.py">p_matrix.py</a> is the <code>toymodel.methods.PMatrix</code> implementation, including directed \(P_{ij}\) propagation, decoherence times, detailed-balance correction, and nuclear-force options.</li>
+            <li><a href="../assets/code/mqc/pmatrix_sac_comparison.py">pmatrix_sac_comparison.py</a> runs the SAC comparison against P-Matrix, FSSH, Ehrenfest, and DVR.</li>
+            <li><a href="../assets/code/mqc/pmatrix_decoherence_balance_demo.py">pmatrix_decoherence_balance_demo.py</a> runs the pairwise-decoherence and detailed-balance diagnostics.</li>
+            <li><a href="../assets/img/mqc-series/pmatrix-sac-comparison-summary.csv">pmatrix-sac-comparison-summary.csv</a> stores the final SAC population comparison.</li>
+            <li><a href="../assets/img/mqc-series/pmatrix-decoherence-balance-summary.csv">pmatrix-decoherence-balance-summary.csv</a> stores the compact diagnostic values quoted above.</li>
+            <li><a href="../assets/img/mqc-series/pmatrix-detailed-balance-sweep.csv">pmatrix-detailed-balance-sweep.csv</a> stores the four-case detailed-balance sweep.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Kang and Wang, <em>Phys. Rev. B</em> 99, 224303 (2019).</li>
+            <li>Tully, <em>J. Chem. Phys.</em> 93, 1061 (1990).</li>
+            <li>Crespo-Otero and Barbatti, <em>Chem. Rev.</em> 118, 7026 (2018).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="mqc-series-map">
+            <h2 id="mqc-series-map">MQC series map</h2>
+            <ol class="series-list">
+              <li><a href="mqc-background.html">Part 0: Background and Working Assumptions</a> - BO approximation, Born-Huang couplings, NAC/HST formulas, MQC closures, and limitations.</li>
+              <li><a href="fssh-tully-benchmark.html">Part I: Fewest-Switches Surface Hopping</a> - active surfaces, stochastic hops, velocity rescaling, and a Tully SAC branch benchmark.</li>
+              <li><a href="ehrenfest-tully-benchmark.html">Part II: Ehrenfest Mean-Field Dynamics</a> - mean-field forces, continuous electronic populations, and the same Tully SAC scan.</li>
+              <li><a href="pmatrix-decoherence-balance.html">Part III: P-Matrix Decoherence and Detailed Balance</a> - directed density-matrix variables, pairwise decoherence, Boltzmann detailed balance, and controlled toy diagnostics.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

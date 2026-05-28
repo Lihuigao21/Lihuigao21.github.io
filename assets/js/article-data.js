@@ -3,7 +3,7 @@ window.SITE_SERIES = [
     id: "mqc",
     title: "MQC Series",
     label: "Mixed Quantum-Classical Dynamics",
-    description: "Background notes and Tully-model benchmarks for MQC methods.",
+    description: "Background notes, Tully-model benchmarks, and density-matrix diagnostics for MQC methods.",
   },
   {
     id: "pimd",
@@ -38,6 +38,17 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    slug: "pmatrix-decoherence-balance",
+    title: "MQC III: P-Matrix Decoherence and Detailed Balance",
+    path: "posts/pmatrix-decoherence-balance.html",
+    date: "2026-05-28",
+    dateText: "2026.05.28",
+    description: "Directed density-matrix dynamics with pairwise decoherence and Boltzmann detailed balance, tested against FSSH, Ehrenfest, and DVR toy-model diagnostics.",
+    tags: ["MQC", "P-Matrix", "Density Matrix", "Decoherence", "Detailed Balance"],
+    series: "mqc",
+    part: 3,
+  },
   {
     slug: "ehrenfest-tully-benchmark",
     title: "MQC II: Ehrenfest Mean-Field Dynamics",
