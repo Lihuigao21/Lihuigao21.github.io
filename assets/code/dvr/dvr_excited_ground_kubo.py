@@ -3,7 +3,9 @@
 This is the cleaned implementation behind DVR Series Part VII.  It builds a
 two-state Tully simple avoided-crossing Hamiltonian, constructs local adiabatic
 projectors Pg and Pe, Kubo-dresses the excited-channel flux operator Pe F Pe,
-and correlates it with either Pg(t) or dPg(t)/dt.
+and correlates it with either Pg(t) or dPg(t)/dt. The integrated dPg(t)/dt
+signal is scaled by 2*pi*hbar*beta so it can be compared with a
+flux-conditioned ground-state population.
 
 The default grid is intentionally modest so the script runs as a smoke test on
 a laptop while still covering the default flux surface. Increase --n-half and
@@ -145,7 +147,7 @@ def cumulative_trapezoid(y: np.ndarray, x: np.ndarray) -> np.ndarray:
     return out
 
 
-def run(args: argparse.Namespace) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def run(args: argparse.Namespace) -> tuple[np.ndarray, np.ndarray, np.ndarray, float]:
     n_grid = 2 * args.n_half
     x = (np.arange(-args.n_half, args.n_half) + 0.5) * args.dx
     beta = 315.7781721496283 * 1000.0 / args.temperature
@@ -169,15 +171,15 @@ def run(args: argparse.Namespace) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     c_pop = schur_correlation(hamiltonian_abs, dressed_excited_flux, pg, time)
     c_flux = schur_correlation(hamiltonian_abs, dressed_excited_flux, ground_flux, time)
     c_integrated = cumulative_trapezoid(c_flux, time)
-    return time, c_pop, c_integrated
+    return time, c_pop, c_integrated, beta
 
 
-def plot_results(time: np.ndarray, c_pop: np.ndarray, c_integrated: np.ndarray, output_dir: Path) -> None:
+def plot_results(time: np.ndarray, c_pop: np.ndarray, c_integrated: np.ndarray, beta: float, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     plt.rcParams.update({"font.size": 10})
 
     fig, ax = plt.subplots(figsize=(6.5, 4.0), constrained_layout=True)
-    ax.plot(time, np.real(c_pop), label="Re Cpop")
+    ax.plot(time, np.real(c_pop), label="direct Re Cpop")
     ax.set_xlabel("t")
     ax.set_ylabel("Cpop")
     ax.grid(True, alpha=0.25)
@@ -185,8 +187,19 @@ def plot_results(time: np.ndarray, c_pop: np.ndarray, c_integrated: np.ndarray, 
     fig.savefig(output_dir / "excited-ground-cpop-demo.png", dpi=180)
     plt.close(fig)
 
+    scaled_population = 2.0 * np.pi * beta * np.real(c_integrated)
+
     fig, ax = plt.subplots(figsize=(6.5, 4.0), constrained_layout=True)
-    ax.plot(time, np.real(c_integrated), label="integrated Re Cflux")
+    ax.plot(time, scaled_population, label="scaled Kubo population")
+    ax.set_xlabel("t")
+    ax.set_ylabel("flux-conditioned ground-state population")
+    ax.grid(True, alpha=0.25)
+    ax.legend(frameon=False)
+    fig.savefig(output_dir / "excited-ground-scaled-pop-demo.png", dpi=180)
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(6.5, 4.0), constrained_layout=True)
+    ax.plot(time, np.real(c_integrated), label="unscaled integrated Re Cflux")
     ax.set_xlabel("t")
     ax.set_ylabel("integrated signal")
     ax.grid(True, alpha=0.25)
@@ -214,11 +227,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    time, c_pop, c_integrated = run(args)
-    plot_results(time, c_pop, c_integrated, args.output_dir)
+    time, c_pop, c_integrated, beta = run(args)
+    plot_results(time, c_pop, c_integrated, beta, args.output_dir)
     print(f"wrote figures to {args.output_dir}")
     print(f"final Re Cpop = {np.real(c_pop[-1]):.8e}")
     print(f"final integrated signal = {np.real(c_integrated[-1]):.8e}")
+    print(f"final scaled population = {2.0 * np.pi * beta * np.real(c_integrated[-1]):.8e}")
 
 
 if __name__ == "__main__":

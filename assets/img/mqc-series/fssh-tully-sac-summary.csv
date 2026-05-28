@@ -1,0 +1,2 @@
+dt,ntraj_per_momentum,near_p20,near_p20_T_lower,near_p20_T_upper,near_p20_R_total,near_p20_mean_hops,near_p20_mean_final_pop_upper,near_p20_dvr_T_upper_exact,near_p20_dvr_R_total_exact
+0.5,50,20.0,0.56,0.44,0.0,0.72,0.5000818666151197,0.49299203562125277,3.882662390810547e-08

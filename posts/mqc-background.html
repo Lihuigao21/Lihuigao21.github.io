@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="MQC series part 0: background, derivation, applications, and working assumptions for mixed quantum-classical nonadiabatic dynamics.">
+    <title>MQC 0: Background and Working Assumptions | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">MQC Series - Part 0</p>
+          <h1>Background and Working Assumptions</h1>
+          <p class="post-meta">2026.05.28 - Nonadiabatic Dynamics / Mixed Quantum-Classical Methods</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="MQC series navigation">
+            <a href="mqc-background.html">0. Background</a>
+            <a href="fssh-tully-benchmark.html">I. FSSH</a>
+            <a href="ehrenfest-tully-benchmark.html">II. Ehrenfest</a>
+          </nav>
+
+          <p class="lead">
+            Mixed quantum-classical dynamics is a practical compromise for nonadiabatic molecular motion: electrons are propagated quantum mechanically, while nuclei are represented by classical trajectories. This opening note sets up the common equations and vocabulary used in the following FSSH and Ehrenfest benchmarks. It is intentionally conceptual; executable tests start in Parts I and II.
+          </p>
+
+          <h2>Why MQC Is Needed</h2>
+          <p>The Born-Oppenheimer picture assumes that the electronic state adapts instantaneously to nuclear motion. That separation becomes fragile near avoided crossings, conical intersections, charge-transfer regions, spin-orbit crossings, and strong laser-field couplings. In those regions, nuclear motion can move population between electronic states, and a single potential energy surface is no longer enough.</p>
+          <p>Fully quantum nuclear-electronic dynamics is usually too expensive for realistic molecular systems. NA-MQC methods reduce the cost by keeping the most phase-sensitive subsystem, usually the electrons, in a quantum representation while replacing nuclear wavepackets by an ensemble of classical paths. This is why the methods are common in photochemistry, exciton migration, organic semiconductors, charge separation and recombination, radiation chemistry, and ultrafast spectroscopy.</p>
+
+          <h2>Born-Oppenheimer Starting Point</h2>
+          <p>Start from a molecular Hamiltonian split into nuclear kinetic energy and an electronic Hamiltonian parametrized by nuclear coordinates:</p>
+          <div class="math-block">\[
+            \hat H=\hat T_n+\hat H_e(r;R),
+            \qquad
+            \hat H_e(r;R)\phi_j(r;R)=E_j(R)\phi_j(r;R).
+          \]</div>
+          <p>The Born-Oppenheimer approximation assumes that a nuclear wavepacket can remain on one electronic eigenstate,</p>
+          <div class="math-block">\[
+            \Psi(r,R,t)\approx \chi_\alpha(R,t)\phi_\alpha(r;R),
+            \qquad
+            i\hbar\frac{\partial\chi_\alpha}{\partial t}
+            =
+            \left[\hat T_n+E_\alpha(R)\right]\chi_\alpha .
+          \]</div>
+          <p>This approximation is useful because the nuclei move on a single potential energy surface. It fails when the electronic basis changes rapidly along the nuclear path, especially near small energy gaps. MQC methods can be viewed as controlled attempts to keep some of the dropped coupling while avoiding fully quantum nuclear dynamics.</p>
+
+          <h2>Born-Huang Couplings</h2>
+          <p>The exact adiabatic expansion is</p>
+          <div class="math-block">\[
+            \Psi(r,R,t)=\sum_j \chi_j(R,t)\phi_j(r;R).
+          \]</div>
+          <p>Substitution into the time-dependent Schrodinger equation gives coupled nuclear channels. For one nuclear coordinate, the coupling structure is schematically</p>
+          <div class="math-block">\[
+            i\hbar\dot\chi_i =
+            \left[\hat T_n+E_i(R)\right]\chi_i
+            -\sum_j\frac{\hbar^2}{2M}
+            \left[
+            2d_{ij}(R)\frac{\partial}{\partial R}
+            +D_{ij}(R)
+            \right]\chi_j,
+          \]</div>
+          <div class="math-block">\[
+            d_{ij}(R)=\langle\phi_i|\nabla_R\phi_j\rangle,
+            \qquad
+            D_{ij}(R)=\langle\phi_i|\nabla_R^2\phi_j\rangle .
+          \]</div>
+          <p>The strict BO approximation drops the off-diagonal channel couplings and often absorbs or neglects the diagonal correction. Nonadiabatic dynamics begins when those derivative terms cannot be ignored.</p>
+
+          <h2>NAC Working Formulas</h2>
+          <p>The first-derivative coupling, or NAC vector, is</p>
+          <div class="math-block">\[
+            d_{ij}(R)=\langle\phi_i(r;R)|\nabla_R\phi_j(r;R)\rangle.
+          \]</div>
+          <p>For nondegenerate adiabatic states, the Hellmann-Feynman form makes the avoided-crossing problem explicit:</p>
+          <div class="math-block">\[
+            d_{ij}(R)=
+            \frac{\langle\phi_i|\nabla_R\hat H_e|\phi_j\rangle}
+            {E_j(R)-E_i(R)},\qquad i\ne j.
+          \]</div>
+          <p>When the energy gap becomes small, derivative coupling can become large. This is the mathematical signal that the nuclei can no longer be assumed to remain on one isolated adiabatic surface.</p>
+
+          <p>Along one classical trajectory, codes often need the scalar time-derivative coupling</p>
+          <div class="math-block">\[
+            \tau_{ij}(t)=\langle\phi_i|\dot\phi_j\rangle
+            =
+            \dot R(t)\cdot d_{ij}(R(t)).
+          \]</div>
+          <p>If analytic NAC vectors are unavailable, the Hammes-Schiffer-Tully overlap formula estimates this quantity from electronic wavefunctions at two adjacent nuclear geometries. With the overlap matrix</p>
+          <div class="math-block">\[
+            S_{ij}(t,t+\Delta t)=
+            \langle\phi_i(t)|\phi_j(t+\Delta t)\rangle,
+          \]</div>
+          <p>the antisymmetric finite-difference estimate is</p>
+          <div class="math-block">\[
+            \tau_{ij}\!\left(t+\frac{\Delta t}{2}\right)
+            \approx
+            \frac{S_{ij}(t,t+\Delta t)-S_{ji}^*(t,t+\Delta t)}
+            {2\Delta t},
+          \]</div>
+          <p>which reduces to the usual antisymmetric real-state expression after phase matching. In complex or spin-orbit-coupled calculations, the conjugated overlap convention must be handled carefully. The formula is practical, but it is not a substitute for state tracking: arbitrary sign flips, root reordering, and near-degenerate subspaces can turn a clean NAC estimate into numerical noise.</p>
+
+          <h2>Classical Nuclei</h2>
+          <p>MQC replaces the nuclear wavepacket by trajectories \((R(t),P(t))\), while the electronic state is expanded along each moving path:</p>
+          <div class="math-block">\[
+            |\psi_e(t)\rangle=\sum_j c_j(t)|\phi_j(R(t))\rangle.
+          \]</div>
+          <p>In an adiabatic representation, the electronic coefficients obey</p>
+          <div class="math-block">\[
+            \dot c_j=
+            -\frac{i}{\hbar}E_j(R)c_j
+            -\sum_k \dot R\cdot d_{jk}(R)c_k.
+          \]</div>
+          <p>The first term is phase accumulation on the adiabatic energy; the second term transfers amplitude when the trajectory crosses a region with nonzero derivative coupling. The remaining question is how the classical nuclei feel the electronic state. Different MQC methods answer that closure differently.</p>
+
+          <h2>Two Closures</h2>
+          <p>Ehrenfest dynamics uses a mean force. In a two-state adiabatic model, the force has the schematic form</p>
+          <div class="math-block">\[
+            F_{\mathrm{Eh}} =
+            \rho_{00}F_0+\rho_{11}F_1
+            +2\,\mathrm{Re}\!\left[\rho_{01}d_{01}\right](E_1-E_0),
+            \qquad
+            \rho_{ij}=c_i c_j^*.
+          \]</div>
+          <p>This is smooth and deterministic, but a single trajectory cannot split into distinct nuclear branches after the electronic wavepacket separates.</p>
+          <p>Fewest-switches surface hopping instead keeps one active adiabatic surface for each trajectory. The electronic amplitudes still evolve continuously, but nuclear forces come from the active state. Stochastic hops are chosen so that the ensemble of active states follows the electronic population flow as closely as possible. This gives a branching picture, but it introduces practical questions: velocity rescaling, frustrated hops, decoherence corrections, detailed balance, and ensemble convergence.</p>
+
+          <h2>Useful Domain</h2>
+          <p>MQC is most useful when electronic transitions are essential but the nuclear motion is sufficiently classical over the time scale of interest. It is a working language for direct dynamics because forces, energies, and nonadiabatic couplings can be evaluated locally along trajectories rather than precomputing global potential energy surfaces.</p>
+          <p>The limitations are equally important. Classical nuclei miss nuclear tunneling, zero-point leakage control, nuclear interference, and exact wavepacket splitting. Electronic coherence often persists too long unless a decoherence correction or a more elaborate trajectory-coupled method is used. The following notes use Tully's one-dimensional avoided-crossing models precisely because they expose these issues without the clutter of a full electronic-structure calculation.</p>
+
+          <h2>References</h2>
+          <ul>
+            <li>Crespo-Otero and Barbatti, <em>Chem. Rev.</em> 118, 7026 (2018).</li>
+            <li>Nelson, White, Bjorgaard, Sifain, Zhang, Nebgen, Fernandez-Alberti, Mozyrsky, Roitberg, and Tretiak, <em>Chem. Rev.</em> 120, 2215 (2020).</li>
+            <li>Tully, <em>J. Chem. Phys.</em> 93, 1061 (1990).</li>
+            <li>Hammes-Schiffer and Tully, <em>J. Chem. Phys.</em> 101, 4657 (1994).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="mqc-series-map">
+            <h2 id="mqc-series-map">MQC series map</h2>
+            <ol class="series-list">
+              <li><a href="mqc-background.html">Part 0: Background and Working Assumptions</a> - BO approximation, Born-Huang couplings, NAC/HST formulas, MQC closures, and limitations.</li>
+              <li><a href="fssh-tully-benchmark.html">Part I: Fewest-Switches Surface Hopping</a> - active surfaces, stochastic hops, velocity rescaling, and a Tully SAC branch benchmark.</li>
+              <li><a href="ehrenfest-tully-benchmark.html">Part II: Ehrenfest Mean-Field Dynamics</a> - mean-field forces, continuous electronic populations, and the same Tully SAC scan.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

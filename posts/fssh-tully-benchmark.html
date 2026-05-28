@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="MQC series part I: fewest-switches surface hopping, active surfaces, hop probabilities, velocity rescaling, and a Tully simple avoided crossing benchmark.">
+    <title>MQC I: Fewest-Switches Surface Hopping | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">MQC Series - Part I</p>
+          <h1>Fewest-Switches Surface Hopping</h1>
+          <p class="post-meta">2026.05.28 - FSSH / Nonadiabatic Coupling / Tully Benchmark</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="MQC series navigation">
+            <a href="mqc-background.html">0. Background</a>
+            <a href="fssh-tully-benchmark.html">I. FSSH</a>
+            <a href="ehrenfest-tully-benchmark.html">II. Ehrenfest</a>
+          </nav>
+
+          <p class="lead">
+            Part 0 introduced MQC as a closure problem: the electrons have amplitudes, but the nuclei need a force. Fewest-switches surface hopping keeps each trajectory on one active adiabatic surface, then uses stochastic hops to make the ensemble follow electronic population transfer with as few switches as possible.
+          </p>
+
+          <h2>Active-Surface Picture</h2>
+          <p>For one trajectory, the electronic state is still propagated in the adiabatic basis,</p>
+          <div class="math-block">\[
+            \dot c_j=
+            -\frac{i}{\hbar}E_j(R)c_j
+            -\sum_k \dot R\cdot d_{jk}(R)c_k.
+          \]</div>
+          <p>The nuclei, however, feel only the active state \(a\):</p>
+          <div class="math-block">\[
+            \dot R=\frac{P}{M},
+            \qquad
+            \dot P=-\nabla_R E_a(R).
+          \]</div>
+          <p>Electronic amplitudes and active surfaces are therefore different bookkeeping layers. The coefficients describe coherent population flow; the active state determines the classical force used by that trajectory.</p>
+
+          <h2>Fewest-Switches Rule</h2>
+          <p>Let \(\rho_{ij}=c_i c_j^*\). Under the real two-state convention used in the benchmark script, the population flux from active state \(a\) toward state \(b\) is</p>
+          <div class="math-block">\[
+            J_{a\to b}=2\,\mathrm{Re}\!\left[
+            \rho_{ab}\,\dot R\cdot d_{ab}
+            \right].
+          \]</div>
+          <p>The attempted hop probability during one time step is the positive part of this outgoing flux divided by the active population:</p>
+          <div class="math-block">\[
+            g_{a\to b}=
+            \max\left(0,\frac{\Delta t\,J_{a\to b}}{\rho_{aa}}\right).
+          \]</div>
+          <p>If a hop is selected, the nuclear momentum is rescaled so that the classical total energy is conserved:</p>
+          <div class="math-block">\[
+            \frac{P'^2}{2M}+E_b(R)
+            =
+            \frac{P^2}{2M}+E_a(R).
+          \]</div>
+          <p>If the kinetic energy is insufficient for an upward hop, the hop is frustrated and the trajectory remains on its original surface. In multidimensional simulations, this rescaling is normally done along the nonadiabatic-coupling direction.</p>
+
+          <h2>Tully SAC Model</h2>
+          <p>The test uses Tully's simple avoided crossing in a diabatic basis,</p>
+          <div class="math-block">\[
+            V(x)=
+            \begin{pmatrix}
+            V_{11}(x) & V_{12}(x)\\
+            V_{12}(x) & -V_{11}(x)
+            \end{pmatrix},
+          \]</div>
+          <div class="math-block">\[
+            V_{11}(x)=
+            \begin{cases}
+            A[1-\exp(-Bx)], & x>0,\\
+            -A[1-\exp(Bx)], & x<0,
+            \end{cases}
+            \qquad
+            V_{12}(x)=C\exp(-Dx^2),
+          \]</div>
+          <p>with \(A=0.01\), \(B=1.6\), \(C=0.005\), \(D=1.0\), \(M=2000\), and \(\hbar=1\). The trajectory starts on the lower adiabatic state at \(x=-10\). The benchmark scans initial momentum \(p_0=10,14,18,20,22,26,30\), runs 50 trajectories at each momentum, and stops once the trajectory leaves the interaction region.</p>
+
+          <h2>DVR Reference</h2>
+          <p>The black reference curve is not another MQC trajectory. It is obtained by diagonalizing a two-channel sinc-DVR Hamiltonian on a finite grid,</p>
+          <div class="math-block">\[
+            H_{\mathrm{DVR}}=
+            \begin{pmatrix}
+            T_{\mathrm{DVR}}+V_{11}(x_i)\delta_{ij} & V_{12}(x_i)\delta_{ij}\\
+            V_{12}(x_i)\delta_{ij} & T_{\mathrm{DVR}}+V_{22}(x_i)\delta_{ij}
+            \end{pmatrix},
+          \]</div>
+          <p>then propagating an initial Gaussian wavepacket centered at \(x_0=-10\), width \(\sigma=1\), and mean momentum \(p_0\) by exact phase factors in that finite Hilbert space. The final wavepacket is projected onto local adiabatic states and integrated on the transmitted and reflected sides. This gives an exact quantum reference for the chosen DVR grid and initial packet, not a point-particle limit.</p>
+
+          <h2>Result</h2>
+          <p>In this momentum window every FSSH trajectory exits on the transmitted side, so the useful diagnostic is not reflection but which adiabatic branch is occupied after the crossing. At \(p_0=20\), the final FSSH branch probabilities are \(T_0=0.560\) and \(T_1=0.440\), while the DVR reference gives \(T_1=0.493\) with negligible reflection. As \(p_0\) increases, the upper transmitted branch becomes more likely; the mean final electronic upper population rises from 0.166 at \(p_0=10\) to 0.717 at \(p_0=30\). The residual oscillation in the active-state probabilities is finite-ensemble noise from the compact 50-trajectory run.</p>
+          <figure>
+            <img src="../assets/img/mqc-series/fssh-tully-sac.png" alt="Fewest-switches surface hopping benchmark on Tully simple avoided crossing">
+            <figcaption>FSSH benchmark on Tully's simple avoided crossing. Left: horizontal axis is nuclear coordinate \(x\); vertical axis is energy in atomic units, with the derivative coupling scaled onto the same axis. Blue and red dashed curves are diabatic \(V_{11}\) and \(V_{22}\), black and gray solid curves are adiabatic energies \(E_0\) and \(E_1\), and the green curve is \(d_{01}/160\). Right: horizontal axis is initial momentum \(p_0\); vertical axis is probability. Blue circles are FSSH transmitted lower-surface active-state probability, red squares are FSSH transmitted upper-surface probability, gray triangles are FSSH total reflection probability, black diamonds are the DVR exact transmitted upper probability for the Gaussian packet, gray inverted triangles are the DVR exact reflection probability, and the green dotted curve is the mean final electronic upper population \(|c_1|^2\). The main comparison is that FSSH tracks the DVR upper-branch trend while retaining stochastic active-state noise.</figcaption>
+          </figure>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/mqc/fssh_tully_sac.py">fssh_tully_sac.py</a> runs the FSSH ensemble, applies energy-conserving hops, writes CSV tables, and renders the benchmark figure.</li>
+            <li><a href="../assets/code/mqc/dvr_tully_sac_reference.py">dvr_tully_sac_reference.py</a> builds and diagonalizes the finite sinc-DVR two-channel Hamiltonian used for the exact quantum reference.</li>
+            <li><a href="../assets/code/mqc/tully_common.py">tully_common.py</a> defines the Tully SAC potential, adiabatic energies, forces, derivative coupling, and shared electronic propagation helpers.</li>
+            <li><a href="../assets/img/mqc-series/fssh-tully-sac.csv">fssh-tully-sac.csv</a> stores the momentum scan, branch probabilities, mean hop counts, and final electronic populations.</li>
+            <li><a href="../assets/img/mqc-series/fssh-tully-sac-summary.csv">fssh-tully-sac-summary.csv</a> stores the compact numerical values quoted in the text.</li>
+            <li><a href="../assets/img/mqc-series/dvr-tully-sac-reference.csv">dvr-tully-sac-reference.csv</a> stores the DVR transmitted/reflected lower/upper adiabatic probabilities.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Tully, <em>J. Chem. Phys.</em> 93, 1061 (1990).</li>
+            <li>Crespo-Otero and Barbatti, <em>Chem. Rev.</em> 118, 7026 (2018).</li>
+            <li>Nelson, White, Bjorgaard, Sifain, Zhang, Nebgen, Fernandez-Alberti, Mozyrsky, Roitberg, and Tretiak, <em>Chem. Rev.</em> 120, 2215 (2020).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="mqc-series-map">
+            <h2 id="mqc-series-map">MQC series map</h2>
+            <ol class="series-list">
+              <li><a href="mqc-background.html">Part 0: Background and Working Assumptions</a> - BO approximation, Born-Huang couplings, NAC/HST formulas, MQC closures, and limitations.</li>
+              <li><a href="fssh-tully-benchmark.html">Part I: Fewest-Switches Surface Hopping</a> - active surfaces, stochastic hops, velocity rescaling, and a Tully SAC branch benchmark.</li>
+              <li><a href="ehrenfest-tully-benchmark.html">Part II: Ehrenfest Mean-Field Dynamics</a> - mean-field forces, continuous electronic populations, and the same Tully SAC scan.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

@@ -90,7 +90,7 @@
           \]</div>
           <p>They satisfy \(P_g^2=P_g\), \(P_e^2=P_e\), and \(P_g+P_e=I\) up to numerical roundoff. This is why the implementation can construct \(P_e\) either explicitly or as \(I-P_g\).</p>
 
-          <h2>Population Kubo formula</h2>
+          <h2>Population Kubo Formula</h2>
           <p>Let \(h_1=\Theta(\hat x-s_1)\otimes I_{\mathrm{el}}\) be a side operator and</p>
           <div class="math-block">\[
             F_1=\frac{i}{\hbar}[H,h_1]
@@ -113,7 +113,25 @@
             e^{-iHt/\hbar}
             \right].
           \]</div>
-          <p>Read literally, this is not the ordinary \(x-x\) Kubo correlation from Part V and not exactly the flux-side plateau from Part VI. It is a channel-resolved transfer diagnostic: thermal weighting first, excited-channel flux selection second, and ground-channel population observation last.</p>
+          <p>Read literally, this is not the ordinary \(x-x\) Kubo correlation from Part V and not a population curve for a single prepared wavepacket. It is a flux-conditioned population diagnostic: thermal weighting first, excited-channel incoming-flux selection second, and ground-channel population observation last.</p>
+
+          <h2>Relation to \(pop(t)\)</h2>
+          <p>The CSSH paper uses this object as the quantum benchmark for the time-dependent ground-state population after excited-state incoming flux. In the corresponding FSSH/CSSH ensemble, trajectories are initialized on the excited adiabatic state with kinetic energies sampled from the thermal flux distribution, and the classical analogue is</p>
+          <div class="math-block">\[
+            C_{\mathrm{pop}}^{\mathrm{cl}}(t;\beta)
+            =
+            \frac{1}{2\pi\hbar\beta}
+            \frac{1}{N}
+            \sum_{i=1}^N \delta_{a_i(t),0},
+          \]</div>
+          <p>where \(\delta_{a_i(t),0}=1\) if trajectory \(i\) is on the ground adiabatic state at time \(t\), and 0 otherwise. Therefore the population-like observable is</p>
+          <div class="math-block">\[
+            P_g^{\mathrm{flux}}(t)
+            =
+            2\pi\hbar\beta\,
+            C_{\mathrm{pop}}(t;\beta),
+          \]</div>
+          <p>with the same energy-zero and unit convention used in the source calculation. This scaled quantity is what should be compared with \(pop(t)\) from FSSH/CSSH trajectories. The unscaled Kubo trace has units and thermal prefactors; plotting it directly gives the correct correlation shape but not the numerical population range.</p>
 
           <h2>Spectral Kubo dressing</h2>
           <p>The imaginary-time integral is handled with the same energy-basis kernel used earlier in the series. If \(H|n\rangle=E_n|n\rangle\), define</p>
@@ -126,25 +144,30 @@
           \]</div>
           <p>The implementation first Kubo-dresses \(P_eF_1P_e\) with this kernel, then evaluates the real-time trace. This keeps the thermal part tied to the Hermitian physical Hamiltonian.</p>
 
-          <h2>Absorber and Schur propagation</h2>
+          <h2>Absorber, Schur Propagation, and Integration</h2>
           <p>As in the flux-side note, a complex absorbing potential is used only for the real-time propagation:</p>
           <div class="math-block">\[
             H_{\mathrm{abs}}=H-i\eta W(x).
           \]</div>
           <p>The absorber prevents boundary reflections from returning to the physical region during long propagation. Since \(H_{\mathrm{abs}}\) is non-Hermitian, the code uses a complex Schur form \(H_{\mathrm{abs}}=ZTZ^\dagger\) and propagates with \(e^{-iTt}\). This avoids depending on unstable eigenvectors of a non-normal matrix.</p>
+          <p>In practice, the stable population curve is obtained from the time derivative of \(P_g(t)\). Define</p>
+          <div class="math-block">\[
+            F_g=\frac{i}{\hbar}[H,P_g].
+          \]</div>
+          <p>The code evaluates the Kubo correlation between the dressed excited-channel flux and \(F_g(t)\), then integrates it in time. This is the population analogue of the flux-side construction: the derivative is local in the active transfer region, while the integrated and scaled curve gives the final probability plateau.</p>
 
           <h2>Numerical setup</h2>
           <p>The production run behind the figures uses \(m=2000\), \(T=300\) K, \(A=0.01\), \(B=1.6\), \(C=0.002\), \(D=1.0\), a displaced dividing surface with \(d=10\), and a dense sinc-DVR grid. In the convergence table below, \(N_p\) denotes the half-grid count in the source code, so the coordinate grid has \(2N_p\) points before the two electronic states are added.</p>
 
           <h2>Results</h2>
           <figure>
-            <img src="../assets/img/dvr-series/dvr6-population-kubo/population-kubo-cpop.png" alt="Real part of excited-ground Kubo population correlation">
-            <figcaption>Real part of \(C_{\mathrm{pop}}^{\mathrm{Kubo}}(t;\beta)\). The horizontal axis is time \(t\) in the source-code time units. The vertical axis is the unnormalized \(C_{\mathrm{pop}}\), with the plot using a \(10^{-9}\) scale factor indicated at the upper left. The blue solid curve is \(\operatorname{Re} C_{\mathrm{pop}}\): it starts near zero, rises as the excited-channel incoming flux reaches the coupling region, peaks around \(t\approx 1.2\times10^4\), and then decays as the selected transfer event leaves the observation window.</figcaption>
+            <img src="../assets/img/dvr-series/dvr6-population-kubo/population-kubo-scaled-pop.png" alt="Scaled excited-ground Kubo population curve">
+            <figcaption>Scaled flux-conditioned ground-state population from the excited-ground Kubo calculation. The horizontal axis is time \(t\) in the source-code time units. The vertical axis is \(P_g^{\mathrm{flux}}(t)\), obtained by integrating the Kubo correlation with \(F_g=dP_g/dt\) and applying the \(2\pi\hbar\beta\) population normalization used in the CSSH comparison. The blue solid curve rises as the excited-channel incoming flux reaches the nonadiabatic region and plateaus near 0.72, so the plotted values are now in the same numerical range as a trajectory population \(pop(t)\).</figcaption>
           </figure>
 
           <figure>
             <img src="../assets/img/dvr-series/dvr6-population-kubo/population-kubo-integral.png" alt="Accumulated flux-side-like signal for the excited-ground Kubo calculation">
-            <figcaption>Accumulated signal from the companion flux expression. The horizontal axis is time \(t\); the vertical axis is labelled \(C_{fs}\) in the source plot and uses a \(10^{-5}\) scale factor. The blue solid curve is the real accumulated correlation. Its plateau near \(1.8\times10^{-5}\) is the rate-like summary obtained after the transient transfer contribution has been integrated.</figcaption>
+            <figcaption>Unscaled accumulated Kubo signal before population normalization. The horizontal axis is time \(t\); the vertical axis is labelled \(C_{fs}\) in the source plot and uses a \(10^{-5}\) scale factor. The blue solid curve is the real integrated correlation before the \(2\pi\hbar\beta\) and source-code thermal-energy scaling are applied. It is useful as a numerical diagnostic, but it should not be read directly as \(pop(t)\).</figcaption>
           </figure>
 
           <h2>Convergence checks</h2>
@@ -185,12 +208,20 @@ dressed_excited_flux = kubo_dress_operator(hamiltonian, excited_flux, beta)
 c_pop = schur_correlation(hamiltonian_abs, dressed_excited_flux, pg, time)
 ground_flux = flux_operator(hamiltonian, pg)
 c_flux = schur_correlation(hamiltonian_abs, dressed_excited_flux, ground_flux, time)
-c_integrated = cumulative_trapezoid(c_flux, time)</code></pre>
+c_integrated = cumulative_trapezoid(c_flux, time)
+scaled_population = 2 * np.pi * beta * c_integrated.real  # hbar = 1</code></pre>
           <ul class="code-list">
             <li><a href="../assets/code/dvr/dvr_excited_ground_kubo.py">dvr_excited_ground_kubo.py</a> is the complete executable script for this note. The default settings are intentionally smaller than the production run so it can be used as a laptop-scale smoke test.</li>
             <li><a href="../assets/code/dvr/dvr_kubo_minimal.py">dvr_kubo_minimal.py</a> contains the shared DVR, side, flux, and Kubo routines used earlier in the series.</li>
             <li><a href="../assets/code/dvr/source/flux-side-kubo/utils/quantum.py">source/flux-side-kubo/utils/quantum.py</a> preserves the flux-side quantum utility routines from the original working folder.</li>
+            <li><a href="../assets/img/dvr-series/dvr6-population-kubo/population-kubo-scaled-pop.csv">population-kubo-scaled-pop.csv</a> stores the scaled population curve used in the updated result figure.</li>
           </ul>
+
+          <h2>References and Acknowledgement</h2>
+          <ul>
+            <li>Zeng, Li, and Fang, <em>J. Chem. Phys.</em> 163, 224126 (2025).</li>
+          </ul>
+          <p>I thank Jia-Xi Zeng of Fudan University for helpful code support.</p>
 
           <section class="series-footer" aria-labelledby="dvr-series-map">
             <h2 id="dvr-series-map">DVR series map</h2>

@@ -1,0 +1,2 @@
+n_grid,x_min,x_max,x0,sigma,p20_T_upper_exact,p20_R_total_exact,p20_center_residual,p20_norm
+768,-32.0,32.0,-10.0,1.0,0.49299203562125277,3.882662390810547e-08,7.090596302163512e-28,0.9999999999999997
