@@ -1,0 +1,13 @@
+quantity,value
+outer_dt,0.04
+n_steps,600
+largest_one_step_stable_P,32
+first_one_step_unstable_P,64
+nm_fft_P512_max_rel_error,1.0715009516e-13
+bead_one_step_P512_stable,0
+bead_auto_P512_nmts,26
+bead_auto_P512_max_rel_error,7.6154456691e-02
+bead_auto_P512_runtime_seconds,0.4069482002
+nm_fft_P512_runtime_seconds,0.0482783001
+best_subcycling_P128_nmts,24
+best_subcycling_P128_max_rel_error,6.5796134944e-03

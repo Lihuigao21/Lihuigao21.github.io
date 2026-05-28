@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="PIMD series part VI: normal-mode and bead-coordinate free ring-polymer propagation, stability limits, subcycling convergence, and efficiency benchmarks.">
+    <title>PIMD VI: Normal-Mode Free Propagation | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">PIMD Series - Part VI</p>
+          <h1>Normal-Mode Free Propagation</h1>
+          <p class="post-meta">2026.05.28 - Normal Modes / Free Ring Polymer / Stability Benchmark</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="PIMD series navigation">
+            <a href="pimd-ring-polymer-basics.html">I. Ring-Polymer Basics</a>
+            <a href="pimd-nvt-gle-piglet.html">II. NVT and GLE</a>
+            <a href="cayley-transform-ring-polymer.html">III. Cayley Stability</a>
+            <a href="pimc-sho-metropolis.html">IV. PIMC Sampling</a>
+            <a href="rpmd-sho-correlation.html">V. From PIMD to RPMD</a>
+            <a href="normal-mode-free-ring-polymer.html">VI. Normal-Mode Free Propagation</a>
+          </nav>
+
+          <p class="lead">
+            Part V used normal modes to propagate an RPMD harmonic benchmark. This note steps back to the integrator itself. The i-PI normal-mode code diagonalizes the free ring-polymer spring matrix and propagates each mode analytically; the alternative bead-coordinate route integrates the same spring force by velocity Verlet, often with subcycling. The difference is small at low bead number, but it becomes the controlling stability issue when \(P\) is large.
+          </p>
+
+          <h2>Free Ring-Polymer Block</h2>
+          <p>In a split PIMD or RPMD integrator, the stiff part is the free ring-polymer Hamiltonian</p>
+          <div class="math-block">\[
+            H_P^0(q,p)=
+            \sum_{j=1}^{P}\frac{p_j^2}{2m}
+            +\frac{1}{2}m\omega_P^2
+            \sum_{j=1}^{P}(q_{j+1}-q_j)^2,
+            \qquad
+            \omega_P=\frac{P}{\beta\hbar}.
+          \]</div>
+          <p>The spring matrix is circulant. Its Fourier eigenvectors diagonalize the internal motion and give</p>
+          <div class="math-block">\[
+            \omega_k=
+            2\omega_P\sin\left(\frac{k\pi}{P}\right),
+            \qquad k=0,\ldots,P-1.
+          \]</div>
+          <p>In normal-mode coordinates, the free step is just independent harmonic motion. For \(\omega_k>0\),</p>
+          <div class="math-block">\[
+            \begin{bmatrix}
+            Q_k(t+\Delta t)\\
+            P_k(t+\Delta t)
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            \cos\theta_k & \sin\theta_k/(m\omega_k)\\
+            -m\omega_k\sin\theta_k & \cos\theta_k
+            \end{bmatrix}
+            \begin{bmatrix}
+            Q_k(t)\\
+            P_k(t)
+            \end{bmatrix},
+            \qquad
+            \theta_k=\omega_k\Delta t .
+          \]</div>
+          <p>The centroid mode has \(\omega_0=0\) and drifts freely. This is the idea behind i-PI's `normalmodes.py`: transform to normal modes by FFT or by an explicit matrix, build the per-mode propagator, apply it, and transform back.</p>
+
+          <h2>Bead-Coordinate Alternative</h2>
+          <p>The same free spring block can be integrated directly in bead coordinates:</p>
+          <div class="math-block">\[
+            F_j^{\mathrm{spring}}=
+            -m\omega_P^2(2q_j-q_{j+1}-q_{j-1}).
+          \]</div>
+          <p>A bead-coordinate velocity-Verlet substep is</p>
+          <div class="math-block">\[
+            p\leftarrow p+\frac{\delta t}{2}F^{\mathrm{spring}}(q),
+            \qquad
+            q\leftarrow q+\delta t\,p/m,
+            \qquad
+            p\leftarrow p+\frac{\delta t}{2}F^{\mathrm{spring}}(q).
+          \]</div>
+          <p>This is simple and avoids transforms. The price is that Verlet must resolve the highest spring frequency. Since \(\omega_{\max}\approx2\omega_P=2P/(\beta\hbar)\), the linear stability condition is roughly</p>
+          <div class="math-block">\[
+            \delta t\,\omega_{\max}<2
+            \quad\Rightarrow\quad
+            \delta t\lesssim\frac{\beta\hbar}{P}.
+          \]</div>
+          <p>Therefore, at fixed outer timestep \(\Delta t\), the bead-coordinate route needs a subcycle count \(n_{\mathrm{mts}}\) that grows approximately linearly with \(P\). This is the role of the Cartesian `free_babstep` style path in the reference i-PI code.</p>
+
+          <h2>Expected Limits</h2>
+          <ul>
+            <li>At \(P=1\), there are no internal modes, so normal-mode and bead-coordinate propagation are the same classical free drift.</li>
+            <li>At small \(P\), bead-coordinate Verlet can be cheaper because it avoids FFTs and a single step may still be stable.</li>
+            <li>At large \(P\), the largest spring frequency grows with \(P\). Fixed-step bead-coordinate Verlet either becomes inaccurate or unstable.</li>
+            <li>Subcycling restores stability, but its required \(n_{\mathrm{mts}}\) also grows with \(P\), so the apparent low-\(P\) efficiency advantage can disappear.</li>
+            <li>Normal-mode propagation removes the spring stiffness from the timestep restriction. It does not remove physical-force timestep limits, and Part III still matters for exact-free-step resonance and Cayley stabilization.</li>
+          </ul>
+
+          <h2>Workflow</h2>
+          <ol>
+            <li>Use the free ring-polymer Hamiltonian only, with \(m=\hbar=1\), \(\beta=2\), outer timestep \(\Delta t=0.04\), and 600 outer steps.</li>
+            <li>Initialize a deterministic high-mode-rich bead configuration and momentum for each bead count.</li>
+            <li>Compare three propagators: FFT normal-mode exact propagation, bead-coordinate Verlet with \(n_{\mathrm{mts}}=1\), and bead-coordinate Verlet with automatic subcycling.</li>
+            <li>Scan \(P=8,16,32,64,128,256,512\), record maximum relative free-ring-polymer energy error, and time the completed trajectories.</li>
+            <li>At \(P=128\), scan \(n_{\mathrm{mts}}\) directly to see how bead-coordinate convergence and runtime change.</li>
+          </ol>
+
+          <h2>Result: Bead Number Scan</h2>
+          <p>With \(\Delta t=0.04\), one-step bead-coordinate Verlet is stable through \(P=32\), but the first unstable case appears at \(P=64\). Normal-mode FFT propagation conserves the free-ring-polymer energy to roundoff; at \(P=512\), the maximum relative error is \(1.07\times10^{-13}\). The automatic bead-coordinate subcycling remains stable at high \(P\), but at \(P=512\) it uses \(n_{\mathrm{mts}}=26\), gives a maximum relative energy error of \(7.62\times10^{-2}\), and takes about \(0.407\) s for the fixed trajectory versus \(0.048\) s for the normal-mode route.</p>
+          <figure>
+            <img src="../assets/img/pimd-series/normal-mode-vs-bead.png" alt="Normal-mode and bead-coordinate free ring-polymer propagation benchmark">
+            <figcaption>Free ring-polymer propagation benchmark with \(m=\hbar=1\), \(\beta=2\), \(\Delta t=0.04\), and 600 outer steps. Left: horizontal axis is bead number \(P\); vertical axis is the maximum relative error in the conserved free-ring-polymer Hamiltonian. Black circles are FFT normal-mode exact propagation, red squares are bead-coordinate velocity Verlet with one outer step and no subcycling, and blue triangles are bead-coordinate Verlet with automatic \(n_{\mathrm{mts}}\) chosen from the highest spring frequency. The gray dotted line marks 100% relative energy error. Right: runtime for completed fixed-length trajectories. The red timing curve stops after \(P=32\) because the larger-\(P\) one-step bead trajectories blow up early and are not meaningful speed measurements.</figcaption>
+          </figure>
+
+          <h2>Result: Subcycling Scan</h2>
+          <p>At \(P=128\), bead-coordinate Verlet with \(n_{\mathrm{mts}}=1\) or 2 is unstable. The linear stability boundary predicts that \(n_{\mathrm{mts}}\ge3\) is needed for this timestep. Increasing \(n_{\mathrm{mts}}\) then reduces the energy error, but the cost grows almost linearly: the best tested case, \(n_{\mathrm{mts}}=24\), lowers the maximum relative energy error to \(6.58\times10^{-3}\), while remaining much slower than the exact normal-mode free step.</p>
+          <figure>
+            <img src="../assets/img/pimd-series/normal-mode-vs-bead-subcycling.png" alt="Subcycling convergence for bead-coordinate free ring-polymer propagation">
+            <figcaption>Subcycling convergence at \(P=128\). Left: horizontal axis is bead-coordinate subcycle count \(n_{\mathrm{mts}}\); vertical axis is maximum relative free-ring-polymer energy error. The red curve is bead-coordinate velocity Verlet, the black dashed horizontal line is the FFT normal-mode energy error for the same trajectory, and the gray dotted vertical line is the approximate Verlet linear-stability boundary. Right: runtime for completed bead-coordinate trajectories as \(n_{\mathrm{mts}}\) increases; the black dashed line is the normal-mode runtime. Unstable bead-coordinate runs are omitted from the runtime panel.</figcaption>
+          </figure>
+
+          <h2>Interpretation</h2>
+          <p>The test mostly confirms the practical intuition, with one correction. At low bead count, bead-coordinate evolution can indeed be cheaper, and for \(P=8\) or \(16\) its errors may be acceptable for a loose free-step tolerance. But the advantage is conditional: as \(P\) grows, the spring frequency grows with it, so fixed-step bead-coordinate Verlet first becomes inaccurate and then unstable. Subcycling can recover robustness, but it turns the cost into a stiffness-management problem. Normal modes are the cleaner limit: the free spring block is solved analytically, and the remaining timestep questions come from the physical potential, thermostat choices, and the resonance issue discussed in Part III.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/pimd/normal_mode_vs_bead.py">normal_mode_vs_bead.py</a> implements FFT normal-mode propagation, bead-coordinate Verlet propagation, bead-number scans, subcycling scans, figures, and CSV tables.</li>
+            <li><a href="../assets/img/pimd-series/normal-mode-vs-bead.csv">normal-mode-vs-bead.csv</a> stores the bead-number scan: method, \(P\), \(n_{\mathrm{mts}}\), maximum energy error, runtime, and stability flag.</li>
+            <li><a href="../assets/img/pimd-series/normal-mode-vs-bead-subcycling.csv">normal-mode-vs-bead-subcycling.csv</a> stores the \(P=128\) subcycling scan.</li>
+            <li><a href="../assets/img/pimd-series/normal-mode-vs-bead-summary.csv">normal-mode-vs-bead-summary.csv</a> stores the compact numerical conclusions used in the text.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Ceriotti, More, and Manolopoulos, <em>Comput. Phys. Commun.</em> 185, 1019 (2014).</li>
+            <li>Tuckerman, Berne, Martyna, and Klein, <em>J. Chem. Phys.</em> 99, 2796 (1993).</li>
+            <li>Korol, Bou-Rabee, and Miller, <em>J. Chem. Phys.</em> 151, 124103 (2019).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="pimd-series-map">
+            <h2 id="pimd-series-map">PIMD series map</h2>
+            <ol class="series-list">
+              <li><a href="pimd-ring-polymer-basics.html">Part I: Ring-Polymer Basics</a> - path-integral isomorphism, normal modes, estimators, and the SHO convergence test.</li>
+              <li><a href="pimd-nvt-gle-piglet.html">Part II: NVT Thermostats and GLE</a> - PILE, GLE, PIGLET-style covariance shaping, and sampling diagnostics.</li>
+              <li><a href="cayley-transform-ring-polymer.html">Part III: Cayley Stability</a> - why exact free ring-polymer propagation can be unstable and how the Cayley step fixes it.</li>
+              <li><a href="pimc-sho-metropolis.html">Part IV: Path-Integral Monte Carlo</a> - local Metropolis bead moves, constrained-PIMC context, and an SHO observable mean.</li>
+              <li><a href="rpmd-sho-correlation.html">Part V: From PIMD to RPMD</a> - PIMC-initialized RPMD trajectories and an exact SHO \(q\)-\(q\) Kubo benchmark.</li>
+              <li><a href="normal-mode-free-ring-polymer.html">Part VI: Normal-Mode Free Propagation</a> - normal-mode and bead-coordinate free spring propagation, stability limits, and subcycling costs.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

@@ -11,6 +11,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- sitemap.xml
 |-- posts
 |   |-- trpmd-qtip4pf-water-ir-spectrum.html
+|   |-- normal-mode-free-ring-polymer.html
 |   |-- rpmd-sho-correlation.html
 |   |-- pimc-sho-metropolis.html
 |   |-- pimd-ring-polymer-basics.html
@@ -35,7 +36,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |   |-- pimd_sho_benchmark.py
 |   |   |   |-- pimd_gle_piglet_toy.py
 |   |   |   |-- pimc_sho_metropolis.py
-|   |   |   `-- rpmd_sho_correlation.py
+|   |   |   |-- rpmd_sho_correlation.py
+|   |   |   `-- normal_mode_vs_bead.py
 |   |   |-- matsubara
 |   |   |   |-- matsubara_lscivr_benchmark.py
 |   |   |   |-- matsubara_mode_filter.py
@@ -88,6 +90,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 ## Published Notes
 
 - `posts/trpmd-qtip4pf-water-ir-spectrum.html`
+- `posts/normal-mode-free-ring-polymer.html`
 - `posts/rpmd-sho-correlation.html`
 - `posts/pimc-sho-metropolis.html`
 - `posts/pimd-ring-polymer-basics.html`
