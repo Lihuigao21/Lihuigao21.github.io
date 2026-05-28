@@ -1,0 +1,9 @@
+quantity,value,standard_error
+pimc_potential_mean,0.9902100283,0.0068420046
+finite_p_potential,0.9929577704,0
+exact_quantum_potential,1.0006711504,0
+pimc_q2_mean,0.1237762535,0.0008552506
+finite_p_q2,0.1241197213,0
+exact_quantum_q2,0.1250838938,0
+accept_rate,0.4480269531,0
+final_step_size,0.5879804864,0

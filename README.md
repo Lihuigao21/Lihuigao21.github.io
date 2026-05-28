@@ -11,6 +11,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- sitemap.xml
 |-- posts
 |   |-- trpmd-qtip4pf-water-ir-spectrum.html
+|   |-- rpmd-sho-correlation.html
+|   |-- pimc-sho-metropolis.html
 |   |-- pimd-ring-polymer-basics.html
 |   |-- pimd-nvt-gle-piglet.html
 |   |-- matsubara-lscivr-phase-space.html
@@ -31,7 +33,9 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- code
 |   |   |-- pimd
 |   |   |   |-- pimd_sho_benchmark.py
-|   |   |   `-- pimd_gle_piglet_toy.py
+|   |   |   |-- pimd_gle_piglet_toy.py
+|   |   |   |-- pimc_sho_metropolis.py
+|   |   |   `-- rpmd_sho_correlation.py
 |   |   |-- matsubara
 |   |   |   |-- matsubara_lscivr_benchmark.py
 |   |   |   |-- matsubara_mode_filter.py
@@ -84,6 +88,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 ## Published Notes
 
 - `posts/trpmd-qtip4pf-water-ir-spectrum.html`
+- `posts/rpmd-sho-correlation.html`
+- `posts/pimc-sho-metropolis.html`
 - `posts/pimd-ring-polymer-basics.html`
 - `posts/pimd-nvt-gle-piglet.html`
 - `posts/cayley-transform-ring-polymer.html`

@@ -1,0 +1,11 @@
+quantity,value,standard_error
+n_paths,48000,0
+n_beads,32,0
+pimc_accept_rate,0.4483061458,0
+pimc_final_step_size,0.5887102748,0
+centroid_variance_pimc,0.0310435408,0.0007279312
+centroid_variance_exact,0.0312500000,0
+correlation_c0_rpmd,0.0310435408,0
+correlation_c0_exact,0.0312500000,0
+rms_correlation_error,0.0001753639,0
+max_abs_correlation_error,0.0002451540,0

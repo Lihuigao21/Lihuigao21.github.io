@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="PIMD series part IV: path-integral Monte Carlo, local Metropolis bead moves, constrained-path context, and a harmonic-oscillator observable benchmark.">
+    <title>PIMD IV: Path-Integral Monte Carlo | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">PIMD Series - Part IV</p>
+          <h1>Path-Integral Monte Carlo</h1>
+          <p class="post-meta">2026.05.28 - PIMC / Metropolis / SHO Benchmark</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="PIMD series navigation">
+            <a href="pimd-ring-polymer-basics.html">I. Ring-Polymer Basics</a>
+            <a href="pimd-nvt-gle-piglet.html">II. NVT and GLE</a>
+            <a href="cayley-transform-ring-polymer.html">III. Cayley Stability</a>
+            <a href="pimc-sho-metropolis.html">IV. PIMC Sampling</a>
+            <a href="rpmd-sho-correlation.html">V. From PIMD to RPMD</a>
+          </nav>
+
+          <p class="lead">
+            The previous notes sampled the ring-polymer distribution by molecular dynamics. Path-integral Monte Carlo targets the same configurational distribution with Metropolis moves instead of fictitious momenta and timesteps. This note writes the local bead update, explains where constrained PIMC enters, and checks an observable mean for a harmonic oscillator.
+          </p>
+
+          <h2>Target Distribution</h2>
+          <p>After Trotter discretization, the one-dimensional canonical partition function can be written as a configurational path integral</p>
+          <div class="math-block">\[
+            Z_P \propto \int dq_1\cdots dq_P\,
+            \exp[-S_P(q)],
+          \]</div>
+          <p>with dimensionless Euclidean action</p>
+          <div class="math-block">\[
+            S_P(q)=
+            \sum_{j=1}^{P}
+            \left[
+            \frac{m}{2\beta_P\hbar^2}(q_{j+1}-q_j)^2
+            +\beta_P V(q_j)
+            \right],
+            \qquad
+            \beta_P=\frac{\beta}{P},
+            \quad
+            q_{P+1}=q_1 .
+          \]</div>
+          <p>PIMD samples this distribution by dynamics on an extended Hamiltonian. PIMC samples it directly as a probability density proportional to \(e^{-S_P}\). There is no MD stability question, but there is a Monte Carlo mixing question.</p>
+
+          <h2>Local Metropolis Move</h2>
+          <p>The implementation follows the simple local-action structure used in the source notes and in the toy-model code. During one sweep, every bead is visited once in a random order. If bead \(i\) is proposed to move from \(q_i\) to \(q_i'\), only the two adjacent spring links and the bead potential change:</p>
+          <div class="math-block">\[
+            S_i(q_i)=
+            \frac{m}{2\beta_P\hbar^2}
+            \left[(q_i-q_{i-1})^2+(q_{i+1}-q_i)^2\right]
+            +\beta_P V(q_i).
+          \]</div>
+          <p>The move is accepted with</p>
+          <div class="math-block">\[
+            p_{\mathrm{acc}}=\min\left(1,\exp[-(S_i(q_i')-S_i(q_i))]\right).
+          \]</div>
+          <p>For a position observable \(A(q)\), the estimator is evaluated on retained paths after burn-in:</p>
+          <div class="math-block">\[
+            A_P(q)=\frac{1}{P}\sum_{j=1}^{P}A(q_j).
+          \]</div>
+
+          <h2>Constrained PIMC Context</h2>
+          <p>The same sampler can be modified to keep the centroid \(q_c=P^{-1}\sum_j q_j\) fixed. A convenient proposal moves one bead and then shifts the whole path so that the centroid returns to a target value \(x_c\). This is the starting point for centroid effective-potential or CMD-style calculations:</p>
+          <div class="math-block">\[
+            V_c(x_c;\beta)=
+            -\frac{1}{\beta}
+            \ln
+            \left\langle
+            \exp\left[-\beta_P\sum_{j=1}^{P}V(q_j)\right]
+            \right\rangle_{\mathrm{free},\,q_c=x_c}
+            +\mathrm{const}.
+          \]</div>
+          <p>This Part IV keeps the benchmark unconstrained because the goal is to verify the basic equilibrium PIMC sampler first. The constrained formula is included to show how the method extends beyond ordinary thermal sampling.</p>
+
+          <h2>Workflow</h2>
+          <ol>
+            <li>Use the same harmonic oscillator scale as Part I: \(m=\hbar=1\), \(\beta=2\), \(\omega_0=4\), and \(P=32\).</li>
+            <li>Start eight independent chains from \(q_j=0\).</li>
+            <li>Run local single-bead Metropolis sweeps with adaptive proposal size during burn-in, targeting an acceptance rate near 0.45.</li>
+            <li>After burn-in, retain every fifth path and evaluate the bead-average potential \(V_P(q)=P^{-1}\sum_j m\omega_0^2q_j^2/2\).</li>
+            <li>Compare the Monte Carlo mean with both the exact finite-\(P\) harmonic value and the infinite-\(P\) quantum value.</li>
+          </ol>
+
+          <h2>Result</h2>
+          <p>For \(P=32\), the run gives \(\langle V\rangle_{\mathrm{PIMC}}=0.99021\pm0.00684\). The exact finite-\(P\) target is \(0.99296\), while the infinite-\(P\) quantum value is \(1.00067\). Within the Monte Carlo uncertainty, the sampler is targeting the finite-bead ring-polymer distribution as intended.</p>
+          <figure>
+            <img src="../assets/img/pimd-series/pimc-sho-metropolis.png" alt="PIMC harmonic oscillator Metropolis benchmark">
+            <figcaption>Metropolis PIMC benchmark for the harmonic oscillator with \(m=\hbar=1\), \(\beta=2\), \(\omega_0=4\), and \(P=32\). Left: horizontal axis is the number of retained paths on a log scale; vertical axis is the running mean of the bead-average potential estimator \(\langle V\rangle\). The red curve is the PIMC running mean, the gray dashed line is the exact finite-\(P\) target \(0.99296\), the black line is the exact quantum value \(1.00067\), and the pale red band is the final PIMC mean plus or minus two batch-standard-error estimates. Right: histogram of all retained bead coordinates. The gray dashed curve is the finite-\(P\) Gaussian bead marginal, and the black curve is the infinite-\(P\) quantum Gaussian; for this \(P=32\) benchmark the two nearly overlap.</figcaption>
+          </figure>
+
+          <h2>Interpretation</h2>
+          <p>PIMC and PIMD share the same finite-\(P\) configurational target. PIMD adds fictitious momenta and then worries about thermostats, normal-mode stiffness, and free-step stability. PIMC removes the timestep issue and replaces it with proposal design, burn-in, acceptance-rate control, and correlation between retained paths. For a harmonic oscillator, the finite-\(P\) target is known analytically, so it is a clean test that the Metropolis action and observable estimator are implemented correctly.</p>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/pimd/pimc_sho_metropolis.py">pimc_sho_metropolis.py</a> implements the local-action Metropolis sampler, runs the SHO benchmark, writes the figure, and saves summary tables.</li>
+            <li><a href="../assets/img/pimd-series/pimc-sho-summary.csv">pimc-sho-summary.csv</a> stores the PIMC mean, finite-\(P\) target, exact quantum value, \(\langle q^2\rangle\), acceptance rate, and final proposal size.</li>
+            <li><a href="../assets/img/pimd-series/pimc-sho-running.csv">pimc-sho-running.csv</a> stores the running \(\langle V\rangle\) curve used in the left panel.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Feynman and Hibbs, <em>Quantum Mechanics and Path Integrals</em>.</li>
+            <li>Ceperley, <em>Rev. Mod. Phys.</em> 67, 279 (1995).</li>
+            <li>Tuckerman, <em>Statistical Mechanics: Theory and Molecular Simulation</em>.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="pimd-series-map">
+            <h2 id="pimd-series-map">PIMD series map</h2>
+            <ol class="series-list">
+              <li><a href="pimd-ring-polymer-basics.html">Part I: Ring-Polymer Basics</a> - path-integral isomorphism, normal modes, estimators, and the SHO convergence test.</li>
+              <li><a href="pimd-nvt-gle-piglet.html">Part II: NVT Thermostats and GLE</a> - PILE, GLE, PIGLET-style covariance shaping, and sampling diagnostics.</li>
+              <li><a href="cayley-transform-ring-polymer.html">Part III: Cayley Stability</a> - why exact free ring-polymer propagation can be unstable and how the Cayley step fixes it.</li>
+              <li><a href="pimc-sho-metropolis.html">Part IV: Path-Integral Monte Carlo</a> - local Metropolis bead moves, constrained-PIMC context, and an SHO observable mean.</li>
+              <li><a href="rpmd-sho-correlation.html">Part V: From PIMD to RPMD</a> - PIMC-initialized RPMD trajectories and an exact SHO \(q\)-\(q\) Kubo benchmark.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

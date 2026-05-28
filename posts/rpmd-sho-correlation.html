@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="PIMD series part V: transition from PIMD and PIMC sampling to RPMD real-time correlation estimates, with a harmonic-oscillator q-q benchmark.">
+    <title>PIMD V: From PIMD to RPMD | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">PIMD Series - Part V</p>
+          <h1>From PIMD to RPMD</h1>
+          <p class="post-meta">2026.05.28 - RPMD / Kubo Correlation / SHO Benchmark</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="PIMD series navigation">
+            <a href="pimd-ring-polymer-basics.html">I. Ring-Polymer Basics</a>
+            <a href="pimd-nvt-gle-piglet.html">II. NVT and GLE</a>
+            <a href="cayley-transform-ring-polymer.html">III. Cayley Stability</a>
+            <a href="pimc-sho-metropolis.html">IV. PIMC Sampling</a>
+            <a href="rpmd-sho-correlation.html">V. From PIMD to RPMD</a>
+          </nav>
+
+          <p class="lead">
+            Parts I-IV built the equilibrium side of the path-integral picture: PIMD and PIMC both sample the finite-\(P\) quantum Boltzmann ring polymer. RPMD starts from that same ensemble but uses the ring-polymer Hamiltonian as an approximate real-time dynamics for Kubo-transformed correlation functions. This note makes that transition explicit and checks it on the harmonic oscillator, where the \(q\)-\(q\) result is known analytically.
+          </p>
+
+          <h2>From Sampling to Dynamics</h2>
+          <p>PIMD trajectories are sampling trajectories. Their fictitious time is not the physical quantum time. The configurational target is</p>
+          <div class="math-block">\[
+            \rho_P(q) \propto
+            \exp\left[
+            -\beta_P
+            \sum_{j=1}^{P}
+            \left\{
+            \frac{1}{2}m\omega_P^2(q_{j+1}-q_j)^2+V(q_j)
+            \right\}
+            \right],
+            \qquad
+            \omega_P=\frac{P}{\beta\hbar}.
+          \]</div>
+          <p>Part IV sampled this distribution directly with Metropolis PIMC. RPMD keeps the same ring-polymer potential but adds canonical momenta and then runs microcanonical dynamics under</p>
+          <div class="math-block">\[
+            H_P(q,p)=
+            \sum_{j=1}^{P}
+            \left[
+            \frac{p_j^2}{2m}
+            +\frac{1}{2}m\omega_P^2(q_{j+1}-q_j)^2
+            +V(q_j)
+            \right],
+          \]</div>
+          <p>with phase-space weight \(e^{-\beta_P H_P}\). The momenta are not sampled by PIMC; after the PIMC path is accepted, each bead momentum is drawn from the Maxwell factor \(p_j\sim N(0,m/\beta_P)\).</p>
+
+          <h2>RPMD Correlation Estimator</h2>
+          <p>The target real-time object is the Kubo-transformed correlation</p>
+          <div class="math-block">\[
+            C_{AB}^{K}(t)=
+            \frac{1}{\beta Z}
+            \int_0^\beta d\lambda\,
+            \operatorname{Tr}
+            \left[
+            e^{-(\beta-\lambda)\hat H}
+            \hat A
+            e^{-\lambda\hat H}
+            e^{i\hat Ht/\hbar}
+            \hat B
+            e^{-i\hat Ht/\hbar}
+            \right].
+          \]</div>
+          <p>RPMD replaces that quantum real-time evolution by classical evolution of the ring-polymer Hamiltonian:</p>
+          <div class="math-block">\[
+            C_{AB}^{\mathrm{RPMD}}(t)=
+            \frac{1}{Z_P}
+            \int dq\,dp\,
+            e^{-\beta_P H_P(q,p)}
+            A_P(q)\,B_P(q_t),
+          \]</div>
+          <p>where \(q_t\) is the RPMD trajectory initialized at \((q,p)\). For a position autocorrelation, the natural linear estimator is the centroid</p>
+          <div class="math-block">\[
+            q_c=\frac{1}{P}\sum_{j=1}^{P}q_j,
+            \qquad
+            C_{qq}^{\mathrm{RPMD}}(t)=
+            \left\langle q_c(0)q_c(t)\right\rangle_{H_P}.
+          \]</div>
+
+          <h2>Limits and Failure Modes</h2>
+          <ul>
+            <li>For static equilibrium averages, the ring-polymer ensemble is exact as \(P\to\infty\); RPMD is not needed for that part.</li>
+            <li>For \(P=1\), RPMD reduces to ordinary classical molecular dynamics on the physical potential.</li>
+            <li>For a harmonic oscillator with linear position operators, RPMD reproduces the exact Kubo-transformed \(q\)-\(q\) correlation.</li>
+            <li>At short times, RPMD has the correct leading Kubo time derivatives for many position-dependent observables.</li>
+            <li>For anharmonic systems, nonlinear operators, tunneling splittings, coherence, and phase-sensitive quantum interference, RPMD is an approximation rather than an exact quantum dynamics.</li>
+            <li>The internal ring-polymer modes are artificial. They can create resonance artifacts, which is why Part III discussed free-step stability and why TRPMD later damps internal modes for spectra.</li>
+          </ul>
+
+          <h2>SHO Analytic Target</h2>
+          <p>For \(V(q)=m\omega_0^2q^2/2\), the ring-polymer normal-mode frequencies are</p>
+          <div class="math-block">\[
+            \Omega_k=\sqrt{\omega_0^2+\omega_k^2},
+            \qquad
+            \omega_k=2\omega_P\sin\left(\frac{k\pi}{P}\right).
+          \]</div>
+          <p>The centroid mode has \(\Omega_0=\omega_0\), so the RPMD centroid follows the same sinusoidal motion as a classical harmonic oscillator. The exact Kubo-transformed position autocorrelation is</p>
+          <div class="math-block">\[
+            C_{qq}^{K}(t)=
+            \frac{1}{\beta m\omega_0^2}
+            \cos(\omega_0t).
+          \]</div>
+          <p>This is not the same as the ordinary equal-time quantum variance \(\langle q^2\rangle=(\hbar/2m\omega_0)\coth(\beta\hbar\omega_0/2)\). For the parameters below, the Kubo \(C_{qq}^{K}(0)\) target is \(1/32=0.03125\), while the bead-coordinate quantum variance is about \(0.125\).</p>
+
+          <h2>Workflow</h2>
+          <ol>
+            <li>Use the same oscillator scale as the previous PIMD notes: \(m=\hbar=1\), \(\beta=2\), \(\omega_0=4\), and \(P=32\).</li>
+            <li>Run six independent local Metropolis PIMC chains and retain 48,000 post-burn-in ring-polymer paths.</li>
+            <li>For each retained path, sample bead momenta from \(p_j\sim N(0,m/\beta_P)\).</li>
+            <li>Transform each RPMD initial condition to ring-polymer normal modes.</li>
+            <li>Propagate the harmonic RPMD modes exactly and evaluate \(\langle q_c(0)q_c(t)\rangle\) from the trajectory ensemble.</li>
+            <li>Compare the numerical curve with \(C_{qq}^{K}(t)=\cos(4t)/32\).</li>
+          </ol>
+
+          <h2>Result</h2>
+          <p>The PIMC initial ensemble gives \(\langle q_c^2\rangle=0.03104\pm0.00073\), consistent with the exact Kubo \(C_{qq}(0)=0.03125\). After attaching RPMD momenta and propagating the trajectories, the full time series has RMS error \(1.75\times10^{-4}\) and maximum absolute error \(2.45\times10^{-4}\) over \(0\le t\le6\).</p>
+          <figure>
+            <img src="../assets/img/pimd-series/rpmd-sho-correlation.png" alt="PIMC-initialized RPMD harmonic oscillator q-q correlation benchmark">
+            <figcaption>PIMC-initialized RPMD benchmark for the harmonic oscillator with \(m=\hbar=1\), \(\beta=2\), \(\omega_0=4\), and \(P=32\). Left: horizontal axis is the centroid coordinate \(q_c=P^{-1}\sum_jq_j\); vertical axis is probability density. The blue histogram is the PIMC centroid distribution from 48,000 retained paths, and the black curve is the exact Gaussian centroid marginal with variance \(1/(\beta m\omega_0^2)=0.03125\). Right: horizontal axis is RPMD time; vertical axis is \(C_{qq}(t)=\langle q_c(0)q_c(t)\rangle\). The black solid curve is the exact Kubo result \(\cos(4t)/32\), and the red dashed curve is the PIMC-initialized RPMD estimate. Their near overlap is expected because harmonic RPMD is exact for this linear correlation.</figcaption>
+          </figure>
+
+          <h2>Code used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/pimd/rpmd_sho_correlation.py">rpmd_sho_correlation.py</a> runs the PIMC sampler, samples RPMD momenta, propagates harmonic normal modes, writes the figure, and saves the numerical tables.</li>
+            <li><a href="../assets/img/pimd-series/rpmd-sho-correlation.csv">rpmd-sho-correlation.csv</a> stores the time grid, RPMD estimate, exact Kubo value, and pointwise error.</li>
+            <li><a href="../assets/img/pimd-series/rpmd-sho-summary.csv">rpmd-sho-summary.csv</a> stores the PIMC acceptance rate, centroid variance, \(C(0)\), RMS error, and maximum absolute error.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Craig and Manolopoulos, <em>J. Chem. Phys.</em> 121, 3368 (2004).</li>
+            <li>Habershon, Manolopoulos, Markland, and Miller, <em>Annu. Rev. Phys. Chem.</em> 64, 387 (2013).</li>
+            <li>Tuckerman, <em>Statistical Mechanics: Theory and Molecular Simulation</em>.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="pimd-series-map">
+            <h2 id="pimd-series-map">PIMD series map</h2>
+            <ol class="series-list">
+              <li><a href="pimd-ring-polymer-basics.html">Part I: Ring-Polymer Basics</a> - path-integral isomorphism, normal modes, estimators, and the SHO convergence test.</li>
+              <li><a href="pimd-nvt-gle-piglet.html">Part II: NVT Thermostats and GLE</a> - PILE, GLE, PIGLET-style covariance shaping, and sampling diagnostics.</li>
+              <li><a href="cayley-transform-ring-polymer.html">Part III: Cayley Stability</a> - why exact free ring-polymer propagation can be unstable and how the Cayley step fixes it.</li>
+              <li><a href="pimc-sho-metropolis.html">Part IV: Path-Integral Monte Carlo</a> - local Metropolis bead moves, constrained-PIMC context, and an SHO observable mean.</li>
+              <li><a href="rpmd-sho-correlation.html">Part V: From PIMD to RPMD</a> - PIMC-initialized RPMD trajectories and an exact SHO \(q\)-\(q\) Kubo benchmark.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
