@@ -7,6 +7,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 ```text
 .
 |-- index.html
+|-- tags.html
+|-- series.html
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
@@ -92,6 +94,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |-- dvr-series
 |   |   `-- favicon.svg
 |   `-- js
+|       |-- article-data.js
+|       |-- taxonomy.js
 |       `-- main.js
 `-- README.md
 ```
@@ -125,8 +129,12 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 1. Copy `posts/technical-note-template.html` and rename it, for example `posts/my-first-note.html`.
 2. Update the title, date, tags, description, and body in the new file.
-3. Add the new link to the "Latest Articles" and "Archive" sections in `index.html`.
-4. Commit and push to GitHub. GitHub Pages will update automatically.
+3. Add the article metadata to `assets/js/article-data.js`, including tags and series membership.
+4. Add the new link to the "Latest Articles" and "Archive" sections in `index.html`.
+5. Update `sitemap.xml`.
+6. Commit and push to GitHub. GitHub Pages will update automatically.
+
+The tag and series browsers are static GitHub Pages pages powered by `assets/js/article-data.js` and `assets/js/taxonomy.js`. Homepage tag labels are converted into links by `assets/js/main.js`, so tag names should match the canonical names in `article-data.js`.
 
 Keep raw source materials, notebooks, PDFs, and drafts in the local `articles/` folder. That folder is ignored by Git so working materials do not get published accidentally.
 

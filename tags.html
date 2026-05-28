@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Browse Lihui Gao's technical notes by topic tag.">
+    <title>Tags | Lihui Gao</title>
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="index.html#articles">Articles</a>
+        <a href="tags.html">Tags</a>
+        <a href="series.html">Series</a>
+        <a href="index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <p class="section-label">Browse</p>
+        <h1>Article Tags</h1>
+        <p class="intro">Use topic tags to collect notes across different series. Clicking a tag shows every article currently assigned to that tag.</p>
+      </section>
+
+      <section class="section taxonomy-section">
+        <div class="section-heading">
+          <p class="section-label">Tags</p>
+          <h2>Topics</h2>
+        </div>
+
+        <div>
+          <div class="taxonomy-chip-list" data-tag-cloud aria-label="All article tags"></div>
+          <div data-tag-results></div>
+          <noscript><p class="muted-note">Enable JavaScript to load the tag index.</p></noscript>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="assets/js/article-data.js"></script>
+    <script src="assets/js/taxonomy.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
