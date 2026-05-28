@@ -1,0 +1,40 @@
+<simulation verbosity='medium'>
+  <output prefix='simulation'>
+    <properties stride='100' filename='out'>
+      [ step, time{picosecond}, conserved{electronvolt}, temperature{kelvin}, kinetic_cv{electronvolt}, potential{electronvolt}, pressure_cv{megapascal} ]
+    </properties>
+    <trajectory filename='dip' stride='4' extra_type='dipole'> extras </trajectory>
+    <trajectory filename='xc' stride='40000' format='xyz' cell_units='angstrom'> x_centroid{angstrom} </trajectory>
+    <checkpoint stride='4000'/>
+  </output>
+  <total_steps>400000</total_steps>
+  <prng>
+    <seed>430101</seed>
+  </prng>
+  <ffsocket name='qtip4pf' mode='unix' pbc='false'>
+    <address>__SOCKET__</address>
+  </ffsocket>
+  <system>
+    <initialize nbeads='32'>
+      <file mode='xyz'>water_216.xyz</file>
+      <cell mode='abc' units='atomic_unit'>[35.23300, 35.23300, 35.23300]</cell>
+      <velocities mode='thermal' units='kelvin'>300</velocities>
+    </initialize>
+    <forces>
+      <force forcefield='qtip4pf'></force>
+    </forces>
+    <motion mode='dynamics'>
+      <fixcom>False</fixcom>
+      <dynamics mode='nvt'>
+        <timestep units='femtosecond'>0.25</timestep>
+        <thermostat mode='pile_l'>
+          <tau units='femtosecond'>1.0e9</tau>
+          <pile_lambda>0.5</pile_lambda>
+        </thermostat>
+      </dynamics>
+    </motion>
+    <ensemble>
+      <temperature units='kelvin'>300</temperature>
+    </ensemble>
+  </system>
+</simulation>

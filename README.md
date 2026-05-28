@@ -10,6 +10,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- trpmd-qtip4pf-water-ir-spectrum.html
 |   |-- pimd-ring-polymer-basics.html
 |   |-- pimd-nvt-gle-piglet.html
 |   |-- matsubara-lscivr-phase-space.html
@@ -41,6 +42,15 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |-- rpmd-ir
 |   |   |   |-- compute_ir_spectrum_mudot.py
 |   |   |   `-- run_mudot_analysis.sh
+|   |   |-- trpmd-ir
+|   |   |   |-- analyze_method.py
+|   |   |   |-- compute_ir_spectrum_mudot.py
+|   |   |   |-- experiment_nalpha_bertie_lan_1996.csv
+|   |   |   |-- input-rpmd-lambda-0p001.template.xml
+|   |   |   |-- input-trpmd-lambda-0p5.template.xml
+|   |   |   |-- parse_qtip4pf_dipoles.py
+|   |   |   |-- render_input.py
+|   |   |   `-- run-qtip4pf-trpmd.slurm
 |   |   |-- allegro
 |   |   |   |-- collect_nve_samples.py
 |   |   |   |-- formal_nve970.yaml
@@ -61,6 +71,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |-- pimd-series
 |   |   |-- matsubara-series
 |   |   |-- rpmd-ir
+|   |   |-- trpmd-ir
 |   |   |-- allegro
 |   |   |-- cayley
 |   |   |-- dvr-series
@@ -72,6 +83,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/trpmd-qtip4pf-water-ir-spectrum.html`
 - `posts/pimd-ring-polymer-basics.html`
 - `posts/pimd-nvt-gle-piglet.html`
 - `posts/cayley-transform-ring-polymer.html`

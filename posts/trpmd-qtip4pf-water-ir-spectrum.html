@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A detailed q-TIP4P/F water infrared spectrum reproduction of the RPMD/TRPMD comparison in Rossi, Ceriotti, and Manolopoulos, including PILE damping parameters, internal-mode resonance analysis, and experimental n(alpha) comparison.">
+    <title>TRPMD Water IR Spectrum with q-TIP4P/F | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [["\\[", "\\]"]]
+        }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Molecular Dynamics</p>
+          <h1>TRPMD Water IR Spectrum with q-TIP4P/F</h1>
+          <p class="post-meta">2026.05.28 - TRPMD / RPMD / Infrared Spectrum / q-TIP4P/F / i-PI</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            This note records a full q-TIP4P/F reproduction workflow for the liquid-water infrared spectrum comparison in Fig. 7 of Rossi, Ceriotti, and Manolopoulos. The goal was not to rebuild every curve in the paper: I deliberately skipped CMD and focused on the three curves needed to understand the resonance problem, namely classical MD, weakly thermostatted RPMD-like dynamics, and optimally damped TRPMD. The final calculation used 216 water molecules, 32 beads for the path-integral runs, eight independent 100 ps trajectories per method, and a dipole-derivative autocorrelation analysis.
+          </p>
+
+          <h2>Target</h2>
+          <p>
+            The reference paper introduced thermostatted ring polymer molecular dynamics (TRPMD) as a minimal modification of RPMD for vibrational spectroscopy. Standard RPMD keeps the path-integral bead masses equal to the physical particle masses and propagates the extended ring-polymer dynamics without damping. This works surprisingly well for many low-frequency and rate observables, but it can fail in vibrational spectra because the artificial internal modes of the ring polymer remain active dynamical variables. When one of those internal-mode frequencies is close to a physical vibration, the spectrum can develop nonphysical peak splitting or shoulders.
+          </p>
+          <p>
+            Fig. 7 of the TRPMD paper applies this idea to the q-TIP4P/F water model at 300 K. In the low-frequency libration and bending region, the path-integral methods are broadly similar. In the O-H stretching region, RPMD shows visible resonance artifacts, while optimally damped TRPMD washes those artifacts into a smoother single band. The original paper also includes CMD, but I left it out of this reproduction so that the comparison remains concentrated on the RPMD to TRPMD change.
+          </p>
+          <p>
+            The final production target was:
+          </p>
+          <div class="algorithm-table">
+            <div>Potential</div><div>q-TIP4P/F flexible water model</div>
+            <div>System</div><div>216 waters, O H H ordering</div>
+            <div>Cell</div><div>Cubic box, 35.233 bohr = 18.644 Angstrom</div>
+            <div>Temperature</div><div>300 K</div>
+            <div>Path-integral beads</div><div>32 for RPMD-like and TRPMD, 1 for classical MD</div>
+            <div>Timestep</div><div>0.25 fs</div>
+            <div>Production length</div><div>8 independent trajectories, 100 ps each, for every method</div>
+            <div>Dipole output</div><div>Every 4 MD steps, so the analysis timestep is 1.0 fs</div>
+          </div>
+
+          <h2>q-TIP4P/F Model</h2>
+          <p>
+            The q-TIP4P/F model is a flexible, fixed-charge water model designed for quantum simulations of liquid water. It keeps the TIP4P idea of placing the negative charge on a massless M site rather than directly on the oxygen, but the intramolecular O-H distances and H-O-H angle are flexible. In the i-PI driver used here, the relevant parameters are hard-coded in the local Fortran source:
+          </p>
+          <pre><code>/data/home/lhgao/i-pi/drivers/f90/pes/qtip4pf.f90</code></pre>
+          <p>
+            The dipole was taken consistently with the q-TIP4P/F charge geometry. For each molecule,
+          </p>
+          <div class="math-block">
+            \[
+            \mathbf r_M
+            =
+            \alpha \mathbf r_O
+            +
+            \frac{1-\alpha}{2}
+            \left(\mathbf r_{H_1}+\mathbf r_{H_2}\right),
+            \qquad
+            \alpha=0.73612,
+            \]
+          </div>
+          <div class="math-block">
+            \[
+            q_M=-1.1128e,\qquad q_H=+0.5564e,
+            \qquad
+            \boldsymbol\mu
+            =
+            \sum_{\mathrm{waters}}
+            \left(
+            q_M\mathbf r_M
+            +
+            q_H\mathbf r_{H_1}
+            +
+            q_H\mathbf r_{H_2}
+            \right).
+            \]
+          </div>
+          <p>
+            This is simpler than the TTM3-F dipole used in the earlier RPMD/CMD water spectrum paper, because q-TIP4P/F is not polarizable. That limitation matters for intensities, especially in the O-H stretching band, but it is sufficient for testing the RPMD resonance artifact and its TRPMD suppression.
+          </p>
+
+          <h2>TRPMD Thermostat</h2>
+          <p>
+            The ring-polymer spring Hamiltonian for one Cartesian coordinate contains
+          </p>
+          <div class="math-block">
+            \[
+            \frac{1}{2}m\omega_P^2
+            \sum_{j=1}^{P}
+            \left(q_j-q_{j+1}\right)^2,
+            \qquad
+            \omega_P=\frac{P}{\beta\hbar}.
+            \]
+          </div>
+          <p>
+            A discrete normal-mode transform diagonalizes this spring term and gives the free internal-mode frequencies
+          </p>
+          <div class="math-block">
+            \[
+            \tilde\omega_k
+            =
+            2\omega_P\sin\left(\frac{k\pi}{P}\right),
+            \qquad
+            k=1,\ldots,P-1.
+            \]
+          </div>
+          <p>
+            The PILE thermostat uses a mode-dependent Langevin friction. Critical damping for a free harmonic mode is
+          </p>
+          <div class="math-block">
+            \[
+            \gamma_{c,k}=2\tilde\omega_k.
+            \]
+          </div>
+          <p>
+            TRPMD uses a scaled family of frictions,
+          </p>
+          <div class="math-block">
+            \[
+            \gamma_k=\lambda\gamma_{c,k}=2\lambda\tilde\omega_k.
+            \]
+          </div>
+          <p>
+            In this reproduction I used the paper's default optimally damped choice, \(\lambda=0.5\), for TRPMD. To make an RPMD-like comparison in the same i-PI thermostat framework, I used \(\lambda=0.001\). The centroid thermostat time was set to an effectively infinite value so that the centroid was not appreciably thermostatted during the correlation dynamics:
+          </p>
+          <pre><code>&lt;thermostat mode="pile_l"&gt;
+  &lt;tau units="femtosecond"&gt;1.0e9&lt;/tau&gt;
+  &lt;pile_lambda&gt;0.5&lt;/pile_lambda&gt;
+&lt;/thermostat&gt;</code></pre>
+          <p>
+            At \(P=32\) and \(T=300\ \mathrm K\), the first few free internal-mode frequencies are:
+          </p>
+          <div class="algorithm-table">
+            <div>Mode k</div><div>Free ring-polymer frequency / cm^-1</div>
+            <div>1</div><div>1308</div>
+            <div>2</div><div>2603</div>
+            <div>3</div><div>3874</div>
+            <div>4</div><div>5107</div>
+          </div>
+          <p>
+            The O-H stretching band of water lies near \(3400\) to \(3700\ \mathrm{cm^{-1}}\), so the closest free ring-polymer mode is \(k=3\), together with its degenerate partner \(P-k=29\). This does not mean that a fake peak must appear exactly at \(3874\ \mathrm{cm^{-1}}\). The spectrum sees physical coordinates and the total dipole, not an isolated free bead spring. A more useful local model is a pair of coupled modes:
+          </p>
+          <div class="math-block">
+            \[
+            \begin{bmatrix}
+            \omega_s^2 & g\\
+            g & \omega_{\mathrm{int}}^2
+            \end{bmatrix},
+            \qquad
+            \Omega_{\pm}^2
+            =
+            \frac{\omega_s^2+\omega_{\mathrm{int}}^2}{2}
+            \pm
+            \sqrt{
+            \left(\frac{\omega_s^2-\omega_{\mathrm{int}}^2}{2}\right)^2
+            +g^2
+            }.
+            \]
+          </div>
+          <p>
+            The coupling shifts the observed positions and redistributes intensity. What one sees in an RPMD spectrum is therefore a shoulder, split band, or distorted high-frequency profile, not necessarily a narrow spike at the bare internal-mode frequency. TRPMD suppresses the artifact by damping the non-centroid internal modes. For \(k=3\), \(\lambda=0.5\) damps on a femtosecond timescale, while \(\lambda=0.001\) leaves the mode close to ordinary RPMD behavior.
+          </p>
+
+          <h2>Spectrum Estimator</h2>
+          <p>
+            The infrared absorption signal is usually written in terms of the Kubo-transformed total-dipole autocorrelation:
+          </p>
+          <div class="math-block">
+            \[
+            n(\omega)\alpha(\omega)
+            =
+            \frac{\pi\beta\omega^2}{3\epsilon_0Vc}
+            \int_{-\infty}^{\infty}
+            e^{-i\omega t}
+            \langle
+            \boldsymbol\mu(0)\cdot\boldsymbol\mu(t)
+            \rangle_K\,dt .
+            \]
+          </div>
+          <p>
+            For the numerical analysis, I used the dipole-derivative route:
+          </p>
+          <div class="math-block">
+            \[
+            C_{\dot\mu\dot\mu}(t)
+            =
+            \langle
+            \dot{\boldsymbol\mu}(0)\cdot
+            \dot{\boldsymbol\mu}(t)
+            \rangle,
+            \qquad
+            \mathcal F\{C_{\dot\mu\dot\mu}\}(\omega)
+            =
+            \omega^2\mathcal F\{C_{\mu\mu}\}(\omega),
+            \]
+          </div>
+          <p>
+            provided the finite-time boundary terms are negligible. The practical advantage is that differentiating the dipole removes constant offsets and strongly reduces the artificial high-frequency baseline drift that can appear when a noisy finite-trajectory dipole ACF is multiplied by \(\omega^2\). The centered finite difference used in the script was
+          </p>
+          <div class="math-block">
+            \[
+            \dot{\boldsymbol\mu}(t_i)
+            \simeq
+            \frac{
+            \boldsymbol\mu(t_{i+1})
+            -
+            \boldsymbol\mu(t_{i-1})
+            }{2\Delta t},
+            \qquad
+            \Delta t=1.0\ \mathrm{fs}
+            \]
+          </div>
+          <p>
+            after bead averaging and skipping the first 5 ps of every production trajectory. I then computed FFT autocorrelations, averaged over independent trajectories, applied a 2 ps Gaussian time window, Fourier transformed, and normalized the spectra. The figures below should therefore be read as normalized spectral-shape comparisons, not as a final absolute-intensity calculation with a fully validated prefactor.
+          </p>
+
+          <h2>Execution</h2>
+          <p>
+            The calculation was staged on the remote cluster under
+          </p>
+          <pre><code>/data/home/lhgao/codex_jobs/trpmd_qtip4pf_fig7</code></pre>
+          <p>
+            using the conda environment
+          </p>
+          <pre><code>/data/home/lhgao/.conda/envs/deepmd</code></pre>
+          <p>
+            The q-TIP4P/F Fortran driver was copied from the local i-PI tree and compiled on the login node. All dynamics were submitted as Slurm jobs on compute nodes. The production ladder was:
+          </p>
+          <ol>
+            <li>Compile and test the q-TIP4P/F Fortran driver.</li>
+            <li>Run a 1-bead 20-step classical smoke test.</li>
+            <li>Run a 32-bead 100-step TRPMD smoke test with \(\lambda=0.5\).</li>
+            <li>Run 1 ps pilot trajectories for classical MD, TRPMD, and RPMD-like dynamics.</li>
+            <li>Submit 8 independent 100 ps production trajectories for each method.</li>
+            <li>Parse bead dipoles, average over beads, compute \(C_{\dot\mu\dot\mu}(t)\), and plot spectra.</li>
+          </ol>
+          <p>
+            A small but important implementation detail was the i-PI output naming. The dipole trajectories were written as <code>simulation.dip_0</code> for the 1-bead classical run and as <code>simulation.dip_00</code> to <code>simulation.dip_31</code> for 32-bead runs. The first version of my analysis script looked for <code>dip_*</code>, so it would have skipped the data. The final script explicitly matches <code>simulation.dip*</code>.
+          </p>
+
+          <h2>Production Diagnostics</h2>
+          <p>
+            All 24 production jobs completed normally. The eight classical trajectories each took about 70 minutes. The 32-bead TRPMD and RPMD-like trajectories each took about 3.2 to 3.7 hours. No nonempty Slurm error logs were found in the final check.
+          </p>
+          <div class="algorithm-table">
+            <div>Method</div><div>Final state and temperature diagnostic</div>
+            <div>Classical MD</div><div>8/8 trajectories completed; average temperature after skipping 5 ps: 299.934 K; trajectory means ranged from 298.615 to 301.022 K.</div>
+            <div>TRPMD, lambda = 0.5</div><div>8/8 trajectories completed; average temperature after skipping 5 ps: 300.050 K; trajectory means ranged from 299.988 to 300.108 K.</div>
+            <div>RPMD-like, lambda = 0.001</div><div>8/8 trajectories completed; average temperature after skipping 5 ps: 300.158 K; trajectory means ranged from 299.968 to 300.326 K.</div>
+          </div>
+          <p>
+            The stability of the TRPMD and RPMD-like temperatures is a useful sanity check that the large centroid thermostat time did not leave the extended dynamics in an obviously drifting state. It does not prove that the spectrum is exact, but it does show that the production trajectories were thermally well behaved.
+          </p>
+
+          <h2>Result</h2>
+          <p>
+            The final normalized spectra are shown first without experiment. The key qualitative result is already visible: the RPMD-like curve shows a more structured O-H stretch band, with a shoulder on the high-frequency side, while TRPMD gives a smoother and broader single band. This is the resonance artifact discussed in the paper.
+          </p>
+
+          <figure>
+            <img src="../assets/img/trpmd-ir/qtip4pf-fig7-final-mudot-normalized.png" alt="Final normalized q-TIP4P/F classical, RPMD-like, and TRPMD infrared spectra">
+            <figcaption>
+              Final q-TIP4P/F spectra from 8 independent 100 ps trajectories per method. The horizontal axes are wavenumbers in \(\mathrm{cm^{-1}}\). The vertical axes are normalized intensities from the dipole-derivative autocorrelation estimator. The analysis uses a 1.0 fs dipole timestep, skips the first 5 ps of each trajectory, applies a 2 ps Gaussian window, and normalizes the plotted curves. Gray is classical MD, blue is RPMD-like dynamics with \(\lambda=0.001\), and green is optimally damped TRPMD with \(\lambda=0.5\).
+            </figcaption>
+          </figure>
+
+          <p>
+            Adding the experimental curve makes the systematic high-frequency shift clearer. The experimental reference was taken from the liquid-water data of Bertie and Lan. I read the real and imaginary refractive indices, \(n\) and \(k\), from the distributed <code>water.zip</code> files and converted them to
+          </p>
+          <div class="math-block">
+            \[
+            n(\omega)\alpha(\omega)
+            =
+            n\,4\pi k\,\tilde\nu,
+            \]
+          </div>
+          <p>
+            where \(\tilde\nu\) is the wavenumber in \(\mathrm{cm^{-1}}\). Because the simulation curves are not yet on an absolute prefactor scale, the following figure normalizes each panel separately. This makes it suitable for comparing peak positions and shapes, not absolute band intensities.
+          </p>
+
+          <figure>
+            <img src="../assets/img/trpmd-ir/qtip4pf-fig7-with-experiment-panel-normalized.png" alt="q-TIP4P/F spectra with the Bertie-Lan experimental water infrared curve">
+            <figcaption>
+              q-TIP4P/F spectra with the experimental liquid-water \(n(\omega)\alpha(\omega)\) curve from Bertie and Lan. The horizontal axes are wavenumbers in \(\mathrm{cm^{-1}}\). The vertical axis in each panel is normalized to the maximum of that panel, so the low-frequency and stretching regions can be compared separately. The dashed black curve is experiment; gray, blue, and green are classical MD, RPMD-like dynamics, and TRPMD, respectively.
+            </figcaption>
+          </figure>
+
+          <p>
+            The peak positions from the final analysis are:
+          </p>
+          <div class="algorithm-table">
+            <div>Curve</div><div>Main O-H stretch peak</div>
+            <div>Experiment, Bertie-Lan n alpha</div><div>3393 cm^-1</div>
+            <div>Classical MD</div><div>3566 cm^-1</div>
+            <div>RPMD-like, lambda = 0.001</div><div>3503 cm^-1</div>
+            <div>TRPMD, lambda = 0.5</div><div>3496 cm^-1</div>
+          </div>
+          <p>
+            The TRPMD stretch band is therefore red shifted by about \(70\ \mathrm{cm^{-1}}\) relative to classical MD, in close agreement with the statement in the TRPMD paper that the TRPMD peak is red shifted from the classical peak by roughly \(75\ \mathrm{cm^{-1}}\). It is still blue shifted from the experimental maximum by about \(100\ \mathrm{cm^{-1}}\). This is not surprising: the curve that lies closest to experiment in the original paper is CMD, and q-TIP4P/F was parameterized using a partially adiabatic CMD approximation. Since I did not run CMD here, the residual blue shift is expected rather than a sign of a failed TRPMD reproduction.
+          </p>
+
+          <h2>Interpreting the Resonance</h2>
+          <p>
+            The RPMD-like high-frequency shoulder should not be interpreted as a new physical water vibration. It is better understood as a resonance channel between a physical stretching coordinate and an artificial ring-polymer internal mode. At 300 K with 32 beads, the \(k=3\) internal mode lies near \(3874\ \mathrm{cm^{-1}}\), close enough to the O-H stretching region to perturb it. In the coupled-mode picture, the observed peaks are shifted away from both the bare physical stretch and the bare free internal-mode frequency.
+          </p>
+          <p>
+            This distinction matters. If a free ring-polymer mode is at \(3874\ \mathrm{cm^{-1}}\), the fake feature in the absorption spectrum does not have to appear exactly at \(3874\ \mathrm{cm^{-1}}\). The total dipole projects onto physical molecular coordinates, the local O-H stretch is anharmonic, and the liquid environment couples the stretch to librations and hydrogen-bond fluctuations. The internal mode therefore distorts the physical band, producing a shoulder or split peak around the stretch region. TRPMD removes the distortion by damping the non-centroid modes without adiabatically separating them as CMD does.
+          </p>
+          <p>
+            This is exactly the point of TRPMD in vibrational spectroscopy: it is not a peak-fitting device that forces the result onto experiment. It is a controlled way to keep the bead masses physical while removing a known RPMD artifact.
+          </p>
+
+          <h2>What Was Reproduced and What Was Not</h2>
+          <p>
+            The reproduction is successful at the level I intended:
+          </p>
+          <ul>
+            <li>The q-TIP4P/F i-PI driver was used directly rather than substituting a different water potential.</li>
+            <li>The production size matches the Fig. 7 protocol: 216 waters, 32 beads, 0.25 fs timestep, and 8 independent 100 ps trajectories for the RPMD-like and TRPMD comparison.</li>
+            <li>The PILE friction parameter follows the TRPMD rule \(\gamma_k=2\lambda\tilde\omega_k\), with \(\lambda=0.5\) for TRPMD and \(\lambda=0.001\) for the RPMD-like comparison.</li>
+            <li>The RPMD-like curve retains a structured O-H stretch band, while TRPMD gives a smoother single band.</li>
+            <li>The classical to TRPMD high-frequency red shift is about \(70\ \mathrm{cm^{-1}}\), consistent with the original paper's discussion.</li>
+          </ul>
+          <p>
+            There are also clear limitations:
+          </p>
+          <ul>
+            <li>I did not run CMD, so the figure is not a complete reproduction of every curve in Fig. 7.</li>
+            <li>The plotted simulation spectra are normalized shape spectra from \(C_{\dot\mu\dot\mu}(t)\), not final absolute \(n(\omega)\alpha(\omega)\) spectra with a fully checked SI prefactor.</li>
+            <li>The q-TIP4P/F fixed-charge dipole omits induced-dipole contributions, so absolute stretching intensities should not be overinterpreted.</li>
+            <li>The experimental curve is plotted from the Bertie-Lan \(n,k\) data and normalized for shape comparison; it is not used to rescale the simulation intensities.</li>
+          </ul>
+
+          <h2>Reproducibility Notes</h2>
+          <p>
+            The compact scripts and templates below are the published record of the calculation. The actual trajectory files are much too large to publish with the website, but the analysis scripts are the same ones used to parse bead dipoles and generate the figures in this note.
+          </p>
+          <ul class="code-list">
+            <li><a href="../assets/code/trpmd-ir/input-trpmd-lambda-0p5.template.xml"><code>input-trpmd-lambda-0p5.template.xml</code></a> - i-PI production template for optimally damped TRPMD.</li>
+            <li><a href="../assets/code/trpmd-ir/input-rpmd-lambda-0p001.template.xml"><code>input-rpmd-lambda-0p001.template.xml</code></a> - i-PI production template for the weakly damped RPMD-like comparison.</li>
+            <li><a href="../assets/code/trpmd-ir/run-qtip4pf-trpmd.slurm"><code>run-qtip4pf-trpmd.slurm</code></a> - representative Slurm wrapper launching i-PI and 32 q-TIP4P/F force clients.</li>
+            <li><a href="../assets/code/trpmd-ir/render_input.py"><code>render_input.py</code></a> - replaces the socket placeholder in the i-PI XML template.</li>
+            <li><a href="../assets/code/trpmd-ir/parse_qtip4pf_dipoles.py"><code>parse_qtip4pf_dipoles.py</code></a> - reads <code>simulation.dip_*</code> extras files and writes bead-averaged dipole CSV files.</li>
+            <li><a href="../assets/code/trpmd-ir/analyze_method.py"><code>analyze_method.py</code></a> - runs the parser and spectrum analysis over all trajectories of one method.</li>
+            <li><a href="../assets/code/trpmd-ir/compute_ir_spectrum_mudot.py"><code>compute_ir_spectrum_mudot.py</code></a> - computes the dipole-derivative ACF spectrum, optional block estimates, and plots.</li>
+            <li><a href="../assets/code/trpmd-ir/experiment_nalpha_bertie_lan_1996.csv"><code>experiment_nalpha_bertie_lan_1996.csv</code></a> - processed experimental \(n(\omega)\alpha(\omega)\) curve from the Bertie-Lan water data.</li>
+          </ul>
+          <p>
+            The final analysis commands were:
+          </p>
+          <pre><code>python scripts/analyze_method.py production/classical_md \
+  analysis/classical_md --dt-fs 1.0 --skip-ps 5.0 \
+  --max-cm 4200 --window gaussian --window-width-ps 2.0 \
+  --block-size 2
+
+python scripts/analyze_method.py production/trpmd_lambda_0p5 \
+  analysis/trpmd_lambda_0p5 --dt-fs 1.0 --skip-ps 5.0 \
+  --max-cm 4200 --window gaussian --window-width-ps 2.0 \
+  --block-size 2
+
+python scripts/analyze_method.py production/rpmd_lambda_0p001 \
+  analysis/rpmd_lambda_0p001 --dt-fs 1.0 --skip-ps 5.0 \
+  --max-cm 4200 --window gaussian --window-width-ps 2.0 \
+  --block-size 2</code></pre>
+
+          <h2>Takeaways</h2>
+          <ul>
+            <li>For q-TIP4P/F water, the RPMD resonance problem is visible in the O-H stretch band even after averaging eight 100 ps trajectories.</li>
+            <li>The most relevant free ring-polymer mode at 300 K and 32 beads is \(k=3\), near \(3874\ \mathrm{cm^{-1}}\), but the observed artifact is a shifted shoulder or split band rather than a peak fixed exactly at that frequency.</li>
+            <li>TRPMD with \(\lambda=0.5\) suppresses the spurious RPMD structure while preserving a physically plausible quantum red shift from classical MD.</li>
+            <li>The remaining blue shift from experiment is expected for this comparison because CMD was omitted and q-TIP4P/F was originally tuned in a partially adiabatic CMD context.</li>
+            <li>The dipole-derivative ACF is a robust practical estimator for these finite trajectories because it avoids the high-frequency baseline drift seen in the direct dipole-ACF route.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>M. Rossi, M. Ceriotti, and D. E. Manolopoulos, "How to remove the spurious resonances from ring polymer molecular dynamics," <em>J. Chem. Phys.</em> <strong>140</strong>, 234116 (2014). DOI: <a href="https://doi.org/10.1063/1.4883861" target="_blank" rel="noreferrer">10.1063/1.4883861</a>.</li>
+            <li>S. Habershon, T. E. Markland, and D. E. Manolopoulos, "Competing quantum effects in the dynamics of a flexible water model," <em>J. Chem. Phys.</em> <strong>131</strong>, 024501 (2009). DOI: <a href="https://doi.org/10.1063/1.3167790" target="_blank" rel="noreferrer">10.1063/1.3167790</a>.</li>
+            <li>J. E. Bertie and Z. Lan, "Infrared intensities of liquids XX: The intensity of the OH stretching band of liquid water revisited, and the best current values of the optical constants of H2O(l) at 25 C between 15,000 and 1 cm-1," <em>Applied Spectroscopy</em> <strong>50</strong>, 1047-1057 (1996). DOI: <a href="https://doi.org/10.1366/0003702963905385" target="_blank" rel="noreferrer">10.1366/0003702963905385</a>.</li>
+            <li>S. Habershon, G. S. Fanourgakis, and D. E. Manolopoulos, "Comparison of path integral molecular dynamics methods for the infrared absorption spectrum of liquid water," <em>J. Chem. Phys.</em> <strong>129</strong>, 074501 (2008). DOI: <a href="https://doi.org/10.1063/1.2968555" target="_blank" rel="noreferrer">10.1063/1.2968555</a>.</li>
+          </ul>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
