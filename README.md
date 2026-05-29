@@ -12,6 +12,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- spin-mapping-math-foundations.html
 |   |-- mmst-zpe-leakage.html
 |   |-- pmatrix-decoherence-balance.html
 |   |-- ehrenfest-tully-benchmark.html
@@ -50,7 +51,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |   |-- mmst_gamma_zpe_scan.py
 |   |   |   |-- mmst_correction_comparison.py
 |   |   |   |-- pmatrix_sac_comparison.py
-|   |   |   `-- pmatrix_decoherence_balance_demo.py
+|   |   |   |-- pmatrix_decoherence_balance_demo.py
+|   |   |   `-- su_n_spin_mapping_checks.py
 |   |   |-- pimd
 |   |   |   |-- pimd_sho_benchmark.py
 |   |   |   |-- pimd_gle_piglet_toy.py
@@ -111,6 +113,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/spin-mapping-math-foundations.html`
 - `posts/mmst-zpe-leakage.html`
 - `posts/pmatrix-decoherence-balance.html`
 - `posts/ehrenfest-tully-benchmark.html`

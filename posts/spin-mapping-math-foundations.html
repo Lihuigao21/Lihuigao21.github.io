@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Mathematical foundations of generalized spin mapping: SU(N) generators, the quadratic Casimir invariant, physical degrees of freedom, and why Stratonovich-Weyl replaces ordinary Wigner transforms for finite electronic spaces.">
+    <title>Spin Mapping Mathematical Foundations | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../tags.html">Tags</a>
+        <a href="../series.html">Series</a>
+        <a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Mapping Dynamics</p>
+          <h1>Spin Mapping Mathematical Foundations</h1>
+          <p class="post-meta">2026.05.29 - SU(N) / Casimir Invariant / Stratonovich-Weyl</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            Generalized spin mapping is easiest to read as a geometry correction to MMST mapping. Instead of first embedding electronic states into fictitious harmonic oscillators, Runeson and Richardson start from the symmetry of the finite electronic Hilbert space itself. The essential objects are the \(SU(N)\) generators, the quadratic Casimir invariant, the physical pure-state manifold, and the Stratonovich-Weyl transform for finite-dimensional phase space.
+          </p>
+
+          <h2>Background</h2>
+          <p>In nonadiabatic dynamics, a molecule is often split into classical nuclear coordinates and a finite electronic subsystem. If there are \(N\) diabatic electronic states, the electronic Hamiltonian is an \(N\times N\) Hermitian matrix. MMST mapping handles this by assigning one fictitious oscillator to each electronic state. That produces useful continuous variables, but it also enlarges the electronic phase space beyond the physical singly-excited oscillator subspace.</p>
+          <p>Spin mapping asks a different question: what continuous phase space belongs to the original \(N\)-level electronic system before any oscillator embedding is introduced? For two states, the answer is familiar: the system is equivalent to a spin-\(1/2\) particle on a Bloch sphere. For \(N\) states, the analogous symmetry is \(SU(N)\).</p>
+
+          <h2>The SU(N) Algebra</h2>
+          <p>The special unitary group is</p>
+          <div class="math-block">\[
+            SU(N)=\{U\in\mathbb C^{N\times N}\mid U^\dagger U=I,\ \det U=1\}.
+          \]</div>
+          <p>The global phase is removed from the physical electronic state, so the nontrivial rotations among \(N\) states are described by \(SU(N)\), not by the full \(U(N)\). Its Lie algebra has \(N^2-1\) traceless Hermitian generators, denoted here by \(\hat S_i\), with the normalization</p>
+          <div class="math-block">\[
+            \mathrm{tr}(\hat S_i\hat S_j)=\frac{1}{2}\delta_{ij},
+            \qquad
+            i,j=1,\ldots,N^2-1.
+          \]</div>
+          <p>For \(N=2\), these are \(\sigma_i/2\), the Pauli matrices divided by two. For \(N=3\), they are the Gell-Mann matrices divided by two. A general electronic operator can then be decomposed as</p>
+          <div class="math-block">\[
+            \hat A=A_0\hat I+\sum_{i=1}^{N^2-1} A_i\hat S_i,
+            \qquad
+            A_0=\frac{1}{N}\mathrm{tr}(\hat A).
+          \]</div>
+          <p>This split is not a numerical convention. The identity carries the trace part, while the \(SU(N)\) generators carry the traceless part. That is why the spin-mapping construction is insensitive to arbitrary choices of how a potential matrix is separated into state-independent and state-dependent pieces.</p>
+
+          <h2>Casimir Invariant</h2>
+          <p>The key invariant is the quadratic Casimir,</p>
+          <div class="math-block">\[
+            \sum_{i=1}^{N^2-1}\hat S_i^2
+            =
+            \frac{N^2-1}{2N}\hat I.
+          \]</div>
+          <p>This is the \(SU(N)\) version of total spin length. For ordinary spin angular momentum, \(\hat S_x^2+\hat S_y^2+\hat S_z^2=S(S+1)\). With \(N=2\), the formula gives</p>
+          <div class="math-block">\[
+            \frac{N^2-1}{2N}=\frac{3}{4},
+          \]</div>
+          <p>which is exactly the spin-\(1/2\) value. In generalized spin mapping, this invariant fixes the natural length scale of the electronic phase-space variables. This is where the zero-point-energy parameter in the W-representation comes from:</p>
+          <div class="math-block">\[
+            \gamma_W=\frac{2}{N}\left(\sqrt{N+1}-1\right).
+          \]</div>
+          <p>For the seven-state FMO model used by Runeson and Richardson, this gives \(\gamma_W\approx0.522\), much closer to the reduced values often found empirically useful in MMST-based calculations than to the original MMST choice \(\gamma=1\).</p>
+
+          <h2>Physical Versus Algebraic Degrees of Freedom</h2>
+          <p>A common trap is to equate the \(N^2-1\) generators with \(N^2-1\) independent pure-state coordinates. That is only safe for \(N=2\). A normalized electronic pure state is</p>
+          <div class="math-block">\[
+            |\Omega\rangle=\sum_{n=1}^{N} c_n|n\rangle,
+            \qquad
+            \sum_{n=1}^N |c_n|^2=1.
+          \]</div>
+          <p>The \(N\) complex coefficients contain \(2N\) real variables. Normalization removes one. The global phase removes another. Therefore a pure \(N\)-level electronic state has</p>
+          <div class="math-block">\[
+            2N-2
+          \]</div>
+          <p>real physical degrees of freedom. The pure-state manifold is the complex projective space \(\mathbb{CP}^{N-1}\).</p>
+          <p>The generalized Bloch vector has \(N^2-1\) components, \(\langle\Omega|\hat S_i|\Omega\rangle\), but for \(N>2\) those components obey constraints and do not fill a full \((N^2-1)\)-dimensional sphere. This distinction matters for mapping dynamics: a physical spin mapping should preserve the constrained \(2N-2\)-dimensional electronic geometry, not freely propagate all \(N^2-1\) algebra components as independent coordinates.</p>
+
+          <h2>Why Not Ordinary Wigner?</h2>
+          <p>The ordinary Wigner transform is built for continuous canonical variables. For a nuclear coordinate, it has the familiar form</p>
+          <div class="math-block">\[
+            A_W(q,p)=\int d\xi\, e^{ip\xi/\hbar}
+            \left\langle q-\frac{\xi}{2}\middle|\hat A\middle|q+\frac{\xi}{2}\right\rangle.
+          \]</div>
+          <p>This formula assumes a continuous coordinate \(q\), a conjugate momentum \(p\), a flat phase space, and the Heisenberg-Weyl translation structure. Nuclear motion satisfies those assumptions well enough for semiclassical dynamics. A finite electronic subsystem does not. It has discrete basis states \(|1\rangle,\ldots,|N\rangle\), but no native continuous \(q,p\) pair.</p>
+          <p>MMST makes ordinary phase-space ideas available by embedding the electronic states into harmonic oscillators. That is practical, but it is also the source of the enlarged unbounded mapping space and the physical-subspace leakage problem. The Stratonovich-Weyl transform avoids this detour by defining a Wigner-like representation directly on the finite \(SU(N)\) coherent-state space.</p>
+
+          <h2>Stratonovich-Weyl Transform</h2>
+          <p>For a finite electronic subsystem, the Stratonovich-Weyl transform maps an operator to a function on the coherent-state phase space:</p>
+          <div class="math-block">\[
+            A_s(\Omega)=\mathrm{tr}[\hat A\hat w_s(\Omega)].
+          \]</div>
+          <p>The index \(s\) labels \(Q\), \(P\), or \(W\) representations. With the normalization used above, the kernels are</p>
+          <div class="math-block">\[
+            \hat w_Q(\Omega)=\frac{1}{N}\hat I
+            +2\sum_{i=1}^{N^2-1}
+            \langle\Omega|\hat S_i|\Omega\rangle\hat S_i,
+          \]</div>
+          <div class="math-block">\[
+            \hat w_P(\Omega)=\frac{1}{N}\hat I
+            +2(N+1)\sum_{i=1}^{N^2-1}
+            \langle\Omega|\hat S_i|\Omega\rangle\hat S_i,
+          \]</div>
+          <div class="math-block">\[
+            \hat w_W(\Omega)=\frac{1}{N}\hat I
+            +2\sqrt{N+1}\sum_{i=1}^{N^2-1}
+            \langle\Omega|\hat S_i|\Omega\rangle\hat S_i.
+          \]</div>
+          <p>The W-representation is especially useful because it is self-dual:</p>
+          <div class="math-block">\[
+            \mathrm{tr}(\hat A\hat B)
+            =
+            \int d\Omega\, A_W(\Omega)B_W(\Omega).
+          \]</div>
+          <p>That property mirrors the role of the ordinary Wigner transform for continuous variables. The right summary is therefore not that Wigner is wrong, but that ordinary Wigner belongs to canonical nuclear coordinates, while Stratonovich-Weyl is the finite-dimensional \(SU(N)\) analogue used for electronic states.</p>
+
+          <h2>Mapping Variables</h2>
+          <p>To propagate trajectories, the coherent-state coefficients are rewritten as Cartesian variables:</p>
+          <div class="math-block">\[
+            (N+1)^{1/4}c_n=\frac{X_n+iP_n}{\sqrt{2}}.
+          \]</div>
+          <p>Normalization gives the W-representation hypersphere constraint</p>
+          <div class="math-block">\[
+            \sum_{n=1}^N(X_n^2+P_n^2)=2\sqrt{N+1}.
+          \]</div>
+          <p>The resulting W-representation Hamiltonian has the same practical shape as MMST,</p>
+          <div class="math-block">\[
+            H_W
+            =
+            \frac{p^2}{2m}
+            +
+            \sum_n V_n(x)\frac{1}{2}(X_n^2+P_n^2-\gamma_W)
+            +
+            \sum_{n>m}V_{nm}(x)(X_nX_m+P_nP_m),
+          \]</div>
+          <p>but the geometry is different. The variables are sampled on a fixed-radius electronic phase space, the identity maps to one, and \(\gamma_W\) is fixed by the \(SU(N)\) construction rather than tuned as an empirical parameter.</p>
+
+          <h2>Diagnostic Check</h2>
+          <p>The following script constructs generalized Gell-Mann generators and checks the two algebraic identities used above:</p>
+          <ul class="code-list">
+            <li><a href="../assets/code/mqc/su_n_spin_mapping_checks.py">su_n_spin_mapping_checks.py</a> verifies generator orthogonality, the quadratic Casimir, the pure-state degree count, and the W-representation \(\gamma_W\) values.</li>
+          </ul>
+          <p>Running the script from the repository root gives:</p>
+          <pre><code>N  generators  pure_dof  bloch_components  Casimir       gamma_W      R_W^2        max_errors
+2  3          2         3                 0.75000000   0.73205081   3.46410162   0.00e+00
+3  8          4         8                 1.33333333   0.66666667   4.00000000   2.22e-16
+7  48         12        48                3.42857143   0.52240775   5.65685425   4.44e-16
+8  63         14        63                3.93750000   0.50000000   6.00000000   4.44e-16</code></pre>
+          <p>The useful comparison is between <code>pure_dof</code> and <code>bloch_components</code>. For \(N=7\), the electronic pure state has only 12 physical real degrees of freedom, even though its generalized Bloch representation has 48 algebra components. The small numerical errors confirm the expected normalization and Casimir identities.</p>
+
+          <h2>Takeaway</h2>
+          <p>The mathematical role of \(SU(N)\) in spin mapping is to keep the electronic subsystem on its own finite-dimensional geometry. The Casimir invariant supplies the generalized spin length. The difference between \(2N-2\) physical pure-state degrees of freedom and \(N^2-1\) algebra components explains why the phase space is constrained. The Stratonovich-Weyl transform then provides the finite-state analogue of a Wigner representation, allowing electronic operators and correlation functions to be evaluated without embedding the electronic problem into an unbounded oscillator space.</p>
+
+          <h2>References</h2>
+          <ol>
+            <li>J. E. Runeson and J. O. Richardson, "Generalized spin mapping for quantum-classical dynamics," <em>Journal of Chemical Physics</em> <strong>152</strong>, 084110 (2020).</li>
+            <li>J. E. Runeson and J. O. Richardson, "Spin-mapping approach for nonadiabatic molecular dynamics," <em>Journal of Chemical Physics</em> <strong>151</strong>, 044119 (2019).</li>
+          </ol>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="mmst-zpe-leakage.html">&lt;- Previous mapping note</a>
+          <a href="../index.html">Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

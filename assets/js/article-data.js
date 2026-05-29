@@ -39,6 +39,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "spin-mapping-math-foundations",
+    title: "Spin Mapping Mathematical Foundations",
+    path: "posts/spin-mapping-math-foundations.html",
+    date: "2026-05-29",
+    dateText: "2026.05.29",
+    description: "SU(N) generators, the quadratic Casimir invariant, physical versus algebraic degrees of freedom, and why Stratonovich-Weyl is the finite-state analogue of Wigner mapping.",
+    tags: ["Spin Mapping", "SU(N)", "Stratonovich-Weyl", "Nonadiabatic Dynamics", "Mapping Dynamics"],
+  },
+  {
     slug: "mmst-zpe-leakage",
     title: "MQC IV: MMST Mapping and ZPE Leakage",
     path: "posts/mmst-zpe-leakage.html",
