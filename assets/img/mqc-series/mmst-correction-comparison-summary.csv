@@ -1,0 +1,15 @@
+section,method,label,gamma,estimator,final_upper,rms_upper_vs_exact,global_min_pop,global_max_pop,outside_fraction,assigned_fraction,lower_bound,upper_bound,focused_pure_state_possible,constraint_allowed,force_error_mean,force_error_std,force_error_max_abs
+population,raw_gamma_1,Raw gamma=1,1.0,raw,0.03853892203668461,0.015582812626268152,-0.4999974722012591,1.499997472201259,0.4867125062437562,1.0,,,,,,,
+population,raw_gamma_1_3,Reduced gamma=1/3,0.3333333333333333,raw,0.03494620006043212,0.007934379822243152,-0.16666628825569357,1.1666662882556933,0.3038816652097902,1.0,,,,,,,
+population,raw_gamma_0,Gamma=0,0.0,raw,0.03121915930767785,4.375343705825196e-15,6.23800992385108e-37,1.0000000000000004,0.0,1.0,,,,,,,
+population,clipped_gamma_1,Clip+renorm gamma=1,1.0,clipped,0.1163971909021673,0.09580741815290665,-0.4999974722012591,1.499997472201259,0.4867125062437562,1.0,,,,,,,
+population,majority_gamma_1_3,Window/bin gamma=1/3,0.3333333333333333,majority,0.0,0.06554818531782076,-0.16666628825569357,1.1666662882556933,0.3038816652097902,1.0,,,,,,,
+population,square_gamma_1_3,SQC square gamma=1/3,0.3333333333333333,square,0.0,0.1148270572400217,-0.16666628825569357,1.1666662882556933,0.3038816652097902,0.8064962381368631,,,,,,,
+negative_gamma_bounds,,,-0.4,,,,,,,,0.2,0.8,False,True,,,
+negative_gamma_bounds,,,-0.2,,,,,,,,0.1,0.9,False,True,,,
+negative_gamma_bounds,,,0.0,,,,,,,,-0.0,1.0,True,True,,,
+negative_gamma_bounds,,,0.3333333333,,,,,,,,-0.16666666665,1.16666666665,True,True,,,
+negative_gamma_bounds,,,0.5,,,,,,,,-0.25,1.25,True,True,,,
+negative_gamma_bounds,,,1.0,,,,,,,,-0.5,1.5,True,True,,,
+initial_force,fixed_sqc_gamma,,,,,,,,,,,,,,0.0161650747086803,0.3063959392753019,0.7489521603804659
+initial_force,trajectory_adjusted_gamma,,,,,,,,,,,,,,0.0,0.0,0.0

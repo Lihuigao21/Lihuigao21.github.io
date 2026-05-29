@@ -3,7 +3,7 @@ window.SITE_SERIES = [
     id: "mqc",
     title: "MQC Series",
     label: "Mixed Quantum-Classical Dynamics",
-    description: "Background notes, Tully-model benchmarks, and density-matrix diagnostics for MQC methods.",
+    description: "Background notes, Tully-model benchmarks, mapping dynamics, density-matrix diagnostics, and ZPE-leakage checks for MQC methods.",
   },
   {
     id: "pimd",
@@ -38,6 +38,17 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    slug: "mmst-zpe-leakage",
+    title: "MQC IV: MMST Mapping and ZPE Leakage",
+    path: "posts/mmst-zpe-leakage.html",
+    date: "2026-05-29",
+    dateText: "2026.05.29",
+    description: "MMST oscillator mapping, electronic phase sampling, ZPE leakage, gamma choices, SQC-style corrections, and SAC diagnostics against FSSH, Ehrenfest, and DVR.",
+    tags: ["MQC", "MMST", "Mapping Dynamics", "Zero-Point Energy", "SQC"],
+    series: "mqc",
+    part: 4,
+  },
   {
     slug: "pmatrix-decoherence-balance",
     title: "MQC III: P-Matrix Decoherence and Detailed Balance",

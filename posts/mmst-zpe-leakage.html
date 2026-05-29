@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="MQC series part IV: Meyer-Miller-Stock-Thoss mapping dynamics, electronic zero-point-energy leakage, gamma choices, SQC-style corrections, and toy-model diagnostics.">
+    <title>MQC IV: MMST Mapping and ZPE Leakage | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">MQC Series - Part IV</p>
+          <h1>MMST Mapping and ZPE Leakage</h1>
+          <p class="post-meta">2026.05.29 - Mapping Dynamics / Zero-Point Energy / SQC</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="MQC series navigation">
+            <a href="mqc-background.html">0. Background</a>
+            <a href="fssh-tully-benchmark.html">I. FSSH</a>
+            <a href="ehrenfest-tully-benchmark.html">II. Ehrenfest</a>
+            <a href="pmatrix-decoherence-balance.html">III. P-Matrix</a>
+            <a href="mmst-zpe-leakage.html">IV. MMST</a>
+          </nav>
+
+          <p class="lead">
+            The previous MQC notes compared active-surface dynamics, mean-field dynamics, and a directed density-matrix correction. This part turns to the Meyer-Miller-Stock-Thoss mapping Hamiltonian. MMST is attractive because it gives discrete electronic states continuous classical variables, but that same enlargement of phase space creates one of its central failure modes: electronic zero-point-energy leakage.
+          </p>
+
+          <h2>Why Mapping Is Needed</h2>
+          <p>Mixed quantum-classical dynamics needs a closure. The nuclei require forces, while the electronic subsystem is intrinsically discrete. Ehrenfest dynamics closes the problem with a density-matrix mean force. FSSH closes it with one active adiabatic surface and stochastic hops. MMST takes a different route: it first rewrites the discrete electronic Hilbert space in terms of continuous oscillator coordinates, then propagates those variables together with the nuclei.</p>
+          <p>This is not merely a convenient analogy. The Stock-Thoss construction maps an \(F\)-state electronic subsystem to \(F\) harmonic-oscillator degrees of freedom and is exact if the oscillator problem is treated quantum mechanically in the singly-excited oscillator subspace. The approximation enters when the oscillator variables are treated as classical coordinates and momenta. That distinction is important: the mapping itself is not the weak link; the classical use of the enlarged mapping phase space is.</p>
+
+          <h2>MMST Hamiltonian</h2>
+          <p>In a diabatic representation, the basic MMST Hamiltonian can be written as</p>
+          <div class="math-block">\[
+            H_{\mathrm{MMST}}
+            =
+            \frac{P^2}{2M}
+            +
+            \frac{1}{2}
+            \sum_{ij} h_{ij}(R)
+            \left(x_i x_j+p_i p_j-\gamma\delta_{ij}\right).
+          \]</div>
+          <p>Each electronic state \(i\) has one mapping pair \((x_i,p_i)\). It is often useful to combine them into a complex mapping amplitude,</p>
+          <div class="math-block">\[
+            z_i=\frac{x_i+i p_i}{\sqrt{2}},
+            \qquad
+            \rho_{ij}^{\mathrm{map}}
+            =
+            z_i z_j^*
+            -
+            \frac{\gamma}{2}\delta_{ij}.
+          \]</div>
+          <p>The diagonal part gives the raw mapping population, or action estimator,</p>
+          <div class="math-block">\[
+            n_i
+            =
+            \rho_{ii}^{\mathrm{map}}
+            =
+            \frac{1}{2}\left(x_i^2+p_i^2-\gamma\right).
+          \]</div>
+          <p>The nuclei move on the gradient of the mapping Hamiltonian. In a compact notation, the electronic variables feed back through a mean-field-like force,</p>
+          <div class="math-block">\[
+            F_R
+            =
+            -\frac{\partial H_{\mathrm{MMST}}}{\partial R}
+            =
+            -
+            \sum_{ij}
+            \rho_{ij}^{\mathrm{map}}
+            \frac{\partial h_{ij}(R)}{\partial R}.
+          \]</div>
+          <p>This is why a basic MMST trajectory resembles Ehrenfest more than FSSH: the nuclei usually do not run on a single active surface. They feel a continuous force determined by the instantaneous mapping density.</p>
+
+          <h2>Electronic Initialization</h2>
+          <p>The simplest MMST initialization is a focused pure-state initialization. If the trajectory starts in electronic state \(k\), the electronic actions are set to</p>
+          <div class="math-block">\[
+            n_k=1,
+            \qquad
+            n_{i\ne k}=0.
+          \]</div>
+          <p>The mapping radii follow from the action definition,</p>
+          <div class="math-block">\[
+            r_i=\sqrt{2n_i+\gamma},
+            \qquad
+            x_i=r_i\cos\theta_i,
+            \qquad
+            p_i=r_i\sin\theta_i.
+          \]</div>
+          <p>The phases \(\theta_i\) are sampled uniformly. This means that even with a fixed nuclear initial condition, MMST is still an ensemble method: different electronic phases give different mapping coherences and, once nuclear back reaction is included, different nuclear forces. In the Tully SAC comparison below, MMST is therefore averaged over 64 electronic phase samples.</p>
+          <p>Negative \(\gamma\) requires more care. For an inactive state, focused initialization asks for \(r_i=\sqrt{\gamma}\). If \(\gamma<0\), that radius is not real. The local implementation therefore allows negative \(\gamma\) only with explicit mapping coordinates or a constrained/windowed sampler, rather than with the default focused pure-state initializer.</p>
+
+          <h2>SAC Workflow Check</h2>
+          <p>As a first placement test, the local <code>toymodel</code> implementation was run on Tully's simple avoided crossing with \(q_0=-10\), \(p_0=10\), \(M=2000\), and the initial adiabatic state set to the upper surface. The figure compares Ehrenfest, FSSH, MMST, and an exact finite-grid DVR reference.</p>
+          <figure>
+            <img src="../assets/img/mqc-series/mmst-sac-mqc-comparison.png" alt="SAC population comparison for Ehrenfest, FSSH, MMST, and DVR">
+            <figcaption>Tully simple avoided crossing comparison. The horizontal axis is time in atomic units. The upper panel gives the upper adiabatic population and the lower panel gives the lower adiabatic population. Black is the finite-grid DVR wavepacket reference. Red is FSSH averaged over 512 trajectories, green is Ehrenfest, and purple is MMST with \(\gamma=1\) averaged over 64 mapping phases. The final upper populations are 0.731 for DVR, 0.713 for FSSH, 0.774 for Ehrenfest, and 0.822 for MMST.</figcaption>
+          </figure>
+          <p>The SAC benchmark is useful because it puts MMST into the same workflow as the earlier MQC notes. It is not the best place to see ZPE leakage. The average MMST population is smooth and finite, and the scattering outcome only reports an ensemble observable. To expose leakage, one needs to look inside the mapping variables themselves.</p>
+
+          <h2>What ZPE Leakage Means</h2>
+          <p>Quantum mechanically, the electronic mapping oscillators should remain in the singly-excited oscillator subspace. Classically, a trajectory can explore regions of the oscillator phase space that have no direct electronic-state interpretation. The raw action estimator can then become negative or larger than one:</p>
+          <div class="math-block">\[
+            n_i<0
+            \quad\mathrm{or}\quad
+            n_i>1.
+          \]</div>
+          <p>This is the electronic zero-point-energy leakage problem. It is not just a plotting inconvenience. If the same raw mapping density also enters the nuclear force, then nonphysical actions can affect the trajectory before any post-processing correction is applied.</p>
+          <p>A minimal two-state example makes the issue transparent. Consider a constant energy gap and a constant derivative coupling. The nuclei are force-free and move at a fixed velocity, so the exact electronic problem is a clean two-level precession. For two states, the raw action obeys</p>
+          <div class="math-block">\[
+            n_i=|z_i|^2-\frac{\gamma}{2},
+            \qquad
+            |z_0|^2+|z_1|^2=1+\gamma.
+          \]</div>
+          <p>Therefore a single raw population can range over</p>
+          <div class="math-block">\[
+            -\frac{\gamma}{2}
+            \le n_i \le
+            1+\frac{\gamma}{2}.
+          \]</div>
+          <p>The leakage interval is built into the classical mapping geometry. With \(\gamma=1\), a single trajectory can reach almost \([-0.5,1.5]\). With \(\gamma=1/3\), the interval shrinks to approximately \([-1/6,7/6]\). With \(\gamma=0\), this particular pure electronic diagnostic has no raw action outside \([0,1]\), but that limit also removes the electronic zero-point offset that motivated the MMST phase-space broadening in the first place.</p>
+
+          <h2>Gamma Scan</h2>
+          <p>The following diagnostic uses the constant-gap model described above. The black line is the exact electronic solution. The colored curves in the top panel are phase-averaged MMST populations. The middle and bottom panels show what is hidden by that average: individual mapping trajectories leave the physical population simplex when \(\gamma>0\).</p>
+          <figure>
+            <img src="../assets/img/mqc-series/mmst-gamma-zpe-scan.png" alt="MMST gamma scan showing raw action leakage">
+            <figcaption>MMST gamma scan on a constant-gap, constant-NAC electronic precession model. The horizontal axis is time in atomic units. The top panel shows phase-averaged upper-state populations for \(\gamma=0\), \(1/3\), \(0.5\), and \(1\), compared with the exact electronic solution. The middle panel shows the envelope of single-trajectory raw upper actions for \(\gamma=1/3\) and \(\gamma=1\); the shaded red zones are outside the physical interval \([0,1]\). The bottom panel plots observed population extrema against \(\gamma\), together with the theoretical bounds \(-\gamma/2\) and \(1+\gamma/2\). Larger positive \(\gamma\) increases the nonphysical raw-action region.</figcaption>
+          </figure>
+          <p>The numerical extrema match the simple bounds. In the 256-phase scan, \(\gamma=1\) reaches approximately \(-0.500\) and \(1.500\), while \(\gamma=1/3\) reaches \(-0.167\) and \(1.167\). The average population still tracks the exact oscillation reasonably well, which is precisely why leakage can be missed if only ensemble averages are inspected.</p>
+
+          <h2>Correction Strategies</h2>
+          <p>The literature does not contain one universal fix. Different corrections target different layers of the problem: the phase-space offset, the population estimator, the initial force, the nuclear quantum distribution, or the numerical integrator.</p>
+
+          <h3>Reduced Gamma</h3>
+          <p>The simplest idea is to reduce \(\gamma\). Since the raw action interval scales as \([-\gamma/2,1+\gamma/2]\), smaller positive \(\gamma\) directly shrinks the leakage range. Mueller and Stock treated this as a reduced ZPE correction and connected the choice of \(\gamma\) to level-density criteria. The drawback is that a smaller \(\gamma\) changes the mapping phase-space distribution and can move the method toward a classical-path or Ehrenfest-like limit.</p>
+
+          <h3>Negative Gamma</h3>
+          <p>He, Gong, Wu, and Liu pointed out that the mapping constraint permits negative \(\gamma\), provided</p>
+          <div class="math-block">\[
+            \gamma>-\frac{1}{F}
+          \]</div>
+          <p>for an \(F\)-state electronic subsystem. In a two-state model, \(\gamma>-1/2\). Negative \(\gamma\) shrinks the raw-action interval from the other side; for example, \(\gamma=-0.2\) gives the interval \([0.1,0.9]\). This can be effective in some spin-boson benchmarks, especially at low temperature. It is not a drop-in focused initialization, however, because inactive states would require imaginary radii unless a constrained sampler is used.</p>
+
+          <h3>Clipping and Renormalization</h3>
+          <p>One can post-process the raw action by clipping negative values and renormalizing. This produces a physical-looking population trace, but it is only an estimator correction. It does not change the nuclear force that was already generated by the uncorrected mapping density.</p>
+
+          <h3>SQC Windowing</h3>
+          <p>The symmetrical quasiclassical approach replaces direct use of raw actions by window functions. Instead of reading \(n_i\) as a continuous population, a trajectory is assigned to a state when its action falls inside that state's window. Square, triangle, and generalized triangle windows are common. Windowing is a practical re-quantization of the electronic oscillator variables and is often much better behaved than the raw action estimator, but it introduces choices: window shape, width, initial sampling, final binning, and the treatment of unassigned trajectories.</p>
+
+          <h3>Trajectory-Adjusted Gamma</h3>
+          <p>SQC sampling gives each trajectory a slightly different electronic oscillator energy. On steep repulsive surfaces, this can make some trajectories feel an initial nuclear force that does not match the intended electronic state. Cotton and Miller proposed keeping the SQC-sampled \((x,p)\) distribution but adjusting the \(\gamma\)-parameter per trajectory so that the initial nuclear force corresponds exactly to the prepared electronic state. This is not meant to solve every long-time equilibrium issue, but it directly fixes a short-time force inconsistency that can otherwise create spurious trajectories.</p>
+
+          <h3>Spin Mapping and Ring-Polymer Variants</h3>
+          <p>More recent work often avoids the MMST oscillator leakage problem by changing the mapping geometry. Spin mapping places the electronic variables on a fixed-radius generalized Bloch sphere, preserving the normalization structure more naturally. Ring-polymer mapping extensions address a separate but related issue: nuclear zero-point energy and nuclear quantum statistics. These methods are not simple gamma tweaks; they replace the electronic geometry, the nuclear representation, or both.</p>
+
+          <h2>Correction Comparison</h2>
+          <p>The following figure separates the main correction ideas on the same constant-gap model. The top-left panel compares population estimators. The top-right panel summarizes estimator RMS error, raw leakage fraction, and window assignment failure. The bottom-left panel shows how negative \(\gamma\) changes the formal raw-action interval. The bottom-right panel isolates the trajectory-adjusted \(\gamma\) idea by sampling SQC-like initial oscillator energies and measuring the error in the initial nuclear force.</p>
+          <figure>
+            <img src="../assets/img/mqc-series/mmst-correction-comparison.png" alt="MMST ZPE and gamma correction comparison">
+            <figcaption>MMST ZPE/gamma correction comparison. The upper-left panel shows mean upper-state population on the constant-gap electronic precession model. The upper-right panel reports RMS error of each population estimator, the fraction of raw samples outside \([0,1]\), and the fraction of unassigned window samples. The lower-left panel gives the raw-action interval as a function of \(\gamma\), including negative values allowed by the two-state constraint. The lower-right panel shows the initial nuclear-force error for a fixed-\(\gamma\) SQC-like window and for trajectory-adjusted \(\gamma\); the adjusted protocol collapses the force-error distribution to zero by construction.</figcaption>
+          </figure>
+          <p>The table below summarizes the population diagnostic. The <code>outside</code> column is the fraction of raw mapping samples with at least one population outside \([0,1]\). The <code>assigned</code> column is the fraction of samples that survive the estimator's assignment rule. The window/binning rows keep the observable physical but do not remove the raw leakage that exists in the underlying mapping variables.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Estimator</th>
+                <th>Gamma</th>
+                <th>RMS upper error</th>
+                <th>Raw min</th>
+                <th>Raw max</th>
+                <th>Outside</th>
+                <th>Assigned</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Raw action</td><td>1</td><td>0.0156</td><td>-0.500</td><td>1.500</td><td>0.487</td><td>1.000</td></tr>
+              <tr><td>Reduced raw action</td><td>1/3</td><td>0.0079</td><td>-0.167</td><td>1.167</td><td>0.304</td><td>1.000</td></tr>
+              <tr><td>Raw action</td><td>0</td><td>0.0000</td><td>0.000</td><td>1.000</td><td>0.000</td><td>1.000</td></tr>
+              <tr><td>Clip and renormalize</td><td>1</td><td>0.0958</td><td>-0.500</td><td>1.500</td><td>0.487</td><td>1.000</td></tr>
+              <tr><td>Window/bin</td><td>1/3</td><td>0.0655</td><td>-0.167</td><td>1.167</td><td>0.304</td><td>1.000</td></tr>
+              <tr><td>SQC square window</td><td>1/3</td><td>0.1148</td><td>-0.167</td><td>1.167</td><td>0.304</td><td>0.806</td></tr>
+            </tbody>
+          </table>
+
+          <h2>What Should Be Implemented Next?</h2>
+          <p>The current <code>toymodel</code> implementation should be read as a baseline fixed-\(\gamma\) MMST method. It is useful for testing the mapping Hamiltonian, phase averaging, raw-action leakage, and comparisons against FSSH, Ehrenfest, and DVR. It is not yet a complete SQC/MMST implementation.</p>
+          <p>The next natural implementation steps are:</p>
+          <ul>
+            <li><code>SQC_MMST</code> with square and triangle windows, including initial window sampling and final binning;</li>
+            <li>a constrained sampler for negative \(\gamma\), especially for spin-boson relaxation benchmarks;</li>
+            <li>a trajectory-adjusted \(\gamma\) option for SQC initial conditions on steep surfaces;</li>
+            <li>a split-Liouvillian or momentum-integral integrator for better long-time Hamiltonian stability;</li>
+            <li>a spin-mapping or spin-PLDM-lite comparison, so the site can compare oscillator mapping with fixed-radius spin mapping.</li>
+          </ul>
+          <p>A good diagnostic protocol should report more than the mean population. For every MMST-style calculation, the article should also record raw action extrema, outside-\([0,1]\) fraction, the estimator used for population, the value of \(\gamma\), the number of electronic phase samples, and any window assignment fraction.</p>
+
+          <h2>Code Used in This Note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/mqc/mmst.py">mmst.py</a> is the local <code>toymodel.methods.MMST</code> implementation with focused initialization, phase averaging support, and explicit handling of negative-\(\gamma\) initialization.</li>
+            <li><a href="../assets/code/mqc/mmst_sac_mqc_comparison.py">mmst_sac_mqc_comparison.py</a> runs the SAC comparison against Ehrenfest, FSSH, MMST, and DVR.</li>
+            <li><a href="../assets/code/mqc/mmst_gamma_zpe_scan.py">mmst_gamma_zpe_scan.py</a> runs the constant-gap gamma scan that exposes raw action leakage.</li>
+            <li><a href="../assets/code/mqc/mmst_correction_comparison.py">mmst_correction_comparison.py</a> compares reduced \(\gamma\), clipping, window/binning, negative-\(\gamma\) bounds, and trajectory-adjusted initial-force correction.</li>
+            <li><a href="../assets/img/mqc-series/mmst-sac-mqc-comparison-summary.csv">mmst-sac-mqc-comparison-summary.csv</a> stores the SAC final populations and DVR errors.</li>
+            <li><a href="../assets/img/mqc-series/mmst-gamma-zpe-scan-summary.csv">mmst-gamma-zpe-scan-summary.csv</a> stores the gamma-scan leakage statistics.</li>
+            <li><a href="../assets/img/mqc-series/mmst-correction-comparison-summary.csv">mmst-correction-comparison-summary.csv</a> stores the correction-comparison table used above.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Meyer and Miller, <em>J. Chem. Phys.</em> 70, 3214 (1979).</li>
+            <li>Stock and Thoss, <em>Phys. Rev. Lett.</em> 78, 578 (1997).</li>
+            <li>Mueller and Stock, <em>J. Chem. Phys.</em> 111, 77 (1999).</li>
+            <li>Cotton and Miller, <em>J. Chem. Phys.</em> 150, 194110 (2019).</li>
+            <li>Chowdhury and Huo, <em>J. Chem. Phys.</em> 150, 244102 (2019).</li>
+            <li>He, Gong, Wu, and Liu, <em>J. Phys. Chem. Lett.</em> 12, 2496 (2021).</li>
+            <li>Cook, Runeson, Richardson, and Hele, <em>J. Chem. Theory Comput.</em> 19, 6109 (2023).</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="mqc-series-map">
+            <h2 id="mqc-series-map">MQC series map</h2>
+            <ol class="series-list">
+              <li><a href="mqc-background.html">Part 0: Background and Working Assumptions</a> - BO approximation, Born-Huang couplings, NAC/HST formulas, MQC closures, and limitations.</li>
+              <li><a href="fssh-tully-benchmark.html">Part I: Fewest-Switches Surface Hopping</a> - active surfaces, stochastic hops, velocity rescaling, and a Tully SAC branch benchmark.</li>
+              <li><a href="ehrenfest-tully-benchmark.html">Part II: Ehrenfest Mean-Field Dynamics</a> - mean-field forces, continuous electronic populations, and the same Tully SAC scan.</li>
+              <li><a href="pmatrix-decoherence-balance.html">Part III: P-Matrix Decoherence and Detailed Balance</a> - directed density-matrix variables, pairwise decoherence, Boltzmann detailed balance, and controlled toy diagnostics.</li>
+              <li><a href="mmst-zpe-leakage.html">Part IV: MMST Mapping and ZPE Leakage</a> - oscillator mapping variables, electronic phase sampling, ZPE leakage, gamma choices, SQC-style corrections, and spin-mapping context.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
