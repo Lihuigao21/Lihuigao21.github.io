@@ -41,9 +41,60 @@
           <h2>Why Mapping Is Needed</h2>
           <p>Mixed quantum-classical dynamics needs a closure. The nuclei require forces, while the electronic subsystem is intrinsically discrete. Ehrenfest dynamics closes the problem with a density-matrix mean force. FSSH closes it with one active adiabatic surface and stochastic hops. MMST takes a different route: it first rewrites the discrete electronic Hilbert space in terms of continuous oscillator coordinates, then propagates those variables together with the nuclei.</p>
           <p>This is not merely a convenient analogy. The Stock-Thoss construction maps an \(F\)-state electronic subsystem to \(F\) harmonic-oscillator degrees of freedom and is exact if the oscillator problem is treated quantum mechanically in the singly-excited oscillator subspace. The approximation enters when the oscillator variables are treated as classical coordinates and momenta. That distinction is important: the mapping itself is not the weak link; the classical use of the enlarged mapping phase space is.</p>
+          <p>The physical picture is simple. A discrete electronic state is replaced by a fictitious oscillator excitation: state \(i\) means that oscillator \(i\) carries one quantum while all other electronic oscillators remain in their ground levels. Electronic populations become oscillator actions, and electronic coherences become relative phases between oscillator coordinates. Diagonal electronic energies weight the oscillator actions, while off-diagonal couplings mix oscillator modes and transfer action between them.</p>
 
           <h2>MMST Hamiltonian</h2>
-          <p>In a diabatic representation, the basic MMST Hamiltonian can be written as</p>
+          <p>Start from an electronic Hamiltonian in a diabatic basis,</p>
+          <div class="math-block">\[
+            \hat{H}
+            =
+            \frac{P^2}{2M}
+            +
+            \hat{h}(R),
+            \qquad
+            \hat{h}(R)
+            =
+            \sum_{ij} h_{ij}(R)\,|i\rangle\langle j|.
+          \]</div>
+          <p>The Stock-Thoss mapping embeds the electronic basis into a singly-excited oscillator, or SEO, subspace:</p>
+          <div class="math-block">\[
+            |i\rangle
+            \longrightarrow
+            |0_1,\ldots,1_i,\ldots,0_F\rangle.
+          \]</div>
+          <p>Within that SEO subspace, the electronic transition operator is represented by a bosonic number-transfer operator,</p>
+          <div class="math-block">\[
+            |i\rangle\langle j|
+            \longrightarrow
+            \hat{a}_i^\dagger \hat{a}_j,
+          \]</div>
+          <p>so the exact quantum mapping Hamiltonian is</p>
+          <div class="math-block">\[
+            \hat{H}_{\mathrm{map}}
+            =
+            \frac{P^2}{2M}
+            +
+            \sum_{ij} h_{ij}(R)\,\hat{a}_i^\dagger\hat{a}_j.
+          \]</div>
+          <p>Using dimensionless oscillator variables,</p>
+          <div class="math-block">\[
+            \hat{a}_i
+            =
+            \frac{\hat{x}_i+i\hat{p}_i}{\sqrt{2}},
+            \qquad
+            \hat{a}_i^\dagger
+            =
+            \frac{\hat{x}_i-i\hat{p}_i}{\sqrt{2}},
+          \]</div>
+          <p>the symmetrized classical symbol of \(\hat{a}_i^\dagger\hat{a}_j\) gives the real mapping bilinear. For a real symmetric diabatic Hamiltonian, the antisymmetric imaginary terms cancel in the full \(ij\) sum, leaving</p>
+          <div class="math-block">\[
+            \hat{a}_i^\dagger\hat{a}_j
+            \rightsquigarrow
+            \frac{1}{2}
+            \left(x_i x_j+p_i p_j-\delta_{ij}\right).
+          \]</div>
+          <p>This \(-\delta_{ij}\) term is the oscillator zero-point subtraction that appears when the quantum number operator is written in coordinate and momentum variables. Many quasiclassical mapping variants replace it by an adjustable \(-\gamma\delta_{ij}\) term. The direct MMST choice is \(\gamma=1\); reduced-\(\gamma\), SQC, and related variants use this offset as a controlled way to change the electronic zero-point-energy content of the mapping phase space.</p>
+          <p>Replacing the oscillator operators by classical coordinates and momenta then gives the basic MMST Hamiltonian,</p>
           <div class="math-block">\[
             H_{\mathrm{MMST}}
             =
