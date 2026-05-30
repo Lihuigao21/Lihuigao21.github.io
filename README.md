@@ -55,6 +55,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |   |-- mmst_correction_comparison.py
 |   |   |   |-- pmatrix_sac_comparison.py
 |   |   |   |-- pmatrix_decoherence_balance_demo.py
+|   |   |   |-- spin_mapping_sac_comparison.py
+|   |   |   |-- three_state_morse_method_comparison.py
 |   |   |   |-- reproduce_spin_mint_three_state_morse.py
 |   |   |   `-- su_n_spin_mapping_checks.py
 |   |   |-- pimd

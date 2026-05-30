@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A compact Spin-MInt reproduction note: SU(N) spin mapping implementation design, focused action-angle sampling, and a non-RPMD three-state Morse benchmark against the Cook, Rampton, and Hele reference setup.">
-    <title>Spin-MInt Three-State Morse Reproduction | Lihui Gao</title>
+    <meta name="description" content="A method-focused note on spin mapping and Spin-MInt: physical motivation, differences from MMST oscillator mapping, SU(N) derivation, and Tully SAC plus three-state Morse benchmarks against FSSH, Ehrenfest, and exact DVR dynamics.">
+    <title>Spin Mapping and Spin-MInt Method | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
@@ -37,144 +37,164 @@
       <article class="post">
         <header class="post-header">
           <p class="section-label">Mapping Dynamics</p>
-          <h1>Spin-MInt Three-State Morse Reproduction</h1>
-          <p class="post-meta">2026.05.30 - Spin-MInt / SU(N) Mapping / Non-RPMD Benchmark</p>
+          <h1>Spin Mapping and Spin-MInt Method</h1>
+          <p class="post-meta">2026.05.30 - Spin Mapping / MMST / SU(N) / Spin-MInt</p>
         </header>
 
         <div class="post-content">
           <p class="lead">
-            This note records a local implementation pass for generalized spin mapping and a non-RPMD Spin-MInt reproduction on the three-state Morse model of Cook, Rampton, and Hele. The goal was not only to run a benchmark, but also to put the code into a method-family shape: a shared spin-mapping base class, generalized spin mapping as one child, direct Spin-MInt propagation as another child, and MASH as a two-state spin-mapping child method rather than a separate conceptual island.
+            Spin mapping is best understood as a finite-state replacement for the oscillator embedding used in MMST mapping. It keeps the electronic subsystem on the geometry of an \(N\)-level Hilbert space, fixes the zero-point parameter through the Stratonovich-Weyl transform, and gives a natural route to symplectic Spin-MInt propagation. This note derives the working equations and then tests the implementation against FSSH, Ehrenfest, and exact DVR wavepacket references on both Tully's simple avoided crossing and a three-state Morse model.
           </p>
 
-          <h2>Background</h2>
-          <p>The preceding spin-mapping note introduced the \(SU(N)\) geometry behind finite electronic mapping. MMST mapping embeds the \(N\)-state electronic space into \(N\) fictitious harmonic oscillators. Spin mapping instead starts from the finite electronic algebra itself. The working variables may still look like Cartesian mapping coordinates, but their radius and zero-point parameter are fixed by the Stratonovich-Weyl construction rather than chosen as a loose oscillator convention.</p>
-          <p>For implementation, this distinction suggests a simple class hierarchy. The common parent owns \(SU(N)\) generators, Stratonovich-Weyl parameters, mapping-variable initialization, density reconstruction, and population estimators. Concrete methods then differ mainly in how they propagate the electronic and nuclear variables.</p>
-
-          <h2>Method Family</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Class</th>
-                <th>Role</th>
-                <th>Electronic geometry</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>SpinMappingBase</code></td>
-                <td>Shared parent for SU(N) basis generation, focused/full-sphere sampling, density maps, and population estimators.</td>
-                <td>General \(SU(N)\)</td>
-              </tr>
-              <tr>
-                <td><code>GeneralizedSpinMapping</code></td>
-                <td>Runeson-Richardson style mapping in Cartesian electronic variables.</td>
-                <td>General \(SU(N)\)</td>
-              </tr>
-              <tr>
-                <td><code>SpinMInt</code></td>
-                <td>Direct Spin-MInt propagation for one-dimensional diabatic models.</td>
-                <td>General \(SU(N)\)</td>
-              </tr>
-              <tr>
-                <td><code>MASH</code></td>
-                <td>Two-state mapping approach to surface hopping, implemented as a spin-mapping child.</td>
-                <td>\(SU(2)\)</td>
-              </tr>
-            </tbody>
-          </table>
-          <p>The important design point is that MASH is a specialized member of the spin/SU(N) mapping family. It uses the Bloch-sphere two-state limit and a hemisphere-based active state, while generalized spin mapping and Spin-MInt use the broader \(SU(N)\) construction.</p>
-
-          <h2>SU(N) Variables</h2>
-          <p>Let \(\hat S_i\), \(i=1,\ldots,N^2-1\), be generalized Gell-Mann generators normalized by</p>
+          <h2>Physical Starting Point</h2>
+          <p>In mixed quantum-classical nonadiabatic dynamics, the nuclear variables are usually treated as continuous phase-space coordinates \((R,P)\), while the electronic subsystem is a finite set of diabatic or adiabatic states. For an \(N\)-state diabatic model, the electronic Hamiltonian is an \(N\times N\) Hermitian matrix,</p>
           <div class="math-block">\[
-            \mathrm{tr}(\hat S_i\hat S_j)=\frac{1}{2}\delta_{ij}.
+            \hat H(R,P)=\frac{P^2}{2M}\hat I+\hat V(R).
           \]</div>
-          <p>A diabatic potential matrix is decomposed as</p>
+          <p>The question is how to attach classical-like continuous variables to this finite electronic space without pretending that the electronic states are ordinary nuclear coordinates. MMST and spin mapping answer this question differently.</p>
+
+          <h2>MMST Mapping</h2>
+          <p>MMST maps each electronic state \(|n\rangle\) to a singly excited harmonic oscillator state. In classical mapping variables, a common MMST Hamiltonian is</p>
           <div class="math-block">\[
-            \hat V(R)=V_0(R)\hat I+\sum_i V_i(R)\hat S_i,
+            H_\mathrm{MMST}
+            =
+            \frac{P^2}{2M}
+            +
+            \frac{1}{2}
+            \sum_{nm}V_{nm}(R)
+            \left(x_nx_m+p_np_m-\gamma\delta_{nm}\right).
+          \]</div>
+          <p>This is practical because it turns an \(N\)-state problem into canonical-looking variables. The cost is geometric. The physical electronic space is the singly-excited oscillator subspace, but the classical variables live in a larger unbounded oscillator phase space. Raw MMST actions can therefore leave the physical population interval, and the zero-point parameter \(\gamma\) becomes both a representation choice and a source of numerical sensitivity.</p>
+
+          <h2>Spin Mapping Idea</h2>
+          <p>Spin mapping starts from the symmetry of the finite electronic subsystem. Removing the irrelevant global phase, an \(N\)-state electronic pure state lives on \(\mathbb{CP}^{N-1}\), with \(2N-2\) physical real degrees of freedom. The natural algebra is \(SU(N)\), whose normalized generators \(\hat S_i\) satisfy</p>
+          <div class="math-block">\[
+            \mathrm{tr}(\hat S_i\hat S_j)=\frac{1}{2}\delta_{ij},
+            \qquad i,j=1,\ldots,N^2-1.
+          \]</div>
+          <p>Any diabatic potential matrix can be decomposed into trace and traceless pieces,</p>
+          <div class="math-block">\[
+            \hat V(R)=V_0(R)\hat I+\sum_{i=1}^{N^2-1}V_i(R)\hat S_i,
             \qquad
             V_0(R)=\frac{1}{N}\mathrm{tr}\,\hat V(R).
           \]</div>
-          <p>The local implementation initializes Cartesian mapping variables \(X_n,P_n\) and forms</p>
+          <p>The finite-state analogue of the Wigner transform is the Stratonovich-Weyl transform. In the W representation, it fixes the mapping zero-point parameter to</p>
+          <div class="math-block">\[
+            \gamma_W=\frac{2}{N}\left(\sqrt{N+1}-1\right),
+          \]</div>
+          <p>instead of leaving \(\gamma\) as an empirical oscillator parameter. The corresponding fixed electronic radius is</p>
+          <div class="math-block">\[
+            R_W^2=N\gamma_W+2=2\sqrt{N+1}.
+          \]</div>
+          <p>For \(N=2\), this is the Bloch-sphere limit. For \(N>2\), the \(N^2-1\) spin components are constrained coordinates of a finite electronic phase space, not independent oscillator amplitudes.</p>
+
+          <h2>Working Variables</h2>
+          <p>The implementation still uses Cartesian variables \(X_n,P_n\), but with a spin-mapping interpretation:</p>
           <div class="math-block">\[
             z_n=\frac{X_n+iP_n}{\sqrt{2}},
             \qquad
             \rho_{mn}=z_m z_n^*-\frac{\gamma}{2}\delta_{mn}.
           \]</div>
-          <p>The spin vector is the generator expansion of this mapped density,</p>
+          <p>The electronic spin vector is reconstructed from the mapped density matrix,</p>
           <div class="math-block">\[
-            \Omega_i = 2\,\mathrm{tr}(\rho \hat S_i).
-          \]</div>
-          <p>For the W-representation, the zero-point parameter is fixed by</p>
-          <div class="math-block">\[
-            \gamma_W=\frac{2}{N}\left(\sqrt{N+1}-1\right).
-          \]</div>
-          <p>For the three-state benchmark, \(N=3\), so \(\gamma_W=2/3\) and the mapping radius satisfies \(R_W^2=N\gamma_W+2=4\).</p>
-
-          <h2>Spin-MInt Step</h2>
-          <p>The direct Spin-MInt update used here is written in terms of the \(SU(N)\) adjoint flow. For a fixed nuclear position \(R\), the electronic spin evolves according to</p>
-          <div class="math-block">\[
-            \dot{\Omega}_i=\sum_j A_{ij}\Omega_j,
+            \Omega_i = 2\,\mathrm{tr}(\rho\hat S_i),
             \qquad
-            A_{ij}=2\,\mathrm{Re}\,\mathrm{tr}\{-i[\hat V,\hat S_j]\hat S_i\}.
+            \rho=\frac{1}{N}\hat I+\sum_i\Omega_i\hat S_i.
           \]</div>
-          <p>The one-step update is a kick-drift-like symplectic split:</p>
-          <ol>
-            <li>Half-step the nuclear coordinate: \(R\leftarrow R+\Delta t\,P/(2M)\).</li>
-            <li>At the midpoint, propagate \(\Omega\) exactly under the linear adjoint generator \(A\).</li>
-            <li>Update the nuclear momentum using the trace force and the integrated spin force, \(-\partial_R V_0-\frac{1}{2}\partial_R V_i\,\Omega_i\).</li>
-            <li>Half-step the coordinate again.</li>
-          </ol>
-          <p>This is the part that makes Spin-MInt attractive for generalized spin mapping: the electronic propagation is a matrix exponential in the adjoint representation, while the nuclear force is evaluated from the same \(SU(N)\) decomposition.</p>
+          <p>Focused action-angle initialization of state \(k\) uses</p>
+          <div class="math-block">\[
+            X_n=\sqrt{2J_n+\gamma}\cos\theta_n,\qquad
+            P_n=\sqrt{2J_n+\gamma}\sin\theta_n,
+          \]</div>
+          <p>with \(J_k=1\), \(J_{n\ne k}=0\), and random phases \(\theta_n\). The phase average returns the focused electronic population while each trajectory remains on the fixed spin-mapping radius.</p>
 
-          <h2>Three-State Morse Setup</h2>
-          <p>The non-RPMD reproduction uses the three-state Morse model from the Spin-MInt paper and its supplementary information. The diabatic surfaces are</p>
+          <h2>Spin-MInt Propagation</h2>
+          <p>Spin-MInt propagates the spin vector directly. At a fixed nuclear position, the electronic equation is the adjoint \(SU(N)\) flow</p>
           <div class="math-block">\[
-            V_{ii}(R)=D_i\left(1-e^{-\alpha_i(R-R_i)}\right)^2+c_i,
-          \]</div>
-          <p>with Gaussian off-diagonal couplings</p>
-          <div class="math-block">\[
-            V_{ij}(R)=A_{ij}e^{-\alpha_{ij}(R-R_{ij})^2}.
-          \]</div>
-          <p>For Model A, the initial nuclear Wigner distribution is</p>
-          <div class="math-block">\[
-            \rho_\mathrm{nuc}(R,P)=\frac{1}{\pi}
-            \exp\left[-M\omega(R-R_0)^2-\frac{(P-P_0)^2}{M\omega}\right],
-          \]</div>
-          <p>with \(R_0=2.1\), \(P_0=0\), \(M=20000\), and \(\omega=0.005\). Focused electronic sampling on state 1 follows the action-angle form</p>
-          <div class="math-block">\[
-            X_n=\sqrt{2J_n+\gamma}\sin\theta_n,
+            \dot{\Omega}_i=\sum_j A_{ij}(R)\Omega_j,
             \qquad
-            P_n=\sqrt{2J_n+\gamma}\cos\theta_n,
+            A_{ij}=2\,\mathrm{Re}\,\mathrm{tr}\{-i[\hat V(R),\hat S_j]\hat S_i\}.
           \]</div>
-          <p>where \(J_1=1\), \(J_{n\ne1}=0\), and each \(\theta_n\) is uniform on \([0,2\pi]\).</p>
+          <p>The nuclear equations are</p>
+          <div class="math-block">\[
+            \dot R=\frac{P}{M},\qquad
+            \dot P=-\partial_R V_0(R)-\frac{1}{2}\sum_i\partial_R V_i(R)\Omega_i.
+          \]</div>
+          <p>The local Spin-MInt step uses a symmetric split: half-step \(R\), exact linear spin flow at the midpoint, an integrated spin-force momentum kick, and a final half-step \(R\). This gives a direct symplectic update in the spin variables, avoiding the repeated adiabatic-basis rotations that appear in some oscillator-variable MInt formulations.</p>
 
-          <h2>Reproduction Result</h2>
-          <p>The local run shown below used Model A with \(\Delta t=10\), \(t_\mathrm{max}=3000\), and 300 trajectories. The reference supplementary figure uses the same timestep but 10000 trajectories, so this is a compact implementation check rather than a fully converged production reproduction.</p>
+          <h2>Method Family</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Role in the implementation</th>
+                <th>Geometry</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>SpinMappingBase</code></td>
+                <td>Shared SU(N) basis, Stratonovich-Weyl parameters, mapping initialization, density reconstruction, and estimators.</td>
+                <td>General \(SU(N)\)</td>
+              </tr>
+              <tr>
+                <td><code>GeneralizedSpinMapping</code></td>
+                <td>Runeson-Richardson style spin mapping in Cartesian mapping variables.</td>
+                <td>General \(SU(N)\)</td>
+              </tr>
+              <tr>
+                <td><code>SpinMInt</code></td>
+                <td>Direct adjoint-flow Spin-MInt propagation for one-dimensional diabatic models.</td>
+                <td>General \(SU(N)\)</td>
+              </tr>
+              <tr>
+                <td><code>MASH</code></td>
+                <td>Two-state mapping approach to surface hopping implemented as a spin-mapping child method.</td>
+                <td>\(SU(2)\)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Tully SAC Benchmark</h2>
+          <p>The benchmark below uses Tully's simple avoided crossing with \(q_0=-10\), \(p_0=10\), \(M=2000\), and the initial upper adiabatic state. Spin-MInt is propagated in the diabatic basis and its density matrix is projected to the instantaneous adiabatic basis for comparison. FSSH uses 512 trajectories. MMST uses 64 focused phase samples with \(\gamma=1\). Spin-MInt uses 128 W-representation phase samples. DVR is a finite-grid wavepacket reference.</p>
           <figure>
-            <img src="../assets/img/mqc-series/spin-mint-tsm-model-a-dt10-ntraj300.png" alt="Spin-MInt three-state Morse Model A reproduction">
-            <figcaption>Spin-MInt reproduction for the three-state Morse Model A. The top panel plots the three diabatic Morse surfaces \(V_{11}\), \(V_{22}\), and \(V_{33}\) in atomic units against nuclear coordinate \(R\); the black arrow marks the focused initial nuclear center \(R_0=2.1\). The bottom panel plots ensemble-averaged state populations versus time for \(\Delta t=10\) and 300 trajectories. The final averaged populations at \(t=3000\) are \(P_1=0.130837\), \(P_2=0.667834\), and \(P_3=0.201329\).</figcaption>
+            <img src="../assets/img/mqc-series/spin-mapping-sac-comparison.png" alt="Spin mapping, MMST, FSSH, Ehrenfest, and exact DVR comparison on Tully simple avoided crossing">
+            <figcaption>Tully simple avoided crossing population comparison. The horizontal axis is time in atomic units. The top panel is the upper adiabatic population and the bottom panel is the lower adiabatic population. Black is exact finite-grid DVR, blue is Spin-MInt W mapping, purple is MMST, red is FSSH, and green is Ehrenfest. Final upper populations are 0.730868 for DVR, 0.745638 for Spin-MInt, 0.821924 for MMST, 0.712891 for FSSH, and 0.773578 for Ehrenfest. The upper-population RMS errors relative to DVR are 0.03493 for Spin-MInt, 0.06751 for MMST, 0.04001 for FSSH, and 0.04388 for Ehrenfest.</figcaption>
           </figure>
-          <p>The qualitative structure matches the published benchmark: population remains on state 1 until the wavepacket reaches the first coupling region, state 2 becomes dominant, and state 3 turns on later. The published curves are smoother because they average over many more trajectories. A local side-by-side comparison against the paper and supplementary figure was generated during the working session, but only the locally generated numerical figure is published here.</p>
+          <p>The figure is not meant to declare a universal ranking from one model. It shows the intended diagnostic behavior: the spin-mapping implementation can be put on the same toy-model footing as standard MQC methods, and in this case the W-representation Spin-MInt curve stays closer to the DVR reference than the \(\gamma=1\) MMST curve.</p>
 
-          <h2>Checks</h2>
-          <p>Two numerical checks were used before treating the reproduction as publishable. First, a two-state Spin-MInt diagnostic conserved the mapped spin norm to roughly machine precision and showed second-order energy-drift reduction as the timestep was decreased. Second, the mapping limit tests and the RP-MASH regression test passed after adding the generalized spin-mapping code:</p>
+          <h2>Three-State Morse Benchmark</h2>
+          <p>A two-state avoided crossing is a useful sanity check, but generalized spin mapping should also be tested where \(N>2\). The next benchmark uses the three-state Morse Model A. The exact reference is finite-grid DVR wavepacket propagation. Spin-MInt, FSSH, and Ehrenfest are run from Wigner-sampled classical initial conditions corresponding to the same initial Gaussian packet, with \(R_0=2.1\), \(P_0=0\), \(M=20000\), \(\omega=0.005\), \(\Delta t=10\), and 300 trajectories for each MQC method.</p>
+          <figure>
+            <img src="../assets/img/mqc-series/three-state-morse-method-comparison.png" alt="Three-state Morse comparison for Spin-MInt, FSSH, Ehrenfest, and exact DVR">
+            <figcaption>Three-state Morse Model A population comparison. The horizontal axis is time in atomic units. Each panel is one adiabatic state population. Black is exact DVR, blue is Spin-MInt W mapping, red is FSSH, and green is Ehrenfest. Final DVR populations are \(P_1=0.640988\), \(P_2=0.249900\), and \(P_3=0.109112\). Final Spin-MInt populations are \(P_1=0.647066\), \(P_2=0.239489\), and \(P_3=0.113445\). The all-state RMS errors relative to DVR are 0.01033 for Spin-MInt, 0.02837 for FSSH, and 0.06241 for Ehrenfest.</figcaption>
+          </figure>
+          <p>This multi-state test is a sharper check of the generalized \(SU(N)\) machinery. Spin-MInt tracks the DVR reference closely across all three populations. FSSH is reasonable for states 1 and 2 but underestimates the final state-3 population in this run, while Ehrenfest overpopulates state 3 and underpopulates state 1, consistent with the usual mean-field tendency to keep too much averaged electronic character.</p>
+
+          <h2>Implementation Checks</h2>
+          <p>The code was checked in three layers. First, SU(N) helper tests verify generator normalization, density reconstruction, and W-representation parameters. Second, a two-state Spin-MInt diagnostic checks spin-norm conservation and timestep-dependent energy drift. Third, the SAC and three-state Morse comparisons above place Spin-MInt next to FSSH, Ehrenfest, and DVR on the same model observables, with MMST included as an additional oscillator-mapping reference for the two-state SAC case.</p>
           <pre><code>pytest tests/limits/test_spin_mapping_limits.py tests/limits/test_mmst_limits.py tests/test_rp_mash.py -q
 14 passed in 0.75s</code></pre>
-          <p>The three-state run also stores the time-dependent population table used for the plotted curves.</p>
 
           <h2>Code and Data</h2>
           <ul class="code-list">
-            <li><a href="../assets/code/mqc/reproduce_spin_mint_three_state_morse.py">reproduce_spin_mint_three_state_morse.py</a> is the driver for the three-state Morse reproduction. It is designed to run from the local <code>toymodel</code> repository root, where the <code>toymodel.methods.SpinMInt</code> and <code>toymodel.model.ThreeStateMorse</code> implementations are available.</li>
-            <li><a href="../assets/img/mqc-series/spin-mint-tsm-model-a-dt10-ntraj300-populations.csv">spin-mint-tsm-model-a-dt10-ntraj300-populations.csv</a> stores the ensemble-averaged populations and standard errors used in the figure.</li>
-            <li><a href="../assets/code/mqc/su_n_spin_mapping_checks.py">su_n_spin_mapping_checks.py</a> is the algebra diagnostic used in the preceding spin-mapping foundations note.</li>
+            <li><a href="../assets/code/mqc/spin_mapping_sac_comparison.py">spin_mapping_sac_comparison.py</a> generates the Spin-MInt/MMST/FSSH/Ehrenfest/DVR comparison figure and CSV files.</li>
+            <li><a href="../assets/img/mqc-series/spin-mapping-sac-comparison.csv">spin-mapping-sac-comparison.csv</a> stores the time-dependent populations used in the benchmark figure.</li>
+            <li><a href="../assets/img/mqc-series/spin-mapping-sac-comparison-summary.csv">spin-mapping-sac-comparison-summary.csv</a> stores final populations and errors relative to DVR.</li>
+            <li><a href="../assets/code/mqc/three_state_morse_method_comparison.py">three_state_morse_method_comparison.py</a> generates the three-state Morse exact/FSSH/Ehrenfest/Spin-MInt comparison.</li>
+            <li><a href="../assets/img/mqc-series/three-state-morse-method-comparison.csv">three-state-morse-method-comparison.csv</a> stores the three-state Morse population time series.</li>
+            <li><a href="../assets/img/mqc-series/three-state-morse-method-comparison-summary.csv">three-state-morse-method-comparison-summary.csv</a> stores final populations and RMS errors for the three-state Morse benchmark.</li>
+            <li><a href="../assets/code/mqc/reproduce_spin_mint_three_state_morse.py">reproduce_spin_mint_three_state_morse.py</a> is a secondary non-RPMD three-state Morse reproduction driver used as an implementation check, not as the main argument of this note.</li>
+            <li><a href="../assets/code/mqc/su_n_spin_mapping_checks.py">su_n_spin_mapping_checks.py</a> verifies SU(N) algebra identities and W-representation parameters.</li>
           </ul>
 
           <h2>References</h2>
           <ol>
-            <li>L. E. Cook, J. R. Rampton, and T. J. H. Hele, "The Spin-MInt algorithm: An accurate and symplectic propagator for the spin-mapping representation of nonadiabatic dynamics," <em>Journal of Chemical Physics</em> <strong>164</strong>, 144112 (2026).</li>
-            <li>J. E. Runeson and J. O. Richardson, "Generalized spin mapping for quantum-classical dynamics," <em>Journal of Chemical Physics</em> <strong>152</strong>, 084110 (2020).</li>
+            <li>H. D. Meyer and W. H. Miller, "A classical analog for electronic degrees of freedom in nonadiabatic collision processes," <em>Journal of Chemical Physics</em> <strong>70</strong>, 3214 (1979).</li>
+            <li>G. Stock and M. Thoss, "Semiclassical description of nonadiabatic quantum dynamics," <em>Physical Review Letters</em> <strong>78</strong>, 578 (1997).</li>
             <li>J. E. Runeson and J. O. Richardson, "Spin-mapping approach for nonadiabatic molecular dynamics," <em>Journal of Chemical Physics</em> <strong>151</strong>, 044119 (2019).</li>
+            <li>J. E. Runeson and J. O. Richardson, "Generalized spin mapping for quantum-classical dynamics," <em>Journal of Chemical Physics</em> <strong>152</strong>, 084110 (2020).</li>
+            <li>L. E. Cook, J. R. Rampton, and T. J. H. Hele, "The Spin-MInt algorithm: An accurate and symplectic propagator for the spin-mapping representation of nonadiabatic dynamics," <em>Journal of Chemical Physics</em> <strong>164</strong>, 144112 (2026).</li>
           </ol>
         </div>
 

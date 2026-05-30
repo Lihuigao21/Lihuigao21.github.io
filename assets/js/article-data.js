@@ -40,12 +40,12 @@ window.SITE_SERIES = [
 window.SITE_ARTICLES = [
   {
     slug: "spin-mint-three-state-morse-reproduction",
-    title: "Spin-MInt Three-State Morse Reproduction",
+    title: "Spin Mapping and Spin-MInt Method",
     path: "posts/spin-mint-three-state-morse-reproduction.html",
     date: "2026-05-30",
     dateText: "2026.05.30",
-    description: "Generalized SU(N) spin-mapping implementation design, direct Spin-MInt propagation, and a non-RPMD three-state Morse Model A reproduction.",
-    tags: ["Spin Mapping", "Spin-MInt", "SU(N)", "Nonadiabatic Dynamics", "Mapping Dynamics"],
+    description: "From MMST oscillator mapping to finite-state SU(N) spin mapping, direct Spin-MInt propagation, and Tully SAC plus three-state Morse benchmarks against FSSH, Ehrenfest, and exact DVR.",
+    tags: ["Spin Mapping", "Spin-MInt", "MMST", "SU(N)", "Nonadiabatic Dynamics", "Mapping Dynamics"],
   },
   {
     slug: "hamgnn-openmx-tio2-hamiltonian-workflow",
