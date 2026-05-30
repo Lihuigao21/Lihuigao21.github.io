@@ -1,0 +1,87 @@
+dataset_params:
+  batch_size: 1
+  split_file: /data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_20260528_083744/split_indices.npz
+  test_ratio: 0.1
+  train_ratio: 0.8
+  val_ratio: 0.1
+  num_workers: 4
+  preload: 0
+  data_format: lmdb
+  graph_data_path: /data/home/lhgao/codex_jobs/hamgnn_tio2_npz_to_lmdb_20260528_080312/graph_data/graph_data.lmdb
+
+losses_metrics:
+  losses:
+  - loss_weight: 27.211
+    metric: mae
+    prediction: hamiltonian
+    target: hamiltonian
+  metrics:
+  - metric: mae
+    prediction: hamiltonian
+    target: hamiltonian
+
+optim_params:
+  lr: 0.005
+  lr_decay: 0.5
+  lr_patience: 5
+  gradient_clip_val: 0.0
+  max_epochs: 100
+  min_epochs: 30
+  stop_patience: 15
+
+output_nets:
+  output_module: HamGNN_out
+  HamGNN_out:
+    ham_only: true
+    ham_type: openmx
+    nao_max: 26
+    add_H0: True
+    symmetrize: True
+    calculate_band_energy: False
+    num_k: 5
+    band_num_control: 8
+    k_path: null
+    soc_switch: False
+    nonlinearity_type: gate
+    spin_constrained: False
+    collinear_spin: False
+    minMagneticMoment: 0.5
+
+profiler_params:
+  progress_bar_refresh_rat: 10
+  train_dir: /data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_resume_20260528_153543/train_output
+
+representation_nets:
+  HamGNN_pre:
+    legacy_edge_update: false
+    cutoff: 26.0
+    cutoff_func: cos
+    edge_sh_normalization: component
+    edge_sh_normalize: true
+    irreps_edge_sh: 0e + 1o + 2e + 3o + 4e + 5o
+    irreps_node_features: 64x0e+64x0o+32x1o+16x1e+12x2o+25x2e+18x3o+9x3e+4x4o+9x4e+4x5o+4x5e+2x6e
+    num_layers: 3
+    num_radial: 64
+    num_types: 96
+    rbf_func: bessel
+    set_features: true
+    radial_MLP: [64, 64]
+    use_corr_prod: False
+    correlation: 2
+    num_hidden_features: 16
+    use_kan: False
+    radius_scale: 1.01
+    build_internal_graph: False
+    use_gradient_checkpointing: False
+
+setup:
+  GNN_Net: HamGNNpre
+  accelerator: null
+  ignore_warnings: true
+  checkpoint_path: /data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_20260528_083744/train_output/version_0/checkpoints/epoch=31-val_loss=0.000000.ckpt
+  load_from_checkpoint: False
+  resume: True
+  num_gpus: 1
+  precision: 32
+  property: hamiltonian
+  stage: fit

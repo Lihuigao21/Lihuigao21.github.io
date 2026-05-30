@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A TiO2 HamGNN workflow using OpenMX LCAO Hamiltonians, NVT sampling, LMDB training, band validation, and a 500 fs NVE nonadiabatic-coupling proxy check.">
+    <title>HamGNN OpenMX Workflow for TiO2 Hamiltonians | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../tags.html">Tags</a>
+        <a href="../series.html">Series</a>
+        <a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Machine Learning Hamiltonians</p>
+          <h1>HamGNN OpenMX Workflow for TiO2 Hamiltonians</h1>
+          <p class="post-meta">2026.05.30 - HamGNN / OpenMX / TiO2 / Nonadiabatic Coupling</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            This note records a practical TiO2 workflow for training and testing a HamGNN Hamiltonian model from OpenMX LCAO data. The goal was not only to reproduce held-out Hamiltonian matrix elements, but also to check whether the learned Hamiltonian preserves downstream electronic-structure observables: band gaps, band dispersions, and a finite-difference nonadiabatic-coupling proxy along a longer NVE trajectory.
+          </p>
+
+          <h2>Background</h2>
+          <p>
+            HamGNN predicts tight-binding-like Hamiltonian blocks from crystal graphs. For an OpenMX workflow, this is naturally tied to a localized atomic-orbital basis rather than to VASP plane waves. That matters for the dataset: the labels used for training must be OpenMX Hamiltonian and overlap outputs generated with a fixed LCAO basis, pseudopotential set, and self-consistent-field protocol.
+          </p>
+          <p>
+            The test system here was a 48-atom TiO2 cell with 16 Ti and 32 O atoms. The OpenMX basis family used in the working scripts was <code>Ti7.0-s3p2d1/Ti_PBE19</code> and <code>O6.0-s2p2d1/O_PBE19</code>. Molecular dynamics and static checks were run on the 4090 cluster under <code>/data/home/lhgao/codex_jobs/</code>, while the installed software lived under <code>/data/home/lhgao/software/</code>.
+          </p>
+
+          <h2>Training Dataset</h2>
+          <p>
+            The dataset was generated from finite-temperature OpenMX molecular dynamics rather than from VASP snapshots. This avoids a basis mismatch: all subsequent HamGNN labels and validations are expressed in the OpenMX LCAO representation. The production dataset used 500 graph samples stored as an LMDB:
+          </p>
+          <pre><code>/data/home/lhgao/codex_jobs/hamgnn_tio2_npz_to_lmdb_20260528_080312/graph_data/graph_data.lmdb</code></pre>
+          <p>
+            The compact conversion and training helpers published with this note are:
+          </p>
+          <ul>
+            <li><a href="../assets/code/hamgnn-tio2/npz_to_lmdb.py"><code>npz_to_lmdb.py</code></a></li>
+            <li><a href="../assets/code/hamgnn-tio2/run_hamgnn_no_tb.py"><code>run_hamgnn_no_tb.py</code></a></li>
+            <li><a href="../assets/code/hamgnn-tio2/config_lmdb_primary_resume_20260528_153543.yaml"><code>config_lmdb_primary_resume_20260528_153543.yaml</code></a></li>
+            <li><a href="../assets/code/hamgnn-tio2/run_train_lmdb_primary_resume_20260528_153543.slurm"><code>run_train_lmdb_primary_resume_20260528_153543.slurm</code></a></li>
+          </ul>
+
+          <h2>Training Result</h2>
+          <p>
+            The selected checkpoint was:
+          </p>
+          <pre><code>/data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_resume_20260528_153543/train_output/noop/checkpoints/epoch=97-val_loss=0.000000.ckpt</code></pre>
+          <p>
+            On a held-out 50-graph test set, the Hamiltonian L1 loss was:
+          </p>
+          <pre><code>test/L1Loss_hamiltonian = 3.5117921015626052e-06</code></pre>
+          <p>
+            This number is useful, but it is not sufficient. A Hamiltonian model should also be tested after diagonalization, because small matrix-element errors may be amplified by band crossings, small gaps, or an unstable overlap matrix.
+          </p>
+
+          <h2>Band-Structure Validation</h2>
+          <p>
+            A first 8 fs trajectory check was too close to the training set: the nearest training frame was only 0.00585 Angstrom RMS away. I therefore generated a new-velocity 200 fs NVT probe and compared the OpenMX and HamGNN band structures at the endpoint. The nearest old training structure was then about 0.204 Angstrom RMS away, making the test a more meaningful interpolation check.
+          </p>
+          <p>The endpoint metrics were:</p>
+          <ul>
+            <li><code>H L1 = 4.255553449183935e-06</code></li>
+            <li><code>OpenMX gap = 1.719572 eV</code></li>
+            <li><code>HamGNN gap = 1.725022 eV</code></li>
+            <li><code>Gap error = 0.005450 eV</code></li>
+          </ul>
+
+          <figure>
+            <img src="../assets/img/hamgnn-tio2/band_compare.png" alt="OpenMX and HamGNN TiO2 band comparison">
+            <figcaption>
+              Band-structure comparison for a TiO2 snapshot after a 200 fs new-velocity NVT probe. The OpenMX and HamGNN bands nearly overlap, and the gap error is 0.00545 eV. This check verifies that the learned Hamiltonian remains useful after diagonalization, not only as a matrix-regression target.
+            </figcaption>
+          </figure>
+
+          <h2>NVE Sampling and Parallel SCF</h2>
+          <p>
+            The short band test was still too local to reveal time-dependent failures. I therefore ran a 500 fs OpenMX NVE probe starting from the same finite-temperature region, then sampled every 5 fs. This produced 101 intended static SCF frames and 100 intended finite-difference pairs. The OpenMX static SCF calculations were run as a Slurm array with 10 concurrent tasks, rather than serially.
+          </p>
+          <pre><code>NVE job:        2141014, completed in 03:46:59
+SCF array:      2141015, 101/101 frames completed
+Postprocess:    2141016, graph/HamGNN completed
+NAC fixup:      2141876, completed in 00:02:05</code></pre>
+          <p>
+            The NVE energy diagnostic was acceptable for a probe trajectory: total energy drift was <code>3.64e-4 Ha</code> over 500 fs. The instantaneous temperature ranged from 269 K to 395 K and ended at 340 K, which is useful here because it tests the Hamiltonian model under a broader structural distribution than the short 20 fs smoke test.
+          </p>
+          <p>The scripts used for the long probe are:</p>
+          <ul>
+            <li><a href="../assets/code/hamgnn-tio2/prepare_nve500_nac_inputs.py"><code>prepare_nve500_nac_inputs.py</code></a></li>
+            <li><a href="../assets/code/hamgnn-tio2/run_nve.slurm"><code>run_nve.slurm</code></a></li>
+            <li><a href="../assets/code/hamgnn-tio2/run_scf_array.slurm"><code>run_scf_array.slurm</code></a></li>
+            <li><a href="../assets/code/hamgnn-tio2/run_postprocess.slurm"><code>run_postprocess.slurm</code></a></li>
+            <li><a href="../assets/code/hamgnn-tio2/compute_nac_compare.py"><code>compute_nac_compare.py</code></a></li>
+          </ul>
+
+          <h2>NAC Proxy Definition</h2>
+          <p>
+            I did not find a ready-made official HamGNN/OpenMX nonadiabatic-coupling driver. The comparison here therefore uses a Gamma-point finite-difference proxy:
+          </p>
+          <pre><code>d_ij ~= C_i^H (dH/dt - E_j dS/dt) C_j / (E_j - E_i)</code></pre>
+          <p>
+            The OpenMX reference uses self-consistent OpenMX Hamiltonian and overlap matrices. The ML comparison uses HamGNN-predicted Hamiltonians and the same OpenMX overlap matrices. This is a useful model-induced NAC diagnostic, but it is not a fully rigorous wavefunction-overlap NAC because it does not include an explicit cross-time AO overlap <code>&lt;phi_mu(R_t)|phi_nu(R_t+dt)&gt;</code>.
+          </p>
+          <p>
+            The plots use absolute values. This is intentional: eigenvectors are defined only up to a phase, or a sign in a real calculation. Without a phase-tracking step, the sign of a coupling can flip even when the physical coupling strength is unchanged. The absolute-value comparison asks whether HamGNN reproduces the magnitude and time localization of the coupling.
+          </p>
+
+          <h2>Long-Trajectory Result</h2>
+          <p>
+            Two sampled frames, 95 fs and 490 fs, were skipped by <code>graph_data_gen</code>, so the final NAC comparison used 99 valid graph frames and 98 adjacent pairs. Most time steps were 5 fs; the two gaps around skipped frames were 10 fs and were handled with the actual finite-difference time interval.
+          </p>
+          <ul>
+            <li><code>HamGNN test/L1Loss_hamiltonian = 4.37791959484457e-06</code></li>
+            <li><code>8-band window mean |NAC|, OpenMX = 0.01355 1/fs</code></li>
+            <li><code>8-band window mean |NAC|, ML = 0.01371 1/fs</code></li>
+            <li><code>8-band window MAE = 0.00280 1/fs</code></li>
+            <li><code>8-band window Pearson correlation = 0.921</code></li>
+            <li><code>VBM-CBM mean |NAC|, OpenMX = 0.001367 1/fs</code></li>
+            <li><code>VBM-CBM mean |NAC|, ML = 0.001342 1/fs</code></li>
+            <li><code>VBM-CBM MAE = 1.00e-4 1/fs</code></li>
+          </ul>
+
+          <figure>
+            <img src="../assets/img/hamgnn-tio2/nac_vbm_cbm_timeseries.png" alt="VBM-CBM NAC magnitude time series for OpenMX and HamGNN">
+            <figcaption>
+              Absolute VBM-CBM NAC proxy along the 500 fs NVE trajectory. The blue curve is OpenMX self-consistent H/S, and the orange curve is the HamGNN-predicted H with the OpenMX overlap S. The close overlap shows that the trained Hamiltonian captures the dominant time dependence of this band-edge coupling.
+            </figcaption>
+          </figure>
+
+          <figure>
+            <img src="../assets/img/hamgnn-tio2/nac_abs_scatter_p995.png" alt="Scatter plot of OpenMX and HamGNN NAC magnitudes">
+            <figcaption>
+              Scatter plot of absolute NAC values in an 8-band window around the VBM and CBM. The dashed line is the ideal <code>ML = OpenMX</code> relation. The plotted axes are clipped at the 99.5th percentile to keep the dense region visible. The overall correlation is 0.921, with a small number of outliers associated with higher-band or near-degenerate couplings.
+            </figcaption>
+          </figure>
+
+          <figure>
+            <img src="../assets/img/hamgnn-tio2/nac_window_heatmaps.png" alt="Average NAC heatmaps for OpenMX, HamGNN, and absolute error">
+            <figcaption>
+              Time-averaged absolute NAC matrices for bands from VBM-3 to CBM+4. Left: OpenMX reference. Middle: HamGNN-induced coupling. Right: absolute difference. The band-edge entries are reproduced well, while some higher conduction-band couplings are more sensitive.
+            </figcaption>
+          </figure>
+
+          <h2>Lessons Learned</h2>
+          <ul>
+            <li>For HamGNN, the DFT interface is part of the model definition. A VASP plane-wave trajectory is useful structurally, but OpenMX H/S labels are needed for an OpenMX-LCAO Hamiltonian model.</li>
+            <li>Very short trajectories can be misleading. The first 8 fs probe was too close to the training distribution, while the 500 fs NVE run exposed a wider temperature and structural range.</li>
+            <li>Band gaps can look excellent even when some high-band NAC entries are fragile. Downstream diagnostics should include both band observables and coupling-like quantities.</li>
+            <li>Absolute NAC values are the right first diagnostic unless eigenvector phases and band identities are tracked continuously.</li>
+            <li>For a stricter NAC workflow, the next step is to add phase tracking, band tracking, and a cross-time AO overlap or an equivalent OpenMX derivative-output route.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li><a href="https://github.com/QuantumLab-ZY/HamGNN" target="_blank" rel="noreferrer">HamGNN official repository</a></li>
+            <li><a href="https://www.openmx-square.org/" target="_blank" rel="noreferrer">OpenMX project</a></li>
+          </ul>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

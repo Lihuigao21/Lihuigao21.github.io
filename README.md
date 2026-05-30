@@ -12,6 +12,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- hamgnn-openmx-tio2-hamiltonian-workflow.html
 |   |-- spin-mapping-math-foundations.html
 |   |-- mmst-zpe-leakage.html
 |   |-- pmatrix-decoherence-balance.html
@@ -40,6 +41,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- assets
 |   |-- code
+|   |   |-- hamgnn-tio2
 |   |   |-- mqc
 |   |   |   |-- tully_common.py
 |   |   |   |-- dvr_tully_sac_reference.py
@@ -95,6 +97,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
+|   |   |-- hamgnn-tio2
 |   |   |-- mqc-series
 |   |   |-- pimd-series
 |   |   |-- matsubara-series
@@ -113,6 +116,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/hamgnn-openmx-tio2-hamiltonian-workflow.html`
 - `posts/spin-mapping-math-foundations.html`
 - `posts/mmst-zpe-leakage.html`
 - `posts/pmatrix-decoherence-balance.html`

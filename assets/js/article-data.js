@@ -39,6 +39,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "hamgnn-openmx-tio2-hamiltonian-workflow",
+    title: "HamGNN OpenMX Workflow for TiO2 Hamiltonians",
+    path: "posts/hamgnn-openmx-tio2-hamiltonian-workflow.html",
+    date: "2026-05-30",
+    dateText: "2026.05.30",
+    description: "OpenMX LCAO data generation, HamGNN Hamiltonian training, band validation, and a 500 fs NVE nonadiabatic-coupling proxy check for TiO2.",
+    tags: ["HamGNN", "OpenMX", "TiO2", "Machine Learning Hamiltonians", "Nonadiabatic Dynamics"],
+  },
+  {
     slug: "spin-mapping-math-foundations",
     title: "Spin Mapping Mathematical Foundations",
     path: "posts/spin-mapping-math-foundations.html",
