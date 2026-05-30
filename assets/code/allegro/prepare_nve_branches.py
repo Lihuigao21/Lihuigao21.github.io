@@ -38,7 +38,7 @@ echo "Nodes: $SLURM_JOB_NODELIST"
 echo "============================================================"
 
 cd "$ROOT_DIR/$JOB_DIR" || exit 2
-export PATH=/public/home/gaolihui/vasp:$PATH
+export PATH="${VASP_BIN_DIR:-/path/to/vasp/bin}:$PATH"
 srun --mpi=pmi2 vasp_std
 """
 

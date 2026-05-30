@@ -1,13 +1,13 @@
 dataset_params:
   batch_size: 1
-  split_file: /data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_20260528_083744/split_indices.npz
+  split_file: ./split_indices.npz
   test_ratio: 0.1
   train_ratio: 0.8
   val_ratio: 0.1
   num_workers: 4
   preload: 0
   data_format: lmdb
-  graph_data_path: /data/home/lhgao/codex_jobs/hamgnn_tio2_npz_to_lmdb_20260528_080312/graph_data/graph_data.lmdb
+  graph_data_path: ./graph_data/graph_data.lmdb
 
 losses_metrics:
   losses:
@@ -49,7 +49,7 @@ output_nets:
 
 profiler_params:
   progress_bar_refresh_rat: 10
-  train_dir: /data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_resume_20260528_153543/train_output
+  train_dir: ./train_output
 
 representation_nets:
   HamGNN_pre:
@@ -78,7 +78,7 @@ setup:
   GNN_Net: HamGNNpre
   accelerator: null
   ignore_warnings: true
-  checkpoint_path: /data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_20260528_083744/train_output/version_0/checkpoints/epoch=31-val_loss=0.000000.ckpt
+  checkpoint_path: ./checkpoints/seed.ckpt
   load_from_checkpoint: False
   resume: True
   num_gpus: 1

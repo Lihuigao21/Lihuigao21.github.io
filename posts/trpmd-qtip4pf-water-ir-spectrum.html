@@ -78,7 +78,7 @@
           <p>
             The q-TIP4P/F model is a flexible, fixed-charge water model designed for quantum simulations of liquid water. It keeps the TIP4P idea of placing the negative charge on a massless M site rather than directly on the oxygen, but the intramolecular O-H distances and H-O-H angle are flexible. In the i-PI driver used here, the relevant parameters are hard-coded in the local Fortran source:
           </p>
-          <pre><code>/data/home/lhgao/i-pi/drivers/f90/pes/qtip4pf.f90</code></pre>
+          <pre><code>&lt;IPI_SOURCE_ROOT&gt;/drivers/f90/pes/qtip4pf.f90</code></pre>
           <p>
             The dipole was taken consistently with the q-TIP4P/F charge geometry. For each molecule,
           </p>
@@ -253,11 +253,11 @@
           <p>
             The calculation was staged on the remote cluster under
           </p>
-          <pre><code>/data/home/lhgao/codex_jobs/trpmd_qtip4pf_fig7</code></pre>
+          <pre><code>&lt;TRPMD_WORKDIR&gt;</code></pre>
           <p>
             using the conda environment
           </p>
-          <pre><code>/data/home/lhgao/.conda/envs/deepmd</code></pre>
+          <pre><code>&lt;CONDA_ENV_ROOT&gt;/deepmd</code></pre>
           <p>
             The q-TIP4P/F Fortran driver was copied from the local i-PI tree and compiled on the login node. All dynamics were submitted as Slurm jobs on compute nodes. The production ladder was:
           </p>

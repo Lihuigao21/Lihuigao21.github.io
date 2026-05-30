@@ -11,12 +11,13 @@
 set -euo pipefail
 ulimit -s unlimited
 
-export PATH="/data/home/lhgao/.conda/envs/deepmd/bin:${PATH}"
+CONDA_ENV_BIN="${CONDA_ENV_BIN:-/path/to/conda/env/bin}"
+export PATH="${CONDA_ENV_BIN}:${PATH}"
 export PYTHONNOUSERSITE=1
 
-ROOT="/data/home/lhgao/codex_jobs/trpmd_qtip4pf_fig7"
+ROOT="${TRPMD_WORKDIR:-$PWD}"
 DRIVER="${ROOT}/driver_src/driver.x"
-IPI_EXE="/data/home/lhgao/.conda/envs/deepmd/bin/i-pi"
+IPI_EXE="${IPI_EXE:-${CONDA_ENV_BIN}/i-pi}"
 RUN_TAG="production_trpmd_lambda_0p5_traj_001"
 NCLIENTS="32"
 SOCKET="qtip4pf_${SLURM_JOB_ID}_${RUN_TAG}"

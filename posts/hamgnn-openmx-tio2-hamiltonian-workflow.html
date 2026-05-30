@@ -49,14 +49,14 @@
             HamGNN predicts tight-binding-like Hamiltonian blocks from crystal graphs. For an OpenMX workflow, this is naturally tied to a localized atomic-orbital basis rather than to VASP plane waves. That matters for the dataset: the labels used for training must be OpenMX Hamiltonian and overlap outputs generated with a fixed LCAO basis, pseudopotential set, and self-consistent-field protocol.
           </p>
           <p>
-            The test system here was a 48-atom TiO2 cell with 16 Ti and 32 O atoms. The OpenMX basis family used in the working scripts was <code>Ti7.0-s3p2d1/Ti_PBE19</code> and <code>O6.0-s2p2d1/O_PBE19</code>. Molecular dynamics and static checks were run on the 4090 cluster under <code>/data/home/lhgao/codex_jobs/</code>, while the installed software lived under <code>/data/home/lhgao/software/</code>.
+            The test system here was a 48-atom TiO2 cell with 16 Ti and 32 O atoms. The OpenMX basis family used in the working scripts was <code>Ti7.0-s3p2d1/Ti_PBE19</code> and <code>O6.0-s2p2d1/O_PBE19</code>. Molecular dynamics and static checks were staged in a private Slurm scratch workspace; the public scripts attached below use environment variables such as <code>OPENMX_DFT_DATA</code>, <code>HAMGNN_ROOT</code>, <code>HAMGNN_CKPT</code>, and <code>HAMGNN_TIO2_WORKDIR</code> instead of site-specific absolute paths.
           </p>
 
           <h2>Training Dataset</h2>
           <p>
             The dataset was generated from finite-temperature OpenMX molecular dynamics rather than from VASP snapshots. This avoids a basis mismatch: all subsequent HamGNN labels and validations are expressed in the OpenMX LCAO representation. The production dataset used 500 graph samples stored as an LMDB:
           </p>
-          <pre><code>/data/home/lhgao/codex_jobs/hamgnn_tio2_npz_to_lmdb_20260528_080312/graph_data/graph_data.lmdb</code></pre>
+          <pre><code>&lt;PROJECT_DATA&gt;/graph_data/graph_data.lmdb</code></pre>
           <p>
             The compact conversion and training helpers published with this note are:
           </p>
@@ -71,7 +71,7 @@
           <p>
             The selected checkpoint was:
           </p>
-          <pre><code>/data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_resume_20260528_153543/train_output/noop/checkpoints/epoch=97-val_loss=0.000000.ckpt</code></pre>
+          <pre><code>&lt;CHECKPOINT_ROOT&gt;/epoch=97-val_loss=0.000000.ckpt</code></pre>
           <p>
             On a held-out 50-graph test set, the Hamiltonian L1 loss was:
           </p>
@@ -103,10 +103,10 @@
           <p>
             The short band test was still too local to reveal time-dependent failures. I therefore ran a 500 fs OpenMX NVE probe starting from the same finite-temperature region, then sampled every 5 fs. This produced 101 intended static SCF frames and 100 intended finite-difference pairs. The OpenMX static SCF calculations were run as a Slurm array with 10 concurrent tasks, rather than serially.
           </p>
-          <pre><code>NVE job:        2141014, completed in 03:46:59
-SCF array:      2141015, 101/101 frames completed
-Postprocess:    2141016, graph/HamGNN completed
-NAC fixup:      2141876, completed in 00:02:05</code></pre>
+          <pre><code>NVE trajectory:       completed in 03:46:59
+Static SCF array:    101/101 frames completed
+Postprocess:         graph generation and HamGNN inference completed
+NAC analysis:        completed in 00:02:05</code></pre>
           <p>
             The NVE energy diagnostic was acceptable for a probe trajectory: total energy drift was <code>3.64e-4 Ha</code> over 500 fs. The instantaneous temperature ranged from 269 K to 395 K and ended at 340 K, which is useful here because it tests the Hamiltonian model under a broader structural distribution than the short 20 fs smoke test.
           </p>
@@ -130,6 +130,15 @@ NAC fixup:      2141876, completed in 00:02:05</code></pre>
           <p>
             The plots use absolute values. This is intentional: eigenvectors are defined only up to a phase, or a sign in a real calculation. Without a phase-tracking step, the sign of a coupling can flip even when the physical coupling strength is unchanged. The absolute-value comparison asks whether HamGNN reproduces the magnitude and time localization of the coupling.
           </p>
+          <p>
+            This also means the figures below should be read as <code>|NAC|</code> diagnostics, not as a production signed or complex NAC workflow. For real nonadiabatic dynamics, the inference pipeline must make the electronic gauge continuous along the trajectory before using the coupling signs or phases. A practical implementation is:
+          </p>
+          <ul>
+            <li>Track band identities between adjacent frames with an overlap matrix <code>M_ij(t,t+dt) = &lt;psi_i(t)|psi_j(t+dt)&gt;</code>, using a maximum-overlap or Hungarian assignment inside the target band window.</li>
+            <li>In an LCAO basis, compute this overlap as <code>C_i(t)^H S_cross(t,t+dt) C_j(t+dt)</code>, where <code>S_cross</code> is the cross-time AO overlap <code>&lt;phi_mu(R_t)|phi_nu(R_t+dt)&gt;</code>. Reusing only same-frame <code>S(t)</code> is a useful approximation for a diagnostic, but it is not the fully consistent signed NAC object.</li>
+            <li>Fix the gauge after band matching. For an isolated real state, flip the sign so the diagonal overlap is positive; for a complex state, multiply by <code>exp(-i arg M_ii)</code>. For near-degenerate states, align the whole subspace with an SVD or polar decomposition of the overlap block.</li>
+            <li>After this state tracking and gauge fixing, evaluate the signed or complex finite-difference NAC from the gauge-continuous wavefunctions, or use an equivalent OpenMX derivative-output route if available.</li>
+          </ul>
 
           <h2>Long-Trajectory Result</h2>
           <p>
@@ -172,8 +181,8 @@ NAC fixup:      2141876, completed in 00:02:05</code></pre>
             <li>For HamGNN, the DFT interface is part of the model definition. A VASP plane-wave trajectory is useful structurally, but OpenMX H/S labels are needed for an OpenMX-LCAO Hamiltonian model.</li>
             <li>Very short trajectories can be misleading. The first 8 fs probe was too close to the training distribution, while the 500 fs NVE run exposed a wider temperature and structural range.</li>
             <li>Band gaps can look excellent even when some high-band NAC entries are fragile. Downstream diagnostics should include both band observables and coupling-like quantities.</li>
-            <li>Absolute NAC values are the right first diagnostic unless eigenvector phases and band identities are tracked continuously.</li>
-            <li>For a stricter NAC workflow, the next step is to add phase tracking, band tracking, and a cross-time AO overlap or an equivalent OpenMX derivative-output route.</li>
+            <li>Absolute NAC values are only a first diagnostic. Real dynamics needs signed or complex NAC after continuous band tracking and gauge fixing.</li>
+            <li>For a stricter NAC workflow, the next step is to add phase tracking, band tracking, and cross-time AO overlaps or an equivalent OpenMX derivative-output route.</li>
           </ul>
 
           <h2>References</h2>

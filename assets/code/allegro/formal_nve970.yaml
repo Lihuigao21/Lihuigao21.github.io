@@ -7,7 +7,7 @@ model_type_names: ${chemical_symbols}
 data:
   _target_: nequip.data.datamodule.ASEDataModule
   split_dataset:
-    file_path: /data/home/lhgao/allegro-main/test/MAPBI3/nve5_encut600_stride15_discard100.extxyz
+    file_path: ./data/nve5_encut600_stride15_discard100.extxyz
     train: 0.8
     val: 0.1
     test: 0.1

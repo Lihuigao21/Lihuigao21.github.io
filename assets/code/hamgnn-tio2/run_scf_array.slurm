@@ -6,8 +6,8 @@
 #SBATCH -t 04:00:00
 #SBATCH --job-name=TiO2_scf500
 #SBATCH --array=0-100%10
-#SBATCH --output=/data/home/lhgao/codex_jobs/hamgnn_tio2_nve500_nac_compare_20260529_1430/slurm-scf-%A_%a.out
-#SBATCH --error=/data/home/lhgao/codex_jobs/hamgnn_tio2_nve500_nac_compare_20260529_1430/slurm-scf-%A_%a.err
+#SBATCH --output=slurm-scf-%A_%a.out
+#SBATCH --error=slurm-scf-%A_%a.err
 
 set -euo pipefail
 ulimit -s unlimited
@@ -15,9 +15,9 @@ export UCX_TLS=dc,self
 export OMP_NUM_THREADS=1
 export PYTHONUNBUFFERED=1
 
-source /data/home/lhgao/software/load_hamgnn_openmx_4090.sh
+source "${HAMGNN_ENV:-/path/to/load_hamgnn_openmx.sh}"
 
-JOB_DIR=/data/home/lhgao/codex_jobs/hamgnn_tio2_nve500_nac_compare_20260529_1430
+JOB_DIR=${HAMGNN_TIO2_WORKDIR:-$PWD}
 FRAME_LIST="$JOB_DIR/scf_frame_dirs.txt"
 LINE_NO=$((SLURM_ARRAY_TASK_ID + 1))
 FRAME_DIR=$(sed -n "${LINE_NO}p" "$FRAME_LIST")

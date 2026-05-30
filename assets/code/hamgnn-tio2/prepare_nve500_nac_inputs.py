@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 
@@ -12,6 +13,9 @@ NVE_STEPS = 501
 SAMPLE_START_FS = 0
 SAMPLE_END_FS = 500
 SAMPLE_STRIDE_FS = 5
+OPENMX_DFT_DATA = os.environ.get("OPENMX_DFT_DATA", "/path/to/openmx/DFT_DATA19")
+HAMGNN_ROOT = os.environ.get("HAMGNN_ROOT", "/path/to/HamGNN")
+HAMGNN_CKPT = os.environ.get("HAMGNN_CKPT", "./checkpoints/hamgnn.ckpt")
 
 
 def read_poscar(path: Path):
@@ -127,7 +131,7 @@ MD.Opt.criterion                 1.0e-4
     with path.open("w", encoding="utf-8") as out:
         out.write(f"""System.CurrrentDirectory         ./
 System.Name                      {system_name}
-DATA.PATH                        /data/home/lhgao/software/openmx3.9/DFT_DATA19
+DATA.PATH                        {OPENMX_DFT_DATA}
 level.of.stdout                  1
 level.of.fileout                 1
 HS.fileout                       {hs_fileout}
@@ -176,7 +180,7 @@ def write_graph_config(path: Path, job_dir: Path):
     path.write_text(
         f"""nao_max: 26
 graph_data_save_path: "{job_dir}/graph_data"
-read_openmx_path: "/data/home/lhgao/software/HamGNN-16e226a/DFT_interfaces/openmx/openmx_postprocess/read_openmx"
+read_openmx_path: "{HAMGNN_ROOT}/DFT_interfaces/openmx/openmx_postprocess/read_openmx"
 max_SCF_skip: 200
 scfout_paths: "{job_dir}/scf/frame_*"
 dat_file_name: "openmx.dat"
@@ -271,7 +275,7 @@ setup:
   GNN_Net: HamGNNpre
   accelerator: null
   ignore_warnings: true
-  checkpoint_path: /data/home/lhgao/codex_jobs/hamgnn_tio2_train_lmdb_primary_resume_20260528_153543/train_output/noop/checkpoints/epoch=97-val_loss=0.000000.ckpt
+  checkpoint_path: {HAMGNN_CKPT}
   load_from_checkpoint: true
   resume: false
   num_gpus: 0
@@ -297,8 +301,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage", choices=["initial", "scf"], required=True)
     parser.add_argument("--job-dir", required=True)
-    parser.add_argument("--poscar", default="/data/home/lhgao/Tio2_ibnac/relax/POSCAR")
-    parser.add_argument("--source-md", default="/data/home/lhgao/codex_jobs/hamgnn_tio2_nvt_band_compare_200fs_newvel_20260529_1100/nvt/TiO2_probe_nvt.md")
+    parser.add_argument("--poscar", default=os.environ.get("OPENMX_POSCAR", "./POSCAR"))
+    parser.add_argument("--source-md", default=os.environ.get("SOURCE_MD", "./nvt/TiO2_probe_nvt.md"))
     args = parser.parse_args()
 
     job_dir = Path(args.job_dir)

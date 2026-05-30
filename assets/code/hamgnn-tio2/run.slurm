@@ -5,8 +5,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH -t 12:00:00
 #SBATCH --job-name=TiO2_nvt_cmp_200fs
-#SBATCH --output=/data/home/lhgao/codex_jobs/hamgnn_tio2_nvt_band_compare_200fs_newvel_20260529_1100/slurm-%j.out
-#SBATCH --error=/data/home/lhgao/codex_jobs/hamgnn_tio2_nvt_band_compare_200fs_newvel_20260529_1100/slurm-%j.err
+#SBATCH --output=slurm-%j.out
+#SBATCH --error=slurm-%j.err
 
 set -euo pipefail
 ulimit -s unlimited
@@ -14,9 +14,9 @@ export UCX_TLS=dc,self
 export OMP_NUM_THREADS=1
 export PYTHONUNBUFFERED=1
 
-source /data/home/lhgao/software/load_hamgnn_openmx_4090.sh
+source "${HAMGNN_ENV:-/path/to/load_hamgnn_openmx.sh}"
 
-JOB_DIR=/data/home/lhgao/codex_jobs/hamgnn_tio2_nvt_band_compare_200fs_newvel_20260529_1100
+JOB_DIR=${HAMGNN_TIO2_WORKDIR:-$PWD}
 
 echo "=== TiO2 NVT probe and OpenMX/HamGNN band comparison ==="
 echo "Job ID: ${SLURM_JOB_ID:-NA}"

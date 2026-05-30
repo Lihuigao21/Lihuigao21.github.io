@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -p 8-4090
+#SBATCH -p gpu
 #SBATCH -N 1
 #SBATCH --ntasks-per-node 1
 #SBATCH --cpus-per-task 8
@@ -13,11 +13,11 @@ ulimit -s unlimited
 export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK}
 
-ENV_PY=/data/home/lhgao/.conda/envs/allergo/bin/python
-NEQUIP_TRAIN=/data/home/lhgao/.conda/envs/allergo/bin/nequip-train
-NEQUIP_COMPILE=/data/home/lhgao/.conda/envs/allergo/bin/nequip-compile
-NEQUIP_PACKAGE=/data/home/lhgao/.conda/envs/allergo/bin/nequip-package
-DATASET=/data/home/lhgao/allegro-main/test/MAPBI3/nve5_encut600_stride15_discard100.extxyz
+ENV_PY=${ENV_PY:-python}
+NEQUIP_TRAIN=${NEQUIP_TRAIN:-nequip-train}
+NEQUIP_COMPILE=${NEQUIP_COMPILE:-nequip-compile}
+NEQUIP_PACKAGE=${NEQUIP_PACKAGE:-nequip-package}
+DATASET=${ALLEGRO_DATASET:-./data/nve5_encut600_stride15_discard100.extxyz}
 TB_DIR=outputs/tensorboard_logs/lightning_logs/formal_nve970_20260527
 MD_DIR=mlpes_md_nvt330_5ps
 
