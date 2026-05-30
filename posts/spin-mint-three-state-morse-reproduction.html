@@ -45,6 +45,7 @@
           <p class="lead">
             Spin mapping is best understood as a finite-state replacement for the oscillator embedding used in MMST mapping. It keeps the electronic subsystem on the geometry of an \(N\)-level Hilbert space, fixes the zero-point parameter through the Stratonovich-Weyl transform, and gives a natural route to symplectic Spin-MInt propagation. This note derives the working equations and then tests the implementation against FSSH, Ehrenfest, and exact DVR wavepacket references on both Tully's simple avoided crossing and a three-state Morse model.
           </p>
+          <p>This article is the method-and-benchmark continuation of <a href="spin-mapping-math-foundations.html">Spin Mapping Mathematical Foundations</a>, which develops the \(SU(N)\) algebra, Casimir invariant, and Stratonovich-Weyl kernels used below.</p>
 
           <h2>Physical Starting Point</h2>
           <p>In mixed quantum-classical nonadiabatic dynamics, the nuclear variables are usually treated as continuous phase-space coordinates \((R,P)\), while the electronic subsystem is a finite set of diabatic or adiabatic states. For an \(N\)-state diabatic model, the electronic Hamiltonian is an \(N\times N\) Hermitian matrix,</p>
@@ -109,18 +110,44 @@
           <p>with \(J_k=1\), \(J_{n\ne k}=0\), and random phases \(\theta_n\). The phase average returns the focused electronic population while each trajectory remains on the fixed spin-mapping radius.</p>
 
           <h2>Spin-MInt Propagation</h2>
-          <p>Spin-MInt propagates the spin vector directly. At a fixed nuclear position, the electronic equation is the adjoint \(SU(N)\) flow</p>
+          <p>Spin-MInt is the direct minimum-integrator form of spin mapping. After decomposing the diabatic potential into trace and \(SU(N)\) components,</p>
+          <div class="math-block">\[
+            \hat V(R)=V_0(R)\hat I+\sum_i V_i(R)\hat S_i,
+          \]</div>
+          <p>the spin-mapping Hamiltonian for one classical trajectory is</p>
+          <div class="math-block">\[
+            H_\mathrm{SM}(R,P,\Omega)
+            =
+            \frac{P^2}{2M}
+            +V_0(R)
+            +\frac{1}{2}\sum_i V_i(R)\Omega_i.
+          \]</div>
+          <p>This expression makes the improvement over an oscillator-coordinate implementation visible. The electronic variables are the \(SU(N)\) spin components \(\Omega_i\), and the electronic force is obtained from \(\partial_R V_i\) on the same algebraic basis. No electronic population windowing or ad hoc zero-point correction is introduced inside the propagation step.</p>
+          <p>At a fixed nuclear midpoint, the electronic equation is a linear adjoint \(SU(N)\) flow,</p>
           <div class="math-block">\[
             \dot{\Omega}_i=\sum_j A_{ij}(R)\Omega_j,
             \qquad
             A_{ij}=2\,\mathrm{Re}\,\mathrm{tr}\{-i[\hat V(R),\hat S_j]\hat S_i\}.
           \]</div>
-          <p>The nuclear equations are</p>
+          <p>The matrix \(A\) is real and antisymmetric for a Hermitian potential, so the exact matrix exponential conserves the spin radius and the quadratic Casimir of the mapped electronic state. The nuclear equations are</p>
           <div class="math-block">\[
             \dot R=\frac{P}{M},\qquad
             \dot P=-\partial_R V_0(R)-\frac{1}{2}\sum_i\partial_R V_i(R)\Omega_i.
           \]</div>
-          <p>The local Spin-MInt step uses a symmetric split: half-step \(R\), exact linear spin flow at the midpoint, an integrated spin-force momentum kick, and a final half-step \(R\). This gives a direct symplectic update in the spin variables, avoiding the repeated adiabatic-basis rotations that appear in some oscillator-variable MInt formulations.</p>
+          <p>The actual one-step update is a symmetric midpoint split. First drift the nuclear coordinate by half a step, \(R_{n+1/2}=R_n+\Delta t\,P_n/(2M)\). Then evaluate \(V\) and \(\partial_R V\) at \(R_{n+1/2}\), build \(A\), and propagate the spin exactly,</p>
+          <div class="math-block">\[
+            \Omega_{n+1}=e^{A\Delta t}\Omega_n,
+            \qquad
+            I_\Omega=\int_0^{\Delta t}e^{A\tau}\Omega_n\,d\tau.
+          \]</div>
+          <p>The momentum kick uses the time-integrated spin force rather than a frozen endpoint estimate,</p>
+          <div class="math-block">\[
+            P_{n+1}
+            =
+            P_n-\Delta t\,\partial_R V_0(R_{n+1/2})
+            -\frac{1}{2}\sum_i\partial_R V_i(R_{n+1/2})\,(I_\Omega)_i.
+          \]</div>
+          <p>Finally, drift again, \(R_{n+1}=R_{n+1/2}+\Delta t\,P_{n+1}/(2M)\). In the implementation, \(I_\Omega\) and \(e^{A\Delta t}\Omega_n\) are obtained from one augmented matrix exponential, so the spin update and the integrated electronic force are consistent. This is why the propagator is useful for generalized \(SU(N)\) mapping: it avoids adiabatic-basis derivative-coupling propagation during the Spin-MInt step, but still captures the multi-state electronic torque through the diabatic matrix commutator.</p>
 
           <h2>Method Family</h2>
           <table>
@@ -166,6 +193,18 @@
           <h2>Three-State Morse Benchmark</h2>
           <p>A two-state avoided crossing is a useful sanity check, but generalized spin mapping should also be tested where \(N>2\). The next benchmark uses the three-state Morse Model A. The exact reference is finite-grid DVR wavepacket propagation. Spin-MInt, FSSH, and Ehrenfest are run from Wigner-sampled classical initial conditions corresponding to the same initial Gaussian packet, with \(R_0=2.1\), \(P_0=0\), \(M=20000\), \(\omega=0.005\), \(\Delta t=10\), and 300 trajectories for each MQC method.</p>
           <figure>
+            <img src="../assets/img/mqc-series/three-state-morse-pes-nac.png" alt="Three-state Morse Model A potential energy surfaces and adiabatic nonadiabatic couplings">
+            <figcaption>Three-state Morse Model A surfaces and derivative couplings. The top panel shows solid adiabatic potential-energy surfaces \(E_1,E_2,E_3\) and dashed diabatic Morse diagonals \(V_{11},V_{22},V_{33}\), all in atomic units. The dotted black line marks the initial wavepacket center \(R_0=2.1\). The lower panel shows absolute adiabatic nonadiabatic couplings \(|d_{12}|\), \(|d_{13}|\), and \(|d_{23}|\) in \(a_0^{-1}\); the gray dotted lines mark the Gaussian diabatic coupling centers \(r_{12}=3.40\) and \(r_{13}=4.97\). Each coupled Morse avoided region appears as a two-shoulder NAC feature rather than as the single Lorentzian-like peak of a linear-gap, constant-coupling model.</figcaption>
+          </figure>
+          <p>The double shoulders are a property of this model, not a phase-fixing artifact. For a local two-state block with diabatic gap \(\Delta(R)=V_1(R)-V_2(R)\) and coupling \(C(R)\), the adiabatic derivative coupling is proportional to the derivative of the mixing angle,</p>
+          <div class="math-block">\[
+            d_{+-}(R)
+            =
+            \frac{\Delta(R)C'(R)-C(R)\Delta'(R)}
+                 {\Delta(R)^2+4C(R)^2}.
+          \]</div>
+          <p>A textbook simple avoided crossing often assumes \(C'(R)=0\), which gives one central peak near the minimum gap. The three-state Morse model instead uses localized Gaussian couplings \(C(R)=A\exp[-\alpha(R-r_c)^2]\), so \(C'(R)\) changes sign on the two sides of the coupling center. Together with the changing Morse gap, the \(\Delta C'\) term enhances two shoulders around one avoided region. In the first coupling region, the signed \(d_{12}\) remains smooth and has maxima near \(R\approx3.29\) and \(R\approx3.54\), while the diabatic gap crossing is near \(R\approx3.41\).</p>
+          <figure>
             <img src="../assets/img/mqc-series/three-state-morse-method-comparison.png" alt="Three-state Morse comparison for Spin-MInt, FSSH, Ehrenfest, and exact DVR">
             <figcaption>Three-state Morse Model A population comparison. The horizontal axis is time in atomic units. Each panel is one adiabatic state population. Black is exact DVR, blue is Spin-MInt W mapping, red is FSSH, and green is Ehrenfest. Final DVR populations are \(P_1=0.640988\), \(P_2=0.249900\), and \(P_3=0.109112\). Final Spin-MInt populations are \(P_1=0.647066\), \(P_2=0.239489\), and \(P_3=0.113445\). The all-state RMS errors relative to DVR are 0.01033 for Spin-MInt, 0.02837 for FSSH, and 0.06241 for Ehrenfest.</figcaption>
           </figure>
@@ -181,6 +220,8 @@
             <li><a href="../assets/code/mqc/spin_mapping_sac_comparison.py">spin_mapping_sac_comparison.py</a> generates the Spin-MInt/MMST/FSSH/Ehrenfest/DVR comparison figure and CSV files.</li>
             <li><a href="../assets/img/mqc-series/spin-mapping-sac-comparison.csv">spin-mapping-sac-comparison.csv</a> stores the time-dependent populations used in the benchmark figure.</li>
             <li><a href="../assets/img/mqc-series/spin-mapping-sac-comparison-summary.csv">spin-mapping-sac-comparison-summary.csv</a> stores final populations and errors relative to DVR.</li>
+            <li><a href="../assets/code/mqc/three_state_morse_pes_nac.py">three_state_morse_pes_nac.py</a> generates the three-state Morse PES/NAC diagnostic figure and data table.</li>
+            <li><a href="../assets/img/mqc-series/three-state-morse-pes-nac.csv">three-state-morse-pes-nac.csv</a> stores the adiabatic surfaces, diabatic matrix elements, and adiabatic derivative couplings.</li>
             <li><a href="../assets/code/mqc/three_state_morse_method_comparison.py">three_state_morse_method_comparison.py</a> generates the three-state Morse exact/FSSH/Ehrenfest/Spin-MInt comparison.</li>
             <li><a href="../assets/img/mqc-series/three-state-morse-method-comparison.csv">three-state-morse-method-comparison.csv</a> stores the three-state Morse population time series.</li>
             <li><a href="../assets/img/mqc-series/three-state-morse-method-comparison-summary.csv">three-state-morse-method-comparison-summary.csv</a> stores final populations and RMS errors for the three-state Morse benchmark.</li>
