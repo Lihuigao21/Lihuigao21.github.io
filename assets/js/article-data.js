@@ -39,6 +39,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "spin-mint-three-state-morse-reproduction",
+    title: "Spin-MInt Three-State Morse Reproduction",
+    path: "posts/spin-mint-three-state-morse-reproduction.html",
+    date: "2026-05-30",
+    dateText: "2026.05.30",
+    description: "Generalized SU(N) spin-mapping implementation design, direct Spin-MInt propagation, and a non-RPMD three-state Morse Model A reproduction.",
+    tags: ["Spin Mapping", "Spin-MInt", "SU(N)", "Nonadiabatic Dynamics", "Mapping Dynamics"],
+  },
+  {
     slug: "hamgnn-openmx-tio2-hamiltonian-workflow",
     title: "HamGNN OpenMX Workflow for TiO2 Hamiltonians",
     path: "posts/hamgnn-openmx-tio2-hamiltonian-workflow.html",

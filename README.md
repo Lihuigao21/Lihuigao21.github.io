@@ -12,6 +12,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- spin-mint-three-state-morse-reproduction.html
 |   |-- hamgnn-openmx-tio2-hamiltonian-workflow.html
 |   |-- spin-mapping-math-foundations.html
 |   |-- mmst-zpe-leakage.html
@@ -54,6 +55,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |   |-- mmst_correction_comparison.py
 |   |   |   |-- pmatrix_sac_comparison.py
 |   |   |   |-- pmatrix_decoherence_balance_demo.py
+|   |   |   |-- reproduce_spin_mint_three_state_morse.py
 |   |   |   `-- su_n_spin_mapping_checks.py
 |   |   |-- pimd
 |   |   |   |-- pimd_sho_benchmark.py
@@ -117,6 +119,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 ## Published Notes
 
 - `posts/hamgnn-openmx-tio2-hamiltonian-workflow.html`
+- `posts/spin-mint-three-state-morse-reproduction.html`
 - `posts/spin-mapping-math-foundations.html`
 - `posts/mmst-zpe-leakage.html`
 - `posts/pmatrix-decoherence-balance.html`
