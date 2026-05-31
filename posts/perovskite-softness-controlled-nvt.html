@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A controlled 330 K NVT comparison of MAPbI3, CsPbI3, and TiO2, using structural fluctuations, displacement statistics, PCA, and MD-derived phonon density of states to diagnose perovskite softness.">
+    <title>Perovskite Softness from Controlled NVT Spectra | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../tags.html">Tags</a>
+        <a href="../series.html">Series</a>
+        <a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Perovskite Dynamics</p>
+          <h1>Perovskite Softness from Controlled NVT Spectra</h1>
+          <p class="post-meta">2026.05.31 - MAPbI3 / CsPbI3 / TiO2 / NVT / Phonon DOS</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            This note packages a controlled comparison between two lead-halide perovskites, MAPbI3 and CsPbI3, and a TiO2 reference. The purpose was to test whether the often-used statement "perovskites are soft" can be seen directly in atomistic trajectories, without mixing different temperatures, time steps, or trajectory lengths.
+          </p>
+
+          <h2>Controlled Setup</h2>
+          <p>
+            All three systems were rerun with the same molecular-dynamics controls: 330 K, 0.5 fs time step, 2000 NVT steps, one frame per step, 600 eV plane-wave cutoff, and Gamma-centered 2x2x2 k points. The final successful VASP setup used <code>LREAL = .FALSE.</code>, <code>ALGO = Normal</code>, and <code>SMASS = -1</code>.
+          </p>
+          <p>
+            The comparison deliberately avoids mixing old trajectories with different frame counts. The first 20 percent of each 2000-step trajectory was skipped as equilibration, leaving 1600 frames per system for the reported statistics.
+          </p>
+          <p>
+            The remote working directory was:
+          </p>
+          <pre><code>/public/home/gaolihui/codex/controlled_nvt_2000_smassm1_20260530</code></pre>
+          <p>
+            Two earlier parameter choices failed for CsPbI3 and were not used for the final statistics: <code>LREAL = Auto</code> triggered a <code>REAL_OPT</code> internal error, and <code>LREAL = .FALSE.</code> with <code>SMASS = 0</code> stopped near step 70 with a <code>PSSYEVX</code> subspace-rotation error while the reported temperature remained at 0 K. This is already a useful warning that the perovskite run is numerically less forgiving.
+          </p>
+
+          <h2>Structural Fluctuations</h2>
+          <p>
+            The first diagnostic is local structure. For perovskites, <code>B-X</code> means Pb-I and the bridge angle is Pb-I-Pb. For TiO2, <code>B-X</code> means Ti-O and the bridge angle is Ti-O-Ti.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>System</th>
+                <th>Bond mean +/- std (A)</th>
+                <th>Bond 5-95% (A)</th>
+                <th>Bridge mean +/- std (deg)</th>
+                <th>Bridge 5-95% (deg)</th>
+                <th>Octahedral deviation (deg)</th>
+                <th>Frame-mean bridge std (deg)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MAPbI3</td>
+                <td>3.2074 +/- 0.0555</td>
+                <td>3.1223-3.3070</td>
+                <td>156.48 +/- 8.12</td>
+                <td>146.30-170.24</td>
+                <td>5.09 +/- 4.01</td>
+                <td>1.24</td>
+              </tr>
+              <tr>
+                <td>CsPbI3</td>
+                <td>3.2639 +/- 0.0945</td>
+                <td>3.1357-3.4557</td>
+                <td>145.42 +/- 11.84</td>
+                <td>129.54-170.97</td>
+                <td>3.90 +/- 4.79</td>
+                <td>10.25</td>
+              </tr>
+              <tr>
+                <td>TiO2</td>
+                <td>1.9732 +/- 0.0878</td>
+                <td>1.8413-2.1282</td>
+                <td>119.81 +/- 15.81</td>
+                <td>94.62-136.26</td>
+                <td>5.29 +/- 3.67</td>
+                <td>0.06</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            The raw Ti-O-Ti angle distribution is broad because the TiO2 reference has a richer static topology of local angles. The clearer dynamic signal is the frame-mean bridge fluctuation: MAPbI3 is about 20 times TiO2, and CsPbI3 is about 164 times TiO2. The perovskite framework is therefore not merely statically diverse; it moves collectively in time.
+          </p>
+
+          <h2>Displacements and Collective Modes</h2>
+          <p>
+            A second diagnostic uses displacements after removing the center of mass. The framework atoms are Pb+I for the perovskites and Ti+O for TiO2. Principal-component analysis was then applied to the displacement covariance matrix.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>System</th>
+                <th>Framework RMS displacement (A)</th>
+                <th>B RMS (A)</th>
+                <th>X RMS (A)</th>
+                <th>VDOS &lt;5 THz</th>
+                <th>VDOS centroid (THz)</th>
+                <th>PC1 fraction</th>
+                <th>PC1 per-atom RMS (A)</th>
+                <th>Effective modes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MAPbI3</td>
+                <td>0.1789</td>
+                <td>Pb 0.0996</td>
+                <td>I 0.1984</td>
+                <td>0.965</td>
+                <td>2.28</td>
+                <td>0.775</td>
+                <td>0.1575</td>
+                <td>1.6</td>
+              </tr>
+              <tr>
+                <td>CsPbI3</td>
+                <td>0.3312</td>
+                <td>Pb 0.0029</td>
+                <td>I 0.3825</td>
+                <td>0.993</td>
+                <td>1.68</td>
+                <td>0.796</td>
+                <td>0.2957</td>
+                <td>1.5</td>
+              </tr>
+              <tr>
+                <td>TiO2</td>
+                <td>0.1165</td>
+                <td>Ti 0.1298</td>
+                <td>O 0.1093</td>
+                <td>0.049</td>
+                <td>12.79</td>
+                <td>0.189</td>
+                <td>0.0506</td>
+                <td>13.2</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            The PCA result is especially compact: roughly 78-80 percent of the perovskite framework variance sits in one collective mode, while TiO2 distributes the same analysis over many more modes. This is the trajectory-level version of a soft-mode picture.
+          </p>
+
+          <figure>
+            <img src="../assets/img/perovskite-softness/dynamic_softness_framework_vdos.png" alt="Framework VDOS from controlled 330 K NVT">
+            <figcaption>
+              Framework vibrational density of states estimated from finite-difference velocities. The perovskite framework spectra are concentrated near the lowest resolved frequencies, while TiO2 has substantial weight at much higher frequencies.
+            </figcaption>
+          </figure>
+
+          <h2>MD-Derived Phonon DOS</h2>
+          <p>
+            I did not find reusable <code>FORCE_CONSTANTS</code>, <code>FORCE_SETS</code>, or <code>phonopy.yaml</code> files in the inspected working directories, and the login environment did not provide a Python <code>phonopy</code> module. The figures below therefore show a finite-temperature VDOS estimated from MD velocities, not a formal 0 K harmonic phonon band structure.
+          </p>
+          <p>
+            This distinction matters: a harmonic phonon calculation tests the curvature of one reference structure, while the MD-derived VDOS tests what the 330 K trajectory actually samples. For soft, anharmonic perovskites, the latter is often closer to the NVT stability question.
+          </p>
+
+          <figure>
+            <img src="../assets/img/perovskite-softness/md_phonon_spectrum_framework.png" alt="MD-derived framework phonon DOS and low-frequency accumulation">
+            <figcaption>
+              Left: normalized framework VDOS from the controlled NVT trajectories. Right: cumulative spectral weight below 20 THz. The shaded region marks frequencies below 5 THz. MAPbI3 and CsPbI3 accumulate nearly all framework spectral weight below 10 THz, while TiO2 remains centered near 12-13 THz.
+            </figcaption>
+          </figure>
+
+          <table>
+            <thead>
+              <tr>
+                <th>System</th>
+                <th>&lt;2 THz</th>
+                <th>&lt;5 THz</th>
+                <th>&lt;10 THz</th>
+                <th>Centroid (THz)</th>
+                <th>Peak (THz)</th>
+                <th>&lt;5 THz / TiO2</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MAPbI3</td>
+                <td>0.247</td>
+                <td>0.818</td>
+                <td>0.995</td>
+                <td>2.60</td>
+                <td>1.25</td>
+                <td>20.7</td>
+              </tr>
+              <tr>
+                <td>CsPbI3</td>
+                <td>0.308</td>
+                <td>0.895</td>
+                <td>1.000</td>
+                <td>2.01</td>
+                <td>1.25</td>
+                <td>22.6</td>
+              </tr>
+              <tr>
+                <td>TiO2</td>
+                <td>0.005</td>
+                <td>0.040</td>
+                <td>0.221</td>
+                <td>12.81</td>
+                <td>12.51</td>
+                <td>1.0</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <figure>
+            <img src="../assets/img/perovskite-softness/md_phonon_projected_spectra.png" alt="Element-projected MD-derived phonon spectra">
+            <figcaption>
+              Element-projected VDOS. Pb and I both contribute strong low-frequency weight in the perovskites. In TiO2, O is much harder and peaks around 12.5 THz, while Ti has only a smaller low-frequency component.
+            </figcaption>
+          </figure>
+
+          <h2>Interpretation</h2>
+          <p>
+            The controlled comparison points to the same conclusion from several independent directions. Pb-I frameworks show larger thermal displacements, much larger low-frequency spectral weight, and a displacement covariance dominated by a small number of collective modes. TiO2 has broader static Ti-O-Ti angle diversity, but its time-dependent frame-mean geometry is far more stable and its spectral weight sits at higher frequencies.
+          </p>
+          <p>
+            This explains why short perovskite NVT runs can be misleading. A 1 ps trajectory can already expose the low-frequency modes, but it is still short for converging their statistics. The important motions are slow octahedral tilts, A-site motion, Pb/I framework breathing, and local off-centering. Their periods and correlation times are long compared with high-frequency bond vibrations, so the trajectory must be longer before averages, frame distributions, and training snapshots stop depending strongly on the initial phase of a soft mode.
+          </p>
+          <p>
+            It also explains why neural-network training is more difficult. The model has to learn a shallow, anharmonic, multi-minimum potential-energy surface where small force errors can move the trajectory into a different tilted or displaced basin. The relevant training distribution is broad and collective: many structures are connected by low energy barriers, and the electronic structure is sensitive to Pb-I-Pb angles, Pb/I displacements, and A-site disorder. TiO2 is comparatively stiffer, so a shorter trajectory samples a narrower and more repetitive region of configuration space.
+          </p>
+
+          <h2>Published Files</h2>
+          <ul>
+            <li><a href="../assets/code/perovskite-softness/analyze_controlled_nvt_2000.py"><code>analyze_controlled_nvt_2000.py</code></a></li>
+            <li><a href="../assets/code/perovskite-softness/analyze_dynamic_softness.py"><code>analyze_dynamic_softness.py</code></a></li>
+            <li><a href="../assets/code/perovskite-softness/plot_md_phonon_spectra.py"><code>plot_md_phonon_spectra.py</code></a></li>
+            <li><a href="../assets/code/perovskite-softness/controlled_nvt_2000_structural_summary.csv"><code>controlled_nvt_2000_structural_summary.csv</code></a></li>
+            <li><a href="../assets/code/perovskite-softness/dynamic_softness_summary.csv"><code>dynamic_softness_summary.csv</code></a></li>
+            <li><a href="../assets/code/perovskite-softness/md_phonon_spectrum_metrics.csv"><code>md_phonon_spectrum_metrics.csv</code></a></li>
+            <li><a href="../assets/code/perovskite-softness/md_phonon_projected_metrics.csv"><code>md_phonon_projected_metrics.csv</code></a></li>
+          </ul>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

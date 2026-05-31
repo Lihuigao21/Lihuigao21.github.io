@@ -39,6 +39,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "perovskite-softness-controlled-nvt",
+    title: "Perovskite Softness from Controlled NVT Spectra",
+    path: "posts/perovskite-softness-controlled-nvt.html",
+    date: "2026-05-31",
+    dateText: "2026.05.31",
+    description: "Controlled 330 K NVT trajectories for MAPbI3, CsPbI3, and TiO2, analyzed through bond and angle fluctuations, displacement PCA, and MD-derived phonon density of states.",
+    tags: ["Perovskites", "TiO2", "Molecular Dynamics", "Phonon DOS", "Machine Learning Potentials", "Real-System Calculation"],
+  },
+  {
     slug: "spin-mint-three-state-morse-reproduction",
     title: "Spin Mapping and Spin-MInt Method",
     path: "posts/spin-mint-three-state-morse-reproduction.html",

@@ -12,6 +12,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- perovskite-softness-controlled-nvt.html
 |   |-- spin-mint-three-state-morse-reproduction.html
 |   |-- hamgnn-openmx-tio2-hamiltonian-workflow.html
 |   |-- spin-mapping-math-foundations.html
@@ -42,6 +43,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- assets
 |   |-- code
+|   |   |-- perovskite-softness
 |   |   |-- hamgnn-tio2
 |   |   |-- mqc
 |   |   |   |-- tully_common.py
@@ -102,6 +104,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
+|   |   |-- perovskite-softness
 |   |   |-- hamgnn-tio2
 |   |   |-- mqc-series
 |   |   |-- pimd-series
@@ -121,6 +124,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/perovskite-softness-controlled-nvt.html`
 - `posts/hamgnn-openmx-tio2-hamiltonian-workflow.html`
 - `posts/spin-mint-three-state-morse-reproduction.html`
 - `posts/spin-mapping-math-foundations.html`
