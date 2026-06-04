@@ -49,6 +49,12 @@
         </header>
 
         <div class="post-content">
+          <nav class="series-nav" aria-label="Water spectroscopy series navigation">
+            <a href="spcf-rpmd-water-ir-spectrum.html">I. SPC/F RPMD IR</a>
+            <a href="trpmd-qtip4pf-water-ir-spectrum.html">II. q-TIP4P/F TRPMD IR</a>
+            <a href="h2o-abacus-rttddft-electronic-absorption.html">III. RT-TDDFT Electronic Absorption</a>
+          </nav>
+
           <p class="lead">
             This note records a reproducible fallback calculation inspired by the RPMD water infrared spectrum benchmark of Habershon, Fanourgakis, and Manolopoulos. The original target was Fig. 1 of their TTM3-F liquid-water study at 300 K. Because a convenient periodic TTM3-F implementation was not available in my i-PI/LAMMPS stack, I used the flexible fixed-charge SPC/F model and focused on reproducing the workflow, the spectral estimator, and the numerical diagnostics rather than claiming an exact TTM3-F reproduction.
           </p>
@@ -174,6 +180,15 @@ bash paper_analysis/run_mudot_analysis.sh \
           <p>
             S. Habershon, G. S. Fanourgakis, and D. E. Manolopoulos, "Comparison of path integral molecular dynamics methods for the infrared absorption spectrum of liquid water," <em>J. Chem. Phys.</em> <strong>129</strong>, 074501 (2008). DOI: <a href="https://doi.org/10.1063/1.2968555" target="_blank" rel="noreferrer">10.1063/1.2968555</a>.
           </p>
+
+          <section class="series-footer" aria-labelledby="water-spectroscopy-map">
+            <h2 id="water-spectroscopy-map">Water spectroscopy map</h2>
+            <ol class="series-list">
+              <li><a href="spcf-rpmd-water-ir-spectrum.html">Part I: RPMD Water IR Spectrum with SPC/F</a> - a fallback path-integral infrared workflow and dipole-derivative spectrum estimator.</li>
+              <li><a href="trpmd-qtip4pf-water-ir-spectrum.html">Part II: TRPMD Water IR Spectrum with q-TIP4P/F</a> - suppression of RPMD internal-mode resonance in the O-H stretching band.</li>
+              <li><a href="h2o-abacus-rttddft-electronic-absorption.html">Part III: H2O Electronic Absorption with ABACUS RT-TDDFT</a> - fixed-nucleus electronic absorption from a weak RT-TDDFT field kick.</li>
+            </ol>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="Article navigation">

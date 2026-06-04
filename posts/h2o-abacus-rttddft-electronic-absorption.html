@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A fixed-nucleus H2O electronic absorption benchmark with ABACUS real-time TDDFT, aligned against the Ren, Kaxiras, and Meng molecular RT-TDDFT reference.">
+    <title>H2O Electronic Absorption with ABACUS RT-TDDFT | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [["\\[", "\\]"]]
+        }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../tags.html">Tags</a>
+        <a href="../series.html">Series</a>
+        <a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Electronic Structure</p>
+          <h1>H2O Electronic Absorption with ABACUS RT-TDDFT</h1>
+          <p class="post-meta">2026.06.04 - RT-TDDFT / Electronic Absorption / H2O / ABACUS</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Water spectroscopy series navigation">
+            <a href="spcf-rpmd-water-ir-spectrum.html">I. SPC/F RPMD IR</a>
+            <a href="trpmd-qtip4pf-water-ir-spectrum.html">II. q-TIP4P/F TRPMD IR</a>
+            <a href="h2o-abacus-rttddft-electronic-absorption.html">III. RT-TDDFT Electronic Absorption</a>
+          </nav>
+
+          <p class="lead">
+            The previous water-spectroscopy note used path-integral dynamics to reproduce a nuclear vibrational infrared benchmark. This follow-up uses a much smaller system for a different purpose: checking whether an ABACUS real-time TDDFT calculation with an external electric-field kick can reproduce the low-energy electronic absorption peaks of an isolated water molecule. The target is the molecular RT-TDDFT reference of Ren, Kaxiras, and Meng, not a laser-driven structural dynamics experiment.
+          </p>
+
+          <h2>Why This Benchmark</h2>
+          <p>
+            A laser field in an Ehrenfest RT-TDDFT input can be used in two rather different ways. In the weak-field limit, it is a perturbation for extracting the linear optical response. In a strong-field molecular-dynamics calculation, it can instead deposit energy and drive structural changes. Before interpreting any light-induced bond motion, I wanted a cleaner validation: a fixed-nucleus molecule, known reference peak positions, and a direct comparison of the induced dipole response.
+          </p>
+          <p>
+            H2O is useful here because the Ren, Kaxiras, and Meng study reported both experimental and real-time TDDFT peak positions for a set of small molecules. For water, the first two reference values are:
+          </p>
+          <div class="algorithm-table">
+            <div>Reference</div><div>Electronic absorption peaks</div>
+            <div>Experiment</div><div>7.447 eV and 9.672 eV</div>
+            <div>Ren/Kaxiras/Meng RT-TDDFT</div><div>7.553 eV and 9.740 eV</div>
+          </div>
+          <p>
+            These are vertical electronic absorption features. They are not O-H stretching peaks and should not be interpreted as nuclear vibrational frequencies.
+          </p>
+
+          <h2>Linear-Response Observable</h2>
+          <p>
+            The external field was applied as a short zero-frequency Gaussian kick along one Cartesian direction:
+          </p>
+          <div class="math-block">
+            \[
+            E_i(t)=E_0\exp\left[-\frac{(t-t_0)^2}{2\sigma^2}\right],
+            \]
+          </div>
+          <p>
+            and the field-induced dipole was obtained by subtracting an otherwise identical no-field trajectory:
+          </p>
+          <div class="math-block">
+            \[
+            \Delta\mu_i(t)=\mu_i^{\mathrm{field}}(t)-\mu_i^{\mathrm{no\ field}}(t).
+            \]
+          </div>
+          <p>
+            In the linear regime, the frequency-domain polarizability can then be estimated component by component as
+          </p>
+          <div class="math-block">
+            \[
+            \alpha_{ii}(\omega)=
+            \frac{\Delta\mu_i(\omega)}{E_i(\omega)},
+            \qquad
+            S_i(\omega)\propto \omega\,\mathrm{Im}\,\alpha_{ii}(\omega).
+            \]
+          </div>
+          <p>
+            This division by the actual Fourier-transformed field is important. A direct plot of \(|\mathcal F[\Delta\mu(t)]|\) is a useful diagnostic, but it is not the same object as the absorption spectrum. The published figure below therefore includes both the absorption proxy and the auxiliary direct dipole FFT.
+          </p>
+
+          <h2>Aligned Calculation</h2>
+          <p>
+            The final calculation used a deliberately conservative alignment to the molecular RT-TDDFT reference. The important choices were:
+          </p>
+          <div class="algorithm-table">
+            <div>Code and method</div><div>ABACUS RT-TDDFT with numerical atomic orbitals and Ehrenfest-style real-time propagation</div>
+            <div>Geometry</div><div>ABACUS LDA-relaxed H2O, fixed nuclei during the RT-TDDFT propagation</div>
+            <div>Relaxed structure</div><div>O-H = 0.9802 and 0.9802 Angstrom; H-O-H = 105.146 degrees</div>
+            <div>Functional</div><div>LDA</div>
+            <div>Pseudopotentials</div><div>H.pz-vbc.UPF and O.pz-mt.UPF</div>
+            <div>Orbitals</div><div>H/O LDA numerical atomic orbitals generated with 100 Ry, using 2s1p for H and 2s2p1d for O</div>
+            <div>Box and k point</div><div>13 Angstrom cubic box, Gamma point</div>
+            <div>Electronic bands</div><div>23 bands</div>
+            <div>Time step</div><div>0.005 fs</div>
+            <div>Field</div><div>Gaussian kick, \(t_0=0.5\ \mathrm{fs}\), \(\sigma=0.06\ \mathrm{fs}\), amplitudes 0.001 and 0.002 V/Angstrom</div>
+          </div>
+          <p>
+            The two amplitudes were used as a linear-response check. If the peak positions changed strongly between 0.001 and 0.002 V/Angstrom, the calculation would be entering a field-strength-dependent regime and would not be a clean absorption benchmark.
+          </p>
+
+          <h2>Result</h2>
+          <p>
+            The final trajectories were stopped after roughly 32 fs because the low-energy peak positions were already stable to about 0.01 eV, and the two field amplitudes gave the same first two electronic peaks. The resulting spectrum is:
+          </p>
+
+          <figure>
+            <img src="../assets/img/rt-tddft-h2o/h2o-ren-aligned-absorption.png" alt="ABACUS H2O RT-TDDFT induced dipoles and electronic absorption spectrum">
+            <figcaption>
+              Fixed-nucleus H2O RT-TDDFT response. The top panel shows no-field-subtracted induced dipoles in atomic units as functions of time in femtoseconds. The middle panel shows the normalized positive \(\omega\,\mathrm{Im}\,\alpha(\omega)\) absorption proxy from the field-divided response. The bottom panel shows the auxiliary normalized direct dipole FFT. Green curves are y-polarized kicks, blue curves are z-polarized kicks, red is the x-polarized kick, and black is the summed isotropic 0.002 V/Angstrom response. Dashed gray vertical lines mark experimental peaks at 7.447 and 9.672 eV; dotted purple lines mark the Ren/Kaxiras/Meng RT-TDDFT peaks at 7.553 and 9.740 eV.
+            </figcaption>
+          </figure>
+
+          <p>
+            The low-energy comparison is:
+          </p>
+          <div class="algorithm-table">
+            <div>Peak</div><div>ABACUS value and comparison</div>
+            <div>First y-polarized peak</div><div>7.762 eV; blue shifted by 0.209 eV from the Ren/Kaxiras/Meng RT-TDDFT value and by 0.315 eV from experiment</div>
+            <div>Second z-polarized peak</div><div>9.832 eV; blue shifted by 0.092 eV from the Ren/Kaxiras/Meng RT-TDDFT value and by 0.160 eV from experiment</div>
+            <div>Field-amplitude check</div><div>The 0.001 and 0.002 V/Angstrom runs give the same y and z peak positions within the plotted resolution</div>
+          </div>
+          <p>
+            This is the main result. Once the functional, pseudopotentials, relaxed geometry, field observable, and postprocessing were brought into a consistent RT-TDDFT setup, the excessive blue shift seen in a rougher preliminary calculation disappeared. The remaining deviation is on the scale expected for a local/semi-local RT-TDDFT molecular absorption benchmark.
+          </p>
+
+          <h2>Finite-Time Ringing</h2>
+          <p>
+            The small oscillations along the spectral baseline are not interpreted as physical absorption peaks. They are mostly finite-window Fourier artifacts. A roughly 32 fs signal has an energy resolution scale
+          </p>
+          <div class="math-block">
+            \[
+            \Delta E \sim \frac{h}{T}\approx 0.13\ \mathrm{eV},
+            \]
+          </div>
+          <p>
+            and a hard or short time window produces side lobes in frequency space. The analysis script applies a mild exponential damping window before the FFT, but the result is still a finite-time spectrum. A longer propagation, or a deliberately chosen Lorentzian/Hann/Blackman broadening protocol, would reduce the baseline wiggles and produce a cleaner line shape. Zero padding can make the plotted curve look smoother, but it does not add physical resolution.
+          </p>
+          <p>
+            For this benchmark I therefore used peak stability under time-window extension and field-amplitude reduction as the convergence criterion, rather than the complete disappearance of low-amplitude baseline ripples.
+          </p>
+
+          <h2>Why No Nuclear Quantum Effects Here</h2>
+          <p>
+            This benchmark does not claim that nuclear quantum effects are generally unimportant under photoexcitation. It asks a narrower question: can the electronic RT-TDDFT external-field machinery reproduce fixed-geometry vertical absorption peaks for a small molecule?
+          </p>
+          <p>
+            In that question, fixed nuclei are the clean choice. The weak Gaussian kick probes the electronic linear response near the ground-state geometry; the electronic density responds on an attosecond-to-femtosecond timescale, while the nuclei are effectively frozen during the vertical excitation. Nuclear quantum effects can matter for vibronic structure, zero-point geometry sampling, isotope shifts, and temperature-dependent broadening. They become central again when the observable is a bond length, a reaction coordinate, or a light-induced structural event. They are simply not the target variable in this electronic absorption validation.
+          </p>
+          <p>
+            This is why the present note complements, rather than replaces, the previous TRPMD infrared spectrum note. The TRPMD calculation tested quantum nuclear dynamics in a vibrational spectrum. The present calculation tests an electronic response implementation before using it in more complicated electron-nuclear dynamics.
+          </p>
+
+          <h2>Limitations</h2>
+          <ul>
+            <li>The high-energy region is not fully quantitative in this compact NAO setup. The 14 and 17 eV features are stronger than expected from the low-energy benchmark, most likely because diffuse and Rydberg-like states are more sensitive to basis and box choices.</li>
+            <li>The plot is normalized. It is suitable for comparing peak positions and qualitative response channels, not absolute oscillator strengths.</li>
+            <li>The calculation is a weak-field absorption benchmark. It does not prove that a strong laser pulse will drive a particular bond-shortening or bond-breaking event in a molecular dynamics simulation.</li>
+            <li>The nuclear positions are fixed. Any claim about vibronic broadening, isotope dependence, or photoinduced structural dynamics would need nuclear sampling or coupled electron-nuclear propagation.</li>
+          </ul>
+
+          <h2>Reproducibility Notes</h2>
+          <p>
+            The published code attachments are intentionally small. They preserve the analysis protocol and final peak table without publishing machine-specific paths or large raw trajectory files.
+          </p>
+          <ul class="code-list">
+            <li><a href="../assets/code/rt-tddft-h2o/analyze_h2o_rt_tddft.py"><code>analyze_h2o_rt_tddft.py</code></a> - reads ABACUS <code>dipole_s1.txt</code> and <code>efield_0.txt</code> outputs, subtracts the no-field dipole, computes \(\alpha(\omega)\), and plots the absorption proxy.</li>
+            <li><a href="../assets/code/rt-tddft-h2o/h2o_rt_tddft_peaks.csv"><code>h2o_rt_tddft_peaks.csv</code></a> - compact peak table for the final benchmark and reference values.</li>
+            <li><a href="../assets/code/rt-tddft-h2o/abacus_h2o_rt_tddft_input.template"><code>abacus_h2o_rt_tddft_input.template</code></a> - representative ABACUS RT-TDDFT input showing the weak Gaussian field settings.</li>
+          </ul>
+          <p>
+            A representative analysis command is:
+          </p>
+          <pre><code>python assets/code/rt-tddft-h2o/analyze_h2o_rt_tddft.py \
+  path/to/h2o-rt-tddft-output \
+  --output analysis/h2o_rt_tddft_absorption \
+  --dt-fs 0.005 \
+  --damping-fs 25.0</code></pre>
+
+          <h2>Takeaways</h2>
+          <ul>
+            <li>A weak, directional electric-field kick in RT-TDDFT is a clean way to extract molecular electronic absorption when it is interpreted through the induced dipole and polarizability.</li>
+            <li>For H2O, the aligned ABACUS calculation gives low-energy peaks at 7.762 and 9.832 eV, close to the Ren/Kaxiras/Meng RT-TDDFT reference values of 7.553 and 9.740 eV.</li>
+            <li>Low-amplitude baseline wiggles in the FFT spectrum are finite-time ringing, not physical peaks.</li>
+            <li>Fixed nuclei are appropriate for this validation because the target is vertical electronic absorption, not nuclear vibrational dynamics or laser-induced bond motion.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="water-spectroscopy-map">
+            <h2 id="water-spectroscopy-map">Water spectroscopy map</h2>
+            <ol class="series-list">
+              <li><a href="spcf-rpmd-water-ir-spectrum.html">Part I: RPMD Water IR Spectrum with SPC/F</a> - a fallback path-integral infrared workflow and dipole-derivative spectrum estimator.</li>
+              <li><a href="trpmd-qtip4pf-water-ir-spectrum.html">Part II: TRPMD Water IR Spectrum with q-TIP4P/F</a> - suppression of RPMD internal-mode resonance in the O-H stretching band.</li>
+              <li><a href="h2o-abacus-rttddft-electronic-absorption.html">Part III: H2O Electronic Absorption with ABACUS RT-TDDFT</a> - fixed-nucleus electronic absorption from a weak RT-TDDFT field kick.</li>
+            </ol>
+          </section>
+
+          <h2>References</h2>
+          <ul>
+            <li>J. Ren, E. Kaxiras, and S. Meng, "Optical properties of clusters and molecules from real-time time-dependent density functional theory using a self-consistent field," <em>Molecular Physics</em> <strong>108</strong>, 1829-1844 (2010). DOI: <a href="https://doi.org/10.1080/00268976.2010.491489" target="_blank" rel="noreferrer">10.1080/00268976.2010.491489</a>.</li>
+            <li>ABACUS documentation, "Full List of INPUT Keywords," RT-TDDFT external-field keywords including <code>td_vext_dire</code>, <code>td_gauss_sigma</code>, <code>td_gauss_t0</code>, <code>out_dipole</code>, and <code>out_efield</code>. <a href="https://abacus.deepmodeling.com/en/latest/advanced/input_files/input-main.html" target="_blank" rel="noreferrer">Documentation page</a>.</li>
+            <li>M. Rossi, M. Ceriotti, and D. E. Manolopoulos, "How to remove the spurious resonances from ring polymer molecular dynamics," <em>J. Chem. Phys.</em> <strong>140</strong>, 234116 (2014). DOI: <a href="https://doi.org/10.1063/1.4883861" target="_blank" rel="noreferrer">10.1063/1.4883861</a>.</li>
+          </ul>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
