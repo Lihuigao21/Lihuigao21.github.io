@@ -77,7 +77,50 @@
 
           <h2>Linear-Response Observable</h2>
           <p>
-            The external field was applied as a short zero-frequency Gaussian kick along one Cartesian direction:
+            In a weak optical field, the induced dipole is linear in the field history. For a molecule initially in its ground state, this can be written as a causal convolution,
+          </p>
+          <div class="math-block">
+            \[
+            \Delta\mu_i(t)
+            =
+            \sum_j
+            \int_0^\infty
+            \chi_{ij}(\tau)\,
+            E_j(t-\tau)\,d\tau ,
+            \]
+          </div>
+          <p>
+            where \(\chi_{ij}(\tau)\) is the retarded dipole-response kernel. The lower limit \(0\) encodes causality: the dipole at time \(t\) can depend on earlier values of the field, but not on future values. If the applied field is monochromatic,
+          </p>
+          <div class="math-block">
+            \[
+            E_j(t)=\mathrm{Re}\left[E_{0,j}e^{-i\omega t}\right],
+            \]
+          </div>
+          <p>
+            the convolution gives a response at the same frequency,
+          </p>
+          <div class="math-block">
+            \[
+            \Delta\mu_i(t)
+            =
+            \mathrm{Re}
+            \left[
+            \sum_j
+            \alpha_{ij}(\omega)E_{0,j}e^{-i\omega t}
+            \right],
+            \qquad
+            \alpha_{ij}(\omega)
+            =
+            \int_0^\infty
+            \chi_{ij}(\tau)e^{i\omega\tau}\,d\tau .
+            \]
+          </div>
+          <p>
+            This equation is the operational definition of the dynamic polarizability. The complex notation does not mean that the physical dipole is complex; the final real part is the observable signal. The real part of \(\alpha\) stores the in-phase, reversible polarization, while the imaginary part stores the out-of-phase response responsible for absorption.
+          </p>
+          <p>
+            The actual RT-TDDFT calculation used a short zero-frequency Gaussian kick along one Cartesian direction:
           </p>
           <div class="math-block">
             \[
@@ -85,7 +128,27 @@
             \]
           </div>
           <p>
-            and the field-induced dipole was obtained by subtracting an otherwise identical no-field trajectory:
+            A Gaussian kick is not a single frequency. It is a compact broadband pulse, so in frequency space it probes many \(\omega\) values at once. In the linear regime every frequency component still satisfies
+          </p>
+          <div class="math-block">
+            \[
+            \Delta\mu_i(\omega)
+            =
+            \sum_j \alpha_{ij}(\omega)E_j(\omega).
+            \]
+          </div>
+          <p>
+            For a field applied only along one direction \(j\), the corresponding diagonal component can therefore be estimated as
+          </p>
+          <div class="math-block">
+            \[
+            \alpha_{jj}(\omega)
+            =
+            \frac{\Delta\mu_j(\omega)}{E_j(\omega)}.
+            \]
+          </div>
+          <p>
+            The field-induced dipole was obtained by subtracting an otherwise identical no-field trajectory:
           </p>
           <div class="math-block">
             \[
@@ -93,18 +156,96 @@
             \]
           </div>
           <p>
-            In the linear regime, the frequency-domain polarizability can then be estimated component by component as
+            The no-field subtraction removes the static dipole background, origin-dependent constant offsets, and the small drift of the unperturbed real-time propagation. What remains is the field-induced response used in the Fourier transform.
+          </p>
+
+          <h2>Why \(\omega\,\mathrm{Im}\,\alpha\) Is Plotted</h2>
+          <p>
+            Absorption is an energy-transfer measurement, not just a measure of how large the dipole oscillation is. The interaction energy between the molecule and a spatially uniform electric field is
           </p>
           <div class="math-block">
             \[
-            \alpha_{ii}(\omega)=
-            \frac{\Delta\mu_i(\omega)}{E_i(\omega)},
+            H'(t)=-\boldsymbol{\mu}(t)\cdot\mathbf E(t).
+            \]
+          </div>
+          <p>
+            For one Cartesian component, the instantaneous power delivered by the field is proportional to
+          </p>
+          <div class="math-block">
+            \[
+            P(t)=E(t)\dot{\mu}(t).
+            \]
+          </div>
+          <p>
+            Now take a monochromatic field \(E(t)=E_0\cos\omega t\), and write the polarizability as
+          </p>
+          <div class="math-block">
+            \[
+            \alpha(\omega)=\alpha'(\omega)+i\alpha''(\omega).
+            \]
+          </div>
+          <p>
+            With the \(e^{-i\omega t}\) convention above, the real induced dipole is
+          </p>
+          <div class="math-block">
+            \[
+            \mu(t)
+            =
+            E_0
+            \left[
+            \alpha'(\omega)\cos\omega t
+            +
+            \alpha''(\omega)\sin\omega t
+            \right].
+            \]
+          </div>
+          <p>
+            The \(\alpha'\) term is in phase with the field. It describes reversible polarization: energy is borrowed from the field during part of the cycle and returned later. The \(\alpha''\) term is \(90^\circ\) out of phase with the field. It is the part that gives nonzero net work over a cycle. Differentiating \(\mu(t)\) and averaging \(P(t)=E(t)\dot{\mu}(t)\) over one optical period gives
+          </p>
+          <div class="math-block">
+            \[
+            \langle P\rangle
+            =
+            \frac{1}{T}
+            \int_0^T
+            E(t)\dot{\mu}(t)\,dt
+            =
+            \frac{\omega E_0^2}{2}\alpha''(\omega),
             \qquad
+            T=\frac{2\pi}{\omega}.
+            \]
+          </div>
+          <p>
+            This derivation explains both factors in the plotted spectrum. The imaginary part of the polarizability is selected because it is the dissipative, absorptive part of the response. The extra factor \(\omega\) appears because absorbed power involves \(\dot{\mu}(t)\), and a time derivative becomes multiplication by frequency in Fourier space.
+          </p>
+          <p>
+            Up to geometry-independent constants and the usual electromagnetic prefactors, the directional absorption signal is therefore
+          </p>
+          <div class="math-block">
+            \[
             S_i(\omega)\propto \omega\,\mathrm{Im}\,\alpha_{ii}(\omega).
             \]
           </div>
           <p>
-            This division by the actual Fourier-transformed field is important. A direct plot of \(|\mathcal F[\Delta\mu(t)]|\) is a useful diagnostic, but it is not the same object as the absorption spectrum. The published figure below therefore includes both the absorption proxy and the auxiliary direct dipole FFT.
+            For an isotropic molecular sample, the orientationally averaged signal uses the trace of the polarizability tensor:
+          </p>
+          <div class="math-block">
+            \[
+            S_{\mathrm{iso}}(\omega)
+            \propto
+            \frac{\omega}{3}
+            \mathrm{Im}
+            \left[
+            \alpha_{xx}(\omega)
+            +
+            \alpha_{yy}(\omega)
+            +
+            \alpha_{zz}(\omega)
+            \right].
+            \]
+          </div>
+          <p>
+            This division by the actual Fourier-transformed field is important. A direct plot of \(|\mathcal F[\Delta\mu(t)]|\) is a useful diagnostic, but it is not the same object as the absorption spectrum. The sign of \(\mathrm{Im}\,\alpha\) can flip if the opposite Fourier-transform convention is used; the physical absorption is the positive dissipative part. The published figure below therefore includes both the absorption proxy and the auxiliary direct dipole FFT.
           </p>
 
           <h2>Aligned Calculation</h2>
