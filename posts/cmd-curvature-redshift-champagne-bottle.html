@@ -53,6 +53,11 @@
             <figcaption>The 2D Morse bottle used for the CMD curvature test. The dashed circle marks the physical minimum at \(r_e\). In the right panel, a low-temperature path constrained to \(R_c=0.4\) bohr can keep its beads near the minimum ring while its centroid sits much closer to the origin. This is the geometry behind the artificial-instanton basin.</figcaption>
           </figure>
 
+          <figure>
+            <img src="../assets/img/cmd-series/cmd-curvature-temperature-path-comparison.png" alt="Temperature comparison of centroid-constrained bead paths at 200 K and 800 K">
+            <figcaption>Temperature dependence of the same \(R_c=0.4\) constrained-path diagnostic. At 200 K, the imaginary-time path can spend most of its length close to the low-energy minimum ring, with \(\langle r_{\mathrm{bead}}\rangle\approx1.70\) bohr. At 800 K, the path is shorter and more compact; under the same centroid constraint the beads sit further inside, \(\langle r_{\mathrm{bead}}\rangle\approx1.37\) bohr, so the small-\(R_c\) artificial basin is much less favorable.</figcaption>
+          </figure>
+
           <h2>Observable</h2>
           <p>
             A Cartesian velocity autocorrelation mixes the radial stretch with low-frequency rotation around the bottle. I therefore use the radial stretch velocity as the observable:
@@ -190,7 +195,7 @@
           <ul class="code-list">
             <li><a href="../assets/code/cmd/cmd_curvature_validation.py">cmd_curvature_validation.py</a> is the Toymodel validation driver used to build the DVR, CMD, classical, RPMD, and TRPMD comparison tables and spectra. Set <code>TOYMODEL_ROOT</code> to a Toymodel checkout when running it outside the repository.</li>
             <li><a href="../assets/code/cmd/run_cmd_curvature_smoke.py">run_cmd_curvature_smoke.py</a> provides the shared spectrum, trajectory, and plotting helpers used by the validation driver.</li>
-            <li><a href="../assets/code/cmd/cmd_curvature_potential_surface.py">cmd_curvature_potential_surface.py</a> regenerates the 2D potential-surface figure and optionally overlays saved constrained-path diagnostics.</li>
+            <li><a href="../assets/code/cmd/cmd_curvature_potential_surface.py">cmd_curvature_potential_surface.py</a> regenerates the 2D potential-surface figure and the low-/high-temperature constrained-path comparison.</li>
             <li><a href="../assets/img/cmd-series/cmd-curvature-method-summary.csv">cmd-curvature-method-summary.csv</a> stores the method-level spectral metrics.</li>
             <li><a href="../assets/img/cmd-series/cmd-curvature-cmd-seed-summary.csv">cmd-curvature-cmd-seed-summary.csv</a> stores the CMD seed means and standard deviations.</li>
           </ul>
