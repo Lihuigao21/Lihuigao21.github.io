@@ -1,5 +1,11 @@
 window.SITE_SERIES = [
   {
+    id: "cmd",
+    title: "CMD Series",
+    label: "Centroid Molecular Dynamics",
+    description: "Centroid molecular dynamics, constrained PIMC mean forces, effective PMFs, curvature artifacts, and benchmark diagnostics.",
+  },
+  {
     id: "mqc",
     title: "MQC Series",
     label: "Mixed Quantum-Classical Dynamics",
@@ -39,6 +45,17 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "cmd-curvature-redshift-champagne-bottle",
+    title: "CMD II: Curvature Red Shift in a 2D Morse Bottle",
+    path: "posts/cmd-curvature-redshift-champagne-bottle.html",
+    date: "2026-06-18",
+    dateText: "2026.06.18",
+    description: "A 2D champagne-bottle Morse benchmark showing how centroid-constrained path integrals can create an artificial-instanton basin, flatten the CMD PMF, and red-shift the radial stretch spectrum relative to direct-density-matrix DVR, RPMD, and TRPMD controls.",
+    tags: ["CMD", "PIMC", "RPMD", "TRPMD", "DVR", "Curvature Problem", "Model Calculation"],
+    series: "cmd",
+    part: 2,
+  },
+  {
     slug: "cmd-effective-surfaces-tully-sac",
     title: "CMD Effective Surfaces for Tully SAC",
     path: "posts/cmd-effective-surfaces-tully-sac.html",
@@ -46,6 +63,8 @@ window.SITE_ARTICLES = [
     dateText: "2026.06.18",
     description: "State-resolved CMD potentials of mean force from constrained PIMC, Hermite-consistent energy-force interpolation, and SAC dynamics against DVR, Ehrenfest, FSSH, and CMD-MQC variants.",
     tags: ["CMD", "PIMC", "MQC", "Tully Model", "DVR", "Nonadiabatic Dynamics", "Model Calculation"],
+    series: "cmd",
+    part: 1,
   },
   {
     slug: "h2o-abacus-rttddft-electronic-absorption",

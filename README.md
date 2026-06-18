@@ -12,6 +12,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- cmd-curvature-redshift-champagne-bottle.html
 |   |-- h2o-abacus-rttddft-electronic-absorption.html
 |   |-- cmd-effective-surfaces-tully-sac.html
 |   |-- perovskite-softness-controlled-nvt.html
@@ -48,7 +49,14 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |-- rt-tddft-h2o
 |   |   |-- perovskite-softness
 |   |   |-- hamgnn-tio2
+|   |   |-- cmd
+|   |   |   |-- cmd_curvature_validation.py
+|   |   |   |-- cmd_curvature_potential_surface.py
+|   |   |   `-- run_cmd_curvature_smoke.py
 |   |   |-- mqc
+|   |   |   |-- cmd_sac_benchmark.py
+|   |   |   |-- cmd_sac_dvr_convergence.py
+|   |   |   |-- cmd_sac_extend_fssh.py
 |   |   |   |-- tully_common.py
 |   |   |   |-- dvr_tully_sac_reference.py
 |   |   |   |-- fssh_tully_sac.py
@@ -110,6 +118,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |   |-- rt-tddft-h2o
 |   |   |-- perovskite-softness
 |   |   |-- hamgnn-tio2
+|   |   |-- cmd-series
 |   |   |-- mqc-series
 |   |   |-- pimd-series
 |   |   |-- matsubara-series
@@ -129,6 +138,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `posts/cmd-curvature-redshift-champagne-bottle.html`
 - `posts/h2o-abacus-rttddft-electronic-absorption.html`
 - `posts/cmd-effective-surfaces-tully-sac.html`
 - `posts/perovskite-softness-controlled-nvt.html`

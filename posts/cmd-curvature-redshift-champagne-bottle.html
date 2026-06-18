@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A Toymodel reproduction of the CMD curvature red-shift problem in a 2D champagne-bottle Morse potential, benchmarked against direct-density-matrix DVR, RPMD, TRPMD, and classical trajectory controls.">
+    <title>CMD II: Curvature Red Shift in a 2D Morse Bottle | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Model Calculation</p>
+          <h1>CMD II: Curvature Red Shift in a 2D Morse Bottle</h1>
+          <p class="post-meta">2026.06.18 - CMD / DVR / RPMD / Curvature Problem</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="CMD series navigation">
+            <a href="cmd-effective-surfaces-tully-sac.html">Part I: Effective Surfaces for Tully SAC</a>
+            <a href="cmd-curvature-redshift-champagne-bottle.html" aria-current="page">Part II: Curvature Red Shift</a>
+          </nav>
+
+          <p class="lead">
+            The first CMD note used centroid potentials of mean force as a constructive tool: a path-integral free-energy surface softened a one-dimensional avoided crossing and improved one Ehrenfest benchmark. This second note is deliberately the opposite. It uses the same centroid-force logic on a curved two-dimensional surface and shows a known failure mode: the CMD centroid can find an artificial instanton basin, flatten its effective radial PMF, and red-shift the stretch spectrum even though the direct quantum benchmark does not.
+          </p>
+
+          <h2>Benchmark Question</h2>
+          <p>
+            The target is the CMD curvature problem discussed by Trenins and Althorpe for a two-dimensional "champagne-bottle" Morse model. The surface is one-state and isotropic,
+          </p>
+          <div class="math-block">\[
+            V(r)=D_0\left[1-\exp[-\alpha(r-r_e)]\right]^2,
+            \qquad
+            r=\sqrt{x^2+y^2}.
+          \]</div>
+          <p>
+            The parameters are \(r_e=1.8324\), \(D_0=0.18748\), \(\alpha=1.1605\), and \(m=1741.05198\), all in atomic units. The physical minimum is a ring, not a point. That ring is harmless for exact quantum dynamics, but it is dangerous for centroid-constrained imaginary-time paths because many bead configurations on the ring can have a small Cartesian centroid.
+          </p>
+
+          <figure>
+            <img src="../assets/img/cmd-series/cmd-curvature-potential-surface.png" alt="2D champagne-bottle Morse potential with representative centroid-constrained bead paths">
+            <figcaption>The 2D Morse bottle used for the CMD curvature test. The dashed circle marks the physical minimum at \(r_e\). In the right panel, a low-temperature path constrained to \(R_c=0.4\) bohr can keep its beads near the minimum ring while its centroid sits much closer to the origin. This is the geometry behind the artificial-instanton basin.</figcaption>
+          </figure>
+
+          <h2>Observable</h2>
+          <p>
+            A Cartesian velocity autocorrelation mixes the radial stretch with low-frequency rotation around the bottle. I therefore use the radial stretch velocity as the observable:
+          </p>
+          <div class="math-block">\[
+            \dot r = \frac{\mathbf q\cdot\mathbf v}{r}
+          \]</div>
+          <p>
+            for trajectory methods, and \(\dot r=i[H,r]\) for the DVR benchmark. The reported spectrum is the Fourier transform of the Kubo radial velocity autocorrelation. This is a natural observable: if CMD really changes the radial stiffness of the centroid PMF, it should show up as a red shift of the radial stretch band rather than as an artificial population threshold or a hand-picked event.
+          </p>
+
+          <h2>Direct DVR Reference</h2>
+          <p>
+            The benchmark is not a wavepacket launched from one hand-picked initial condition. It is a thermal density-matrix calculation. For a radial operator in an isotropic 2D potential, the DVR implementation uses an angular-momentum block decomposition and evaluates the Kubo correlation in the energy basis:
+          </p>
+          <div class="math-block">\[
+            C_{vv}^{K}(t)=
+            \frac{1}{\beta Z}\int_0^\beta d\lambda\,
+            \mathrm{Tr}\left[
+              e^{-(\beta-\lambda)H}\dot r\,
+              e^{-\lambda H}
+              e^{iHt}\dot r e^{-iHt}
+            \right].
+          \]</div>
+          <p>
+            Numerically this is a direct density-matrix benchmark: diagonalize each radial partial-wave block, form the Kubo thermal weights, and sum the angular degeneracies. That matters because the CMD artifact is a finite-temperature equilibrium artifact of the centroid free energy; a single scattering packet would not be testing the same object.
+          </p>
+
+          <h2>CMD Mean Force</h2>
+          <p>
+            The CMD/CA surface is computed from a centroid-constrained path-integral ensemble. For a target vector centroid \(\mathbf R_c\), the sampled paths obey
+          </p>
+          <div class="math-block">\[
+            \bar{\mathbf q}=\frac{1}{P}\sum_{k=1}^{P}\mathbf q_k=\mathbf R_c .
+          \]</div>
+          <p>
+            The Euclidean action is
+          </p>
+          <div class="math-block">\[
+            S_P(\mathbf q)=
+            \frac{1}{2\beta_P}\sum_{k=1}^{P}
+            m\left|\mathbf q_{k+1}-\mathbf q_k\right|^2
+            +\beta_P\sum_{k=1}^{P}V(\mathbf q_k),
+            \qquad
+            \beta_P=\frac{\beta}{P}.
+          \]</div>
+          <p>
+            Metropolis moves displace one bead, then translate the whole path back to the requested centroid. The radial CMD mean force is the constrained average of the bead-mean physical force:
+          </p>
+          <div class="math-block">\[
+            \mathbf F_c(\mathbf R_c)=
+            -\left\langle
+              \frac{1}{P}\sum_{k=1}^{P}\nabla V(\mathbf q_k)
+            \right\rangle_{\bar{\mathbf q}=\mathbf R_c}.
+          \]</div>
+          <p>
+            By rotational symmetry, the force is projected along the centroid direction and integrated to a radial PMF \(A(R_c)\), with \(dA/dR_c=-F_c(R_c)\). The CMD dynamics then propagates the centroid on this PMF. The artificial-instanton diagnostic is only a way to visualize low-action constrained paths; it is not used to redefine the force.
+          </p>
+
+          <h2>Why the Red Shift Happens</h2>
+          <p>
+            In a compact ring polymer, every bead sits near the centroid and the CMD mean force resembles the physical Morse force. At low temperature, however, the imaginary-time polymer is long enough to bend around the minimum ring. A small centroid radius no longer means that the bead positions sit at small \(r\); it can mean that the beads are distributed along a curved arc of the real minimum ring. The centroid is then artificially cheap.
+          </p>
+          <p>
+            The radial frequency of CMD motion is controlled by the curvature of the centroid PMF,
+          </p>
+          <div class="math-block">\[
+            \Omega_{\mathrm{CMD}}^2 \approx
+            \frac{1}{m}\frac{d^2 A(R_c)}{dR_c^2}.
+          \]</div>
+          <p>
+            Once the constrained ensemble collapses into the artificial-instanton basin, \(A(R_c)\) becomes too flat in the radial coordinate. A flatter PMF means a smaller effective frequency, hence a red-shifted radial stretch spectrum. This is the same CMD force formula that was useful in Part I; the difference is the multidimensional curved geometry of the centroid constraint.
+          </p>
+
+          <figure>
+            <img src="../assets/img/cmd-series/cmd-curvature-pmf-distribution.png" alt="CMD radial PMF and centroid radial distribution at 200, 400, and 800 K">
+            <figcaption>CMD radial PMF and centroid distribution. At 200 K the centroid distribution collapses to very small \(R_c\), even though the physical potential minimum is at \(r_e=1.8324\) bohr. At 800 K the distribution returns to the ordinary stretch region, and the CMD spectrum returns near the direct quantum benchmark.</figcaption>
+          </figure>
+
+          <h2>Controls</h2>
+          <p>
+            I compare five objects. DVR is the direct-density-matrix Kubo reference. CMD/CA is centroid dynamics on the constrained PMF above. The "classical EH" curve is the one-state classical trajectory limit sampled from the thermal ensemble. RPMD and TRPMD use full ring-polymer thermal sampling and centroid radial velocity correlations; they are included as path-integral trajectory controls that do not collapse the dynamics onto the centroid PMF.
+          </p>
+
+          <figure>
+            <img src="../assets/img/cmd-series/cmd-curvature-spectra-validation.png" alt="DVR, CMD, classical, RPMD, and TRPMD radial velocity spectra">
+            <figcaption>Validation spectra for 200, 400, and 800 K. Thin red curves are individual CMD seeds and the thick red curve is their mean. The key qualitative signature is not a single 200 K maximum, which is seed-sensitive, but the low-temperature transfer of CMD spectral weight to softer frequencies while DVR, RPMD, TRPMD, and the classical control remain in the OH-stretch band.</figcaption>
+          </figure>
+
+          <h2>Medium Validation Numbers</h2>
+          <p>
+            The table below uses the 3000-4000 cm\(^{-1}\) stretch band for peak reporting, matching the stretch region used in the literature comparison. CMD entries are seed means and standard deviations over three constrained-PIMC realizations. The "soft fraction" is the positive spectral area between 1500 and 3000 cm\(^{-1}\), divided by the positive area up to 5000 cm\(^{-1}\).
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>T / K</th>
+                  <th>DVR peak</th>
+                  <th>CMD peak</th>
+                  <th>Classical peak</th>
+                  <th>RPMD peak</th>
+                  <th>TRPMD peak</th>
+                  <th>CMD soft fraction</th>
+                  <th>CMD \(P(R_c&lt;0.4)\)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>200</td><td>3565.76</td><td>3301.95 +/- 517.20</td><td>3682.19</td><td>3611.63</td><td>3620.38</td><td>0.515 +/- 0.438</td><td>0.99996</td></tr>
+                <tr><td>400</td><td>3563.38</td><td>3394.00 +/- 48.34</td><td>3702.97</td><td>3586.68</td><td>3514.86</td><td>0.165 +/- 0.044</td><td>1.83e-07</td></tr>
+                <tr><td>800</td><td>3558.89</td><td>3563.28 +/- 14.77</td><td>3677.82</td><td>3607.66</td><td>3656.85</td><td>0.070 +/- 0.023</td><td>2.13e-19</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <figure>
+            <img src="../assets/img/cmd-series/cmd-curvature-paper-band-peaks.png" alt="Peak positions in the 3000 to 4000 inverse centimeter stretch band">
+            <figcaption>Stretch-band peak summary. The DVR benchmark is nearly temperature independent in this medium validation run. CMD approaches the benchmark at 800 K but shifts downward and broadens as the artificial constrained-path basin appears at lower temperature.</figcaption>
+          </figure>
+
+          <h2>What Is Decisive Here?</h2>
+          <p>
+            The decisive part is geometric, not just a lucky numerical peak. The exact thermal DVR spectrum does not show a comparable low-temperature red shift. RPMD and TRPMD remain in the same stretch region as the direct quantum benchmark. CMD, in contrast, develops a low-\(R_c\) centroid distribution and a large soft-frequency spectral fraction at 200 K. Those three facts are mutually reinforcing: the wrong PMF geometry creates the wrong dynamical stiffness.
+          </p>
+          <p>
+            There is also an important limitation. The 200 K CMD spectrum is broad and seed-sensitive, so a single maximum is a fragile scalar summary. I would not claim that this medium run is a production-level point-by-point reproduction of every published curve. I would claim that it reproduces the mechanism of the curvature problem in Toymodel: constrained centroid sampling opens an artificial-instanton basin, and CMD turns that basin into a red-shifted radial stretch response.
+          </p>
+
+          <figure>
+            <img src="../assets/img/cmd-series/cmd-curvature-instanton-paths.png" alt="Representative artificial instanton paths at low and high temperature">
+            <figcaption>Representative constrained paths from the artificial-instanton diagnostic. At low temperature and small centroid radius, the path can wrap around the minimum ring while keeping a small centroid. This explains why \(R_c\) can be small without the beads actually sitting at the high-energy center of the Morse bottle.</figcaption>
+          </figure>
+
+          <h2>Code and Data</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/cmd/cmd_curvature_validation.py">cmd_curvature_validation.py</a> is the Toymodel validation driver used to build the DVR, CMD, classical, RPMD, and TRPMD comparison tables and spectra. Set <code>TOYMODEL_ROOT</code> to a Toymodel checkout when running it outside the repository.</li>
+            <li><a href="../assets/code/cmd/run_cmd_curvature_smoke.py">run_cmd_curvature_smoke.py</a> provides the shared spectrum, trajectory, and plotting helpers used by the validation driver.</li>
+            <li><a href="../assets/code/cmd/cmd_curvature_potential_surface.py">cmd_curvature_potential_surface.py</a> regenerates the 2D potential-surface figure and optionally overlays saved constrained-path diagnostics.</li>
+            <li><a href="../assets/img/cmd-series/cmd-curvature-method-summary.csv">cmd-curvature-method-summary.csv</a> stores the method-level spectral metrics.</li>
+            <li><a href="../assets/img/cmd-series/cmd-curvature-cmd-seed-summary.csv">cmd-curvature-cmd-seed-summary.csv</a> stores the CMD seed means and standard deviations.</li>
+          </ul>
+
+          <h2>References</h2>
+          <p>
+            The conceptual target is the CMD curvature problem of Trenins and Althorpe, J. Chem. Phys. 149, 014102 (2018). The CMD centroid-force construction follows the centroid density and centroid molecular dynamics framework of Cao and Voth, while the broader comparison to RPMD is best understood through the Matsubara-dynamics analysis of CMD and RPMD approximations.
+          </p>
+
+          <section class="series-footer" aria-labelledby="cmd-series-map">
+            <h2 id="cmd-series-map">CMD series map</h2>
+            <ol class="series-list">
+              <li><a href="cmd-effective-surfaces-tully-sac.html">Part I: CMD Effective Surfaces for Tully SAC</a> - constrained PIMC PMFs used as state-resolved effective surfaces for one-dimensional nonadiabatic dynamics.</li>
+              <li><a href="cmd-curvature-redshift-champagne-bottle.html">Part II: Curvature Red Shift in a 2D Morse Bottle</a> - a curved multidimensional surface where the same centroid construction produces an artificial-instanton basin and a red-shifted CMD spectrum.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
