@@ -12,9 +12,15 @@ This file defines how future agents should write, revise, and publish articles f
 - Keep typography and layout consistent with the current site. Do not introduce article-specific fonts, oversized headings, bright palettes, or decorative layouts unless the whole site style is intentionally revised.
 - Use the existing HTML article structure: header metadata, `series-nav` when applicable, lead paragraph, clear `h2` sections, figures with captions, code links, and footer navigation.
 
+## Public-Site Safety
+
+- Treat the website as fully public. Do not publish private local filesystem paths, absolute machine paths, usernames, email addresses beyond the intentional public contact already in the site chrome, account names, tokens, API keys, internal URLs, or other personal information.
+- Article text, captions, code snippets, and linked example scripts must avoid machine-specific paths such as local workspace directories. Use repository-relative paths, published URLs, or generic placeholders when a path is necessary.
+- Before publishing, scan new article text and code blocks for private paths, personal identifiers, raw terminal prompts, environment dumps, and accidental credentials.
+
 ## Article Shape
 
-Each article should be concise and useful. Prefer a compact technical note over a long transcript of raw source material.
+Each article should be useful and self-contained. It may be moderately long when needed, but the length should clarify the science or workflow rather than reproduce raw source material.
 
 Every article should normally contain:
 
@@ -23,6 +29,10 @@ Every article should normally contain:
 3. Workflow: how the calculation or method is actually carried out.
 4. Result: at least one staged result, benchmark, diagnostic, or test.
 5. Code: links to the executable or source files used in the note.
+
+The background, principle, and workflow sections should be explicit enough that a reader can understand the motivation, the governing idea, and the successful computational path without needing private notes or trial logs.
+
+Articles are not lab notebooks or experiment reports. Do not include tuning history, failed attempts, debugging records, environment mishaps, or chronological error logs unless they are essential to a scientific conclusion. Present a cleaned, complete, successful path with the final choices and enough rationale to reproduce it.
 
 Avoid purely theoretical articles with no result. If the source material is theoretical, add a minimal benchmark, numerical check, derivation check, or reproducible toy example.
 
@@ -69,12 +79,13 @@ Avoid purely theoretical articles with no result. If the source material is theo
 Before committing or pushing article changes:
 
 1. Confirm that the article is English-only.
-2. Check that all local links and image paths resolve.
-3. Run any compact scripts linked from the article when feasible.
-4. Verify that each article has at least one result, benchmark, or diagnostic.
-5. Update `index.html`, `sitemap.xml`, and `README.md` when adding a new published page.
-6. Check desktop and mobile layout for long titles, formulas, figures, and code blocks.
-7. Commit with a clear message and push to `origin/main` only when the user asks to publish or the task explicitly includes upload/deploy.
+2. Confirm that no absolute local paths, private personal information, credentials, or raw private environment details appear in published article text, captions, or code snippets.
+3. Check that all local links and image paths resolve.
+4. Run any compact scripts linked from the article when feasible.
+5. Verify that each article has at least one result, benchmark, or diagnostic.
+6. Update `index.html`, `sitemap.xml`, and `README.md` when adding a new published page.
+7. Check desktop and mobile layout for long titles, formulas, figures, and code blocks.
+8. Commit with a clear message and push to `origin/main` only when the user asks to publish or the task explicitly includes upload/deploy.
 
 ## Site Boundaries
 
