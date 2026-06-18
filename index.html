@@ -42,6 +42,29 @@
           <span class="contact-text">Contact me: 23110190022@m.fudan.edu.cn</span>
           <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
         </div>
+
+        <div class="home-search" id="site-search-panel" data-search-root data-search-empty="hidden">
+          <form class="search-form" data-search-form data-search-anchor="top" role="search">
+            <label class="visually-hidden" for="site-search">Search titles and tags</label>
+            <input
+              class="search-input"
+              id="site-search"
+              name="q"
+              type="search"
+              autocomplete="off"
+              placeholder="Title or tag"
+              data-search-input
+            >
+            <button class="search-button" type="submit">Search</button>
+          </form>
+
+          <div class="search-actions" hidden>
+            <p class="muted-note search-summary" data-search-summary></p>
+            <a class="search-clear" href="index.html#top" data-search-clear hidden>Clear</a>
+          </div>
+
+          <div class="search-results-panel" data-search-results hidden></div>
+        </div>
       </section>
 
       <section class="section" id="articles">
@@ -451,30 +474,7 @@
       <section class="section" id="browse">
         <div class="section-heading">
           <p class="section-label">Browse</p>
-          <h2>Search and Browse</h2>
-        </div>
-
-        <div class="home-search" id="site-search-panel" data-search-root data-search-empty="hidden">
-          <form class="search-form" data-search-form data-search-anchor="browse" role="search">
-            <label class="visually-hidden" for="site-search">Search titles and tags</label>
-            <input
-              class="search-input"
-              id="site-search"
-              name="q"
-              type="search"
-              autocomplete="off"
-              placeholder="Title or tag"
-              data-search-input
-            >
-            <button class="search-button" type="submit">Search</button>
-          </form>
-
-          <div class="search-actions" hidden>
-            <p class="muted-note search-summary" data-search-summary></p>
-            <a class="search-clear" href="index.html#browse" data-search-clear hidden>Clear</a>
-          </div>
-
-          <div class="search-results-panel" data-search-results hidden></div>
+          <h2>Browse</h2>
         </div>
 
         <div class="taxonomy-card-grid">
