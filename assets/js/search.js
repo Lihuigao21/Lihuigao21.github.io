@@ -8,6 +8,12 @@
 
   if (!form || !input || !summary || !results) return;
 
+  const actions = summary.closest(".search-actions");
+  const root = form.closest("[data-search-root]") || document;
+  const rootDataset = root.dataset || {};
+  const hideEmpty = rootDataset.searchEmpty === "hidden";
+  const anchor = form.dataset.searchAnchor || "";
+
   const escapeHtml = (value) =>
     String(value).replace(/[&<>"']/g, (char) => {
       const entities = {
@@ -76,7 +82,10 @@
   }
 
   function updateUrl(query) {
-    const next = query ? `search.html?q=${encodeURIComponent(query)}` : "search.html";
+    const pageName = window.location.pathname.split("/").pop() || "index.html";
+    const queryString = query ? `?q=${encodeURIComponent(query)}` : "";
+    const hash = anchor ? `#${encodeURIComponent(anchor)}` : "";
+    const next = `${pageName}${queryString}${hash}`;
     window.history.replaceState({}, "", next);
   }
 
@@ -86,7 +95,17 @@
     const matches = articles.filter((article) => matchesArticle(article, tokens)).sort(byDateDesc);
 
     input.value = query;
-    clearLink.hidden = !trimmed;
+    if (clearLink) clearLink.hidden = !trimmed;
+    if (!trimmed && hideEmpty) {
+      if (actions) actions.hidden = true;
+      summary.textContent = "";
+      results.innerHTML = "";
+      results.hidden = true;
+      return;
+    }
+
+    if (actions) actions.hidden = false;
+    results.hidden = false;
     summary.textContent = trimmed
       ? `${matches.length} result${matches.length === 1 ? "" : "s"} for "${trimmed}".`
       : `Showing all ${matches.length} article${matches.length === 1 ? "" : "s"}.`;
@@ -108,6 +127,15 @@
     updateUrl(query);
     render(query);
   });
+
+  if (clearLink) {
+    clearLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      updateUrl("");
+      render("");
+      input.focus();
+    });
+  }
 
   render(initialQuery);
 })();

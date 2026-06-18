@@ -23,7 +23,6 @@
 
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
         <a href="#articles">Articles</a>
-        <a href="search.html">Search</a>
         <a href="tags.html">Tags</a>
         <a href="series.html">Series</a>
         <a href="#archive">Archive</a>
@@ -455,13 +454,30 @@
           <h2>Search and Browse</h2>
         </div>
 
+        <div class="home-search" id="site-search-panel" data-search-root data-search-empty="hidden">
+          <form class="search-form" data-search-form data-search-anchor="browse" role="search">
+            <label class="visually-hidden" for="site-search">Search titles and tags</label>
+            <input
+              class="search-input"
+              id="site-search"
+              name="q"
+              type="search"
+              autocomplete="off"
+              placeholder="Title or tag"
+              data-search-input
+            >
+            <button class="search-button" type="submit">Search</button>
+          </form>
+
+          <div class="search-actions" hidden>
+            <p class="muted-note search-summary" data-search-summary></p>
+            <a class="search-clear" href="index.html#browse" data-search-clear hidden>Clear</a>
+          </div>
+
+          <div class="search-results-panel" data-search-results hidden></div>
+        </div>
+
         <div class="taxonomy-card-grid">
-          <a class="taxonomy-card" href="search.html">
-            <span class="section-label">Search</span>
-            <strong>Search Notes</strong>
-            <span>Find articles by title or topic tag.</span>
-            <span class="taxonomy-count">Open search</span>
-          </a>
           <a class="taxonomy-card" href="tags.html">
             <span class="section-label">Tags</span>
             <strong>Topic Index</strong>
@@ -609,6 +625,8 @@
       <a href="#top">Back to top</a>
     </footer>
 
+    <script src="assets/js/article-data.js"></script>
+    <script src="assets/js/search.js?v=home-search"></script>
     <script src="assets/js/main.js"></script>
   </body>
 </html>

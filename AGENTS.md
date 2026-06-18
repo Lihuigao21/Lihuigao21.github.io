@@ -85,7 +85,7 @@ Before committing or pushing article changes:
 5. Verify that each article has at least one result, benchmark, or diagnostic.
 6. Update `index.html`, `sitemap.xml`, and `README.md` when adding a new published page.
 7. Check desktop and mobile layout for long titles, formulas, figures, and code blocks.
-8. Commit with a clear message and push to `origin/main` only when the user asks to publish or the task explicitly includes upload/deploy.
+8. Commit with a clear message and push to `origin/main` after validation by default, unless the user explicitly asks to keep the change local or not to publish.
 
 ## Site Boundaries
 

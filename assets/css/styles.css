@@ -639,6 +639,10 @@ h3 {
   color: var(--muted);
 }
 
+.home-search {
+  margin-bottom: 28px;
+}
+
 .search-form {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -692,6 +696,10 @@ h3 {
 
 .search-clear {
   font-weight: 700;
+}
+
+.search-results-panel {
+  margin-bottom: 28px;
 }
 
 .post-nav {
