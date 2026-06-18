@@ -1,8 +1,8 @@
 """Plot the 2D champagne-bottle Morse surface used in the CMD curvature note.
 
 The script is self-contained for the potential surface.  If an instanton
-directory is provided, it also overlays representative centroid-constrained
-ring-polymer paths saved as ``instanton_T*_R*.npz`` files.
+directory is provided, it also overlays one representative low-temperature
+centroid-constrained ring-polymer path saved as ``instanton_T200_R0.40.npz``.
 """
 
 from __future__ import annotations
@@ -59,25 +59,37 @@ def main():
     axes[0].set_title("2D radial Morse bottle")
     axes[0].text(0.04, 0.94, r"minimum ring: $r_e=1.8324$ bohr", color="white", transform=axes[0].transAxes, fontsize=9, va="top")
 
-    path_specs = [
-        ("instanton_T200_R0.40.npz", "200 K, $R_c=0.4$", "#ffcc33", "o"),
-        ("instanton_T800_R0.40.npz", "800 K, $R_c=0.4$", "#ff5a5f", "s"),
-        ("instanton_T200_R1.80.npz", "200 K, $R_c=1.8$", "#69d2e7", "^"),
-    ]
-    for filename, label, color, marker in path_specs:
-        data = load_path(instanton_dir, filename)
-        if data is None:
-            continue
+    data = load_path(instanton_dir, "instanton_T200_R0.40.npz")
+    if data is not None:
         q = data["path"]
         q_closed = np.vstack([q, q[0]])
-        axes[1].plot(q_closed[:, 0], q_closed[:, 1], color=color, lw=1.8, label=label)
-        axes[1].scatter(q[:, 0], q[:, 1], s=11, color=color, marker=marker, edgecolor="black", linewidth=0.25, zorder=4)
+        axes[1].plot(q_closed[:, 0], q_closed[:, 1], color="#ffcc33", lw=2.2, label="bead path, 200 K")
+        axes[1].scatter(q[:, 0], q[:, 1], s=18, color="#ffcc33", marker="o", edgecolor="black", linewidth=0.3, zorder=4, label="beads")
         c = data["centroid"]
-        axes[1].scatter([c[0]], [c[1]], s=52, color=color, edgecolor="black", linewidth=0.7, zorder=5)
+        axes[1].scatter([c[0]], [c[1]], s=150, color="white", marker="*", edgecolor="black", linewidth=1.1, zorder=6, label=r"centroid, $R_c=0.4$")
+        axes[1].annotate(
+            "centroid",
+            xy=(c[0], c[1]),
+            xytext=(0.68, 0.34),
+            arrowprops={"arrowstyle": "->", "lw": 1.0, "color": "white"},
+            color="white",
+            fontsize=9,
+        )
+        bead = q[np.argmax(q[:, 1])]
+        axes[1].annotate(
+            "beads remain\nnear the minimum ring",
+            xy=(bead[0], bead[1]),
+            xytext=(-2.25, 2.35),
+            arrowprops={"arrowstyle": "->", "lw": 1.0, "color": "white"},
+            color="white",
+            fontsize=9,
+        )
+    else:
+        axes[1].text(0.5, 0.08, "provide --instanton-dir to overlay the path", transform=axes[1].transAxes, ha="center", color="white")
 
-    axes[1].set_title("Centroid-constrained bead paths")
-    if axes[1].lines:
-        axes[1].legend(loc="lower left", fontsize=8, frameon=True, facecolor="white", framealpha=0.88)
+    axes[1].set_title("One constrained path: 200 K, $R_c=0.4$")
+    if data is not None:
+        axes[1].legend(loc="lower left", fontsize=8, frameon=True, facecolor="white", framealpha=0.9)
     cb = fig.colorbar(cf, ax=axes, shrink=0.9, pad=0.02)
     cb.set_label("V(r) / hartree, clipped at 0.22")
     fig.suptitle("Champagne-bottle Morse surface and artificial-instanton geometry", fontsize=14)
