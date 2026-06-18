@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Browse Lihui Gao's technical notes by series and article collection.">
-    <title>Series | Lihui Gao</title>
+    <meta name="description" content="Search Lihui Gao's technical notes by title and topic tag.">
+    <title>Search | Lihui Gao</title>
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="assets/css/styles.css">
   </head>
@@ -23,7 +23,7 @@
 
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
         <a href="index.html#articles">Articles</a>
-        <a href="search.html">Search</a>
+        <a href="search.html" aria-current="page">Search</a>
         <a href="tags.html">Tags</a>
         <a href="series.html">Series</a>
         <a href="index.html#archive">Archive</a>
@@ -34,21 +34,39 @@
 
     <main id="top">
       <section class="hero">
-        <p class="section-label">Collections</p>
-        <h1>Series</h1>
-        <p class="intro">Each collection gathers a coherent set of notes so that the reading order is visible instead of scattered through the archive.</p>
+        <p class="section-label">Search</p>
+        <h1>Search Notes</h1>
+        <p class="intro">Find technical notes by title or topic tag.</p>
       </section>
 
       <section class="section taxonomy-section">
         <div class="section-heading">
-          <p class="section-label">Series</p>
-          <h2>Collections</h2>
+          <p class="section-label">Index</p>
+          <h2>Title and Tags</h2>
         </div>
 
         <div>
-          <div class="taxonomy-card-grid" data-series-overview aria-label="Article series"></div>
-          <div data-series-results></div>
-          <noscript><p class="muted-note">Enable JavaScript to load the series index.</p></noscript>
+          <form class="search-form" data-search-form role="search">
+            <label class="visually-hidden" for="site-search">Search titles and tags</label>
+            <input
+              class="search-input"
+              id="site-search"
+              name="q"
+              type="search"
+              autocomplete="off"
+              placeholder="Title or tag"
+              data-search-input
+            >
+            <button class="search-button" type="submit">Search</button>
+          </form>
+
+          <div class="search-actions">
+            <p class="muted-note search-summary" data-search-summary></p>
+            <a class="search-clear" href="search.html" data-search-clear hidden>Clear</a>
+          </div>
+
+          <div data-search-results></div>
+          <noscript><p class="muted-note">Enable JavaScript to load the search index.</p></noscript>
         </div>
       </section>
     </main>
@@ -59,7 +77,7 @@
     </footer>
 
     <script src="assets/js/article-data.js"></script>
-    <script src="assets/js/taxonomy.js"></script>
+    <script src="assets/js/search.js"></script>
     <script src="assets/js/main.js"></script>
   </body>
 </html>

@@ -47,6 +47,18 @@ a:hover {
   outline-offset: 3px;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .site-header,
 main,
 .site-footer {
@@ -627,6 +639,61 @@ h3 {
   color: var(--muted);
 }
 
+.search-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.search-input,
+.search-button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.search-input {
+  min-width: 0;
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.search-input::placeholder {
+  color: var(--subtle);
+}
+
+.search-button {
+  padding: 8px 16px;
+  background: var(--ink);
+  color: var(--surface);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.search-button:hover {
+  background: var(--accent);
+}
+
+.search-actions {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.search-summary {
+  margin: 0;
+}
+
+.search-clear {
+  font-weight: 700;
+}
+
 .post-nav {
   margin-top: 42px;
   padding-top: 24px;
@@ -673,6 +740,20 @@ h3 {
 
   .taxonomy-card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .search-form {
+    grid-template-columns: 1fr;
+  }
+
+  .search-button {
+    width: 100%;
+  }
+
+  .search-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .algorithm-table > div:nth-child(odd) {
