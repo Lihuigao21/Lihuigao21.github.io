@@ -13,6 +13,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- sitemap.xml
 |-- posts
 |   |-- h2o-abacus-rttddft-electronic-absorption.html
+|   |-- cmd-effective-surfaces-tully-sac.html
 |   |-- perovskite-softness-controlled-nvt.html
 |   |-- spin-mint-three-state-morse-reproduction.html
 |   |-- hamgnn-openmx-tio2-hamiltonian-workflow.html
@@ -129,6 +130,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 ## Published Notes
 
 - `posts/h2o-abacus-rttddft-electronic-absorption.html`
+- `posts/cmd-effective-surfaces-tully-sac.html`
 - `posts/perovskite-softness-controlled-nvt.html`
 - `posts/hamgnn-openmx-tio2-hamiltonian-workflow.html`
 - `posts/spin-mint-three-state-morse-reproduction.html`

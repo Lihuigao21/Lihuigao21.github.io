@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Centroid molecular dynamics effective free-energy surfaces for Tully's simple avoided crossing, built from constrained PIMC mean forces and tested with Ehrenfest, FSSH, and DVR references.">
+    <title>CMD Effective Surfaces for Tully SAC | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Model Calculation</p>
+          <h1>CMD Effective Surfaces for Tully SAC</h1>
+          <p class="post-meta">2026.06.18 - CMD / PIMC / MQC / Tully Model</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            This note builds a centroid molecular dynamics (CMD) effective surface for Tully's simple avoided crossing, then uses that surface in Ehrenfest and fewest-switches surface hopping dynamics. The central object is not a new nonadiabatic coupling formula, but a state-resolved potential of mean force obtained from constrained path-integral Monte Carlo.
+          </p>
+
+          <h2>Why a CMD Surface?</h2>
+          <p>
+            A classical mixed quantum-classical trajectory samples one nuclear point \(Q\) at a time. Near a narrow avoided crossing, however, a quantum nuclear packet can delocalize across the coupling region. CMD folds part of this nuclear quantum delocalization into an effective free-energy surface for the centroid coordinate. In a one-dimensional two-state benchmark this is a useful diagnostic: far from the avoided crossing the CMD surface should reduce to the ordinary adiabatic energy, while near the coupling region the lower-state barrier can be softened by imaginary-time delocalization.
+          </p>
+          <p>
+            The implementation used here is deliberately conservative. It precomputes the CMD potential of mean force (PMF) on an adaptive grid, aligns the PMF in the non-coupled reactant asymptote, interpolates a continuous energy-force pair, and only then runs Ehrenfest and FSSH trajectories. It is not an on-the-fly PIMC calculation during dynamics.
+          </p>
+
+          <h2>Constrained PIMC on One Adiabatic State</h2>
+          <p>
+            For each adiabatic state \(s\) and centroid value \(Q\), a ring-polymer path \(\{q_i\}_{i=1}^{P}\) is sampled under the exact centroid constraint
+          </p>
+          <div class="math-block">\[
+            Q=\frac{1}{P}\sum_{i=1}^{P}q_i .
+          \]</div>
+          <p>
+            The state-resolved Euclidean action is
+          </p>
+          <div class="math-block">\[
+            S_s(\mathbf q)=
+            K_P(\mathbf q)+U_{P,s}(\mathbf q).
+          \]</div>
+          <div class="math-block">\[
+            K_P(\mathbf q)=
+            \frac{1}{2\beta_P}
+            \sum_{i=1}^{P} m(q_{i+1}-q_i)^2
+          \]</div>
+          <div class="math-block">\[
+            U_{P,s}(\mathbf q)=
+            \beta_P\sum_{i=1}^{P} E_s(q_i),
+            \qquad
+            \beta_P=\frac{\beta}{P}.
+          \]</div>
+          <p>
+            The Metropolis move changes one bead, then shifts the entire path so that the centroid returns exactly to \(Q\). This keeps the constrained ensemble well defined without adding a penalty potential. In this benchmark the highest PMF level used \(P=8\) beads and \(15000\) Monte Carlo steps per grid point and state. The adaptive centroid grid has 66 points over \([-7,7]\), with spacing \(0.1\) in the coupling region \([-2.221,2.221]\) and spacing \(0.5\) outside.
+          </p>
+
+          <h2>Mean Force and PMF Integration</h2>
+          <p>
+            The PMF is reconstructed from a constrained mean force, not from a simple average of adiabatic energies. For a sampled path, the bead-averaged force on state \(s\) is
+          </p>
+          <div class="math-block">\[
+            \bar F_s(\mathbf q)=
+            \frac{1}{P}\sum_{i=1}^{P}F_s(q_i),
+            \qquad
+            F_s(q)=-\frac{\partial E_s(q)}{\partial q}.
+          \]</div>
+          <p>
+            The CMD force is the constrained ensemble average
+          </p>
+          <div class="math-block">\[
+            F_s^{\mathrm{CMD}}(Q)=
+            \left\langle \bar F_s(\mathbf q)\right\rangle_{Q,s}.
+          \]</div>
+          <p>
+            The state-resolved PMF \(A_s(Q)\) is then obtained by integrating
+          </p>
+          <div class="math-block">\[
+            \frac{dA_s(Q)}{dQ}=-F_s^{\mathrm{CMD}}(Q).
+          \]</div>
+          <div class="math-block">\[
+            A_s(Q_j)=A_s(Q_0)
+            -\int_{Q_0}^{Q_j}
+            F_s^{\mathrm{CMD}}(Q)\,dQ .
+          \]</div>
+          <p>
+            Because a PMF is defined only up to a constant, each state is aligned by a least-squares shift in the reactant asymptote \(Q\le -3\). This is important: aligning at \(Q=0\) would pin the avoided crossing itself and hide the barrier lowering that CMD is meant to reveal. After asymptotic alignment, the residual mismatch in the left non-coupled region is about \(3\times 10^{-6}\) hartree.
+          </p>
+
+          <figure>
+            <img src="../assets/img/mqc-series/cmd-sac-pmf-vs-adiabatic.png" alt="CMD PMF compared with ordinary adiabatic energies for Tully simple avoided crossing">
+            <figcaption>CMD PMF surfaces compared with ordinary adiabatic energies. The horizontal axis is the centroid coordinate \(Q\); the vertical axis is energy in hartree. Dashed black curves are ordinary adiabatic energies and colored solid curves are CMD PMFs. The gray band marks \(|Q|\le 0.5\), the barrier region used for the numerical estimate. The lower state is nearly unchanged in the asymptotic region but is lowered around the avoided crossing by \(4.83\times 10^{-4}\) hartree, consistent with a quantum-delocalization reduction of the effective reaction barrier.</figcaption>
+          </figure>
+
+          <h2>Interpolating a Continuous \(E(Q)\) and \(F(Q)\)</h2>
+          <p>
+            Dynamics cannot run directly on isolated PMF grid values. The surface must provide a continuous energy and a force that is consistent with that energy. The benchmark therefore uses a cubic Hermite spline for each state:
+          </p>
+          <div class="math-block">\[
+            E_s^{\mathrm{CMD}}(Q)
+            =
+            H_s\!\left(Q;\, A_s(Q_i),\, A_s'(Q_i)\right).
+          \]</div>
+          <div class="math-block">\[
+            A_s'(Q_i)=-F_s^{\mathrm{CMD}}(Q_i).
+          \]</div>
+          <p>
+            The force used in dynamics is the derivative of the same spline,
+          </p>
+          <div class="math-block">\[
+            F_s^{\mathrm{dyn}}(Q)
+            =
+            -\frac{dE_s^{\mathrm{CMD}}(Q)}{dQ}.
+          \]</div>
+          <p>
+            This avoids a common inconsistency: fitting energy and force with two unrelated splines can produce a trajectory force that is not the derivative of the plotted surface. In the present implementation the diagonal energies and diagonal forces are replaced by the CMD effective values, while the adiabatic wavefunctions and derivative couplings are still evaluated from the original Tully model at the centroid.
+          </p>
+
+          <figure>
+            <img src="../assets/img/mqc-series/cmd-sac-force-comparison.png" alt="CMD force compared with ordinary adiabatic force and their difference">
+            <figcaption>Force-level comparison. Top panels show the ordinary adiabatic force (black dashed), the Hermite-interpolated CMD force (solid), and the PIMC mean-force grid points. Bottom panels show \(F_{\mathrm{CMD}}-F_{\mathrm{adiabatic}}\). The correction is localized near the avoided crossing; in the left asymptote \(Q\le -3\), the maximum force difference is only about \(1.3\times 10^{-5}\) hartree bohr\(^{-1}\), while in \(|Q|\le0.5\) it reaches about \(1.9\times10^{-3}\) on state 0.</figcaption>
+          </figure>
+
+          <h2>Dynamics on the CMD Surface</h2>
+          <p>
+            The same initial ensemble is used for ordinary and CMD dynamics: a boosted harmonic thermal density centered at \(q_0=-4\), mean momentum \(p_0=20\), mass \(M=2000\), temperature \(300\) K, and preparation frequency \(\omega=0.004\) a.u. The quantum reference is a DVR density-matrix propagation on Tully's simple avoided crossing. The trajectory methods propagate to \(t=1200\) a.u.; this is long enough for the packet to leave the coupling region and for the final DVR population to plateau.
+          </p>
+          <p>
+            For Ehrenfest, the nuclear force is the electronic-population-weighted average of the CMD state forces. For FSSH, each trajectory moves on an active CMD surface, while hop probabilities still use the original derivative coupling evaluated at the centroid. The calculation is therefore a minimal CMD effective-surface correction, not a complete path-integral nonadiabatic theory.
+          </p>
+
+          <figure>
+            <img src="../assets/img/mqc-series/cmd-sac-population-comparison.png" alt="DVR, Ehrenfest, CMD-Ehrenfest, FSSH, and CMD-FSSH population comparison">
+            <figcaption>Population comparison for \(t\in[0,1200]\) a.u. The black curve is the DVR total adiabatic population, blue is ordinary Ehrenfest, orange is CMD-Ehrenfest, green is ordinary FSSH, and red is CMD-FSSH. The FSSH bands show two standard errors for the 1024-trajectory run. CMD-Ehrenfest reduces the final-state and time-series error relative to ordinary Ehrenfest.</figcaption>
+          </figure>
+
+          <h2>Benchmark Numbers</h2>
+          <p>
+            The PMF convergence check compares \(5000\) and \(15000\) PIMC steps per centroid point and state. The maximum PMF difference is \(8.89\times10^{-5}\) hartree and the RMS difference is \(4.41\times10^{-5}\) hartree. The lower-state barrier lowering measured from the left reactant basin is \(4.83\times10^{-4}\) hartree.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Trajectories</th>
+                  <th>Final \(P_1\)</th>
+                  <th>DVR final \(P_1\)</th>
+                  <th>Final absolute error</th>
+                  <th>RMS error vs DVR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>DVR</td><td>-</td><td>0.492785</td><td>0.492785</td><td>0</td><td>0</td></tr>
+                <tr><td>Ehrenfest</td><td>1024</td><td>0.520624</td><td>0.492785</td><td>0.027839</td><td>0.020349</td></tr>
+                <tr><td>CMD-Ehrenfest</td><td>1024</td><td>0.510500</td><td>0.492785</td><td>0.017715</td><td>0.012802</td></tr>
+                <tr><td>FSSH</td><td>4096</td><td>0.500488</td><td>0.492785</td><td>0.007703</td><td>0.007962</td></tr>
+                <tr><td>CMD-FSSH</td><td>4096</td><td>0.505859</td><td>0.492785</td><td>0.013074</td><td>0.010601</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Two points are worth keeping separate. First, CMD-Ehrenfest improves the Ehrenfest result for this setup. Second, CMD-FSSH is not automatically superior to ordinary FSSH after trajectory convergence: the 4096-trajectory extension gives a smaller prefix RMS convergence error for CMD-FSSH, but the final RMS error against DVR is slightly larger than ordinary FSSH. The CMD surface is physically interpretable, but it is not a universal correction for every MQC closure.
+          </p>
+
+          <figure>
+            <img src="../assets/img/mqc-series/cmd-sac-fssh4096-comparison.png" alt="FSSH and CMD-FSSH compared with DVR using 4096 trajectories">
+            <figcaption>FSSH-only extension to 4096 trajectories. The black line is the DVR reference, blue is ordinary FSSH, and orange is CMD-FSSH. Both trajectory methods reach a stable asymptotic population; the 2048-to-4096 prefix RMS difference is \(7.74\times10^{-3}\) for FSSH and \(2.82\times10^{-3}\) for CMD-FSSH.</figcaption>
+          </figure>
+
+          <h2>DVR Reference and Monotonicity</h2>
+          <p>
+            The DVR reference itself was checked against grid, box, and time-step changes. Relative to the \(N_{\mathrm{DVR}}=384\), \(x_{\max}=18\), \(\Delta t=2\) baseline, the final \(P_1\) changes by \(5.44\times10^{-4}\) for \(N_{\mathrm{DVR}}=320\), \(4.22\times10^{-4}\) for \(N_{\mathrm{DVR}}=448\), \(1.21\times10^{-4}\) for \(x_{\max}=22\), and zero to printed precision when halving the time step to \(\Delta t=1\). The density trace is conserved to about \(10^{-14}\).
+          </p>
+          <p>
+            The plotted DVR quantity is the total instantaneous adiabatic population \(P_1(t)\), not a cumulative transmitted flux. It is therefore not required to be monotonic: it overshoots near \(t=500\) a.u. and relaxes to the asymptotic value. This overshoot is also converged. In contrast, the right-half total probability is monotonic and reaches \(0.99999996\), confirming that the packet has scattered out of the coupling region.
+          </p>
+
+          <figure>
+            <img src="../assets/img/mqc-series/cmd-sac-dvr-convergence.png" alt="DVR convergence of total adiabatic P1 and trace">
+            <figcaption>DVR convergence for the total instantaneous adiabatic \(P_1(t)\). The left panel overlays five grid, box, and time-step choices; the curves are visually indistinguishable on the population scale. The right panel shows trace conservation. The nonmonotonic peak is therefore a converged property of this observable, not a grid artifact.</figcaption>
+          </figure>
+
+          <figure>
+            <img src="../assets/img/mqc-series/cmd-sac-dvr-total-vs-split.png" alt="DVR total adiabatic population compared with right-half probability">
+            <figcaption>Total versus split DVR observables. The total adiabatic \(P_1(t)\) and the right-half adiabatic \(P_1(t)\) both show an avoided-crossing overshoot, whereas the right-half total probability is monotonic and approaches one. This separates a monotonic scattering-arrival diagnostic from an instantaneous adiabatic-population diagnostic.</figcaption>
+          </figure>
+
+          <h2>Code and Data</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/mqc/cmd_sac_benchmark.py">cmd_sac_benchmark.py</a> builds the adaptive CMD PMF, runs DVR, Ehrenfest, FSSH, CMD-Ehrenfest, and CMD-FSSH, and writes the main population figures.</li>
+            <li><a href="../assets/code/mqc/cmd_sac_extend_fssh.py">cmd_sac_extend_fssh.py</a> reuses a saved CMD PMF and DVR result to extend the FSSH and CMD-FSSH trajectory convergence to 4096 trajectories.</li>
+            <li><a href="../assets/code/mqc/cmd_sac_dvr_convergence.py">cmd_sac_dvr_convergence.py</a> runs the DVR-only grid, box, and time-step convergence diagnostics.</li>
+            <li><a href="../assets/img/mqc-series/cmd-sac-summary.csv">cmd-sac-summary.csv</a> stores the 1024-ensemble EH/CMD-EH/FSSH/CMD-FSSH comparison.</li>
+            <li><a href="../assets/img/mqc-series/cmd-sac-fssh4096-summary.csv">cmd-sac-fssh4096-summary.csv</a> stores the 4096-trajectory FSSH and CMD-FSSH comparison.</li>
+            <li><a href="../assets/img/mqc-series/cmd-sac-pimc-diffs.csv">cmd-sac-pimc-diffs.csv</a> stores the PIMC PMF convergence difference.</li>
+            <li><a href="../assets/img/mqc-series/cmd-sac-barrier-metrics.csv">cmd-sac-barrier-metrics.csv</a> stores the PMF barrier-lowering metrics.</li>
+            <li><a href="../assets/img/mqc-series/cmd-sac-dvr-convergence-metrics.csv">cmd-sac-dvr-convergence-metrics.csv</a> and <a href="../assets/img/mqc-series/cmd-sac-dvr-convergence-vs-base.csv">cmd-sac-dvr-convergence-vs-base.csv</a> store the DVR convergence evidence.</li>
+          </ul>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

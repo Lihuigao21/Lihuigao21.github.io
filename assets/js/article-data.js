@@ -39,6 +39,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "cmd-effective-surfaces-tully-sac",
+    title: "CMD Effective Surfaces for Tully SAC",
+    path: "posts/cmd-effective-surfaces-tully-sac.html",
+    date: "2026-06-18",
+    dateText: "2026.06.18",
+    description: "State-resolved CMD potentials of mean force from constrained PIMC, Hermite-consistent energy-force interpolation, and SAC dynamics against DVR, Ehrenfest, FSSH, and CMD-MQC variants.",
+    tags: ["CMD", "PIMC", "MQC", "Tully Model", "DVR", "Nonadiabatic Dynamics", "Model Calculation"],
+  },
+  {
     slug: "h2o-abacus-rttddft-electronic-absorption",
     title: "H2O Electronic Absorption with ABACUS RT-TDDFT",
     path: "posts/h2o-abacus-rttddft-electronic-absorption.html",
