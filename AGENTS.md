@@ -4,13 +4,22 @@ This file defines how future agents should write, revise, and publish articles f
 
 ## Core Style
 
-- All published site content must be in English.
+- All published technical article content must be in English by default.
+- Exception: the `mind.html` / “精神世界” section is intentionally Chinese-language content for personal reflection.
 - Keep a consistent academic and technical style across articles: restrained, clear, reproducible, and not promotional.
 - Keep titles compact and consistent with the existing pattern:
   - Series articles: `DVR VII: Excited-Ground Kubo Population Correlation`
   - Standalone articles: short technical title without decorative wording.
 - Keep typography and layout consistent with the current site. Do not introduce article-specific fonts, oversized headings, bright palettes, or decorative layouts unless the whole site style is intentionally revised.
 - Use the existing HTML article structure: header metadata, `series-nav` when applicable, lead paragraph, clear `h2` sections, figures with captions, code links, and footer navigation.
+
+## 精神世界 Section
+
+- The “精神世界” section is a Chinese-language public section for recording the user's understanding of their own inner life, including self-observation, emotion patterns, values, attention, and action-reflection.
+- Do not force this section into the technical-article requirements for benchmark results, code links, or reproducible computational workflows.
+- Keep the tone restrained, sincere, precise, and non-performative. Avoid decorative prose, motivational slogans, raw diary dumps, or sensational private confession.
+- Preserve public-site safety especially carefully here: do not publish private names, raw personal incidents, addresses, accounts, contact details beyond the site chrome, therapy/medical details, or identifying information about other people unless the user explicitly asks and confirms it is public-safe.
+- Future notes in this section should stay in Chinese unless the user explicitly asks for bilingual or English text. They should answer a clear reflective question such as: what was observed, why it matters, and how the understanding may be revised through action.
 
 ## Public-Site Safety
 
@@ -78,7 +87,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 
 Before committing or pushing article changes:
 
-1. Confirm that the article is English-only.
+1. Confirm that technical articles are English-only; the `mind.html` / “精神世界” section is the explicit Chinese-language exception.
 2. Confirm that no absolute local paths, private personal information, credentials, or raw private environment details appear in published article text, captions, or code snippets.
 3. Check that all local links and image paths resolve.
 4. Run any compact scripts linked from the article when feasible.
@@ -90,6 +99,7 @@ Before committing or pushing article changes:
 ## Site Boundaries
 
 - `posts/` contains published HTML articles.
+- `mind.html` is the public Chinese landing page for the “精神世界” reflection section.
 - `assets/img/` contains published images.
 - `assets/code/` contains published code attachments.
 - `articles/` contains local raw materials and should stay unpublished.
