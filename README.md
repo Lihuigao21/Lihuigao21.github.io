@@ -7,6 +7,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 ```text
 .
 |-- index.html
+|-- life.html
 |-- mind.html
 |-- tags.html
 |-- series.html
@@ -45,6 +46,12 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- dvr-flux-side-correlation.html
 |   |-- dvr-excited-ground-kubo.html
 |   `-- technical-note-template.html
+|-- life
+|   |-- daily.html
+|   |-- travel.html
+|   |-- food.html
+|   |-- study.html
+|   `-- friends.html
 |-- assets
 |   |-- code
 |   |   |-- rt-tddft-h2o
@@ -139,7 +146,13 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
-- `mind.html` - Chinese reflection section for self-observation and inner-world notes.
+- `life.html` - Chinese life-notes landing page.
+- `mind.html` - Chinese inner-world module under life notes.
+- `life/daily.html` - Chinese daily-life module.
+- `life/travel.html` - Chinese travel module.
+- `life/food.html` - Chinese food module.
+- `life/study.html` - Chinese study module.
+- `life/friends.html` - Chinese friends and relationships module.
 - `posts/cmd-curvature-redshift-champagne-bottle.html`
 - `posts/h2o-abacus-rttddft-electronic-absorption.html`
 - `posts/cmd-effective-surfaces-tully-sac.html`
@@ -183,7 +196,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 The homepage search plus the tag and series browsers are static GitHub Pages features powered by `assets/js/article-data.js`, `assets/js/search.js`, and `assets/js/taxonomy.js`. Search matches article titles and canonical tags only. Homepage tag labels are converted into links by `assets/js/main.js`, so tag names should match the canonical names in `article-data.js`.
 
-The `mind.html` page is a separate Chinese-language reflection section. It is linked from the top navigation and homepage, but it is not part of the technical article search, tag index, or benchmark/code-link article workflow.
+The `life.html`, `mind.html`, and `life/` pages form a separate Chinese-language life-notes section. It is linked from the top navigation and homepage, but it is not part of the technical article search, tag index, or benchmark/code-link article workflow.
 
 Keep raw source materials, notebooks, PDFs, and drafts in the local `articles/` folder. That folder is ignored by Git so working materials do not get published accidentally.
 

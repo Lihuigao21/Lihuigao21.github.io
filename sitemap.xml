@@ -2,11 +2,35 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://lihuigao21.github.io/</loc>
-    <lastmod>2026-06-25</lastmod>
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://lihuigao21.github.io/life.html</loc>
+    <lastmod>2026-06-29</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/mind.html</loc>
-    <lastmod>2026-06-25</lastmod>
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://lihuigao21.github.io/life/daily.html</loc>
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://lihuigao21.github.io/life/travel.html</loc>
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://lihuigao21.github.io/life/food.html</loc>
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://lihuigao21.github.io/life/study.html</loc>
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://lihuigao21.github.io/life/friends.html</loc>
+    <lastmod>2026-06-29</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/tags.html</loc>

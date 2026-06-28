@@ -5,7 +5,7 @@ This file defines how future agents should write, revise, and publish articles f
 ## Core Style
 
 - All published technical article content must be in English by default.
-- Exception: the `mind.html` / “精神世界” section is intentionally Chinese-language content for personal reflection.
+- Exception: the `life.html`, `mind.html`, and `life/` pages form an intentionally Chinese-language “生活记录” section for daily life and personal reflection.
 - Keep a consistent academic and technical style across articles: restrained, clear, reproducible, and not promotional.
 - Keep titles compact and consistent with the existing pattern:
   - Series articles: `DVR VII: Excited-Ground Kubo Population Correlation`
@@ -13,13 +13,16 @@ This file defines how future agents should write, revise, and publish articles f
 - Keep typography and layout consistent with the current site. Do not introduce article-specific fonts, oversized headings, bright palettes, or decorative layouts unless the whole site style is intentionally revised.
 - Use the existing HTML article structure: header metadata, `series-nav` when applicable, lead paragraph, clear `h2` sections, figures with captions, code links, and footer navigation.
 
-## 精神世界 Section
+## 生活记录 Section
 
-- The “精神世界” section is a Chinese-language public section for recording the user's understanding of their own inner life, including self-observation, emotion patterns, values, attention, and action-reflection.
+- The “生活记录” section is a Chinese-language public section for recording daily life. Its modules include “精神世界”, “日常”, “出游”, “美食”, “学习”, and “交友”.
+- Treat `life.html` as the section landing page. Treat `mind.html` as the “精神世界” module, not as a separate top-level site category. Put additional lifestyle module pages under `life/`.
 - Do not force this section into the technical-article requirements for benchmark results, code links, or reproducible computational workflows.
 - Keep the tone restrained, sincere, precise, and non-performative. Avoid decorative prose, motivational slogans, raw diary dumps, or sensational private confession.
-- Preserve public-site safety especially carefully here: do not publish private names, raw personal incidents, addresses, accounts, contact details beyond the site chrome, therapy/medical details, or identifying information about other people unless the user explicitly asks and confirms it is public-safe.
-- Future notes in this section should stay in Chinese unless the user explicitly asks for bilingual or English text. They should answer a clear reflective question such as: what was observed, why it matters, and how the understanding may be revised through action.
+- Future notes in this section should stay in Chinese unless the user explicitly asks for bilingual or English text.
+- Daily-life notes should normally preserve: date, module, one concrete public-safe fact, one real feeling or observation, and one judgment or question that can be revisited later.
+- Preserve public-site safety especially carefully here: do not publish private names, raw personal incidents, addresses, real-time locations, exact travel routes, receipts, account details, contact details beyond the site chrome, therapy/medical details, or identifying information about other people unless the user explicitly asks and confirms it is public-safe.
+- For “交友” and other relationship notes, anonymize or generalize other people by default and do not publish private conversations verbatim without explicit user confirmation.
 
 ## Public-Site Safety
 
@@ -87,7 +90,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 
 Before committing or pushing article changes:
 
-1. Confirm that technical articles are English-only; the `mind.html` / “精神世界” section is the explicit Chinese-language exception.
+1. Confirm that technical articles are English-only; the `life.html`, `mind.html`, and `life/` pages are the explicit Chinese-language exceptions.
 2. Confirm that no absolute local paths, private personal information, credentials, or raw private environment details appear in published article text, captions, or code snippets.
 3. Check that all local links and image paths resolve.
 4. Run any compact scripts linked from the article when feasible.
@@ -99,7 +102,9 @@ Before committing or pushing article changes:
 ## Site Boundaries
 
 - `posts/` contains published HTML articles.
-- `mind.html` is the public Chinese landing page for the “精神世界” reflection section.
+- `life.html` is the public Chinese landing page for the “生活记录” section.
+- `mind.html` is the public Chinese “精神世界” module within “生活记录”.
+- `life/` contains public Chinese lifestyle module pages such as daily life, travel, food, study, and friends.
 - `assets/img/` contains published images.
 - `assets/code/` contains published code attachments.
 - `articles/` contains local raw materials and should stay unpublished.
