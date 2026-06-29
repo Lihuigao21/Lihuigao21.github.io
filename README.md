@@ -48,6 +48,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- life
 |   |-- daily.html
+|   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
 |   |-- relationship-summary-2026-06-29.html
 |   |-- travel.html
@@ -152,6 +153,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life.html` - Chinese life-notes landing page.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
+- `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
 - `life/relationship-summary-2026-06-29.html` - Chinese relationship reflection note.
 - `life/travel.html` - Chinese travel module.

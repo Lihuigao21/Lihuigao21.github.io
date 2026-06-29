@@ -82,6 +82,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 ## Editing Existing Articles
 
 - Preserve the existing site tone and structure unless the user explicitly asks for a redesign.
+- For text personally submitted by the user for publication on the site, preserve the original wording unless the user explicitly asks for rewriting. For Chinese text, only correct grammar mistakes, semantic errors, and typos; do not rewrite or rephrase. For English text, light polishing is allowed as long as it does not change the original meaning.
 - Do not simply paste raw source notes into an article. Rewrite, compress, and organize them.
 - Remove duplicated derivations, unclear commentary, and irrelevant implementation details.
 - Keep technical claims grounded in the supplied source files, papers, code, or generated results.
