@@ -29,7 +29,7 @@ if (navToggle) {
   navToggle.addEventListener("click", () => {
     const isOpen = document.body.classList.toggle("nav-open");
     navToggle.setAttribute("aria-expanded", String(isOpen));
-    navToggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
+    navToggle.setAttribute("aria-label", isOpen ? "关闭导航" : "打开导航");
   });
 }
 
@@ -37,6 +37,6 @@ navLinks.forEach((link) => {
   link.addEventListener("click", () => {
     document.body.classList.remove("nav-open");
     navToggle?.setAttribute("aria-expanded", "false");
-    navToggle?.setAttribute("aria-label", "Open navigation");
+    navToggle?.setAttribute("aria-label", "打开导航");
   });
 });

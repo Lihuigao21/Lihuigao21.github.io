@@ -6,6 +6,7 @@ This file defines how future agents should write, revise, and publish articles f
 
 - All published technical article content must be in English by default.
 - Exception: the `life.html`, `mind.html`, and `life/` pages form an intentionally Chinese-language “生活记录” section for daily life and personal reflection.
+- Outside academic/technical article content, default all public-facing site text to Chinese, including lifestyle pages, personal notes, captions, section labels, and newly added interface copy.
 - Keep a consistent academic and technical style across articles: restrained, clear, reproducible, and not promotional.
 - Keep titles compact and consistent with the existing pattern:
   - Series articles: `DVR VII: Excited-Ground Kubo Population Correlation`
@@ -15,14 +16,14 @@ This file defines how future agents should write, revise, and publish articles f
 
 ## 生活记录 Section
 
-- The “生活记录” section is a Chinese-language public section for recording daily life. Its modules include “精神世界”, “日常”, “出游”, “美食”, “学习”, and “交友”.
+- The “生活记录” section is a Chinese-language public section for recording daily life. Its modules include “精神世界”, “日常”, “感情”, “出游”, “美食”, “学习”, and “交友”.
 - Treat `life.html` as the section landing page. Treat `mind.html` as the “精神世界” module, not as a separate top-level site category. Put additional lifestyle module pages under `life/`.
 - Do not force this section into the technical-article requirements for benchmark results, code links, or reproducible computational workflows.
 - Keep the tone restrained, sincere, precise, and non-performative. Avoid decorative prose, motivational slogans, raw diary dumps, or sensational private confession.
 - Future notes in this section should stay in Chinese unless the user explicitly asks for bilingual or English text.
 - Daily-life notes should normally preserve: date, module, one concrete public-safe fact, one real feeling or observation, and one judgment or question that can be revisited later.
 - Preserve public-site safety especially carefully here: do not publish private names, raw personal incidents, addresses, real-time locations, exact travel routes, receipts, account details, contact details beyond the site chrome, therapy/medical details, or identifying information about other people unless the user explicitly asks and confirms it is public-safe.
-- For “交友” and other relationship notes, anonymize or generalize other people by default and do not publish private conversations verbatim without explicit user confirmation.
+- For “感情”, “交友”, and other relationship notes, anonymize or generalize other people by default and do not publish private conversations verbatim without explicit user confirmation.
 
 ## Public-Site Safety
 
@@ -104,7 +105,7 @@ Before committing or pushing article changes:
 - `posts/` contains published HTML articles.
 - `life.html` is the public Chinese landing page for the “生活记录” section.
 - `mind.html` is the public Chinese “精神世界” module within “生活记录”.
-- `life/` contains public Chinese lifestyle module pages such as daily life, travel, food, study, and friends.
+- `life/` contains public Chinese lifestyle module pages such as daily life, relationship, travel, food, study, and friends.
 - `assets/img/` contains published images.
 - `assets/code/` contains published code attachments.
 - `articles/` contains local raw materials and should stay unpublished.
