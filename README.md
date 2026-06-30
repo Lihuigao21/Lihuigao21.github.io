@@ -52,6 +52,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-summary-2026-06-29.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-world-2026-06-30.html
 |   |-- relationship-summary-2026-06-29.html
 |   |-- travel.html
 |   |-- food.html
@@ -159,6 +160,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-world-2026-06-30.html` - Chinese relationship-world reflection note.
 - `life/relationship-summary-2026-06-29.html` - Chinese relationship reflection note.
 - `life/travel.html` - Chinese travel module.
 - `life/food.html` - Chinese food module.
