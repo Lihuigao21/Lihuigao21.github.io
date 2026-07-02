@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A compact theoretical note on Jahn-Teller symmetry breaking, conical intersections, static versus dynamic regimes, and the triangular Li3/Na3 examples.">
+    <meta name="description" content="A compact theoretical note on Jahn-Teller symmetry breaking, group-theoretical selection rules, conical intersections, and the triangular Li3/Na3 examples.">
     <title>Jahn-Teller Instability in Li3 and Na3 | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
@@ -71,6 +71,95 @@
           \]</div>
           <p>
             If instead every member of the degenerate shell is occupied equally, \(\rho=cI\), the first-order Jahn-Teller driving force cancels.
+          </p>
+
+          <h2>Symmetry as an Invariant Subspace</h2>
+          <p>
+            Let \(R_0\) be a high-symmetry nuclear geometry with point group \(G\). The electronic Hamiltonian at this geometry is invariant under every symmetry operation of the group. More precisely, if \(\hat U_g\) is the operator that acts on electronic wavefunctions by the point-group operation \(g\), then
+          </p>
+          <div class="math-block">\[
+            [\hat H_e(R_0),\hat U_g]=0,\qquad g\in G.
+          \]</div>
+          <p>
+            If \(\psi\) is an electronic eigenstate,
+          </p>
+          <div class="math-block">\[
+            \hat H_e(R_0)\psi=E\psi,
+          \]</div>
+          <p>
+            then the transformed state \(\hat U_g\psi\) has the same energy:
+          </p>
+          <div class="math-block">\[
+            \hat H_e(R_0)(\hat U_g\psi)
+            =
+            \hat U_g\hat H_e(R_0)\psi
+            =
+            E(\hat U_g\psi).
+          \]</div>
+          <p>
+            Thus symmetry operations cannot take a state out of its energy eigenspace. They act inside the degenerate subspace. For an \(n\)-fold degenerate level with basis \(\{\psi_1,\ldots,\psi_n\}\),
+          </p>
+          <div class="math-block">\[
+            \hat U_g\psi_i=\sum_j D_{ji}(g)\psi_j .
+          \]</div>
+          <p>
+            The matrices \(D(g)\) form a representation of \(G\). Decomposing the electronic Hilbert space into irreducible representations is therefore not a labeling convention added afterward; it follows from the symmetry of the Hamiltonian. One-dimensional irreducible representations give nondegenerate symmetry blocks, while multidimensional irreducible representations, such as \(E_g\), \(T_{2g}\), or \(e'\), enforce degeneracy as long as the high symmetry is retained.
+          </p>
+          <p>
+            The subtle point is that a multidimensional irreducible subspace is invariant as a whole, but a single chosen vector inside it is usually not invariant under the full group. A \(p_x\)-like orbital can be rotated into \(p_y\); a \(d_{z^2}\)-like component of an \(E_g\) pair can be transformed into another linear combination within the same \(E_g\) space. Jahn-Teller physics begins exactly here: the lattice has symmetry \(G\), but an occupied direction inside a degenerate electronic subspace can have only a subgroup \(H\subset G\).
+          </p>
+
+          <h2>Density Components and Selection Rules</h2>
+          <p>
+            The charge density is a scalar function, but it is still a function on which the point group acts. It can be decomposed into symmetry components, much as an ordinary periodic function can be decomposed into Fourier components:
+          </p>
+          <div class="math-block">\[
+            \rho(\mathbf r)=
+            \rho_{A_1}(\mathbf r)+
+            \rho_\gamma(\mathbf r)+\cdots .
+          \]</div>
+          <p>
+            The fully symmetric component is obtained by group averaging,
+          </p>
+          <div class="math-block">\[
+            \rho_{A_1}(\mathbf r)=
+            \frac{1}{|G|}
+            \sum_{g\in G}\rho(g^{-1}\mathbf r),
+          \]</div>
+          <p>
+            and satisfies
+          </p>
+          <div class="math-block">\[
+            \hat U_g\rho_{A_1}=\rho_{A_1},\qquad g\in G.
+          \]</div>
+          <p>
+            This part of the density cannot select a lower-symmetry direction. It can couple to a totally symmetric breathing mode, but such a mode preserves the point group and does not split a symmetry-protected degeneracy.
+          </p>
+          <p>
+            The Jahn-Teller source is the non-totally-symmetric part, \(\rho_\gamma\). It represents an electronic anisotropy: more charge along one direction than another, or one site of a symmetric cluster being distinguished from equivalent sites. A nuclear normal coordinate \(Q_\gamma\) can couple linearly to that density only if the product is a totally symmetric scalar. In group-theoretical language,
+          </p>
+          <div class="math-block">\[
+            \Gamma(Q_\gamma)\otimes\Gamma(\rho_\gamma)\supset A_1.
+          \]</div>
+          <p>
+            This condition says that the direct product of the distortion symmetry and the electronic-density symmetry must contain the fully symmetric representation. Otherwise the proposed coupling term changes under some operation of \(G\), and its coefficient must vanish in a \(G\)-symmetric Hamiltonian.
+          </p>
+          <p>
+            For a two-component \(e'\) density and a two-component \(e'\) distortion in \(D_{3h}\),
+          </p>
+          <div class="math-block">\[
+            e'\otimes e'=a_1'\oplus a_2'\oplus e',
+          \]</div>
+          <p>
+            so a totally symmetric contraction exists:
+          </p>
+          <div class="math-block">\[
+            E_{\mathrm{JT}}
+            =
+            -g(Q_1\rho_1+Q_2\rho_2).
+          \]</div>
+          <p>
+            This is the compact symmetry statement behind the verbal picture: the low-symmetry electronic density and the low-symmetry lattice distortion must point in matching representation channels, while their product remains a legitimate scalar contribution to the total energy.
           </p>
 
           <h2>How Three \(s\) Orbitals Become \(a_1'+e'\)</h2>
@@ -141,6 +230,23 @@
           \]</div>
           <p>
             The \(e'\) shell is open and degenerate, with only one electron in a two-dimensional orbital space. That is a first-order Jahn-Teller situation. An \(e'\)-type vibrational distortion lowers one branch of the \(e'\) pair and raises the other, so the single electron occupies the lower branch.
+          </p>
+          <p>
+            The same point can be expressed directly in the density language. If the occupied \(e'\) combination is approximately
+          </p>
+          <div class="math-block">\[
+            \psi=
+            \frac{1}{\sqrt{6}}
+            \left(2\chi_1-\chi_2-\chi_3\right),
+          \]</div>
+          <p>
+            then, ignoring overlap terms, the site-density pattern is proportional to
+          </p>
+          <div class="math-block">\[
+            (4,1,1)=(2,2,2)+(2,-1,-1).
+          \]</div>
+          <p>
+            The first vector is the totally symmetric \(a_1'\) average. The second is the \(e'\)-type anisotropy: site 1 is distinguished while sites 2 and 3 remain equivalent. That non-totally-symmetric density component couples to an \(e'\) distortion and naturally produces an isosceles triangle.
           </p>
           <p>
             Geometrically this changes the equilateral triangle into an isosceles triangle:
@@ -262,6 +368,8 @@
           <h2>Takeaways</h2>
           <ul>
             <li>Degenerate orbitals are not enough by themselves; the occupation of the degenerate shell must be non-symmetric for a first-order Jahn-Teller instability.</li>
+            <li>At a high-symmetry geometry, \([\hat H_e,\hat U_g]=0\) makes each degenerate electronic subspace invariant under the point group, but a single occupied vector inside a multidimensional irreducible representation need not be invariant.</li>
+            <li>The active Jahn-Teller source is the non-totally-symmetric component of the electronic density, and a linear vibronic term is allowed only when \(\Gamma(Q)\otimes\Gamma(\rho)\) contains the totally symmetric representation.</li>
             <li>Three equivalent \(s\) orbitals in an equilateral \(\mathrm{Li_3}\) or \(\mathrm{Na_3}\) triangle form \(a_1'+e'\), and the three valence electrons occupy \((a_1')^2(e')^1\).</li>
             <li>The expected distortion is \(D_{3h}\rightarrow C_{2v}\): an equilateral triangle becomes an isosceles triangle.</li>
             <li>Jahn-Teller symmetry breaking is usually economical: it removes the degeneracy while preserving as much symmetry as possible.</li>

@@ -50,7 +50,7 @@ window.SITE_ARTICLES = [
     path: "posts/jahn-teller-li3-na3.html",
     date: "2026-07-02",
     dateText: "2026.07.02",
-    description: "A compact theoretical note on Jahn-Teller symmetry breaking, conical intersections, static versus dynamic regimes, and the triangular Li3/Na3 examples.",
+    description: "A compact theoretical note on Jahn-Teller symmetry breaking, group-theoretical selection rules, conical intersections, and the triangular Li3/Na3 examples.",
     tags: ["Jahn-Teller Effect", "Conical Intersection", "Vibronic Coupling", "Li3", "Na3", "Model Calculation"],
   },
   {
