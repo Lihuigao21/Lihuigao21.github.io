@@ -56,6 +56,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-softness-2026-07-02.html
 |   |-- relationship-tragedy-roots-2026-07-01.html
 |   |-- relationship-summary-2026-06-29.html
 |   |-- travel.html
@@ -170,6 +171,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-softness-2026-07-02.html` - Chinese relationship reflection note.
 - `life/relationship-tragedy-roots-2026-07-01.html` - Chinese relationship reflection note.
 - `life/relationship-summary-2026-06-29.html` - Chinese relationship reflection note.
 - `life/travel.html` - Chinese travel module.
