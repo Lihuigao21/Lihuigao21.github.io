@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A compact theoretical note on Jahn-Teller symmetry breaking, conical intersections, static versus dynamic regimes, and the triangular Li3/Na3 examples.">
+    <title>Jahn-Teller Instability in Li3 and Na3 | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">鐢熸椿璁板綍</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Model Calculation</p>
+          <h1>Jahn-Teller Instability in Li3 and Na3</h1>
+          <p class="post-meta">2026.07.02 - Jahn-Teller Effect / Conical Intersections / Vibronic Coupling</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            The Jahn-Teller effect is not a vague tendency toward lower symmetry. It is a precise vibronic instability: a non-linear molecule or local coordination unit with a degenerate electronic state can lower its total energy by distorting along symmetry-allowed nuclear coordinates. The triangular \(\mathrm{Li_3}\) and \(\mathrm{Na_3}\) clusters are clean examples because three equivalent atomic \(s\) orbitals already contain the essential algebra.
+          </p>
+
+          <h2>Degeneracy and Occupation</h2>
+          <p>
+            Suppose two orbitals are degenerate at a high-symmetry geometry. A distortion coordinate \(Q\) may split them as
+          </p>
+          <div class="math-block">\[
+            \varepsilon_1(Q)=\varepsilon_0-gQ,\qquad
+            \varepsilon_2(Q)=\varepsilon_0+gQ .
+          \]</div>
+          <p>
+            If the degenerate shell is not occupied symmetrically, the electrons can choose the lower branch. For one electron in the pair,
+          </p>
+          <div class="math-block">\[
+            E_{\mathrm{el}}(Q)=\varepsilon_0-g|Q|.
+          \]</div>
+          <p>
+            The elastic cost of the distortion is quadratic to leading order,
+          </p>
+          <div class="math-block">\[
+            E_{\mathrm{nuc}}(Q)=\frac{1}{2}KQ^2.
+          \]</div>
+          <p>
+            The total energy is therefore
+          </p>
+          <div class="math-block">\[
+            E(Q)=E(0)-g|Q|+\frac{1}{2}KQ^2.
+          \]</div>
+          <p>
+            Near \(Q=0\), the electronic stabilization is linear while the nuclear penalty is quadratic. The high-symmetry point is unstable, and the minimum occurs at
+          </p>
+          <div class="math-block">\[
+            Q_0=\frac{g}{K},\qquad
+            \Delta E_{\mathrm{JT}}=-\frac{g^2}{2K}.
+          \]</div>
+          <p>
+            This is the mathematical meaning of an "asymmetric occupation" of degenerate orbitals. In density-matrix language, the occupation matrix inside the degenerate subspace is not proportional to the identity:
+          </p>
+          <div class="math-block">\[
+            \rho \ne cI.
+          \]</div>
+          <p>
+            If instead every member of the degenerate shell is occupied equally, \(\rho=cI\), the first-order Jahn-Teller driving force cancels.
+          </p>
+
+          <h2>How Three \(s\) Orbitals Become \(a_1'+e'\)</h2>
+          <p>
+            In an equilateral \(\mathrm{M_3}\) triangle, with \(\mathrm{M}=\mathrm{Li}\) or \(\mathrm{Na}\), the point group is \(D_{3h}\). Each atom contributes one valence \(s\) orbital. Call the three localized orbitals \(\chi_1,\chi_2,\chi_3\). A molecular orbital is a linear combination
+          </p>
+          <div class="math-block">\[
+            \psi=c_1\chi_1+c_2\chi_2+c_3\chi_3 .
+          \]</div>
+          <p>
+            There are three basis orbitals, so there must be three independent molecular orbitals. They cannot all be the same orbital, because independent quantum states must be linearly independent and can be chosen orthogonal.
+          </p>
+          <p>
+            The fully symmetric combination is
+          </p>
+          <div class="math-block">\[
+            \psi_{a_1'}=\frac{1}{\sqrt{3}}\left(\chi_1+\chi_2+\chi_3\right).
+          \]</div>
+          <p>
+            It is unchanged by the symmetry operations of \(D_{3h}\), so it belongs to the one-dimensional representation \(a_1'\). The two remaining combinations must be orthogonal to it, so their coefficients satisfy \(c_1+c_2+c_3=0\). One convenient choice is
+          </p>
+          <div class="math-block">\[
+            \psi_{e_1'}=\frac{1}{\sqrt{6}}\left(2\chi_1-\chi_2-\chi_3\right),
+            \qquad
+            \psi_{e_2'}=\frac{1}{\sqrt{2}}\left(\chi_2-\chi_3\right).
+          \]</div>
+          <p>
+            These two functions transform into each other under rotations and reflections, so they form a two-dimensional \(e'\) representation. The symmetry decomposition is therefore
+          </p>
+          <div class="math-block">\[
+            3s \rightarrow a_1' + e'.
+          \]</div>
+          <p>
+            The same result appears from the three-site Huckel Hamiltonian
+          </p>
+          <div class="math-block">\[
+            H=
+            \begin{pmatrix}
+            \alpha & \beta & \beta\\
+            \beta & \alpha & \beta\\
+            \beta & \beta & \alpha
+            \end{pmatrix},
+          \]</div>
+          <p>
+            whose eigenvalues are
+          </p>
+          <div class="math-block">\[
+            \varepsilon(a_1')=\alpha+2\beta,\qquad
+            \varepsilon(e')=\alpha-\beta .
+          \]</div>
+          <p>
+            For the usual bonding sign \(\beta&lt;0\), \(a_1'\) is the lower bonding orbital and \(e'\) is a degenerate pair.
+          </p>
+
+          <h2>Li3 and Na3</h2>
+          <p>
+            Neutral \(\mathrm{Li_3}\) and \(\mathrm{Na_3}\) each have three valence electrons:
+          </p>
+          <div class="math-block">\[
+            \mathrm{Li}:2s^1,\qquad
+            \mathrm{Na}:3s^1.
+          \]</div>
+          <p>
+            At the equilateral geometry the occupation is
+          </p>
+          <div class="math-block">\[
+            (a_1')^2(e')^1.
+          \]</div>
+          <p>
+            The \(e'\) shell is open and degenerate, with only one electron in a two-dimensional orbital space. That is a first-order Jahn-Teller situation. An \(e'\)-type vibrational distortion lowers one branch of the \(e'\) pair and raises the other, so the single electron occupies the lower branch.
+          </p>
+          <p>
+            Geometrically this changes the equilateral triangle into an isosceles triangle:
+          </p>
+          <div class="math-block">\[
+            D_{3h}\rightarrow C_{2v},\qquad
+            R_{12}=R_{13}\ne R_{23}.
+          \]</div>
+          <p>
+            The two clusters therefore share the same symmetry argument. Their quantitative difference is in the vibronic coupling \(g\), the effective stiffness \(K\), anharmonic terms, and nuclear masses. Static electronic energy does not depend directly on mass, but dynamic Jahn-Teller motion and nuclear quantum effects do: lighter \(\mathrm{Li}\) nuclei make zero-point motion and tunneling more plausible when the barrier between equivalent distorted structures is shallow.
+          </p>
+
+          <h2>Why Symmetry Is Not Broken Completely</h2>
+          <p>
+            Jahn-Teller distortion is economical. It does not lower symmetry for its own sake; it lowers symmetry only enough to remove the electronic degeneracy. In the octahedral \(e_g\) example, a tetragonal distortion gives
+          </p>
+          <div class="math-block">\[
+            O_h\rightarrow D_{4h},\qquad
+            E_g(O_h)\rightarrow A_{1g}(D_{4h})+B_{1g}(D_{4h}).
+          \]</div>
+          <p>
+            The \(d_{z^2}\) and \(d_{x^2-y^2}\) orbitals are no longer symmetry-forced to be degenerate, but many symmetry elements remain. In group-theoretical language the distorted structure often chooses a high-symmetry subgroup that is just sufficient to split the electronic representation. This is the epikernel principle.
+          </p>
+          <p>
+            The same idea appears in the triangular clusters. The distortion need not make all three bond lengths different. A \(C_{2v}\) isosceles triangle is already enough to split \(e'\), so going all the way to a scalene \(C_s\) or \(C_1\) geometry would require extra nuclear distortion without a guaranteed first-order electronic reward.
+          </p>
+
+          <h2>Static, Dynamic, and Nuclear-Quantum Limits</h2>
+          <p>
+            The same symmetry-allowed Jahn-Teller force can lead to different physical regimes. If the stabilization is large compared with thermal and zero-point fluctuations, the system is static: it is frozen in one distorted geometry and experiments resolve inequivalent bond lengths. If the force is weak, or if the equivalent minima are separated by a low barrier, the system can be dynamic: the instantaneous structure is distorted but the time-averaged structure may look nearly high-symmetry.
+          </p>
+          <p>
+            A useful schematic diagnostic is
+          </p>
+          <div class="math-block">\[
+            E_{\mathrm{ZP}}\sim V_{\mathrm{barrier}}.
+          \]</div>
+          <p>
+            When the nuclear zero-point energy or tunneling splitting is comparable to the barrier between equivalent Jahn-Teller minima, a vibronic ground state can delocalize over several distorted structures. Then one may have
+          </p>
+          <div class="math-block">\[
+            \langle Q\rangle =0,\qquad
+            \langle Q^2\rangle \ne 0.
+          \]</div>
+          <p>
+            This means that local distortions exist, but the averaged structure recovers more symmetry. In crystallography such dynamics can appear as large anisotropic thermal displacement parameters rather than as a clean static bond-length splitting.
+          </p>
+
+          <h2>Conical Intersection View</h2>
+          <p>
+            The \(E\otimes e\) Jahn-Teller problem is also a conical-intersection problem. With two degenerate electronic states and two active nuclear coordinates \(Q_\theta,Q_\epsilon\), the linear vibronic Hamiltonian can be written as
+          </p>
+          <div class="math-block">\[
+            H_{\mathrm{JT}}=
+            \frac{1}{2}K(Q_\theta^2+Q_\epsilon^2)I+
+            g(Q_\theta\sigma_z+Q_\epsilon\sigma_x).
+          \]</div>
+          <p>
+            The adiabatic surfaces are
+          </p>
+          <div class="math-block">\[
+            E_\pm(Q_\theta,Q_\epsilon)=
+            \frac{1}{2}KQ^2\pm gQ,\qquad
+            Q=\sqrt{Q_\theta^2+Q_\epsilon^2}.
+          \]</div>
+          <p>
+            They intersect at \(Q_\theta=Q_\epsilon=0\), the high-symmetry geometry. Moving away from the origin opens the energy gap linearly. This is a true two-dimensional conical intersection, not merely a one-dimensional avoided crossing. A one-dimensional same-symmetry avoided crossing can be described by
+          </p>
+          <div class="math-block">\[
+            H(x)=
+            \begin{pmatrix}
+            ax & \Delta\\
+            \Delta & -ax
+            \end{pmatrix},
+            \qquad
+            E_\pm(x)=\pm\sqrt{a^2x^2+\Delta^2}.
+          \]</div>
+          <p>
+            If \(\Delta\ne0\), the minimum gap is finite. In a genuine conical intersection the gap can vanish because two independent nuclear coordinates can satisfy the two degeneracy conditions at once. In higher-dimensional nuclear space the conical intersection becomes a seam of dimension \(N-2\), with a two-dimensional branching plane attached to each seam point.
+          </p>
+          <p>
+            The topology is also different. For the simple two-dimensional model, a loop around the origin changes the sign of the electronic eigenvector and gives a Berry phase of \(\pi\). This phase is absent in an ordinary one-dimensional avoided crossing and can alter vibronic levels, tunneling, and dynamic Jahn-Teller spectra.
+          </p>
+
+          <h2>Minimal Numerical Check</h2>
+          <p>
+            The script linked below performs a compact model check. The left panel diagonalizes a three-site triangular Hamiltonian along one \(e'\) distortion path and shows the \(e'\) degeneracy splitting. The right panel overlays two illustrative effective Jahn-Teller curves of the form
+          </p>
+          <div class="math-block">\[
+            E(Q)=\frac{1}{2}KQ^2-g|Q|.
+          \]</div>
+          <p>
+            The "Li3-like" and "Na3-like" labels are pedagogical parameter sets, not experimental constants. They are included only to show that the same symmetry mechanism can have different distortion amplitudes and stabilization energies once \(g\) and \(K\) change.
+          </p>
+
+          <figure>
+            <img src="../assets/img/jt/li3-na3-jt-model.png" alt="Minimal Jahn-Teller model for triangular Li3 and Na3-like clusters">
+            <figcaption>Minimal Jahn-Teller model. Left: molecular-orbital energies from a three-site triangular tight-binding Hamiltonian along a zero-sum \(e'\) bond distortion coordinate \(Q\). At \(Q=0\), the upper two branches are degenerate and correspond to \(e'\); for \(Q\ne0\), this pair splits linearly to first order. Right: total effective energy \(E(Q)=KQ^2/2-g|Q|\) in arbitrary units. The minima at \(\pm g/K\) are the two equivalent distorted structures along this one-dimensional cut.</figcaption>
+          </figure>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model label</th>
+                  <th>\(g\)</th>
+                  <th>\(K\)</th>
+                  <th>\(Q_0=g/K\)</th>
+                  <th>\(E_{\mathrm{JT}}=g^2/(2K)\)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Li3-like</td><td>0.45</td><td>1.40</td><td>0.321</td><td>0.072</td></tr>
+                <tr><td>Na3-like</td><td>0.30</td><td>0.90</td><td>0.333</td><td>0.050</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Takeaways</h2>
+          <ul>
+            <li>Degenerate orbitals are not enough by themselves; the occupation of the degenerate shell must be non-symmetric for a first-order Jahn-Teller instability.</li>
+            <li>Three equivalent \(s\) orbitals in an equilateral \(\mathrm{Li_3}\) or \(\mathrm{Na_3}\) triangle form \(a_1'+e'\), and the three valence electrons occupy \((a_1')^2(e')^1\).</li>
+            <li>The expected distortion is \(D_{3h}\rightarrow C_{2v}\): an equilateral triangle becomes an isosceles triangle.</li>
+            <li>Jahn-Teller symmetry breaking is usually economical: it removes the degeneracy while preserving as much symmetry as possible.</li>
+            <li>The \(E\otimes e\) Jahn-Teller model is a symmetry-enforced conical intersection. Dynamic Jahn-Teller behavior adds nuclear motion, tunneling, and Berry-phase physics around that intersection.</li>
+          </ul>
+
+          <h2>Code and Data</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/jt/li3_na3_jt_model.py">li3_na3_jt_model.py</a> diagonalizes the triangular three-site model, evaluates the effective JT curves, and writes the figure and CSV table.</li>
+            <li><a href="../assets/img/jt/li3-na3-jt-model.csv">li3-na3-jt-model.csv</a> stores the sampled distortion coordinate, three molecular-orbital energies, and two toy total-energy curves.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Jahn and Teller, <em>Proc. R. Soc. Lond. A</em> 161, 220 (1937).</li>
+            <li>Bersuker, <em>The Jahn-Teller Effect</em>, Cambridge University Press.</li>
+            <li>Domcke, Yarkony, and Koeppel, eds., <em>Conical Intersections</em>, World Scientific.</li>
+          </ul>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "jahn-teller-li3-na3",
+    title: "Jahn-Teller Instability in Li3 and Na3",
+    path: "posts/jahn-teller-li3-na3.html",
+    date: "2026-07-02",
+    dateText: "2026.07.02",
+    description: "A compact theoretical note on Jahn-Teller symmetry breaking, conical intersections, static versus dynamic regimes, and the triangular Li3/Na3 examples.",
+    tags: ["Jahn-Teller Effect", "Conical Intersection", "Vibronic Coupling", "Li3", "Na3", "Model Calculation"],
+  },
+  {
     slug: "cmd-curvature-redshift-champagne-bottle",
     title: "CMD II: Curvature Red Shift in a 2D Morse Bottle",
     path: "posts/cmd-curvature-redshift-champagne-bottle.html",

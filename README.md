@@ -14,6 +14,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- jahn-teller-li3-na3.html
 |   |-- cmd-curvature-redshift-champagne-bottle.html
 |   |-- h2o-abacus-rttddft-electronic-absorption.html
 |   |-- cmd-effective-surfaces-tully-sac.html
@@ -63,6 +64,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- friends.html
 |-- assets
 |   |-- code
+|   |   |-- jt
+|   |   |   `-- li3_na3_jt_model.py
 |   |   |-- rt-tddft-h2o
 |   |   |-- perovskite-softness
 |   |   |-- hamgnn-tio2
@@ -132,6 +135,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- css
 |   |   `-- styles.css
 |   |-- img
+|   |   |-- jt
 |   |   |-- life
 |   |   |-- rt-tddft-h2o
 |   |   |-- perovskite-softness
@@ -172,6 +176,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/food.html` - Chinese food module.
 - `life/study.html` - Chinese study module.
 - `life/friends.html` - Chinese friends and relationships module.
+- `posts/jahn-teller-li3-na3.html`
 - `posts/cmd-curvature-redshift-champagne-bottle.html`
 - `posts/h2o-abacus-rttddft-electronic-absorption.html`
 - `posts/cmd-effective-surfaces-tully-sac.html`

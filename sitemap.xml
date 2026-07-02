@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://lihuigao21.github.io/</loc>
-    <lastmod>2026-06-29</lastmod>
+    <lastmod>2026-07-02</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/life.html</loc>
@@ -70,11 +70,15 @@
   </url>
   <url>
     <loc>https://lihuigao21.github.io/tags.html</loc>
-    <lastmod>2026-06-18</lastmod>
+    <lastmod>2026-07-02</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/series.html</loc>
     <lastmod>2026-06-18</lastmod>
+  </url>
+  <url>
+    <loc>https://lihuigao21.github.io/posts/jahn-teller-li3-na3.html</loc>
+    <lastmod>2026-07-02</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/cmd-curvature-redshift-champagne-bottle.html</loc>
