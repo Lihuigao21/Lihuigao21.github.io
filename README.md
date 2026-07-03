@@ -61,7 +61,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- relationship-summary-2026-06-29.html
 |   |-- travel.html
 |   |-- food.html
-|   |-- study.html
+|   |-- life-experience.html
 |   `-- friends.html
 |-- assets
 |   |-- code
@@ -176,7 +176,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/relationship-summary-2026-06-29.html` - Chinese relationship reflection note.
 - `life/travel.html` - Chinese travel module.
 - `life/food.html` - Chinese food module.
-- `life/study.html` - Chinese study module.
+- `life/life-experience.html` - Chinese life-experience module.
 - `life/friends.html` - Chinese friends and relationships module.
 - `posts/jahn-teller-li3-na3.html`
 - `posts/cmd-curvature-redshift-champagne-bottle.html`
