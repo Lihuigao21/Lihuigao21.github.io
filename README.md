@@ -68,7 +68,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- travel.html
 |   |-- food.html
 |   |-- life-experience.html
-|   `-- friends.html
+|   `-- dreams-creation.html
 |-- assets
 |   |-- code
 |   |   |-- jt
@@ -189,7 +189,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/travel.html` - Chinese travel module.
 - `life/food.html` - Chinese food module.
 - `life/life-experience.html` - Chinese life-experience module.
-- `life/friends.html` - Chinese friends and relationships module.
+- `life/dreams-creation.html` - Chinese dreams and creation module.
 - `posts/jahn-teller-li3-na3.html`
 - `posts/cmd-curvature-redshift-champagne-bottle.html`
 - `posts/h2o-abacus-rttddft-electronic-absorption.html`
