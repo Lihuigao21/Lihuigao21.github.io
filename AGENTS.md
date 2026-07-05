@@ -22,6 +22,7 @@ This file defines how future agents should write, revise, and publish articles f
 - Keep the tone restrained, sincere, precise, and non-performative. Avoid decorative prose, motivational slogans, raw diary dumps, or sensational private confession.
 - Future notes in this section should stay in Chinese unless the user explicitly asks for bilingual or English text.
 - Daily-life notes should normally preserve: date, module, one concrete public-safe fact, one real feeling or observation, and one judgment or question that can be revisited later.
+- Every published life-note article should have a compact, specific title, preferably in the form `YYYY.MM.DD 具体主题`. Do not leave article titles as generic module names such as “每日记录” or “精神状态”; keep module names in section labels, indexes, or metadata instead.
 - Preserve public-site safety especially carefully here: do not publish private names, raw personal incidents, addresses, real-time locations, exact travel routes, receipts, account details, contact details beyond the site chrome, therapy/medical details, or identifying information about other people unless the user explicitly asks and confirms it is public-safe.
 - For “感情” and other relationship notes, anonymize or generalize other people by default and do not publish private conversations verbatim without explicit user confirmation.
 
