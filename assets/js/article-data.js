@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "hefeinamd-training-hands-on-workflow",
+    title: "HefeiNAMD Training Hands-On Workflow",
+    path: "posts/hefeinamd-training-hands-on-workflow.html",
+    date: "2026-07-08",
+    dateText: "2026.07.08",
+    description: "A practical note on preparing a complete HefeiNAMD workshop with slides, server environment, precomputed outputs, Slurm scripts, pseudo jobs, and an end-to-end rehearsal path.",
+    tags: ["HefeiNAMD", "Nonadiabatic Dynamics", "Training", "Slurm", "Workflow", "Real-System Calculation"],
+  },
+  {
     slug: "jahn-teller-li3-na3",
     title: "Jahn-Teller Instability in Li3 and Na3",
     path: "posts/jahn-teller-li3-na3.html",

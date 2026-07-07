@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A practical note on preparing a complete HefeiNAMD training with slides, server environment, precomputed data, Slurm scripts, pseudo jobs, and hands-on rehearsal.">
+    <title>HefeiNAMD Training Hands-On Workflow | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../tags.html">Tags</a>
+        <a href="../series.html">Series</a>
+        <a href="../life.html">生活记录</a>
+        <a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Nonadiabatic Dynamics</p>
+          <h1>HefeiNAMD Training Hands-On Workflow</h1>
+          <p class="post-meta">2026.07.08 - HefeiNAMD / Training / Slurm / Workflow</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            A HefeiNAMD training with a hands-on session is not just a slide lecture. The practical bottleneck is the training environment: a shared conference server, many participants submitting jobs at the same time, and a workflow whose real production path can take far longer than the classroom window. This note summarizes how I would prepare a complete training package after a recent HefeiNAMD workshop trip.
+          </p>
+
+          <h2>Background</h2>
+          <p>
+            My first assumption was that the task would be mostly presentation work: collect previous slides, watch available training videos, and explain the method clearly. The actual workshop required live demonstration and hands-on execution. That changed the preparation target from "understand the PPT" to "make every participant directory, script, dependency, and fallback output behave on the conference server".
+          </p>
+          <p>
+            The environment itself is usually not the hardest part. Conference servers normally have administrators, and most missing modules, queue settings, or path issues can be resolved quickly if the trainer asks early. The harder part is making the workflow robust when many attendees submit jobs through Slurm at the same time.
+          </p>
+
+          <h2>Principle</h2>
+          <p>
+            The key distinction is between a production HefeiNAMD workflow and a training demonstration. In production, every stage should be run and checked in sequence. In a hands-on workshop, however, the live computation should be designed as a reproducible teaching path, not as a time-consuming scientific production run.
+          </p>
+          <p>
+            The most reliable strategy is to precompute all heavy results on the same server before the workshop, then use light pseudo-job scripts during class. These scripts mimic the commands and directory transitions that participants need to learn, but copy or expose known-good outputs instead of forcing dozens of long calculations to compete in the queue.
+          </p>
+
+          <h2>HefeiNAMD Chain</h2>
+          <p>
+            A complete real workflow should still define the scientific chain clearly:
+          </p>
+          <ol>
+            <li>Relax the initial structure.</li>
+            <li>Build a suitable supercell and relax the expanded cell.</li>
+            <li>Run NVT thermalization, then NVE production dynamics.</li>
+            <li>Use the production <code>XDATCAR</code> to generate numbered SCF snapshot directories.</li>
+            <li>Run SCF calculations and prepare the CA-NAC inputs.</li>
+            <li>Generate consistent <code>EIGTXT</code>, <code>NATXT</code>, <code>inp</code>, and <code>INICON</code> files.</li>
+            <li>Run HefeiNAMD or DISH dynamics.</li>
+            <li>Analyze populations, lifetimes, NAC traces, and comparison plots.</li>
+          </ol>
+          <p>
+            The important consistency checks are the time window, band window, timestep, number of MD frames, and the relationship among <code>NSW</code>, <code>NAMDTIME</code>, and <code>NSAMPLE</code>. A training fallback may skip expensive runtime, but it should not hide these dependencies from the participants.
+          </p>
+
+          <h2>Prepared Outputs</h2>
+          <p>
+            For a real hands-on session, I would prepare the following outputs before teaching:
+          </p>
+          <ul>
+            <li>A tested software environment: compiler, MPI, VASP or upstream electronic-structure binaries, HefeiNAMD, Python, and all plotting or data-processing dependencies.</li>
+            <li>Precomputed MD data, especially a stable production <code>XDATCAR</code>.</li>
+            <li>Precomputed SCF snapshot outputs, including files that would normally be expensive to regenerate during class, such as <code>WAVECAR</code> when the teaching workflow needs it.</li>
+            <li>CA-NAC outputs that are already known to match the selected band window and MD time interval.</li>
+            <li>Ready-to-run <code>inp</code>, <code>INICON</code>, <code>EIGTXT</code>, and <code>NATXT</code> examples.</li>
+            <li>Finished HefeiNAMD or DISH outputs and compact analysis scripts for population fitting and comparison with experimental timescales.</li>
+          </ul>
+          <p>
+            The ideal state is simple: if the server queue fails, the workshop can still teach the entire workflow. If the queue behaves well, participants can run selected lightweight stages themselves.
+          </p>
+
+          <h2>Workshop Directory Design</h2>
+          <p>
+            The participant directory should be cleaner than the trainer's research workspace. It should contain only the files needed for the exercise, with no absolute private paths, no unnecessary large intermediates, and no ambiguous duplicate scripts. I would prepare three layers:
+          </p>
+          <ul>
+            <li><code>inputs/</code>: minimal clean inputs for each stage.</li>
+            <li><code>scripts/</code>: Slurm scripts, pseudo-job scripts, and postprocessing scripts.</li>
+            <li><code>reference-results/</code>: precomputed outputs that pseudo jobs can copy into the active working directory.</li>
+          </ul>
+          <p>
+            The pseudo-job scripts should preserve the visible logic of the real workflow. For example, participants should still see where <code>XDATCAR</code> enters, where SCF snapshots are created, where <code>EIGTXT</code> and <code>NATXT</code> come from, and how the final dynamics output is analyzed.
+          </p>
+
+          <h2>Fallback Used in This Training</h2>
+          <p>
+            In the time available for this workshop, it was not realistic to complete the whole HefeiNAMD chain live from scratch. The practical fallback was:
+          </p>
+          <ul>
+            <li>Use an existing <code>XDATCAR</code> for the MD stage.</li>
+            <li>Represent the SCF and <code>WAVECAR</code> stage with a prepared link or precomputed output.</li>
+            <li>Use pseudo-job scripts for the later steps so participants could follow the workflow without waiting for the full queue.</li>
+            <li>Run a long single-sample DISH trajectory, fit the population behavior, and compare it qualitatively with experiment as a teaching demonstration.</li>
+          </ul>
+          <p>
+            This is acceptable as a classroom scaffold, but it should be labeled clearly. A single-sample long trajectory and a prepared <code>WAVECAR</code> are not a production-quality statistical protocol. They are a way to teach the file dependencies, execution order, and analysis logic within a limited workshop slot.
+          </p>
+
+          <h2>Rehearsal Checklist</h2>
+          <p>
+            Before the training starts, I would test the following steps on the actual server account that will be used during the workshop:
+          </p>
+          <ol>
+            <li>Load modules and activate the Python environment from a clean shell.</li>
+            <li>Submit one real Slurm job and one pseudo job.</li>
+            <li>Check that parallel settings, queue names, and wall-time limits match the conference server policy.</li>
+            <li>Run the complete participant path once, starting from a fresh copied directory.</li>
+            <li>Confirm that every script uses relative paths or documented environment variables.</li>
+            <li>Confirm that analysis scripts generate the expected plots and tables without manual edits.</li>
+            <li>Prepare a short recovery note for common failures: missing module, wrong queue, exhausted quota, failed symbolic link, and accidental resubmission by many participants.</li>
+          </ol>
+          <p>
+            This rehearsal is the part I would treat most seriously next time. A slide can be corrected during a talk, but a broken directory layout or missing environment variable can consume the whole hands-on session.
+          </p>
+
+          <h2>Materials</h2>
+          <p>
+            The public material repository for this training is:
+          </p>
+          <ul>
+            <li><a href="https://github.com/Lihuigao21/2026.7.7-HefeiNAMD" target="_blank" rel="noreferrer">2026.7.7-HefeiNAMD repository</a></li>
+            <li><a href="https://github.com/Lihuigao21/2026.7.7-HefeiNAMD/blob/main/%E8%87%AA%E6%B4%BD%E8%AE%B2%E7%A8%BF.txt" target="_blank" rel="noreferrer">Self-consistent lecture script</a></li>
+            <li><a href="https://github.com/Lihuigao21/2026.7.7-HefeiNAMD/blob/main/2026.7.7Hefeinamd.pptx" target="_blank" rel="noreferrer">Training slide deck</a></li>
+          </ul>
+          <p>
+            At publication time, the repository also contains compressed example data and result artifacts such as <code>CsPbI3.zip</code> and <code>res.tar.gz</code>. I keep them in the source repository rather than duplicating them into this website, because the website article only needs to document the preparation logic and point to the maintained training package.
+          </p>
+
+          <h2>Lesson Learned</h2>
+          <p>
+            The main lesson is that a computational workshop should be prepared like a small reproducible software release. Slides explain the method, but the hands-on session lives or dies by tested environments, clean directories, precomputed outputs, and a fallback path that still teaches the real dependency graph. For HefeiNAMD, this is especially important because the scientific chain is long: MD, SCF snapshots, CA-NAC, input generation, dynamics, and analysis all have to describe the same physical time window and electronic band window.
+          </p>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
