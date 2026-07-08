@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "geometric-phase-key-theory-reproductions",
+    title: "Geometric Phase: Key Theory Reproductions",
+    path: "posts/geometric-phase-key-theory-reproductions.html",
+    date: "2026-07-08",
+    dateText: "2026.07.08",
+    description: "Key theoretical and computational papers on molecular geometric phase effects near conical intersections, with small reproducible models for pseudorotor quantization, two-path interference, and localization.",
+    tags: ["Geometric Phase", "Conical Intersection", "Jahn-Teller Effect", "Quantum Dynamics", "Model Calculation", "Reproduction"],
+  },
+  {
     slug: "geometric-phase-jahn-teller-thermodynamics",
     title: "Geometric Phase in Jahn-Teller Thermodynamics",
     path: "posts/geometric-phase-jahn-teller-thermodynamics.html",

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Key theoretical and computational papers on molecular geometric phase effects near conical intersections, with small reproducible models for pseudorotor quantization, two-path interference, and localization.">
+    <title>Geometric Phase: Key Theory Reproductions | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">鐢熸椿璁板綍</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Model Calculation</p>
+          <h1>Geometric Phase: Key Theory Reproductions</h1>
+          <p class="post-meta">2026.07.08 - Geometric Phase / Conical Intersections / Reproducible Models</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            This note collects several key theory and computation papers on molecular geometric phase effects near conical intersections, then reproduces their shared mechanisms with intentionally small models. The goal is not yet a full quantum scattering or full vibronic calculation. The goal is to isolate the topological moves that recur across the literature: half-integer pseudorotational quantization, a \(\pi\) phase shift in path interference, and cancellation of symmetric tunneling routes.
+          </p>
+
+          <h2>Literature Map</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Core result</th>
+                <th>Small reproduction here</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Longuet-Higgins et al. 1958; Ham 1987<sup><a href="#ref-1">[1]</a>,<a href="#ref-2">[2]</a></sup></td>
+                <td>The linear \(E\otimes e\) Jahn-Teller problem has a Berry-phase-induced half-integer pseudorotational sequence.</td>
+                <td>Angular spectra \(E_m\propto m^2\) versus \(E_m\propto(m+1/2)^2\).</td>
+              </tr>
+              <tr>
+                <td>Berry 1984; Mead-Truhlar 1979; Mead 1992<sup><a href="#ref-3">[3]</a>,<a href="#ref-4">[4]</a>,<a href="#ref-5">[5]</a></sup></td>
+                <td>A loop around a conical intersection carries a topological phase that can be represented as a sign change or vector potential.</td>
+                <td>Two-path interference with and without an added \(\pi\) phase.</td>
+              </tr>
+              <tr>
+                <td>Althorpe 2006; Althorpe, Stecher, Bouakline 2008<sup><a href="#ref-6">[6]</a>,<a href="#ref-7">[7]</a></sup></td>
+                <td>Reactive-path contributions can be organized by topology; the GP flips interference between paths that wind differently around the CI.</td>
+                <td>Interference intensity \(I\propto |1\pm e^{i\delta}|^2\).</td>
+              </tr>
+              <tr>
+                <td>Ryabinkin and Izmaylov 2013; Gherib, Ryabinkin, Izmaylov 2015<sup><a href="#ref-8">[8]</a>,<a href="#ref-9">[9]</a></sup></td>
+                <td>Near a CI, GP can suppress low-energy transfer and produce localization-like behavior by destructive interference.</td>
+                <td>Two-route tunneling splitting \(|t_1+t_2|\) versus \(|t_1-t_2|\).</td>
+              </tr>
+              <tr>
+                <td>Xie, Yarkony, Guo 2017<sup><a href="#ref-10">[10]</a></sup></td>
+                <td>In nonadiabatic tunneling through a CI region, GP can turn constructive interference into destructive interference and change rates/lifetimes.</td>
+                <td>The same two-path interference panel gives the minimal phase rule.</td>
+              </tr>
+              <tr>
+                <td>Zhai, Shang, Liu 2026<sup><a href="#ref-11">[11]</a></sup></td>
+                <td>The same topology affects imaginary-time thermodynamics and is naturally retained by multi-electronic-state path integrals.</td>
+                <td>Pseudorotor heat-capacity response from shifted spectra.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Reproduction 1: Ham Pseudorotor Sequence</h2>
+          <p>
+            The fixed-radius pseudorotor is the smallest model that retains the angular topology of the \(E\otimes e\) Jahn-Teller trough. If the GP is excluded, the nuclear angular wavefunction is periodic:
+          </p>
+          <div class="math-block">\[
+            \chi_m(\theta)=e^{im\theta},\qquad m\in\mathbb Z,
+            \qquad
+            E_m^{\mathrm{no\ GP}}=\frac{m^2}{2I}.
+          \]</div>
+          <p>
+            If the GP is included, the nuclear wavefunction must compensate the sign change of the adiabatic electronic state after one loop around the CI. Equivalently, the angular momentum is shifted by one half:
+          </p>
+          <div class="math-block">\[
+            \chi_m^{\mathrm{GP}}(\theta)=e^{i(m+1/2)\theta},
+            \qquad
+            E_m^{\mathrm{GP}}=\frac{(m+1/2)^2}{2I}.
+          \]</div>
+          <p>
+            The lowest GP-included angular states are the two degenerate choices \(m+1/2=\pm 1/2\). This reproduces the mechanism behind Ham's sequence of Jahn-Teller states, stripped down to a one-dimensional angular spectrum.
+          </p>
+
+          <h2>Reproduction 2: Two-Path Interference</h2>
+          <p>
+            Many real-time GP effects reduce to a path-interference statement. Suppose two nuclear routes go around opposite sides of a conical intersection and recombine. Without the GP, a minimal amplitude is
+          </p>
+          <div class="math-block">\[
+            A_{\mathrm{no\ GP}}=1+e^{i\delta},
+          \]</div>
+          <p>
+            where \(\delta\) is the ordinary dynamical phase difference. If the two routes differ topologically by one winding around the CI, the GP contributes an extra minus sign:
+          </p>
+          <div class="math-block">\[
+            A_{\mathrm{GP}}=1-e^{i\delta}.
+          \]</div>
+          <p>
+            The normalized intensities are therefore
+          </p>
+          <div class="math-block">\[
+            I_{\mathrm{no\ GP}}=\frac{1+\cos\delta}{2},
+            \qquad
+            I_{\mathrm{GP}}=\frac{1-\cos\delta}{2}.
+          \]</div>
+          <p>
+            Constructive and destructive interference are exchanged. This is the minimal algebra behind topological explanations of GP effects in reactive scattering and CI-mediated tunneling.
+          </p>
+
+          <h2>Reproduction 3: Localization by Tunneling Cancellation</h2>
+          <p>
+            A similarly compact model captures GP-induced localization. Imagine transfer between two equivalent nuclear regions through two semiclassical routes, with amplitudes \(t_1\) and \(t_2\). Without GP, the effective coupling is proportional to
+          </p>
+          <div class="math-block">\[
+            T_{\mathrm{no\ GP}}=t_1+t_2.
+          \]</div>
+          <p>
+            With a \(\pi\) phase between the routes,
+          </p>
+          <div class="math-block">\[
+            T_{\mathrm{GP}}=t_1-t_2.
+          \]</div>
+          <p>
+            If the routes are symmetry-related, \(t_1=t_2\), the GP-included coupling vanishes. The two regions stop communicating in this toy model, which is the cleanest way to see why the GP can suppress low-energy transfer and create localization-like behavior near a conical intersection.
+          </p>
+
+          <figure>
+            <img src="../assets/img/jt/gp-key-theory-reproductions.png" alt="Four small reproductions of geometric phase mechanisms near conical intersections.">
+            <figcaption>
+              Minimal reproductions of recurring GP mechanisms. Top left: the pseudorotor angular spectrum changes from integer to half-integer quantization. Top right: the shifted spectrum changes the heat-capacity response. Bottom left: a \(\pi\) GP phase swaps constructive and destructive two-path interference. Bottom right: when two tunneling routes have equal amplitude, the GP-included coupling \(|t_1-t_2|\) cancels, producing a localization toy limit.
+            </figcaption>
+          </figure>
+          <p>
+            The script and CSV for this figure are available at
+            <a href="../assets/code/jt/gp_key_theory_reproductions.py">assets/code/jt/gp_key_theory_reproductions.py</a>
+            and
+            <a href="../assets/img/jt/gp-key-theory-reproductions.csv">assets/img/jt/gp-key-theory-reproductions.csv</a>.
+          </p>
+
+          <h2>What Is Not Reproduced Yet</h2>
+          <p>
+            These panels are mechanism reproductions, not full paper reproductions. They do not solve the full two-dimensional vibronic Schrödinger equation, do not propagate a wavepacket on coupled conical-intersection surfaces, and do not compute reaction scattering cross sections. Their value is that they make the topological algebra explicit before committing to a heavier numerical calculation.
+          </p>
+          <p>
+            The next useful reproduction steps are: first, a direct polar-grid or basis-set solution of the \(E\otimes e\) vibronic Hamiltonian to recover the GP-included and GP-excluded low-energy spectra; second, a two-dimensional wavepacket around a model CI to visualize the GP-induced nodal line; third, a closer reproduction of a published tunneling/localization benchmark from the Ryabinkin-Izmaylov or Xie-Yarkony-Guo papers.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li id="ref-1">H. C. Longuet-Higgins, U. Opik, M. H. L. Pryce, and R. A. Sack, "Studies of the Jahn-Teller Effect. II. The Dynamical Problem," <em>Proc. R. Soc. Lond. A</em> <strong>244</strong>, 1-16 (1958). DOI: <a href="https://doi.org/10.1098/rspa.1958.0022" target="_blank" rel="noreferrer">10.1098/rspa.1958.0022</a>.</li>
+            <li id="ref-2">F. S. Ham, "Berry's Geometrical Phase and the Sequence of States in the Jahn-Teller Effect," <em>Phys. Rev. Lett.</em> <strong>58</strong>, 725-728 (1987). DOI: <a href="https://doi.org/10.1103/PhysRevLett.58.725" target="_blank" rel="noreferrer">10.1103/PhysRevLett.58.725</a>.</li>
+            <li id="ref-3">M. V. Berry, "Quantal Phase Factors Accompanying Adiabatic Changes," <em>Proc. R. Soc. Lond. A</em> <strong>392</strong>, 45-57 (1984). DOI: <a href="https://doi.org/10.1098/rspa.1984.0023" target="_blank" rel="noreferrer">10.1098/rspa.1984.0023</a>.</li>
+            <li id="ref-4">C. A. Mead and D. G. Truhlar, "On the Determination of Born-Oppenheimer Nuclear Motion Wave Functions Including Complications Due to Conical Intersections and Identical Nuclei," <em>J. Chem. Phys.</em> <strong>70</strong>, 2284-2296 (1979). DOI: <a href="https://doi.org/10.1063/1.437734" target="_blank" rel="noreferrer">10.1063/1.437734</a>.</li>
+            <li id="ref-5">C. A. Mead, "The Geometric Phase in Molecular Systems," <em>Rev. Mod. Phys.</em> <strong>64</strong>, 51-85 (1992). DOI: <a href="https://doi.org/10.1103/RevModPhys.64.51" target="_blank" rel="noreferrer">10.1103/RevModPhys.64.51</a>.</li>
+            <li id="ref-6">S. C. Althorpe, "General Explanation of Geometric Phase Effects in Reactive Systems: Unwinding the Nuclear Wave Function Using Simple Topology," <em>J. Chem. Phys.</em> <strong>124</strong>, 084105 (2006). DOI: <a href="https://doi.org/10.1063/1.2161220" target="_blank" rel="noreferrer">10.1063/1.2161220</a>.</li>
+            <li id="ref-7">S. C. Althorpe, T. Stecher, and A. Bouakline, "Effect of the Geometric Phase on Nuclear Dynamics at a Conical Intersection: Extension of a Recent Topological Approach from One to Two Coupled Surfaces," <em>J. Chem. Phys.</em> <strong>129</strong>, 214117 (2008). DOI: <a href="https://doi.org/10.1063/1.3031215" target="_blank" rel="noreferrer">10.1063/1.3031215</a>.</li>
+            <li id="ref-8">I. G. Ryabinkin and A. F. Izmaylov, "Geometric Phase Effects in Dynamics near Conical Intersections: Symmetry Breaking and Spatial Localization," <em>Phys. Rev. Lett.</em> <strong>111</strong>, 220406 (2013). DOI: <a href="https://doi.org/10.1103/PhysRevLett.111.220406" target="_blank" rel="noreferrer">10.1103/PhysRevLett.111.220406</a>.</li>
+            <li id="ref-9">R. Gherib, I. G. Ryabinkin, and A. F. Izmaylov, "Why Do Mixed Quantum-Classical Methods Describe Short-Time Dynamics through Conical Intersections So Well? Analysis of Geometric Phase Effects," <em>J. Chem. Theory Comput.</em> <strong>11</strong>, 1375-1382 (2015). DOI: <a href="https://doi.org/10.1021/acs.jctc.5b00072" target="_blank" rel="noreferrer">10.1021/acs.jctc.5b00072</a>.</li>
+            <li id="ref-10">C. Xie, D. R. Yarkony, and H. Guo, "Nonadiabatic Tunneling via Conical Intersections and the Role of the Geometric Phase," <em>Phys. Rev. A</em> <strong>95</strong>, 022104 (2017). DOI: <a href="https://doi.org/10.1103/PhysRevA.95.022104" target="_blank" rel="noreferrer">10.1103/PhysRevA.95.022104</a>.</li>
+            <li id="ref-11">Y. Zhai, Y. Shang, and J. Liu, "Geometric Phase Effect in Thermodynamic Properties and in the Imaginary-Time Multi-Electronic-State Path Integral Formulation," <em>J. Phys. Chem. Lett.</em> <strong>17</strong>, 4274-4291 (2026). DOI: <a href="https://doi.org/10.1021/acs.jpclett.6c00429" target="_blank" rel="noreferrer">10.1021/acs.jpclett.6c00429</a>.</li>
+          </ol>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="geometric-phase-jahn-teller-thermodynamics.html">&lt;- Geometric phase in thermodynamics</a>
+          <a href="../index.html">Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
