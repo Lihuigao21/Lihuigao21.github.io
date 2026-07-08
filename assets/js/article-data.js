@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "mes-pimd-geometric-phase-thermodynamics",
+    title: "MES-PIMD and the Geometric Phase",
+    path: "posts/mes-pimd-geometric-phase-thermodynamics.html",
+    date: "2026-07-08",
+    dateText: "2026.07.08",
+    description: "A close reading of the MES-PI/MES-PIMD geometric-phase thermodynamics paper, with the logic chain from Jahn-Teller topology to overlap matrices, winding numbers, heat capacity, and single-state limits.",
+    tags: ["MES-PIMD", "Geometric Phase", "Path Integrals", "Conical Intersection", "Thermodynamics", "Literature Close Reading"],
+  },
+  {
     slug: "geometric-phase-key-theory-reproductions",
     title: "Geometric Phase: Key Theory Reproductions",
     path: "posts/geometric-phase-key-theory-reproductions.html",

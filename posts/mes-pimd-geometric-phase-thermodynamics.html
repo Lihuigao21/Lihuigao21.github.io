@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A close reading of the MES-PI/MES-PIMD geometric-phase thermodynamics paper, with the logic chain from Jahn-Teller topology to overlap matrices, winding numbers, heat capacity, and single-state limits.">
+    <title>MES-PIMD and the Geometric Phase | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">閻㈢喐妞跨拋鏉跨秿</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Literature Close Reading</p>
+          <h1>MES-PIMD and the Geometric Phase</h1>
+          <p class="post-meta">2026.07.08 - MES-PIMD / Geometric Phase / Thermodynamics</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            Zhai, Shang, and Liu's perspective makes a precise point that is easy to blur: ordinary single-surface BO-PIMD does not contain the molecular geometric phase, but the imaginary-time multi-electronic-state path-integral formulation does. The difference is not in the adiabatic potential energy surface. It is in the electronic overlap accumulated along the closed ring polymer. That overlap product is the imaginary-time analogue of a Wilson loop, and it records whether the nuclear path winds around a conical intersection.<sup><a href="#ref-1">[1]</a>,<a href="#ref-2">[2]</a></sup>
+          </p>
+
+          <h2>The Paper's Main Conclusions</h2>
+          <ol>
+            <li>Geometric phase effects can significantly change low-temperature thermodynamic properties, not only spectra and real-time dynamics.</li>
+            <li>In the Jahn-Teller benchmark, GP-included and GP-excluded calculations share the same adiabatic potential surfaces, but their kinetic operators and boundary conditions differ.</li>
+            <li>The GP-included Jahn-Teller ground state is doubly degenerate, while the artificial GP-excluded ground state is non-degenerate.</li>
+            <li>The low-lying spectrum difference produces a visible heat-capacity difference, especially at large inverse temperature \(\beta\).</li>
+            <li>MES-PI naturally includes the GP through the electronic trace of a product of statistically weighted overlap matrices between adjacent imaginary-time beads.</li>
+            <li>A winding-number phase factor can be used to build an artificial GP-excluded MES-PI control, allowing the authors to isolate the purely topological contribution from other nonadiabatic effects.</li>
+            <li>Ring-polymer winding sectors are not rare in the low-temperature benchmark: for the \(c=1\), \(\beta=8\) case, odd-winding paths occupy a substantial fraction of the sampled ensemble.</li>
+            <li>Small bead counts can be qualitatively misleading. \(N_{\mathrm{bead}}=1\) is the classical-nuclei limit, and \(N_{\mathrm{bead}}=2\) cannot resolve a true winding around the CI.</li>
+            <li>The brute-force GP-excluded winding correction converges slowly with bead number, while the paper's GPA-SP strategy improves the convergence behavior.</li>
+            <li>Single-electronic-state schemes can work in a low-temperature, large-gap limit, but the full MES formulation is needed when the excited-state gap is not large enough.</li>
+          </ol>
+
+          <h2>Logic Chain I: The Jahn-Teller Topology</h2>
+          <p>
+            The model used to expose the topology is the two-state linear Jahn-Teller \(E\otimes e\) Hamiltonian. In reduced units, a common diabatic potential matrix can be written as
+          </p>
+          <div class="math-block">\[
+            V_{\mathrm{diab}}(r,\theta)
+            =
+            \frac{1}{2}(r^2+c^2)I
+            +
+            cr
+            \begin{pmatrix}
+              -\cos\theta & \sin\theta\\
+              \sin\theta & \cos\theta
+            \end{pmatrix}.
+          \]</div>
+          <p>
+            Diagonalizing this matrix gives the adiabatic potential energy surfaces
+          </p>
+          <div class="math-block">\[
+            \Lambda_-(r)=\frac{1}{2}(r-c)^2,
+            \qquad
+            \Lambda_+(r)=\frac{1}{2}(r+c)^2 .
+          \]</div>
+          <p>
+            The conical intersection is at \(r=0\), and the lower surface has the Mexican-hat trough at \(r=c\). A real lower-state eigenvector may be written with a half-angle dependence,
+          </p>
+          <div class="math-block">\[
+            \phi_-(\theta)=
+            \begin{pmatrix}
+              \cos(\theta/2)\\
+              -\sin(\theta/2)
+            \end{pmatrix}.
+          \]</div>
+          <p>
+            Therefore a loop around the CI gives
+          </p>
+          <div class="math-block">\[
+            \phi_-(\theta+2\pi)=-\phi_-(\theta).
+          \]</div>
+          <p>
+            This sign change is the molecular geometric phase. The potential eigenvalue \(\Lambda_-(r)\) is unchanged by that sign, but the kinetic energy is not. Nuclear derivatives act on both the nuclear amplitude and the coordinate-dependent electronic basis. Once the adiabatic basis twists around the CI, the kinetic operator must either carry the Berry vector potential or impose the compensating antiperiodic nuclear boundary condition.
+          </p>
+
+          <h2>Logic Chain II: Why the Spectrum Changes</h2>
+          <p>
+            The simplest fixed-radius reduction is a pseudorotor around the trough. If the GP is ignored, the angular wavefunction is periodic:
+          </p>
+          <div class="math-block">\[
+            \chi(\theta+2\pi)=\chi(\theta),
+            \qquad
+            m\in\mathbb Z.
+          \]</div>
+          <p>
+            If the GP is retained, the electronic factor changes sign after one loop, so the nuclear factor must compensate:
+          </p>
+          <div class="math-block">\[
+            \chi(\theta+2\pi)=-\chi(\theta).
+          \]</div>
+          <p>
+            Equivalently, angular momentum is shifted by one half:
+          </p>
+          <div class="math-block">\[
+            E_m^{\mathrm{no\ GP}}\propto m^2,
+            \qquad
+            E_m^{\mathrm{GP}}\propto (m+1/2)^2 .
+          \]</div>
+          <p>
+            This explains the qualitative spectral benchmark. Without the GP, the lowest angular state is \(m=0\), non-degenerate. With the GP, the lowest angular choices \(m=0\) and \(m=-1\) correspond to angular momenta \(+1/2\) and \(-1/2\), giving a doublet. The paper's full two-dimensional basis-set calculation contains radial structure and the exact kinetic terms, but the half-integer pseudorotor is the cleanest explanation for the ground-state degeneracy.
+          </p>
+
+          <h2>Logic Chain III: Why Heat Capacity Sees It</h2>
+          <p>
+            Thermodynamic observables are spectral sums. The partition function is
+          </p>
+          <div class="math-block">\[
+            Z=\sum_\nu e^{-\beta E_\nu},
+          \]</div>
+          <p>
+            and the heat capacity can be written as
+          </p>
+          <div class="math-block">\[
+            C_V
+            =
+            k_B\beta^2
+            \left(
+              \langle E^2\rangle-\langle E\rangle^2
+            \right).
+          \]</div>
+          <p>
+            At low temperature, large \(\beta\) suppresses high-energy states. The result is controlled by the ground level, its degeneracy, and the first few excitation gaps. Therefore a topological shift in angular quantization can change \(C_V\) even though the plotted adiabatic surface is identical. In the paper's figures, the artificial GP-excluded Hamiltonian produces a low-temperature heat-capacity feature that is absent or strongly reduced in the GP-included result. That feature is not a new potential well. It is a spectral artifact of removing the topological boundary condition.
+          </p>
+
+          <h2>Logic Chain IV: MES-PI Contains the GP</h2>
+          <p>
+            The imaginary-time multi-electronic-state path integral writes the partition function as a ring-polymer integral over nuclear bead positions \(R^{[j]}\), with an electronic trace:
+          </p>
+          <div class="math-block">\[
+            Z_{N_{\mathrm{bead}}}^{\mathrm{adia}}
+            =
+            \left(\frac{N_{\mathrm{bead}}M}{2\pi\beta\hbar^2}\right)^{N_{\mathrm{bead}}f/2}
+            \int d\{R^{[j]}\}
+            e^{-\beta U_{\mathrm{spr}}}
+            \mathrm{Tr}_e
+            \left[
+              \prod_{j=1}^{N_{\mathrm{bead}}}
+              e^{-\beta\Lambda^{[j]}/N_{\mathrm{bead}}}
+              C^{[j,j+1]}
+            \right].
+          \]</div>
+          <p>
+            Here
+          </p>
+          <div class="math-block">\[
+            C_{\alpha\beta}^{[j,j+1]}
+            =
+            \langle
+              \phi_\alpha(R^{[j]})
+              |
+              \phi_\beta(R^{[j+1]})
+            \rangle
+          \]</div>
+          <p>
+            is the electronic overlap matrix between adjacent imaginary-time slices. In a single-state limit, the overlap product becomes
+          </p>
+          <div class="math-block">\[
+            \prod_j
+            \langle
+              \phi(R^{[j]})
+              |
+              \phi(R^{[j+1]})
+            \rangle
+            \rightarrow
+            \exp\left(i\oint A(R)\cdot dR\right).
+          \]</div>
+          <p>
+            This is precisely the Berry phase for the closed imaginary-time path. If the path winds once around a CI, the product gives \(-1\); if it winds twice, it gives \(+1\). More generally, for the single-CI two-state Jahn-Teller model,
+          </p>
+          <div class="math-block">\[
+            \prod_j C^{[j,j+1]}\sim (-1)^W,
+          \]</div>
+          <p>
+            where \(W\) is the winding number of the ring polymer around the CI. This is why MES-PI can contain the GP even when the electronic eigenvectors obtained by diagonalization are real-valued and discontinuous across a branch cut. The phase information is not reconstructed by differentiating the eigenvectors; it is carried by their finite overlaps.
+          </p>
+
+          <figure>
+            <img src="../assets/img/jt/mes-pi-gp-logic-demo.png" alt="Minimal diagnostics for the MES-PI geometric-phase logic.">
+            <figcaption>
+              Minimal diagnostics for the logic of the paper. Top left: a discrete overlap product approaches \((-1)^W\) for closed paths with winding number \(W\) around the CI. Top right and bottom left: a half-integer angular shift changes the low-energy spectrum and the toy heat capacity \(C_V/k_B\). Bottom right: the artificial GP-excluded control cancels the MES-PI sign by multiplying the winding-number phase factor, leaving a positive topological sign in every sector.
+            </figcaption>
+          </figure>
+          <p>
+            The script used for this diagnostic is available at
+            <a href="../assets/code/jt/mes_pi_gp_logic_demo.py">assets/code/jt/mes_pi_gp_logic_demo.py</a>. It also writes
+            <a href="../assets/img/jt/mes-pi-gp-logic-wilson.csv">mes-pi-gp-logic-wilson.csv</a> and
+            <a href="../assets/img/jt/mes-pi-gp-logic-thermo.csv">mes-pi-gp-logic-thermo.csv</a>.
+          </p>
+
+          <h2>Logic Chain V: How the Paper Isolates the GP</h2>
+          <p>
+            A raw comparison between different methods can mix several effects: nonadiabatic transitions, DBOC-like kinetic terms, finite-bead errors, and topology. To isolate only the topology, the paper constructs an artificial GP-excluded MES-PI. For multiple CIs, it introduces a geometric signature matrix \(\eta_\alpha\) and a winding number \(W_\alpha\) for each CI. The corresponding phase factor is
+          </p>
+          <div class="math-block">\[
+            \prod_\alpha \eta_\alpha^{W_\alpha}.
+          \]</div>
+          <p>
+            For the single-CI two-state Jahn-Teller model, this reduces to
+          </p>
+          <div class="math-block">\[
+            (-1)^W.
+          \]</div>
+          <p>
+            Multiplying the MES-PI expression by this factor cancels the \((-1)^W\) already present in the overlap product. The resulting expression is not meant as the physical simulation. It is a deliberately artificial control: it answers the question, "What would the thermodynamics look like if the same PES and nonadiabatic framework were used but the GP sign were removed?"
+          </p>
+
+          <h2>Numerical Findings</h2>
+          <p>
+            The paper's exact basis-set calculations and MES-PIMD simulations support the following conclusions.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Observation</th>
+                <th>Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GP-included and GP-excluded curves have the same adiabatic PES.</td>
+                <td>The GP is not a potential-surface correction; it is a kinetic and boundary-condition effect.</td>
+              </tr>
+              <tr>
+                <td>The GP-included ground state is doubly degenerate.</td>
+                <td>The nuclear angular condition is half-integer, as in the Jahn-Teller pseudorotor.</td>
+              </tr>
+              <tr>
+                <td>The heat capacity differs most strongly at low temperature.</td>
+                <td>Low-temperature thermodynamics is dominated by the lowest vibronic levels and degeneracies.</td>
+              </tr>
+              <tr>
+                <td>Odd winding sectors have substantial probability in the \(c=1,\beta=8\) benchmark.</td>
+                <td>The topological sign is not a negligible rare-event correction in that regime.</td>
+              </tr>
+              <tr>
+                <td>MES-PIMD converges to the GP-included exact benchmark.</td>
+                <td>The overlap-matrix trace retains the physical geometric phase.</td>
+              </tr>
+              <tr>
+                <td>The artificial GP-excluded MES-PIMD converges to the artificial GP-excluded benchmark.</td>
+                <td>The winding-number cancellation successfully isolates the topological contribution.</td>
+              </tr>
+              <tr>
+                <td>Small \(N_{\mathrm{bead}}\) can give qualitatively wrong heat-capacity trends.</td>
+                <td>Resolving GP physics requires enough imaginary-time slices to represent winding paths.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Convergence and the Bead-Number Trap</h2>
+          <p>
+            One of the most practically important conclusions is not only that the GP matters, but that it changes convergence behavior. For \(N_{\mathrm{bead}}=1\), the path integral is the classical-nuclei limit; it cannot carry a Berry phase. For \(N_{\mathrm{bead}}=2\), the ring polymer still cannot wind around the CI in the relevant sense. Therefore GP-included and GP-excluded results can look identical at very small bead count.
+          </p>
+          <p>
+            The paper shows that a small bead number can even reverse a qualitative conclusion about the heat capacity. This is a warning for simulations: a calculation that appears "quantum" because \(N_{\mathrm{bead}}>1\) is not necessarily converged with respect to topology. The authors also report that the brute-force GP-excluded winding correction can converge slowly, with an asymptotic bias behaving like \(1/N_{\mathrm{bead}}\) rather than the usual \(1/N_{\mathrm{bead}}^2\) Trotter behavior. Their GPA-SP algorithm is introduced to improve this convergence for the winding-corrected artificial control.
+          </p>
+
+          <h2>Single-State Limits</h2>
+          <p>
+            The paper then asks when one can avoid the full multi-electronic-state calculation. In a single-electronic-state limit, there are several possible schemes:
+          </p>
+          <ul>
+            <li>ordinary BO-PI, which neglects the GP;</li>
+            <li>BHA-PI, which includes DBOC but still neglects the GP unless corrected;</li>
+            <li>GP-included BO-PI or BHA-PI, when the relevant CI topology is known and a winding phase can be supplied;</li>
+            <li>SES-overlap-PI, obtained by retaining the ground-state electronic overlaps along the ring polymer.</li>
+          </ul>
+          <p>
+            The full MES result is the benchmark. For \(c=1\), where the gap to the excited adiabatic state is relatively small, BO and BHA single-state approximations deviate significantly from the MES result. For \(c=3\), where the CI point is energetically higher and the gap is more favorable, BHA agrees much better with MES in the low-temperature regime. This gives the practical rule: single-state GP-corrected schemes are useful when the excited-state gap is large compared with thermal energy, but the full MES formulation is safer when that separation is not clear.
+          </p>
+
+          <h2>What Not to Overclaim</h2>
+          <p>
+            The article is about imaginary-time thermodynamics. It does not prove that MES-RPMD, IB-RPMD, FSSH, or mapping RPMD automatically gives correct real-time GP interference. MES-PI gives a rigorous equilibrium density for a multi-electronic-state system, and the same overlap-matrix idea suggests a route to real-time formulations. But real-time dynamics also requires preserving wavepacket phase relations during propagation. Correctly sampling the thermal density is necessary; it is not, by itself, a proof of correct dynamical interference.
+          </p>
+          <p>
+            This distinction is important for future benchmarks. A method that claims to automatically include GP in dynamics should reproduce at least the minimal signatures: nodal lines from destructive interference, GP-induced localization or tunneling suppression, and the phase reversal between paths winding differently around a CI.
+          </p>
+
+          <h2>Takeaway</h2>
+          <p>
+            The paper's logic is internally tight: the Jahn-Teller CI makes the adiabatic electronic state change sign; that sign changes the allowed nuclear boundary condition; the changed boundary condition reorganizes the low-lying vibronic spectrum; the low-temperature heat capacity follows from that spectrum; and MES-PI captures the same sign automatically because a closed ring polymer carries the product of adjacent electronic overlaps. The winding-number construction is then used only as a diagnostic knife: it cuts out the GP from the otherwise identical path-integral expression so the thermodynamic role of topology can be measured cleanly.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li id="ref-1">Y. Zhai, Y. Shang, and J. Liu, "Geometric Phase Effect in Thermodynamic Properties and in the Imaginary-Time Multi-Electronic-State Path Integral Formulation," <em>J. Phys. Chem. Lett.</em> <strong>17</strong>, 4274-4291 (2026). DOI: <a href="https://doi.org/10.1021/acs.jpclett.6c00429" target="_blank" rel="noreferrer">10.1021/acs.jpclett.6c00429</a>.</li>
+            <li id="ref-2">X. Liu and J. Liu, "Path Integral Molecular Dynamics for Exact Quantum Statistics of Multi-Electronic-State Systems," <em>J. Chem. Phys.</em> <strong>148</strong>, 102319 (2018). DOI: <a href="https://doi.org/10.1063/1.5005059" target="_blank" rel="noreferrer">10.1063/1.5005059</a>.</li>
+            <li id="ref-3">H. C. Longuet-Higgins, U. Oepik, M. H. L. Pryce, and R. A. Sack, "Studies of the Jahn-Teller Effect. II. The Dynamical Problem," <em>Proc. R. Soc. Lond. A</em> <strong>244</strong>, 1-16 (1958). DOI: <a href="https://doi.org/10.1098/rspa.1958.0022" target="_blank" rel="noreferrer">10.1098/rspa.1958.0022</a>.</li>
+            <li id="ref-4">F. S. Ham, "Berry's Geometrical Phase and the Sequence of States in the Jahn-Teller Effect," <em>Phys. Rev. Lett.</em> <strong>58</strong>, 725-728 (1987). DOI: <a href="https://doi.org/10.1103/PhysRevLett.58.725" target="_blank" rel="noreferrer">10.1103/PhysRevLett.58.725</a>.</li>
+            <li id="ref-5">C. A. Mead, "The Geometric Phase in Molecular Systems," <em>Rev. Mod. Phys.</em> <strong>64</strong>, 51-85 (1992). DOI: <a href="https://doi.org/10.1103/RevModPhys.64.51" target="_blank" rel="noreferrer">10.1103/RevModPhys.64.51</a>.</li>
+          </ol>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="geometric-phase-jahn-teller-thermodynamics.html">&lt;- Jahn-Teller thermodynamics</a>
+          <a href="geometric-phase-key-theory-reproductions.html">Key theory reproductions -&gt;</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

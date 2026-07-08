@@ -15,6 +15,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- sitemap.xml
 |-- posts
 |   |-- hefeinamd-training-hands-on-workflow.html
+|   |-- mes-pimd-geometric-phase-thermodynamics.html
 |   |-- geometric-phase-key-theory-reproductions.html
 |   |-- geometric-phase-jahn-teller-thermodynamics.html
 |   |-- jahn-teller-li3-na3.html
@@ -90,6 +91,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- code
 |   |   |-- jt
 |   |   |   |-- li3_na3_jt_model.py
+|   |   |   |-- mes_pi_gp_logic_demo.py
 |   |   |   |-- gp_pseudorotor_thermo.py
 |   |   |   |-- gp_fig1d_heat_capacity_reproduction.py
 |   |   |   `-- gp_key_theory_reproductions.py
