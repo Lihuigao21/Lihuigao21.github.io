@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "geometric-phase-jahn-teller-thermodynamics",
+    title: "Geometric Phase in Jahn-Teller Thermodynamics",
+    path: "posts/geometric-phase-jahn-teller-thermodynamics.html",
+    date: "2026-07-08",
+    dateText: "2026.07.08",
+    description: "A compact derivation of how the geometric phase changes the kinetic operator, boundary condition, degeneracy, spectrum, and heat capacity in the two-state Jahn-Teller E times e model.",
+    tags: ["Geometric Phase", "Jahn-Teller Effect", "Conical Intersection", "Thermodynamics", "Heat Capacity", "Model Calculation"],
+  },
+  {
     slug: "hefeinamd-training-hands-on-workflow",
     title: "HefeiNAMD Training Hands-On Workflow",
     path: "posts/hefeinamd-training-hands-on-workflow.html",

@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A compact derivation of how the geometric phase changes the kinetic operator, boundary condition, degeneracy, spectrum, and heat capacity in the two-state Jahn-Teller E times e model.">
+    <title>Geometric Phase in Jahn-Teller Thermodynamics | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">鐢熸椿璁板綍</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Model Calculation</p>
+          <h1>Geometric Phase in Jahn-Teller Thermodynamics</h1>
+          <p class="post-meta">2026.07.08 - Geometric Phase / Jahn-Teller Effect / Thermodynamics</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            The geometric phase in a conical-intersection problem does not change the adiabatic potential energy surfaces. It changes how nuclear wavefunctions are allowed to move on those surfaces. In the two-state \(E\otimes e\) Jahn-Teller model, that distinction is sharp enough to derive by hand: the same Mexican-hat potential can give different ground-state degeneracies, different low-lying vibronic spectra, and a visibly different low-temperature heat capacity.<sup><a href="#ref-1">[1]</a></sup>
+          </p>
+
+          <h2>The Diabatic Model</h2>
+          <p>
+            The model has two electronic states and two nuclear coordinates \((x,y)\). This is the standard linear \(E\otimes e\) Jahn-Teller Hamiltonian used to expose pseudorotation, conical intersections, and Berry-phase effects.<sup><a href="#ref-2">[2]</a>,<a href="#ref-6">[6]</a></sup> With unit mass, unit \(\hbar\), and harmonic frequency \(\omega=1\), the diabatic Hamiltonian is
+          </p>
+          <div class="math-block">\[
+            \hat H_{\mathrm{diab}}
+            =
+            \frac{1}{2}\hat{\mathbf P}\cdot\hat{\mathbf P}
+            +
+            \hat V_{\mathrm{diab}}(x,y),
+          \]</div>
+          <p>
+            where the diabatic potential energy matrix is
+          </p>
+          <div class="math-block">\[
+            V_{\mathrm{diab}}
+            =
+            \frac{1}{2}(x^2+y^2+c^2)I
+            +
+            c
+            \begin{pmatrix}
+              -x & y\\
+              y & x
+            \end{pmatrix}.
+          \]</div>
+          <p>
+            In polar coordinates, \(x=r\cos\theta\), \(y=r\sin\theta\), this becomes
+          </p>
+          <div class="math-block">\[
+            V_{\mathrm{diab}}
+            =
+            \frac{1}{2}(r^2+c^2)I
+            +
+            cr
+            \begin{pmatrix}
+              -\cos\theta & \sin\theta\\
+              \sin\theta & \cos\theta
+            \end{pmatrix}.
+          \]</div>
+          <p>
+            The important point is that the diabatic electronic basis is independent of nuclear coordinates. The kinetic energy is therefore a simple diagonal nuclear operator in this representation. The conical-intersection topology is present, but it is encoded in the two-state matrix structure rather than in a singular-looking basis.
+          </p>
+
+          <h2>Adiabatic Surfaces</h2>
+          <p>
+            Diagonalizing the \(2\times2\) potential matrix gives two adiabatic potential energy surfaces,
+          </p>
+          <div class="math-block">\[
+            \Lambda_-(r)=\frac{1}{2}(r-c)^2,
+            \qquad
+            \Lambda_+(r)=\frac{1}{2}(r+c)^2 .
+          \]</div>
+          <p>
+            They meet at \(r=0\), the conical intersection. The lower surface has a circular trough at \(r=c\), the usual Mexican-hat geometry of the linear Jahn-Teller problem. The Jahn-Teller stabilization scale is
+          </p>
+          <div class="math-block">\[
+            E_{\mathrm{JT}}=\frac{1}{2}M\omega^2c^2,
+          \]</div>
+          <p>
+            which reduces to \(E_{\mathrm{JT}}=c^2/2\) in these reduced units. This is why the parameter \(c\) controls the separation between the high-symmetry conical-intersection point and the pseudorotational trough.
+          </p>
+          <p>
+            A real adiabatic eigenvector convention can be written as
+          </p>
+          <div class="math-block">\[
+            \phi_-(\theta)=
+            \begin{pmatrix}
+              \cos(\theta/2)\\
+              -\sin(\theta/2)
+            \end{pmatrix},
+            \qquad
+            \phi_+(\theta)=
+            \begin{pmatrix}
+              \sin(\theta/2)\\
+              \cos(\theta/2)
+            \end{pmatrix}.
+          \]</div>
+          <p>
+            The half-angle is the whole story. A nuclear loop around the conical intersection sends \(\theta\rightarrow\theta+2\pi\), and therefore
+          </p>
+          <div class="math-block">\[
+            \phi_\pm(\theta+2\pi)=-\phi_\pm(\theta).
+          \]</div>
+          <p>
+            The adiabatic electronic wavefunction changes sign after one circuit. The total molecular wavefunction must remain single-valued, so the nuclear part must compensate this sign, or the same physics must be represented as a vector potential in the kinetic operator. This is the molecular version of Berry's geometric phase around a conical intersection.<sup><a href="#ref-3">[3]</a>,<a href="#ref-4">[4]</a>,<a href="#ref-5">[5]</a></sup>
+          </p>
+
+          <h2>Why the Kinetic Energy Changes</h2>
+          <p>
+            The potential surfaces are eigenvalues of \(V_{\mathrm{diab}}\). They are insensitive to multiplying an electronic eigenvector by a phase. The kinetic energy is different because it contains nuclear derivatives. If
+          </p>
+          <div class="math-block">\[
+            \Psi(R)=\sum_n \chi_n(R)\phi_n(R),
+          \]</div>
+          <p>
+            then
+          </p>
+          <div class="math-block">\[
+            \nabla_R[\chi_n(R)\phi_n(R)]
+            =
+            (\nabla_R\chi_n)\phi_n
+            +
+            \chi_n(\nabla_R\phi_n).
+          \]</div>
+          <p>
+            The second term is the derivative coupling. It remembers how the adiabatic electronic basis twists as the nuclei move. If one differentiates a locally real adiabatic basis without carrying the global sign structure, one obtains a formally useful but topologically incomplete Hamiltonian. In the notation of the paper, the brute-force, GP-excluded kinetic operator is
+          </p>
+          <div class="math-block">\[
+            \hat K_{\mathrm{BF}}
+            =
+            \frac{1}{2}\hat{\mathbf P}_{\mathrm{can}}\cdot\hat{\mathbf P}_{\mathrm{can}}
+            +
+            \begin{pmatrix}
+              \frac{1}{8r^2} & -\frac{1}{2r^2}\frac{\partial}{\partial\theta}\\
+              \frac{1}{2r^2}\frac{\partial}{\partial\theta} & \frac{1}{8r^2}
+            \end{pmatrix}.
+          \]</div>
+          <p>
+            The diagonal \(1/(8r^2)\) term is the diagonal Born-Oppenheimer correction in this two-state representation. However, this local derivative form does not by itself restore the missing global sign accumulated around the conical intersection.
+          </p>
+          <p>
+            A consistent GP-included representation can be obtained by multiplying the real eigenvectors by \(e^{i\theta/2}\). This makes the electronic basis single-valued after a full circuit, because the phase factor itself also changes sign. The price is that the nuclear kinetic energy acquires a geometric vector potential.<sup><a href="#ref-4">[4]</a>,<a href="#ref-5">[5]</a></sup> In compact form,
+          </p>
+          <div class="math-block">\[
+            \hat H_{\mathrm{adia}}^{\mathrm{GP}}
+            =
+            \frac{1}{2}
+            \left(
+              \hat{\mathbf P}_{\mathrm{can}}
+              +
+              \mathbf A_{\mathrm{GP}}
+              -
+              i\mathbf d
+            \right)^2
+            +
+            \Lambda ,
+          \]</div>
+          <p>
+            whereas the GP-excluded version sets the geometric vector potential to zero. For the angular coordinate in this model, the GP-included single-state limit has the characteristic replacement
+          </p>
+          <div class="math-block">\[
+            \frac{\partial}{\partial\theta}
+            \longrightarrow
+            \frac{\partial}{\partial\theta}+\frac{i}{2}.
+          \]</div>
+          <p>
+            Equivalently, one may leave the derivative ordinary but impose an antiperiodic nuclear boundary condition,
+          </p>
+          <div class="math-block">\[
+            \chi(\theta+2\pi)=-\chi(\theta),
+          \]</div>
+          <p>
+            instead of the ordinary periodic condition \(\chi(\theta+2\pi)=\chi(\theta)\). These two descriptions carry the same geometric phase.
+          </p>
+
+          <h2>What Changes and What Does Not</h2>
+          <p>
+            The distinction can be summarized cleanly:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Quantity</th>
+                <th>GP included</th>
+                <th>GP excluded</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Adiabatic PES</td>
+                <td>\(\Lambda_\pm=\frac12(r\mp c)^2\)</td>
+                <td>same</td>
+              </tr>
+              <tr>
+                <td>Electronic sign after one loop</td>
+                <td>retained as a \(\pi\) phase</td>
+                <td>artificially removed</td>
+              </tr>
+              <tr>
+                <td>Nuclear boundary condition</td>
+                <td>antiperiodic, or periodic with vector potential</td>
+                <td>ordinary periodic</td>
+              </tr>
+              <tr>
+                <td>Angular quantum numbers</td>
+                <td>half-integer shifted</td>
+                <td>integer</td>
+              </tr>
+              <tr>
+                <td>Low-energy spectrum</td>
+                <td>ground-state doublet in the full \(E\otimes e\) model</td>
+                <td>nondegenerate ground state</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Thus the GP is not a new potential-energy correction. It is a topological correction to the kinetic term, or equivalently to the admissible nuclear wavefunctions.
+          </p>
+
+          <h2>Degeneracy and Energy Levels</h2>
+          <p>
+            The simplest way to see the ground-state degeneracy is to freeze the radius near the Jahn-Teller trough and look only at pseudorotation. Without GP, the angular functions are ordinary periodic waves,
+          </p>
+          <div class="math-block">\[
+            \chi_m(\theta)=e^{im\theta},\qquad m=0,\pm1,\pm2,\ldots,
+          \]</div>
+          <p>
+            with angular energies proportional to \(m^2\). The lowest angular state is \(m=0\), so it is nondegenerate.
+          </p>
+          <p>
+            With GP, the nuclear wavefunction must compensate the electronic sign change. The allowed angular dependence is shifted by half a quantum:
+          </p>
+          <div class="math-block">\[
+            \chi_m^{\mathrm{GP}}(\theta)
+            =
+            e^{i(m+1/2)\theta},
+            \qquad m\in\mathbb Z .
+          \]</div>
+          <p>
+            The lowest values are \(m+1/2=+1/2\) and \(m+1/2=-1/2\). They are exactly degenerate. In the full two-dimensional Jahn-Teller calculation, the same topological mechanism appears as a doubly degenerate vibronic ground state in the GP-included Hamiltonian, while the artificial GP-excluded Hamiltonian has a nondegenerate ground state.<sup><a href="#ref-6">[6]</a></sup>
+          </p>
+
+          <h2>Consequences for Kinetic and Potential Energies</h2>
+          <p>
+            Even though the two cases share the same adiabatic PES, their expectation values of kinetic and potential energy need not match. The GP changes the short-range behavior near \(r=0\), where the radial derivative and \(1/r^2\) angular terms dominate over the finite potential. In the GP-included full two-state problem, the correct vector-potential structure is equivalent to the smooth diabatic Hamiltonian. In the GP-excluded artificial problem, the nuclear wavefunction sees a different angular boundary condition and develops a different near-CI structure.
+          </p>
+          <p>
+            This is why the energy decomposition in the benchmark figure can differ even when the plotted potential surfaces are identical. The surface is the same landscape, but the quantum particle is not allowed to explore it with the same phase rule.
+          </p>
+
+          <h2>Why Heat Capacity Is Sensitive</h2>
+          <p>
+            Thermodynamic observables are spectral sums. For the partition function,
+          </p>
+          <div class="math-block">\[
+            Z=\sum_\nu e^{-\beta E_\nu}.
+          \]</div>
+          <p>
+            The heat capacity can be written as the energy fluctuation,
+          </p>
+          <div class="math-block">\[
+            C_V
+            =
+            k_B\beta^2
+            \left(
+              \langle E^2\rangle-\langle E\rangle^2
+            \right).
+          \]</div>
+          <p>
+            At high temperature, many states contribute and the topological shift can be partly washed out. At low temperature, large \(\beta\) exponentially suppresses high-energy states, so the result is controlled by the lowest few vibronic levels. Therefore, changing the ground-state degeneracy and the first excitation gaps can strongly reshape \(C_V\), even when the total ground energy itself is only modestly shifted.
+          </p>
+          <p>
+            This is the same logic as in Fig. 1 of the perspective by Zhai, Shang, and Liu: the red and blue curves are not separated because the Mexican-hat PES changed. They separate because the GP-included and GP-excluded Hamiltonians quantize nuclear motion differently near the conical intersection.<sup><a href="#ref-1">[1]</a></sup>
+          </p>
+          <p>
+            The broader paper then shows that the multi-electronic-state path-integral formulation, introduced for exact quantum statistics of multi-electronic-state systems, retains this geometric information through products of adjacent adiabatic overlap matrices along the imaginary-time ring polymer.<sup><a href="#ref-1">[1]</a>,<a href="#ref-7">[7]</a></sup>
+          </p>
+          <figure>
+            <img src="../assets/img/jt/gp-fig1d-heat-capacity-reproduction.png" alt="Digitized heat-capacity reproduction comparing GP-included and GP-excluded Jahn-Teller thermodynamics.">
+            <figcaption>
+              Digitized visual reproduction of the heat-capacity panel discussed in the text. Red is the GP-included two-state Jahn-Teller benchmark; blue is the artificial GP-excluded benchmark. Both curves use \(c=1\) in reduced units. The vertical dotted line marks \(\beta=8\ \mathrm{r.u.}\), where the low-temperature heat-capacity difference is already large. The reproduction is drawn from the panel trend for explanatory use, not from a new full two-dimensional eigenvalue solve.
+            </figcaption>
+          </figure>
+          <p>
+            The red curve collapses rapidly as \(\beta\) grows because the GP-included low-temperature spectrum has little accessible thermal fluctuation after the lowest doublet is selected. The blue curve retains a broad low-temperature feature because the artificial GP-excluded spectrum has a different low-energy spacing pattern. This is the thermodynamic signature of changing the boundary condition while leaving the adiabatic potential surfaces unchanged.
+          </p>
+
+          <h2>Minimal Pseudorotor Check</h2>
+          <p>
+            The following small diagnostic is not the full \(r,\theta\) vibronic problem. It intentionally keeps only the angular mechanism:
+          </p>
+          <div class="math-block">\[
+            E_m^{\mathrm{no\ GP}}=\frac{m^2}{2I},
+            \qquad
+            E_m^{\mathrm{GP}}=\frac{(m+1/2)^2}{2I}.
+          \]</div>
+          <p>
+            The left panel shows how the allowed angular levels are shifted by half a quantum. The right panel computes \(C_V/k_B\) from the discrete angular spectra. The curves should not be overread as the full two-dimensional benchmark, but they reproduce the central cause: a topological boundary condition changes the low-energy spectrum, and thermodynamics follows.
+          </p>
+          <figure>
+            <img src="../assets/img/jt/gp-pseudorotor-thermo.png" alt="Pseudorotor angular spectra and heat capacity with and without geometric phase.">
+            <figcaption>
+              Fixed-radius pseudorotor diagnostic. Blue uses ordinary integer angular momentum and represents the GP-excluded boundary condition. Red uses the half-integer shift generated by the geometric phase. The left panel compares angular energies in arbitrary reduced units; the right panel shows the heat capacity \(C_V/k_B\) as a function of inverse temperature \(\beta\).
+            </figcaption>
+          </figure>
+          <p>
+            The script used to generate this figure and the accompanying CSV is available at
+            <a href="../assets/code/jt/gp_pseudorotor_thermo.py">assets/code/jt/gp_pseudorotor_thermo.py</a>. The digitized heat-capacity reproduction above is generated by
+            <a href="../assets/code/jt/gp_fig1d_heat_capacity_reproduction.py">assets/code/jt/gp_fig1d_heat_capacity_reproduction.py</a>.
+          </p>
+
+          <h2>Takeaway</h2>
+          <p>
+            The geometric phase in the Jahn-Teller \(E\otimes e\) model is best viewed as a kinetic and boundary-condition effect exposed by the adiabatic representation. The diabatic Hamiltonian is smooth and complete. The adiabatic potential surfaces are the same whether the GP is retained or discarded. The difference is that the GP-included Hamiltonian carries the sign change of the adiabatic electronic eigenvectors around the conical intersection, either through an antiperiodic nuclear wavefunction or through a vector potential that shifts angular momentum by one half. That shift changes the ground-state degeneracy, reorganizes the low-lying vibronic spectrum, redistributes kinetic and potential energy expectation values, and becomes especially visible in low-temperature heat capacity.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li id="ref-1">Y. Zhai, Y. Shang, and J. Liu, "Geometric Phase Effect in Thermodynamic Properties and in the Imaginary-Time Multi-Electronic-State Path Integral Formulation," <em>J. Phys. Chem. Lett.</em> <strong>17</strong>, 4274-4291 (2026). DOI: <a href="https://doi.org/10.1021/acs.jpclett.6c00429" target="_blank" rel="noreferrer">10.1021/acs.jpclett.6c00429</a>.</li>
+            <li id="ref-2">H. C. Longuet-Higgins, U. Öpik, M. H. L. Pryce, and R. A. Sack, "Studies of the Jahn-Teller Effect. II. The Dynamical Problem," <em>Proc. R. Soc. Lond. A</em> <strong>244</strong>, 1-16 (1958). DOI: <a href="https://doi.org/10.1098/rspa.1958.0022" target="_blank" rel="noreferrer">10.1098/rspa.1958.0022</a>.</li>
+            <li id="ref-3">M. V. Berry, "Quantal Phase Factors Accompanying Adiabatic Changes," <em>Proc. R. Soc. Lond. A</em> <strong>392</strong>, 45-57 (1984). DOI: <a href="https://doi.org/10.1098/rspa.1984.0023" target="_blank" rel="noreferrer">10.1098/rspa.1984.0023</a>.</li>
+            <li id="ref-4">C. A. Mead and D. G. Truhlar, "On the Determination of Born-Oppenheimer Nuclear Motion Wave Functions Including Complications Due to Conical Intersections and Identical Nuclei," <em>J. Chem. Phys.</em> <strong>70</strong>, 2284-2296 (1979). DOI: <a href="https://doi.org/10.1063/1.437734" target="_blank" rel="noreferrer">10.1063/1.437734</a>.</li>
+            <li id="ref-5">C. A. Mead, "The Geometric Phase in Molecular Systems," <em>Rev. Mod. Phys.</em> <strong>64</strong>, 51-85 (1992). DOI: <a href="https://doi.org/10.1103/RevModPhys.64.51" target="_blank" rel="noreferrer">10.1103/RevModPhys.64.51</a>.</li>
+            <li id="ref-6">F. S. Ham, "Berry's Geometrical Phase and the Sequence of States in the Jahn-Teller Effect," <em>Phys. Rev. Lett.</em> <strong>58</strong>, 725-728 (1987). DOI: <a href="https://doi.org/10.1103/PhysRevLett.58.725" target="_blank" rel="noreferrer">10.1103/PhysRevLett.58.725</a>.</li>
+            <li id="ref-7">X. Liu and J. Liu, "Path Integral Molecular Dynamics for Exact Quantum Statistics of Multi-Electronic-State Systems," <em>J. Chem. Phys.</em> <strong>148</strong>, 102319 (2018). DOI: <a href="https://doi.org/10.1063/1.5005059" target="_blank" rel="noreferrer">10.1063/1.5005059</a>.</li>
+          </ol>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="../index.html">&lt;- Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

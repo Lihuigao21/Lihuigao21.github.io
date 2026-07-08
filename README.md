@@ -15,6 +15,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- sitemap.xml
 |-- posts
 |   |-- hefeinamd-training-hands-on-workflow.html
+|   |-- geometric-phase-jahn-teller-thermodynamics.html
 |   |-- jahn-teller-li3-na3.html
 |   |-- cmd-curvature-redshift-champagne-bottle.html
 |   |-- h2o-abacus-rttddft-electronic-absorption.html
@@ -87,7 +88,9 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- assets
 |   |-- code
 |   |   |-- jt
-|   |   |   `-- li3_na3_jt_model.py
+|   |   |   |-- li3_na3_jt_model.py
+|   |   |   |-- gp_pseudorotor_thermo.py
+|   |   |   `-- gp_fig1d_heat_capacity_reproduction.py
 |   |   |-- rt-tddft-h2o
 |   |   |-- perovskite-softness
 |   |   |-- hamgnn-tio2
@@ -219,6 +222,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/dream-discrete-moments-2026-07-06.html` - Chinese dreams and creation note.
 - `life/dream-two-weeks-memorial-2026-07-05.html` - Chinese dreams and creation special note.
 - `life/dream-meet-again-2026-07-05.html` - Chinese dreams and creation note.
+- `posts/geometric-phase-jahn-teller-thermodynamics.html`
 - `posts/hefeinamd-training-hands-on-workflow.html`
 - `posts/jahn-teller-li3-na3.html`
 - `posts/cmd-curvature-redshift-champagne-bottle.html`
