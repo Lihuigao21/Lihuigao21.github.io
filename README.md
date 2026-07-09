@@ -53,6 +53,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- life
 |   |-- daily.html
+|   |-- daily-record-2026-07-08.html
 |   |-- daily-record-2026-07-07.html
 |   |-- daily-record-2026-07-06.html
 |   |-- daily-record-2026-07-05.html
@@ -72,6 +73,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-not-an-option-2026-07-09.html
 |   |-- relationship-competition-self-polishing-2026-07-06.html
 |   |-- relationship-pain-loop-2026-07-05.html
 |   |-- relationship-journey-scenery-2026-07-04.html
@@ -192,6 +194,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life.html` - Chinese life-notes landing page.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
+- `life/daily-record-2026-07-08.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-07.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-06.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-05.html` - Chinese daily-life record note.
@@ -211,6 +214,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-not-an-option-2026-07-09.html` - Chinese relationship reflection note.
 - `life/relationship-competition-self-polishing-2026-07-06.html` - Chinese relationship reflection note.
 - `life/relationship-pain-loop-2026-07-05.html` - Chinese relationship reflection note.
 - `life/relationship-journey-scenery-2026-07-04.html` - Chinese relationship reflection note.
