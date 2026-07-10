@@ -64,6 +64,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-record-2026-07-01.html
 |   |-- daily-record-2026-06-30.html
 |   |-- daily-summary-2026-06-29.html
+|   |-- mind-state-worldview-consistency-2026-07-10.html
+|   |-- mind-state-worldview-nodes-2026-07-10.html
 |   |-- mind-state-2026-07-09.html
 |   |-- mind-state-2026-07-07.html
 |   |-- mind-state-2026-07-06.html
@@ -210,6 +212,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-record-2026-07-01.html` - Chinese daily-life record note.
 - `life/daily-record-2026-06-30.html` - Chinese daily-life record note.
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
+- `life/mind-state-worldview-consistency-2026-07-10.html` - Chinese mental-state reflection note.
+- `life/mind-state-worldview-nodes-2026-07-10.html` - Chinese mental-state reflection note.
 - `life/mind-state-2026-07-09.html` - Chinese mental-state reflection note.
 - `life/mind-state-2026-07-07.html` - Chinese mental-state reflection note.
 - `life/mind-state-2026-07-06.html` - Chinese mental-state reflection note.
