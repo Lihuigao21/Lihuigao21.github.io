@@ -93,6 +93,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- food.html
 |   |-- life-experience.html
 |   |-- dreams-creation.html
+|   |-- creation-angel-2026-07-11.html
 |   |-- dream-mortal-dust-2026-07-10.html
 |   |-- dream-judgment-2026-07-09.html
 |   |-- dream-discrete-moments-2026-07-06.html
@@ -243,6 +244,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/food.html` - Chinese food module.
 - `life/life-experience.html` - Chinese life-experience module.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/creation-angel-2026-07-11.html` - Chinese dreams and creation note.
 - `life/dream-mortal-dust-2026-07-10.html` - Chinese dreams and creation special note.
 - `life/dream-judgment-2026-07-09.html` - Chinese dreams and creation note.
 - `life/dream-discrete-moments-2026-07-06.html` - Chinese dreams and creation note.
