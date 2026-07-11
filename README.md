@@ -82,6 +82,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
 |   |-- relationship-rational-emotional-cycle-2026-07-12.html
+|   |-- relationship-obsession-2026-07-11.html
 |   |-- relationship-destination-scenery-2026-07-11.html
 |   |-- relationship-leave-vortex-2026-07-11.html
 |   |-- relationship-burial-2026-07-09.html
@@ -243,6 +244,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
 - `life/relationship-rational-emotional-cycle-2026-07-12.html` - Chinese relationship reflection note.
+- `life/relationship-obsession-2026-07-11.html` - Chinese relationship reflection note.
 - `life/relationship-destination-scenery-2026-07-11.html` - Chinese relationship reflection note.
 - `life/relationship-leave-vortex-2026-07-11.html` - Chinese relationship reflection note.
 - `life/relationship-burial-2026-07-09.html` - Chinese relationship reflection note.
