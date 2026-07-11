@@ -53,6 +53,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   `-- technical-note-template.html
 |-- life
 |   |-- daily.html
+|   |-- daily-record-2026-07-10.html
 |   |-- daily-record-2026-07-09.html
 |   |-- daily-record-2026-07-08.html
 |   |-- daily-record-2026-07-07.html
@@ -205,6 +206,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life.html` - Chinese life-notes landing page.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
+- `life/daily-record-2026-07-10.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-09.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-08.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-07.html` - Chinese daily-life record note.
