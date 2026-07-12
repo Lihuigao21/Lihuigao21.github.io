@@ -99,6 +99,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- life-experience.html
 |   |-- dreams-creation.html
 |   |-- gpt-deep-chat.html
+|   |-- gpt-chat-imagined-future-her-2026-07-12.html
+|   |-- gpt-chat-dreams-of-reunion-2026-07-12.html
 |   |-- gpt-chat-deprived-participation-2026-07-12.html
 |   |-- dream-lingering-obsession-2026-07-12.html
 |   |-- creation-angel-2026-07-11.html
@@ -258,6 +260,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/life-experience.html` - Chinese life-experience module.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
 - `life/gpt-deep-chat.html` - Chinese deep GPT chat module.
+- `life/gpt-chat-imagined-future-her-2026-07-12.html` - Chinese deep GPT chat note.
+- `life/gpt-chat-dreams-of-reunion-2026-07-12.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-deprived-participation-2026-07-12.html` - Chinese deep GPT chat note.
 - `life/dream-lingering-obsession-2026-07-12.html` - Chinese dreams and creation note.
 - `life/creation-angel-2026-07-11.html` - Chinese dreams and creation note.
