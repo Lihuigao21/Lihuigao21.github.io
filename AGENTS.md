@@ -16,7 +16,7 @@ This file defines how future agents should write, revise, and publish articles f
 
 ## 生活记录 Section
 
-- The “生活记录” section is a Chinese-language public section for recording daily life. Its modules include “精神世界”, “日常”, “感情”, “出游”, “美食”, “人生体验”, and “梦与创造”.
+- The “生活记录” section is a Chinese-language public section for recording daily life. Its modules include “精神世界”, “日常”, “感情”, “出游”, “美食”, “人生体验”, “梦与创造”, and “和 GPT 的深度聊天”.
 - Treat `life.html` as the section landing page. Treat `mind.html` as the “精神世界” module, not as a separate top-level site category. Put additional lifestyle module pages under `life/`.
 - Do not force this section into the technical-article requirements for benchmark results, code links, or reproducible computational workflows.
 - Keep the tone restrained, sincere, precise, and non-performative. Avoid decorative prose, motivational slogans, raw diary dumps, or sensational private confession.
@@ -107,7 +107,7 @@ Before committing or pushing article changes:
 - `posts/` contains published HTML articles.
 - `life.html` is the public Chinese landing page for the “生活记录” section.
 - `mind.html` is the public Chinese “精神世界” module within “生活记录”.
-- `life/` contains public Chinese lifestyle module pages such as daily life, relationship, travel, food, life experience, dreams and creation.
+- `life/` contains public Chinese lifestyle module pages such as daily life, relationship, travel, food, life experience, dreams and creation, and deep GPT chats.
 - `assets/img/` contains published images.
 - `assets/code/` contains published code attachments.
 - `articles/` contains local raw materials and should stay unpublished.
