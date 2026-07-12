@@ -81,6 +81,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-rational-emotional-cycle-2026-07-12.html
 |   |-- relationship-destination-scenery-2026-07-11.html
 |   |-- relationship-leave-vortex-2026-07-11.html
 |   |-- relationship-burial-2026-07-09.html
@@ -98,6 +99,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- life-experience.html
 |   |-- dreams-creation.html
 |   |-- gpt-deep-chat.html
+|   |-- gpt-chat-deprived-participation-2026-07-12.html
 |   |-- dream-lingering-obsession-2026-07-12.html
 |   |-- creation-angel-2026-07-11.html
 |   |-- dream-mortal-dust-2026-07-10.html
@@ -238,6 +240,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-rational-emotional-cycle-2026-07-12.html` - Chinese relationship reflection note.
 - `life/relationship-destination-scenery-2026-07-11.html` - Chinese relationship reflection note.
 - `life/relationship-leave-vortex-2026-07-11.html` - Chinese relationship reflection note.
 - `life/relationship-burial-2026-07-09.html` - Chinese relationship reflection note.
@@ -255,6 +258,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/life-experience.html` - Chinese life-experience module.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
 - `life/gpt-deep-chat.html` - Chinese deep GPT chat module.
+- `life/gpt-chat-deprived-participation-2026-07-12.html` - Chinese deep GPT chat note.
 - `life/dream-lingering-obsession-2026-07-12.html` - Chinese dreams and creation note.
 - `life/creation-angel-2026-07-11.html` - Chinese dreams and creation note.
 - `life/dream-mortal-dust-2026-07-10.html` - Chinese dreams and creation special note.
