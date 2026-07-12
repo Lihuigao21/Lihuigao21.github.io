@@ -99,6 +99,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- travel.html
 |   |-- food.html
 |   |-- life-experience.html
+|   |-- editorial.html
 |   |-- dreams-creation.html
 |   |-- gpt-deep-chat.html
 |   |-- gpt-chat-imagined-future-her-2026-07-12.html
@@ -262,6 +263,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/travel.html` - Chinese travel module.
 - `life/food.html` - Chinese food module.
 - `life/life-experience.html` - Chinese life-experience module.
+- `life/editorial.html` - Chinese editorial module.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
 - `life/gpt-deep-chat.html` - Chinese deep GPT chat module.
 - `life/gpt-chat-imagined-future-her-2026-07-12.html` - Chinese deep GPT chat note.
