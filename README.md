@@ -66,6 +66,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-record-2026-07-01.html
 |   |-- daily-record-2026-06-30.html
 |   |-- daily-summary-2026-06-29.html
+|   |-- mind-state-language-action-2026-07-12.html
 |   |-- mind-state-2026-07-11.html
 |   |-- mind-state-worldview-consistency-2026-07-10.html
 |   |-- mind-state-worldview-nodes-2026-07-10.html
@@ -96,6 +97,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- food.html
 |   |-- life-experience.html
 |   |-- dreams-creation.html
+|   |-- dream-lingering-obsession-2026-07-12.html
 |   |-- creation-angel-2026-07-11.html
 |   |-- dream-mortal-dust-2026-07-10.html
 |   |-- dream-judgment-2026-07-09.html
@@ -220,6 +222,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-record-2026-07-01.html` - Chinese daily-life record note.
 - `life/daily-record-2026-06-30.html` - Chinese daily-life record note.
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
+- `life/mind-state-language-action-2026-07-12.html` - Chinese mental-state reflection note.
 - `life/mind-state-2026-07-11.html` - Chinese mental-state reflection note.
 - `life/mind-state-worldview-consistency-2026-07-10.html` - Chinese mental-state reflection note.
 - `life/mind-state-worldview-nodes-2026-07-10.html` - Chinese mental-state reflection note.
@@ -250,6 +253,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/food.html` - Chinese food module.
 - `life/life-experience.html` - Chinese life-experience module.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/dream-lingering-obsession-2026-07-12.html` - Chinese dreams and creation note.
 - `life/creation-angel-2026-07-11.html` - Chinese dreams and creation note.
 - `life/dream-mortal-dust-2026-07-10.html` - Chinese dreams and creation special note.
 - `life/dream-judgment-2026-07-09.html` - Chinese dreams and creation note.
