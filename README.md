@@ -52,6 +52,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- dvr-excited-ground-kubo.html
 |   `-- technical-note-template.html
 |-- life
+|   |-- leave-comfort-zone-plan-2026-07-13.html
 |   |-- daily.html
 |   |-- daily-record-2026-07-13.html
 |   |-- daily-record-2026-07-12.html
@@ -222,6 +223,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 ## Published Notes
 
 - `life.html` - Chinese life-notes landing page.
+- `life/leave-comfort-zone-plan-2026-07-13.html` - Chinese pinned life-plan note.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
 - `life/daily-record-2026-07-13.html` - Chinese daily-life record note.
