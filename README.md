@@ -102,6 +102,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
 |   |-- dreams-creation.html
+|   |-- dream-wangchuan-forgetting-river-2026-07-13.html
 |   |-- gpt-deep-chat.html
 |   |-- gpt-chat-imagined-future-her-2026-07-12.html
 |   |-- gpt-chat-dreams-of-reunion-2026-07-12.html
@@ -267,6 +268,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/dream-wangchuan-forgetting-river-2026-07-13.html` - Chinese dreams and creation note.
 - `life/gpt-deep-chat.html` - Chinese deep GPT chat module.
 - `life/gpt-chat-imagined-future-her-2026-07-12.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-dreams-of-reunion-2026-07-12.html` - Chinese deep GPT chat note.
