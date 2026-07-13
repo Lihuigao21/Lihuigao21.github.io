@@ -67,6 +67,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-record-2026-07-01.html
 |   |-- daily-record-2026-06-30.html
 |   |-- daily-summary-2026-06-29.html
+|   |-- mind-state-calm-heart-2026-07-13.html
 |   |-- mind-state-language-action-2026-07-12.html
 |   |-- mind-state-2026-07-11.html
 |   |-- mind-state-worldview-consistency-2026-07-10.html
@@ -82,6 +83,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-self-release-process-2026-07-13.html
+|   |-- relationship-admiring-strength-self-frame-2026-07-13.html
 |   |-- relationship-rational-emotional-cycle-2026-07-12.html
 |   |-- relationship-obsession-2026-07-11.html
 |   |-- relationship-destination-scenery-2026-07-11.html
@@ -104,6 +107,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- dreams-creation.html
 |   |-- dream-wangchuan-forgetting-river-2026-07-13.html
 |   |-- gpt-deep-chat.html
+|   |-- gpt-chat-what-is-true-love-2026-07-13.html
 |   |-- gpt-chat-imagined-future-her-2026-07-12.html
 |   |-- gpt-chat-dreams-of-reunion-2026-07-12.html
 |   |-- gpt-chat-deprived-participation-2026-07-12.html
@@ -233,6 +237,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-record-2026-07-01.html` - Chinese daily-life record note.
 - `life/daily-record-2026-06-30.html` - Chinese daily-life record note.
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
+- `life/mind-state-calm-heart-2026-07-13.html` - Chinese mental-state reflection note.
 - `life/mind-state-language-action-2026-07-12.html` - Chinese mental-state reflection note.
 - `life/mind-state-2026-07-11.html` - Chinese mental-state reflection note.
 - `life/mind-state-worldview-consistency-2026-07-10.html` - Chinese mental-state reflection note.
@@ -248,6 +253,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-self-release-process-2026-07-13.html` - Chinese relationship reflection note.
+- `life/relationship-admiring-strength-self-frame-2026-07-13.html` - Chinese relationship reflection note.
 - `life/relationship-rational-emotional-cycle-2026-07-12.html` - Chinese relationship reflection note.
 - `life/relationship-obsession-2026-07-11.html` - Chinese relationship reflection note.
 - `life/relationship-destination-scenery-2026-07-11.html` - Chinese relationship reflection note.
@@ -270,6 +277,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/dreams-creation.html` - Chinese dreams and creation module.
 - `life/dream-wangchuan-forgetting-river-2026-07-13.html` - Chinese dreams and creation note.
 - `life/gpt-deep-chat.html` - Chinese deep GPT chat module.
+- `life/gpt-chat-what-is-true-love-2026-07-13.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-imagined-future-her-2026-07-12.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-dreams-of-reunion-2026-07-12.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-deprived-participation-2026-07-12.html` - Chinese deep GPT chat note.
