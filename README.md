@@ -108,7 +108,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- food-xinjiang-first-day-2026-07-14.html
 |   |-- life-experience.html
 |   |-- escape-comfort-zone.html
-|   |-- escape-comfort-zone-english-task-2026-07-14.html
+|   |-- escape-english-task-2026-07-14.html
 |   |-- memories.html
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
@@ -288,7 +288,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/food-xinjiang-first-day-2026-07-14.html` - Chinese food note.
 - `life/life-experience.html` - Chinese life-experience module.
 - `life/escape-comfort-zone.html` - Chinese escape-comfort-zone module.
-- `life/escape-comfort-zone-english-task-2026-07-14.html` - Chinese escape-comfort-zone note.
+- `life/escape-english-task-2026-07-14.html` - Chinese escape-comfort-zone note.
 - `life/memories.html` - Chinese memories module.
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
