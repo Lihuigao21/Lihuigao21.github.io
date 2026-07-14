@@ -54,6 +54,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- life
 |   |-- leave-comfort-zone-plan-2026-07-13.html
 |   |-- daily.html
+|   |-- daily-record-2026-07-15.html
 |   |-- daily-record-2026-07-13.html
 |   |-- daily-record-2026-07-12.html
 |   |-- daily-record-2026-07-11.html
@@ -227,6 +228,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/leave-comfort-zone-plan-2026-07-13.html` - Chinese pinned life-plan note.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
+- `life/daily-record-2026-07-15.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-13.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-12.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-11.html` - Chinese daily-life record note.
