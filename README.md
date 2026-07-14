@@ -86,6 +86,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-leave-small-pond-2026-07-14.html
 |   |-- relationship-self-release-process-2026-07-13.html
 |   |-- relationship-admiring-strength-self-frame-2026-07-13.html
 |   |-- relationship-rational-emotional-cycle-2026-07-12.html
@@ -104,11 +105,16 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- relationship-summary-2026-06-29.html
 |   |-- travel.html
 |   |-- food.html
+|   |-- food-xinjiang-first-day-2026-07-14.html
 |   |-- life-experience.html
+|   |-- escape-comfort-zone.html
+|   |-- escape-comfort-zone-english-task-2026-07-14.html
+|   |-- memories.html
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
 |   |-- dreams-creation.html
 |   |-- dream-forgetting-is-hard-2026-07-14.html
+|   |-- creation-home-2026-07-14.html
 |   |-- dream-wangchuan-forgetting-river-2026-07-13.html
 |   |-- gpt-deep-chat.html
 |   |-- gpt-chat-what-is-true-love-2026-07-13.html
@@ -260,6 +266,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-leave-small-pond-2026-07-14.html` - Chinese relationship reflection note.
 - `life/relationship-self-release-process-2026-07-13.html` - Chinese relationship reflection note.
 - `life/relationship-admiring-strength-self-frame-2026-07-13.html` - Chinese relationship reflection note.
 - `life/relationship-rational-emotional-cycle-2026-07-12.html` - Chinese relationship reflection note.
@@ -278,11 +285,16 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/relationship-summary-2026-06-29.html` - Chinese relationship reflection note.
 - `life/travel.html` - Chinese travel module.
 - `life/food.html` - Chinese food module.
+- `life/food-xinjiang-first-day-2026-07-14.html` - Chinese food note.
 - `life/life-experience.html` - Chinese life-experience module.
+- `life/escape-comfort-zone.html` - Chinese escape-comfort-zone module.
+- `life/escape-comfort-zone-english-task-2026-07-14.html` - Chinese escape-comfort-zone note.
+- `life/memories.html` - Chinese memories module.
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
 - `life/dream-forgetting-is-hard-2026-07-14.html` - Chinese dreams and creation note.
+- `life/creation-home-2026-07-14.html` - Chinese dreams and creation note.
 - `life/dream-wangchuan-forgetting-river-2026-07-13.html` - Chinese dreams and creation note.
 - `life/gpt-deep-chat.html` - Chinese deep GPT chat module.
 - `life/gpt-chat-what-is-true-love-2026-07-13.html` - Chinese deep GPT chat note.
