@@ -113,6 +113,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
 |   |-- dreams-creation.html
+|   |-- dream-chasing-phantom-2026-07-15.html
 |   |-- dream-forgetting-is-hard-2026-07-14.html
 |   |-- creation-home-2026-07-14.html
 |   |-- dream-wangchuan-forgetting-river-2026-07-13.html
@@ -293,6 +294,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/dream-chasing-phantom-2026-07-15.html` - Chinese dreams and creation note.
 - `life/dream-forgetting-is-hard-2026-07-14.html` - Chinese dreams and creation note.
 - `life/creation-home-2026-07-14.html` - Chinese dreams and creation note.
 - `life/dream-wangchuan-forgetting-river-2026-07-13.html` - Chinese dreams and creation note.
