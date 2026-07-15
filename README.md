@@ -54,6 +54,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- life
 |   |-- leave-comfort-zone-plan-2026-07-13.html
 |   |-- daily.html
+|   |-- daily-record-2026-07-15.html
 |   |-- daily-record-2026-07-14.html
 |   |-- daily-record-2026-07-13.html
 |   |-- daily-record-2026-07-12.html
@@ -86,6 +87,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-marriage-view-2026-07-15.html
 |   |-- relationship-leave-small-pond-2026-07-14.html
 |   |-- relationship-self-release-process-2026-07-13.html
 |   |-- relationship-admiring-strength-self-frame-2026-07-13.html
@@ -108,6 +110,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- food-xinjiang-first-day-2026-07-14.html
 |   |-- life-experience.html
 |   |-- escape-comfort-zone.html
+|   |-- escape-wake-up-to-2026-07-15.html
 |   |-- escape-english-task-2026-07-14.html
 |   |-- memories.html
 |   |-- editorial.html
@@ -235,6 +238,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/leave-comfort-zone-plan-2026-07-13.html` - Chinese pinned life-plan note.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
+- `life/daily-record-2026-07-15.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-14.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-13.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-12.html` - Chinese daily-life record note.
@@ -267,6 +271,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-marriage-view-2026-07-15.html` - Chinese relationship reflection note.
 - `life/relationship-leave-small-pond-2026-07-14.html` - Chinese relationship reflection note.
 - `life/relationship-self-release-process-2026-07-13.html` - Chinese relationship reflection note.
 - `life/relationship-admiring-strength-self-frame-2026-07-13.html` - Chinese relationship reflection note.
@@ -289,6 +294,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/food-xinjiang-first-day-2026-07-14.html` - Chinese food note.
 - `life/life-experience.html` - Chinese life-experience module.
 - `life/escape-comfort-zone.html` - Chinese escape-comfort-zone module.
+- `life/escape-wake-up-to-2026-07-15.html` - Chinese escape-comfort-zone note.
 - `life/escape-english-task-2026-07-14.html` - Chinese escape-comfort-zone note.
 - `life/memories.html` - Chinese memories module.
 - `life/editorial.html` - Chinese editorial module.
