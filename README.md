@@ -56,6 +56,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-07-18.html
 |   |-- daily-record-2026-07-17.html
 |   |-- daily-record-2026-07-16.html
 |   |-- daily-record-2026-07-15.html
@@ -254,6 +255,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-07-18.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-17.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-16.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-15.html` - Chinese daily-life record note.
