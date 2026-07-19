@@ -56,6 +56,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-07-19.html
 |   |-- daily-record-2026-07-18.html
 |   |-- daily-record-2026-07-17.html
 |   |-- daily-record-2026-07-16.html
@@ -129,6 +130,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
 |   |-- dreams-creation.html
+|   |-- creation-old-photo-2026-07-19.html
 |   |-- dream-heart-knot-released-2026-07-17.html
 |   |-- dream-journey-end-2026-07-16.html
 |   |-- dream-chasing-phantom-2026-07-15.html
@@ -136,6 +138,9 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- creation-home-2026-07-14.html
 |   |-- dream-wangchuan-forgetting-river-2026-07-13.html
 |   |-- gpt-deep-chat.html
+|   |-- gpt-chat-safety-vitality-repair-2026-07-19.html
+|   |-- gpt-chat-mature-sincerity-2026-07-19.html
+|   |-- gpt-chat-love-with-boundaries-2026-07-19.html
 |   |-- gpt-chat-what-is-true-love-2026-07-13.html
 |   |-- gpt-chat-imagined-future-her-2026-07-12.html
 |   |-- gpt-chat-dreams-of-reunion-2026-07-12.html
@@ -255,6 +260,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-07-19.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-18.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-17.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-16.html` - Chinese daily-life record note.
@@ -328,6 +334,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/creation-old-photo-2026-07-19.html` - Chinese dreams and creation note.
 - `life/dream-heart-knot-released-2026-07-17.html` - Chinese dreams and creation note.
 - `life/dream-journey-end-2026-07-16.html` - Chinese dreams and creation note.
 - `life/dream-chasing-phantom-2026-07-15.html` - Chinese dreams and creation note.
@@ -335,6 +342,9 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/creation-home-2026-07-14.html` - Chinese dreams and creation note.
 - `life/dream-wangchuan-forgetting-river-2026-07-13.html` - Chinese dreams and creation note.
 - `life/gpt-deep-chat.html` - Chinese deep GPT chat module.
+- `life/gpt-chat-safety-vitality-repair-2026-07-19.html` - Chinese deep GPT chat note.
+- `life/gpt-chat-mature-sincerity-2026-07-19.html` - Chinese deep GPT chat note.
+- `life/gpt-chat-love-with-boundaries-2026-07-19.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-what-is-true-love-2026-07-13.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-imagined-future-her-2026-07-12.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-dreams-of-reunion-2026-07-12.html` - Chinese deep GPT chat note.
