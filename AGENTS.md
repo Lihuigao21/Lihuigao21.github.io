@@ -20,12 +20,12 @@ This file defines how future agents should write, revise, and publish articles f
 - Treat `life.html` as the section landing page. Treat `mind.html` as the “精神世界” module, not as a separate top-level site category. Put additional lifestyle module pages under `life/`.
 - When publishing any new life-note page, update the hand-maintained “最新十篇” list in `life.html` so it contains the newest ten life records in reverse chronological order.
 - Do not force this section into the technical-article requirements for benchmark results, code links, or reproducible computational workflows.
-- Keep the tone restrained, sincere, precise, and non-performative. Avoid decorative prose, motivational slogans, raw diary dumps, or sensational private confession.
+- Keep agent-authored introductions, summaries, and interface copy restrained, sincere, precise, and non-performative. This style guidance does not authorize editing, toning down, or summarizing the user's own life-note text; for user-authored notes, the preservation rules under “Editing Existing Articles” take priority.
 - Future notes in this section should stay in Chinese unless the user explicitly asks for bilingual or English text.
 - Daily-life notes should normally preserve: date, module, one concrete public-safe fact, one real feeling or observation, and one judgment or question that can be revisited later.
 - Every published life-note article should have a compact, specific title, preferably in the form `YYYY.MM.DD 具体主题`. Do not leave article titles as generic module names such as “每日记录” or “精神状态”; keep module names in section labels, indexes, or metadata instead.
-- Preserve public-site safety especially carefully here: do not publish private names, raw personal incidents, addresses, real-time locations, exact travel routes, receipts, account details, contact details beyond the site chrome, therapy/medical details, or identifying information about other people unless the user explicitly asks and confirms it is public-safe.
-- For “感情” and other relationship notes, anonymize or generalize other people by default and do not publish private conversations verbatim without explicit user confirmation.
+- Preserve public-site safety especially carefully here. If user-authored text contains private names, raw personal incidents, addresses, real-time locations, exact travel routes, receipts, account details, therapy/medical details, or identifying information about other people, identify the exact passage and ask whether to publish it or redact it; do not silently anonymize, generalize, or rewrite it. Credentials, secrets, and direct personal identifiers must not be published.
+- For “感情” and other relationship notes, explicit confirmation is required before publishing another person's identifiable private words. Do not automatically generalize or rewrite the passage. The user's own words may be published verbatim when the user explicitly submits or confirms them for publication.
 
 ## Public-Site Safety
 
@@ -84,8 +84,9 @@ Avoid purely theoretical articles with no result. If the source material is theo
 ## Editing Existing Articles
 
 - Preserve the existing site tone and structure unless the user explicitly asks for a redesign.
-- For text personally submitted by the user for publication on the site, preserve the original wording unless the user explicitly asks for rewriting. For Chinese text, only correct grammar mistakes, semantic errors, and typos; do not rewrite or rephrase. For English text, light polishing is allowed as long as it does not change the original meaning.
-- Do not simply paste raw source notes into an article. Rewrite, compress, and organize them.
+- For text personally submitted by the user for publication on the site, preserve the original wording unless the user explicitly asks for rewriting. For Chinese life notes, do not rewrite, paraphrase, tone down, summarize, or silently correct wording, grammar, or typos unless the user explicitly requests it. Emotional intensity, intimacy, bluntness, or an unpolished style is not by itself a reason to edit the text.
+- If a specific passage appears to create a genuine legal, ethical, or public-safety issue, identify the exact passage and ask the user before changing it; do not silently replace it with a paraphrase. Credentials and direct personal identifiers must never be published.
+- Except for user-authored life notes governed by the preceding rules, do not simply paste raw source notes into a technical article. Rewrite, compress, and organize them.
 - Remove duplicated derivations, unclear commentary, and irrelevant implementation details.
 - Keep technical claims grounded in the supplied source files, papers, code, or generated results.
 - If formulas are OCRed from screenshots or PDFs, verify them against source LaTeX or code when possible.
