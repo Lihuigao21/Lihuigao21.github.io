@@ -56,6 +56,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-07-21.html
 |   |-- daily-record-2026-07-20.html
 |   |-- daily-record-2026-07-19.html
 |   |-- daily-record-2026-07-18.html
@@ -98,6 +99,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-love-and-reality-2026-07-21.html
 |   |-- relationship-love-story-reflection-2026-07-20.html
 |   |-- relationship-guiding-partner-2026-07-20.html
 |   |-- relationship-words-once-believed-2026-07-17.html
@@ -134,6 +136,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
 |   |-- dreams-creation.html
+|   |-- dream-love-and-letting-go-2026-07-21.html
 |   |-- dream-wang-wei-2026-07-20.html
 |   |-- creation-old-photo-2026-07-19.html
 |   |-- dream-heart-knot-released-2026-07-17.html
@@ -265,6 +268,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-07-21.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-20.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-19.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-18.html` - Chinese daily-life record note.
@@ -307,6 +311,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-love-and-reality-2026-07-21.html` - Chinese relationship reflection note.
 - `life/relationship-love-story-reflection-2026-07-20.html` - Chinese relationship reflection note.
 - `life/relationship-guiding-partner-2026-07-20.html` - Chinese relationship reflection note.
 - `life/relationship-words-once-believed-2026-07-17.html` - Chinese relationship reflection note.
@@ -343,6 +348,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/dream-love-and-letting-go-2026-07-21.html` - Chinese dreams and creation note.
 - `life/dream-wang-wei-2026-07-20.html` - Chinese dreams and creation note.
 - `life/creation-old-photo-2026-07-19.html` - Chinese dreams and creation note.
 - `life/dream-heart-knot-released-2026-07-17.html` - Chinese dreams and creation note.
