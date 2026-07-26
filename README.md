@@ -56,6 +56,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-07-26.html
 |   |-- daily-record-2026-07-25.html
 |   |-- daily-record-2026-07-24.html
 |   |-- daily-record-2026-07-23.html
@@ -104,6 +105,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-fairness-and-conscience-2026-07-26.html
 |   |-- relationship-love-beyond-money-2026-07-26.html
 |   |-- relationship-final-farewell-2026-07-25.html
 |   |-- relationship-better-stranger-2026-07-24.html
@@ -283,6 +285,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-07-26.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-25.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-24.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-23.html` - Chinese daily-life record note.
@@ -331,6 +334,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-fairness-and-conscience-2026-07-26.html` - Chinese relationship reflection note.
 - `life/relationship-love-beyond-money-2026-07-26.html` - Chinese relationship reflection note.
 - `life/relationship-final-farewell-2026-07-25.html` - Chinese relationship reflection note.
 - `life/relationship-better-stranger-2026-07-24.html` - Chinese relationship reflection note.
