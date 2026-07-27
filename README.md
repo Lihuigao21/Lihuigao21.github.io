@@ -56,6 +56,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
 |   |-- daily-record-2026-07-26.html
+|   |-- daily-record-2026-07-27.html
 |   |-- daily-record-2026-07-25.html
 |   |-- daily-record-2026-07-24.html
 |   |-- daily-record-2026-07-23.html
@@ -84,6 +85,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-record-2026-06-30.html
 |   |-- daily-summary-2026-06-29.html
 |   |-- mind-state-crisis-and-uncertainty-2026-07-26.html
+|   |-- mind-state-positive-feedback-2026-07-27.html
+|   |-- mind-state-socialization-2026-07-27.html
 |   |-- mind-state-mbti-change-2026-07-20.html
 |   |-- mind-state-from-blame-to-repair-2026-07-17.html
 |   |-- mind-state-responsibility-as-ability-2026-07-17.html
@@ -105,6 +108,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
 |   |-- relationship-fairness-and-conscience-2026-07-26.html
+|   |-- relationship-love-and-self-protection-2026-07-27.html
 |   |-- relationship-love-beyond-money-2026-07-26.html
 |   |-- relationship-final-farewell-2026-07-25.html
 |   |-- relationship-better-stranger-2026-07-24.html
@@ -141,6 +145,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- skill.html
 |   |-- positive-feedback.html
 |   |-- positive-feedback-task-list-2026-07-27.html
+|   |-- positive-feedback-kindness-and-table-tennis-2026-07-27.html
 |   |-- memories.html
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
@@ -282,6 +287,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
 - `life/daily-record-2026-07-26.html` - Chinese daily-life record note.
+- `life/daily-record-2026-07-27.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-25.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-24.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-23.html` - Chinese daily-life record note.
@@ -310,6 +316,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-record-2026-06-30.html` - Chinese daily-life record note.
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
 - `life/mind-state-crisis-and-uncertainty-2026-07-26.html` - Chinese mental-state reflection note.
+- `life/mind-state-positive-feedback-2026-07-27.html` - Chinese mental-state reflection note.
+- `life/mind-state-socialization-2026-07-27.html` - Chinese mental-state reflection note.
 - `life/mind-state-mbti-change-2026-07-20.html` - Chinese mental-state reflection note.
 - `life/mind-state-from-blame-to-repair-2026-07-17.html` - Chinese mental-state reflection note.
 - `life/mind-state-responsibility-as-ability-2026-07-17.html` - Chinese mental-state reflection note.
@@ -331,6 +339,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
 - `life/relationship-fairness-and-conscience-2026-07-26.html` - Chinese relationship reflection note.
+- `life/relationship-love-and-self-protection-2026-07-27.html` - Chinese relationship reflection note.
 - `life/relationship-love-beyond-money-2026-07-26.html` - Chinese relationship reflection note.
 - `life/relationship-final-farewell-2026-07-25.html` - Chinese relationship reflection note.
 - `life/relationship-better-stranger-2026-07-24.html` - Chinese relationship reflection note.
@@ -367,6 +376,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/skill.html` - Chinese skill-learning module.
 - `life/positive-feedback.html` - Chinese positive-feedback module.
 - `life/positive-feedback-task-list-2026-07-27.html` - Chinese positive-feedback task note.
+- `life/positive-feedback-kindness-and-table-tennis-2026-07-27.html` - Chinese positive-feedback note.
 - `life/memories.html` - Chinese memories module.
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
