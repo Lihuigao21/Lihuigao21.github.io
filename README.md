@@ -140,6 +140,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- life-experience.html
 |   |-- skill.html
 |   |-- positive-feedback.html
+|   |-- positive-feedback-task-list-2026-07-27.html
 |   |-- memories.html
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
@@ -365,6 +366,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/life-experience.html` - Chinese life-experience module.
 - `life/skill.html` - Chinese skill-learning module.
 - `life/positive-feedback.html` - Chinese positive-feedback module.
+- `life/positive-feedback-task-list-2026-07-27.html` - Chinese positive-feedback task note.
 - `life/memories.html` - Chinese memories module.
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
