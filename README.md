@@ -52,7 +52,6 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- dvr-excited-ground-kubo.html
 |   `-- technical-note-template.html
 |-- life
-|   |-- leave-comfort-zone-plan-2026-07-13.html
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
@@ -141,9 +140,6 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- life-experience.html
 |   |-- skill.html
 |   |-- positive-feedback.html
-|   |-- escape-dream-song-2026-07-16.html
-|   |-- escape-wake-up-to-2026-07-15.html
-|   |-- escape-english-task-2026-07-14.html
 |   |-- memories.html
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
@@ -280,7 +276,6 @@ This is a lightweight static website for technical articles, designed for GitHub
 ## Published Notes
 
 - `life.html` - Chinese life-notes landing page.
-- `life/leave-comfort-zone-plan-2026-07-13.html` - Chinese pinned life-plan note.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
@@ -370,9 +365,6 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/life-experience.html` - Chinese life-experience module.
 - `life/skill.html` - Chinese skill-learning module.
 - `life/positive-feedback.html` - Chinese positive-feedback module.
-- `life/escape-dream-song-2026-07-16.html` - Chinese positive-feedback note.
-- `life/escape-wake-up-to-2026-07-15.html` - Chinese positive-feedback note.
-- `life/escape-english-task-2026-07-14.html` - Chinese positive-feedback note.
 - `life/memories.html` - Chinese memories module.
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
