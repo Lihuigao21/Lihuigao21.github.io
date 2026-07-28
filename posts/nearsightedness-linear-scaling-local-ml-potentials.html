@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A derivation-focused account of electronic nearsightedness, its consequences for linear-scaling electronic structure, and the locality assumptions behind machine-learning interatomic potentials.">
+    <title>Electronic Nearsightedness, Linear Scaling, and Local ML Potentials | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../tags.html">Tags</a>
+        <a href="../series.html">Series</a>
+        <a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Electronic Structure Theory</p>
+          <h1>Electronic Nearsightedness, Linear Scaling, and Local ML Potentials</h1>
+          <p class="post-meta">2026.07.28 - Locality / Linear-Scaling DFT / Machine-Learning Potentials</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            Why can a large electronic system be understood one neighborhood at a time? Prodan and Kohn made this intuition quantitative through the nearsightedness of electronic matter: at fixed chemical potential, the largest possible change in a local density caused by any sufficiently distant potential tends to zero. This note derives that statement, follows it to linear-scaling electronic-structure methods, and then separates what it does and does not justify in local machine-learning interatomic potentials.
+          </p>
+
+          <h2>1. The locality question</h2>
+          <p>
+            Chemical bonds are transferable, defects are often described by local coordination shells, and divide-and-conquer electronic-structure methods compute a large material by assembling overlapping fragments. These practices assume that a local observable is controlled mainly by a finite neighborhood. The difficulty is that quantum states are extended and antisymmetrized, metals have a Fermi surface, and electrostatics is long ranged. A useful locality principle must therefore specify the observable, the allowed disturbance, the thermodynamic constraint, and the requested accuracy.
+          </p>
+          <p>
+            Nearsightedness is formulated for a many-fermion system in equilibrium at fixed chemical potential \(\mu\). Let \(v(\mathbf r)\) be the reference external potential and choose a point \(\mathbf r_0\). An additional potential \(w(\mathbf r)\), of arbitrary shape and amplitude, is allowed only outside a ball of radius \(R\):
+          </p>
+          <div class="math-block">\[
+            w(\mathbf r)=0\qquad\text{for}\qquad |\mathbf r-\mathbf r_0|&lt;R.
+          \]</div>
+          <p>If the induced density change at the observation point is \(\delta n_w(\mathbf r_0)\), define the worst-case response</p>
+          <div class="math-block">\[
+            \Delta n(\mathbf r_0,R)
+            =\sup_{w:\,\mathrm{supp}(w)\cap B_R(\mathbf r_0)=\varnothing}
+            |\delta n_w(\mathbf r_0)|.
+          \]</div>
+          <p>The system is nearsighted when</p>
+          <div class="math-block">\[
+            \boxed{\lim_{R\to\infty}\Delta n(\mathbf r_0,R)=0.}
+          \]</div>
+          <p>
+            This is stronger than linear response because the supremum includes strong scatterers and hard walls. It is also different from electrostatic screening: the perturbation is an external potential, not necessarily the Coulomb field of a distant charge.
+          </p>
+
+          <h2>2. From a tolerance to a length scale</h2>
+          <p>For a prescribed density tolerance \(\varepsilon\), the nearsightedness range is the smallest radius beyond which every admissible disturbance is harmless to that accuracy:</p>
+          <div class="math-block">\[
+            R(\mathbf r_0,\varepsilon)
+            =\inf\{R:\Delta n(\mathbf r_0,R')\leq\varepsilon
+            \text{ for all }R'\geq R\}.
+          \]</div>
+          <p>
+            Locality is therefore not a universal cutoff. It is an error-controlled length. Tightening the tolerance increases \(R\), and the rate of that increase distinguishes insulators from metals.
+          </p>
+
+          <h2>3. Scattering representation in one dimension</h2>
+          <p>
+            Consider independent fermions in a one-dimensional periodic potential \(v(x+b)=v(x)\), with a disturbance confined to \(x&lt;0\) and an observation point at \(x&gt;0\). The unperturbed states are Bloch waves
+          </p>
+          <div class="math-block">\[
+            \psi_k(x)=u_k(x)e^{ikx},\qquad u_k(x+b)=u_k(x).
+          \]</div>
+          <p>
+            The remote disturbance enters the right-hand region only through its reflection amplitude \(r(k)\). After summing occupied states, the induced density can be written schematically as
+          </p>
+          <div class="math-block">\[
+            \delta n(x)=2\,\mathrm{Re}\int_{\mathcal C} r(k)\,\psi_k(x)^2\,dk.
+          \]</div>
+          <p>
+            This equation separates material and perturbation. The complex band structure of the unperturbed system controls the spatial decay; the remote environment enters through \(r(k)\). Unitarity of scattering bounds \(|r(k)|\), so making the perturbation arbitrarily strong cannot change the asymptotic decay class.
+          </p>
+
+          <h2>4. Gapped systems: exponential nearsightedness</h2>
+          <p>
+            In an insulator the occupied bands are separated from the empty bands. Analytically continuing the Bloch problem into complex wave vector, the closest branch point connecting the highest occupied and lowest empty bands occurs at
+          </p>
+          <div class="math-block">\[
+            \kappa=k_0+iq,\qquad q&gt;0.
+          \]</div>
+          <p>
+            The integration contour can be deformed toward this singularity. Since \(\psi_k(x)^2\) contributes \(e^{2ikx}\), its modulus supplies \(e^{-2qx}\). The square-root structure of the band branch point contributes an algebraic prefactor. In one dimension,
+          </p>
+          <div class="math-block">\[
+            \Delta n(x)\lesssim C\,x^{-1/2}e^{-2qx}.
+          \]</div>
+          <p>To obtain the range, solve \(C R^{-1/2}e^{-2qR}\sim\varepsilon\). Taking logarithms gives</p>
+          <div class="math-block">\[
+            2qR+\frac{1}{2}\ln R\sim\ln\frac{C}{\varepsilon}.
+          \]</div>
+          <p>The logarithm of \(R\) is subleading, so the principal scaling is</p>
+          <div class="math-block">\[
+            \boxed{R_{\mathrm{gap}}(\varepsilon)
+            \sim\frac{1}{2q_{\mathrm{eff}}}
+            \ln\frac{\widetilde n}{\varepsilon}.}
+          \]</div>
+          <p>
+            The decay constant \(q_{\mathrm{eff}}\) is a property of the complex band structure and is related, but not reducible in every material, to the size of the band gap. The important algorithmic result is logarithmic growth of the required environment with inverse tolerance.
+          </p>
+
+          <h2>5. Gapless systems: Fermi-surface tails</h2>
+          <p>
+            In a zero-temperature metal, occupation terminates sharply at the Fermi surface. The endpoint of the occupied-state integral cannot be moved away into the complex plane as in an insulator. In one dimension, integration by parts near \(k_F\) produces the familiar Friedel tail
+          </p>
+          <div class="math-block">\[
+            \delta n(x)\sim
+            \frac{A\sin(2k_Fx+\phi)}{x}.
+          \]</div>
+          <p>Taking the worst-case envelope and imposing \(|\delta n|\leq\varepsilon\) gives</p>
+          <div class="math-block">\[
+            \boxed{R_{\mathrm{metal}}^{1\mathrm D}(\varepsilon)
+            \sim\frac{A}{\varepsilon}.}
+          \]</div>
+          <p>
+            Higher dimensions add phase-space cancellation, but the response remains algebraic because it is tied to the Fermi surface. For the hard-wall jellium estimates in Prodan and Kohn,
+          </p>
+          <div class="math-block">\[
+            R^{2\mathrm D}(\varepsilon)\sim\frac{k_F}{2\varepsilon},
+            \qquad
+            R^{3\mathrm D}(\varepsilon)\sim\frac{k_F^2}{2\varepsilon},
+          \]</div>
+          <p>
+            with material-dependent effective wave vectors replacing \(k_F\) in periodic solids. Metals are nearsighted, but reaching high accuracy requires a larger neighborhood than in a gapped system. Finite electronic temperature smooths the occupation discontinuity and introduces an exponential thermal length, which is one reason finite-temperature density-matrix methods are easier to localize.
+          </p>
+
+          <h2>6. Density matrix, Wannier functions, and nearsightedness</h2>
+          <p>The one-particle density matrix is</p>
+          <div class="math-block">\[
+            \rho(\mathbf r,\mathbf r')
+            =\sum_i f_i\psi_i(\mathbf r)\psi_i^*(\mathbf r').
+          \]</div>
+          <p>
+            In gapped systems it decays exponentially with \(|\mathbf r-\mathbf r'|\); in zero-temperature metals it generally decays algebraically. This behavior supports sparse density-matrix algorithms. It is closely related to nearsightedness, but the statements are not identical: density-matrix decay concerns an off-diagonal kernel of one Hamiltonian, whereas nearsightedness bounds the change of a local observable under every remote modification of the Hamiltonian.
+          </p>
+
+          <h2>7. Deriving linear scaling</h2>
+          <p>
+            Divide a system of volume \(V\) into \(N_s\) core regions of linear size \(a\). Surround each core with a buffer of thickness \(b\), solve the electronic problem on the enlarged region, and retain observables only in the core. If the boundary perturbation is to change the core density by no more than \(\varepsilon\), choose
+          </p>
+          <div class="math-block">\[
+            b\gtrsim R(\varepsilon).
+          \]</div>
+          <p>In \(d\) dimensions,</p>
+          <div class="math-block">\[
+            N_s\sim\frac{V}{a^d},
+            \qquad
+            \tau_{\mathrm{frag}}\sim(a+2b)^{\nu d},
+          \]</div>
+          <p>
+            where \(\nu\) characterizes the cost of the chosen electronic solver as a function of linear fragment size. The total time is
+          </p>
+          <div class="math-block">\[
+            T(a,b)\sim\frac{V}{a^d}(a+2b)^{\nu d}.
+          \]</div>
+          <p>For fixed \(b\), minimize \(\ln T\) with respect to \(a\):</p>
+          <div class="math-block">\[
+            \frac{\partial\ln T}{\partial a}
+            =-\frac{d}{a}+\frac{\nu d}{a+2b}=0,
+            \qquad
+            a_*=\frac{2b}{\nu-1}.
+          \]</div>
+          <p>Substitution yields</p>
+          <div class="math-block">\[
+            T_{\min}\propto V\,b^{(\nu-1)d}.
+          \]</div>
+          <p>At fixed density, \(V\propto N\). For a fixed target error, \(b\) is independent of total system size, hence</p>
+          <div class="math-block">\[
+            \boxed{T_{\min}\propto N.}
+          \]</div>
+          <p>
+            This is the physical origin of linear scaling. The prefactor still depends strongly on accuracy. With exponential nearsightedness,
+          </p>
+          <div class="math-block">\[
+            T_{\mathrm{gap}}
+            \propto N\left[\ln\left(\frac{\widetilde n}{\varepsilon}\right)\right]^{(\nu-1)d},
+          \]</div>
+          <p>whereas algebraic nearsightedness, \(R\propto\varepsilon^{-\alpha}\), gives</p>
+          <div class="math-block">\[
+            T_{\mathrm{metal}}
+            \propto N\,\varepsilon^{-\alpha(\nu-1)d}.
+          \]</div>
+          <p>
+            An \(O(N)\) label therefore does not imply a small prefactor. Tight-tolerance metallic calculations remain difficult even when the formal dependence on atom count is linear.
+          </p>
+
+          <h2>8. What linear-scaling electronic-structure methods localize</h2>
+          <p>Different methods exploit the same physical decay at different mathematical levels:</p>
+          <table>
+            <thead><tr><th>Method family</th><th>Localized object</th><th>Main approximation</th></tr></thead>
+            <tbody>
+              <tr><td>Divide and conquer</td><td>Fragment density or local observables</td><td>Finite buffer around each core region</td></tr>
+              <tr><td>Density-matrix truncation</td><td>\(\rho(\mathbf r,\mathbf r')\) or sparse matrix blocks</td><td>Discard elements beyond a spatial threshold</td></tr>
+              <tr><td>Localized orbitals</td><td>Wannier-like support functions</td><td>Constrain orbital support radii</td></tr>
+              <tr><td>Fermi-operator expansion</td><td>\(f_\beta(H-\mu)\)</td><td>Polynomial or rational approximation plus sparse algebra</td></tr>
+            </tbody>
+          </table>
+          <p>
+            All require convergence with localization radius, truncation threshold, or polynomial order. Nearsightedness explains why these controls can saturate with system size; it does not select one algorithm or remove the need for error tests.
+          </p>
+
+          <h2>9. From electronic locality to local ML potentials</h2>
+          <p>A local machine-learning potential normally writes the total energy as</p>
+          <div class="math-block">\[
+            E(\mathbf R,Z)\approx\sum_{i=1}^{N}
+            \varepsilon_{\theta,s_i}(\mathcal N_i^{r_c}),
+          \]</div>
+          <p>
+            where \(\mathcal N_i^{r_c}\) is the geometry and species information inside a cutoff \(r_c\) around atom \(i\). Forces follow from the global energy gradient,
+          </p>
+          <div class="math-block">\[
+            \mathbf F_i=-\nabla_{\mathbf R_i}E.
+          \]</div>
+          <p>
+            The connection to nearsightedness is real but indirect. If a remote change modifies the local electronic density only weakly, then a local energy contribution can often be represented from a finite environment to a controlled tolerance. Extensive summation also makes evaluation linear in atom number when neighbor counts remain bounded:
+          </p>
+          <div class="math-block">\[
+            \text{cost}\sim N\,n_{\mathrm{neigh}}(r_c)=O(N).
+          \]</div>
+          <p>
+            Message-passing and equivariant graph networks enlarge the effective receptive field. With \(L\) layers and an edge cutoff \(r_c\), information can propagate across roughly \(L\) graph hops, but the result is still a finite-range representation unless a global or long-range module is added.
+          </p>
+
+          <h2>10. A cutoff is an accuracy parameter, not a theorem</h2>
+          <p>
+            Nearsightedness does not prove that the exact Born-Oppenheimer energy has a unique, finite-cutoff atomic decomposition. It bounds local electronic responses under stated conditions. A local ML potential adds modeling choices: an energy partition, a descriptor, a finite training distribution, and a loss over energies, forces, or stresses. The physically relevant analogy is
+          </p>
+          <div class="math-block">\[
+            r_c\quad\leftrightarrow\quad R(\varepsilon),
+          \]</div>
+          <p>
+            not \(r_c=\text{a universal material constant}\). A cutoff should be converged against target observables and chosen for the electronic state, thermodynamic range, composition, and accuracy of interest.
+          </p>
+
+          <h2>11. Where strictly local potentials fail</h2>
+          <p>Several effects are not guaranteed to be captured by a short-range neighborhood:</p>
+          <ul>
+            <li><strong>Long-range electrostatics:</strong> distant charges create Coulomb fields. Metals screen them, but insulating and polar systems may retain long-range polarization fields.</li>
+            <li><strong>Charge transfer and changing oxidation states:</strong> the local geometry may not determine the global charge distribution uniquely.</li>
+            <li><strong>Long-range dispersion:</strong> the asymptotic \(R^{-6}\) interaction is algebraic and collective many-body dispersion is nonlocal.</li>
+            <li><strong>Metallic response:</strong> Fermi-surface physics produces algebraic tails and can require larger environments or explicit electronic information.</li>
+            <li><strong>External fields, interfaces, and dielectric polarization:</strong> identical local neighborhoods can sit in different macroscopic electrostatic environments.</li>
+          </ul>
+          <p>A more faithful architecture separates scales:</p>
+          <div class="math-block">\[
+            E=E_{\mathrm{short}}^{\mathrm{ML}}
+            +E_{\mathrm{electrostatic}}
+            +E_{\mathrm{dispersion}}
+            +E_{\mathrm{global/polarization}}.
+          \]</div>
+          <p>
+            The short-range model captures chemically complex local interactions, while explicit modules impose known long-range asymptotics. Charge-equilibration, polarizable, Ewald-aware, reciprocal-space, and global-message architectures are different realizations of this principle.
+          </p>
+
+          <h2>12. Disorder, temperature, and the direction of locality</h2>
+          <p>
+            Weak disorder can reduce a band gap and lengthen the nearsightedness range of an insulator. In a metal, disorder randomizes the phase of Friedel oscillations and can give the disorder-averaged response an exponential envelope. Finite temperature also smooths the Fermi edge and shortens the effective coherence length. Locality must therefore be assessed for the state being modeled, not inferred from a zero-temperature label alone.
+          </p>
+
+          <h2>13. Analytical result map</h2>
+          <table>
+            <thead><tr><th>Physical case</th><th>Remote influence</th><th>Range at tolerance \(\varepsilon\)</th><th>Computational implication</th></tr></thead>
+            <tbody>
+              <tr><td>Ordered gapped system</td><td>\(\sim e^{-2qR}\) up to an algebraic prefactor</td><td>\(R\sim(2q)^{-1}\ln(\widetilde n/\varepsilon)\)</td><td>Small localization radii; favorable accuracy scaling</td></tr>
+              <tr><td>Zero-temperature ordered metal</td><td>Friedel-type algebraic tail</td><td>Power law in \(1/\varepsilon\)</td><td>Formally linear in \(N\), but with a large accuracy-dependent prefactor</td></tr>
+              <tr><td>Finite-temperature metal</td><td>Thermally damped tail</td><td>Controlled by a thermal coherence length</td><td>Sparser density matrices and easier localization</td></tr>
+              <tr><td>Distant real charge in an insulator</td><td>Long-range classical field may remain</td><td>No short universal electrostatic cutoff</td><td>Add explicit electrostatics or polarization</td></tr>
+            </tbody>
+          </table>
+
+          <h2>14. Practical design rules</h2>
+          <ol>
+            <li>Treat localization radius and ML cutoff as convergence parameters tied to an observable and tolerance.</li>
+            <li>Expect gapped systems to localize more readily than zero-temperature metals.</li>
+            <li>Separate short-range chemical complexity from known long-range physics.</li>
+            <li>Test nonlocal failure modes explicitly: charge rearrangement, interfaces, fields, dielectric response, and dispersion.</li>
+            <li>Do not equate linear wall-clock scaling with controlled accuracy; report both system-size scaling and cutoff convergence.</li>
+          </ol>
+
+          <h2>Conclusion</h2>
+          <p>
+            Electronic nearsightedness supplies the physical bridge from quantum electronic matter to local computation. It turns the informal statement that distant environments matter less into an error-dependent range \(R(\varepsilon)\). Once that range stays finite as the system grows, fragment and sparse-matrix electronic-structure methods can achieve \(O(N)\) cost. Local machine-learning potentials inherit the same opportunity, but not an unconditional guarantee: their cutoff is a model approximation, and long-range electrostatics, polarization, dispersion, and metallic response must be treated or tested separately. The robust principle is therefore not that matter is exactly local, but that short-range and long-range physics can be separated with an explicit accuracy target.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li>E. Prodan and W. Kohn, “Nearsightedness of electronic matter,” <em>PNAS</em> <strong>102</strong>, 11635-11638 (2005), <a href="https://doi.org/10.1073/pnas.0505436102" target="_blank" rel="noreferrer">doi:10.1073/pnas.0505436102</a>.</li>
+            <li>W. Kohn, “Density functional and density matrix method scaling linearly with the number of atoms,” <em>Physical Review Letters</em> <strong>76</strong>, 3168-3171 (1996).</li>
+            <li>W. Yang, “Direct calculation of electron density in density-functional theory,” <em>Physical Review Letters</em> <strong>66</strong>, 1438-1441 (1991).</li>
+            <li>S. Goedecker, “Linear scaling electronic structure methods,” <em>Reviews of Modern Physics</em> <strong>71</strong>, 1085-1123 (1999).</li>
+          </ol>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="allegro-mlpes-mapbi3-workflow.html">&lt;- Local ML potential workflow</a>
+          <a href="../index.html">Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

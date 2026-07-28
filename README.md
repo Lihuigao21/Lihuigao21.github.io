@@ -42,6 +42,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- matsubara-quartic-benchmark.html
 |   |-- spcf-rpmd-water-ir-spectrum.html
 |   |-- allegro-mlpes-mapbi3-workflow.html
+|   |-- nearsightedness-linear-scaling-local-ml-potentials.html
 |   |-- cayley-transform-ring-polymer.html
 |   |-- dvr-wavepacket-methods.html
 |   |-- dvr-operator-matrices.html
@@ -438,6 +439,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `posts/matsubara-quartic-benchmark.html`
 - `posts/spcf-rpmd-water-ir-spectrum.html`
 - `posts/allegro-mlpes-mapbi3-workflow.html`
+- `posts/nearsightedness-linear-scaling-local-ml-potentials.html`
 - `posts/dvr-wavepacket-methods.html`
 - `posts/dvr-operator-matrices.html`
 - `posts/dvr-wavepacket-dynamics.html`

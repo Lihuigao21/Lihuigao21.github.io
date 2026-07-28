@@ -45,6 +45,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "nearsightedness-linear-scaling-local-ml-potentials",
+    title: "Electronic Nearsightedness, Linear Scaling, and Local ML Potentials",
+    path: "posts/nearsightedness-linear-scaling-local-ml-potentials.html",
+    date: "2026-07-28",
+    dateText: "2026.07.28",
+    description: "A derivation-focused account of electronic nearsightedness, its consequences for linear-scaling electronic structure, and the scope and limits of locality in machine-learning interatomic potentials.",
+    tags: ["Electronic Structure", "Nearsightedness", "Linear Scaling", "Machine Learning Potentials", "Locality", "Literature Close Reading"],
+    series: "mlpes",
+  },
+  {
     slug: "mes-pimd-geometric-phase-thermodynamics",
     title: "MES-PIMD and the Geometric Phase",
     path: "posts/mes-pimd-geometric-phase-thermodynamics.html",
