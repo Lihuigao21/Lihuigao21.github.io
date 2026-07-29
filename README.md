@@ -56,6 +56,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-07-28.html
 |   |-- daily-record-2026-07-26.html
 |   |-- daily-record-2026-07-27.html
 |   |-- daily-record-2026-07-25.html
@@ -85,6 +86,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-record-2026-07-01.html
 |   |-- daily-record-2026-06-30.html
 |   |-- daily-summary-2026-06-29.html
+|   |-- mind-state-rational-reshaping-2026-07-28.html
 |   |-- mind-state-crisis-and-uncertainty-2026-07-26.html
 |   |-- mind-state-positive-feedback-2026-07-27.html
 |   |-- mind-state-socialization-2026-07-27.html
@@ -146,11 +148,13 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- skill.html
 |   |-- positive-feedback.html
 |   |-- positive-feedback-task-list-2026-07-27.html
+|   |-- positive-feedback-progress-2026-07-28.html
 |   |-- positive-feedback-kindness-and-table-tennis-2026-07-27.html
 |   |-- memories.html
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
 |   |-- dreams-creation.html
+|   |-- dream-sweep-away-confusion-2026-07-28.html
 |   |-- dream-burning-2026-07-26.html
 |   |-- dream-moon-becomes-sun-2026-07-25.html
 |   |-- dream-shattered-dream-2026-07-24.html
@@ -287,6 +291,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-07-28.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-26.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-27.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-25.html` - Chinese daily-life record note.
@@ -316,6 +321,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-record-2026-07-01.html` - Chinese daily-life record note.
 - `life/daily-record-2026-06-30.html` - Chinese daily-life record note.
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
+- `life/mind-state-rational-reshaping-2026-07-28.html` - Chinese mental-state reflection note.
 - `life/mind-state-crisis-and-uncertainty-2026-07-26.html` - Chinese mental-state reflection note.
 - `life/mind-state-positive-feedback-2026-07-27.html` - Chinese mental-state reflection note.
 - `life/mind-state-socialization-2026-07-27.html` - Chinese mental-state reflection note.
@@ -377,11 +383,13 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/skill.html` - Chinese skill-learning module.
 - `life/positive-feedback.html` - Chinese positive-feedback module.
 - `life/positive-feedback-task-list-2026-07-27.html` - Chinese positive-feedback task note.
+- `life/positive-feedback-progress-2026-07-28.html` - Chinese positive-feedback note.
 - `life/positive-feedback-kindness-and-table-tennis-2026-07-27.html` - Chinese positive-feedback note.
 - `life/memories.html` - Chinese memories module.
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/dream-sweep-away-confusion-2026-07-28.html` - Chinese dreams and creation note.
 - `life/dream-burning-2026-07-26.html` - Chinese dreams and creation note.
 - `life/dream-moon-becomes-sun-2026-07-25.html` - Chinese dreams and creation note.
 - `life/dream-shattered-dream-2026-07-24.html` - Chinese dreams and creation note.
