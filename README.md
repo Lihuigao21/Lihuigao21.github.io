@@ -56,6 +56,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-07-31.html
 |   |-- daily-record-2026-07-30.html
 |   |-- daily-record-2026-07-29.html
 |   |-- daily-record-2026-07-28.html
@@ -112,6 +113,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-cherish-love-2026-07-31.html
 |   |-- relationship-three-separations-2026-07-30.html
 |   |-- relationship-highest-level-release-2026-07-29.html
 |   |-- relationship-fairness-and-conscience-2026-07-26.html
@@ -152,6 +154,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- skill.html
 |   |-- positive-feedback.html
 |   |-- positive-feedback-task-list-2026-07-27.html
+|   |-- positive-feedback-kindness-and-guidance-2026-07-31.html
 |   |-- positive-feedback-sharing-health-2026-07-30.html
 |   |-- positive-feedback-progress-2026-07-28.html
 |   |-- positive-feedback-kindness-and-table-tennis-2026-07-27.html
@@ -297,6 +300,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-07-31.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-30.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-29.html` - Chinese daily-life record note.
 - `life/daily-record-2026-07-28.html` - Chinese daily-life record note.
@@ -353,6 +357,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-cherish-love-2026-07-31.html` - Chinese relationship reflection note.
 - `life/relationship-three-separations-2026-07-30.html` - Chinese relationship reflection note.
 - `life/relationship-highest-level-release-2026-07-29.html` - Chinese relationship reflection note.
 - `life/relationship-fairness-and-conscience-2026-07-26.html` - Chinese relationship reflection note.
@@ -393,6 +398,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/skill.html` - Chinese skill-learning module.
 - `life/positive-feedback.html` - Chinese positive-feedback module.
 - `life/positive-feedback-task-list-2026-07-27.html` - Chinese positive-feedback task note.
+- `life/positive-feedback-kindness-and-guidance-2026-07-31.html` - Chinese positive-feedback note.
 - `life/positive-feedback-sharing-health-2026-07-30.html` - Chinese positive-feedback note.
 - `life/positive-feedback-progress-2026-07-28.html` - Chinese positive-feedback note.
 - `life/positive-feedback-kindness-and-table-tennis-2026-07-27.html` - Chinese positive-feedback note.
