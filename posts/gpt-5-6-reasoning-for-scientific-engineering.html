@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A practical guide to choosing GPT-5.6 models and reasoning effort for literature reproduction, scientific software, simulations, and long-running research projects.">
+    <title>GPT-5.6 Reasoning for Scientific Engineering | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../tags.html">Tags</a>
+        <a href="../series.html">Series</a>
+        <a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Scientific Computing Practice</p>
+          <h1>GPT-5.6 Reasoning for Scientific Engineering</h1>
+          <p class="post-meta">2026.08.01 - Codex / Literature Reproduction / Research Engineering</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            Literature reproduction is not one task. It alternates between reading an incomplete methods section, designing a computational workflow, editing routine inputs, diagnosing numerical failures, monitoring long calculations, and auditing a final conclusion. Using maximum reasoning for every stage wastes quota without making every stage safer. A better policy assigns model capability and inference-time effort to the uncertainty and consequence of the current decision.
+          </p>
+
+          <h2>1. Two independent scaling axes</h2>
+          <p>
+            The GPT-5.6 family exposes two conceptually different ways to spend computation. Choosing among Sol, Terra, and Luna changes the model: Sol targets frontier capability, Terra balances intelligence and cost, and Luna targets efficient high-volume work. Changing reasoning effort keeps the selected model and changes how much inference-time reasoning it is encouraged or allowed to use.
+          </p>
+          <p>
+            These axes should not be conflated. Moving from Luna to Sol is a model-capability decision; moving from medium to high is a test-time-compute decision. The public benchmark pattern is consistent with both training-time and inference-time scaling, but a cost-quality curve does not reveal the proprietary architecture or training recipe behind it.
+          </p>
+
+          <h2>2. What a reasoning level means—and what remains unknown</h2>
+          <p>
+            OpenAI documents reasoning effort as a control over how much the model thinks. Lower effort favors latency and lower token use; higher effort permits more complete reasoning, while the model still adapts token use to task difficulty. Public reinforcement-fine-tuning documentation also states that effort can limit the number of reasoning tokens used during training or evaluation.
+          </p>
+          <p>
+            This supports a conservative interpretation: reasoning effort selects a point on a quality-latency-cost frontier. It does not establish that each level is merely a different prompt, nor that GPT-5.6 was trained with one known length-penalty coefficient per level. Plausible mechanisms include control tokens or system instructions, reasoning-token budgets, learned stopping behavior, decoding controls, and reinforcement-learning objectives that trade task reward against computation. The exact GPT-5.6 implementation is not public.
+          </p>
+          <p>
+            It is also important to distinguish visible answer length from internal reasoning use. A high-effort run may return a concise answer after substantial hidden reasoning. Therefore, “higher effort means longer output” is not a reliable model of the product.
+          </p>
+
+          <h2>3. The workload map for scientific projects</h2>
+          <table>
+            <thead><tr><th>Work stage</th><th>Default effort</th><th>Escalate when</th></tr></thead>
+            <tbody>
+              <tr><td>File organization, path edits, plotting, report formatting</td><td>Medium</td><td>The transformation changes scientific meaning</td></tr>
+              <tr><td>Routine implementation, tests, input generation, log inspection</td><td>High</td><td>Evidence points to a cross-module or numerical cause</td></tr>
+              <tr><td>Extracting equations, assumptions, and parameters from a paper</td><td>High</td><td>The paper is internally ambiguous or omits a decisive detail</td></tr>
+              <tr><td>Workflow design and expensive-compute decisions</td><td>High</td><td>Several plausible designs have materially different scientific risks</td></tr>
+              <tr><td>Persistent disagreement with a published result</td><td>Extra High</td><td>A minimal case remains unexplained after controlled diagnostics</td></tr>
+              <tr><td>Core theoretical contradiction or stubborn numerical pathology</td><td>Ultra</td><td>Only after the problem is bounded and the evidence is compressed</td></tr>
+              <tr><td>Final evidence audit</td><td>Extra High</td><td>Ultra only for one unresolved, high-consequence claim</td></tr>
+            </tbody>
+          </table>
+
+          <h2>4. Recommended operating policy</h2>
+          <p>
+            For a long literature-reproduction project, Sol at High is a strong default when the model is acting as both project manager and primary engineer. Medium is appropriate for mechanical execution. Extra High is best treated as a technical-review mode. Ultra should be a bounded consultation, not the permanent project state.
+          </p>
+          <ol>
+            <li>Start at High and build a staged plan with explicit validation gates.</li>
+            <li>Drop routine transformations and documentation to Medium.</li>
+            <li>Before escalating, collect the smallest failing case, relevant equations, inputs, recent logs, and competing hypotheses.</li>
+            <li>Use Extra High to decide among hypotheses or to design the decisive test.</li>
+            <li>Use Ultra only when the unresolved question is singular, evidence-rich, and scientifically consequential.</li>
+            <li>Return to High immediately after the diagnosis; implementation and verification rarely require a continuous Ultra session.</li>
+          </ol>
+          <p>
+            The compact rule is: <strong>Medium executes, High manages and engineers, Extra High reviews, and Ultra diagnoses one exceptional problem.</strong>
+          </p>
+
+          <h2>5. A reproducible escalation diagnostic</h2>
+          <p>Before increasing effort, record five fields:</p>
+          <ol>
+            <li><strong>Blocker:</strong> the single decision or failure preventing progress.</li>
+            <li><strong>Evidence:</strong> the minimal input, output, equation, or trace that demonstrates it.</li>
+            <li><strong>Exclusions:</strong> causes already tested and ruled out.</li>
+            <li><strong>Decision:</strong> what the higher-effort run must determine.</li>
+            <li><strong>Acceptance test:</strong> the observation that will confirm or reject the result.</li>
+          </ol>
+          <p>
+            If these fields cannot be filled, the immediate need is usually better instrumentation rather than more reasoning. This diagnostic prevents an expensive model from spending its budget rediscovering project context or exploring an unbounded space.
+          </p>
+
+          <h2>6. Long calculations need monitoring, not more reasoning</h2>
+          <p>
+            A simulation that runs for hours does not become safer because its initiating conversation used Ultra. Reliability comes from explicit supervision: verify that the process remains alive, outputs continue to update, storage and memory remain safe, and the physical or numerical diagnostics behave as expected. Examples include energy conservation in NVE, temperature stability in NVT, SCF convergence, trajectory integrity, loss curves, and residual trends.
+          </p>
+          <p>
+            For expensive electronic-structure or molecular-dynamics campaigns, define the minimum downstream output set, run a smoke test, inspect actual file growth, and only then submit the full batch. Reasoning effort helps design these controls; it does not replace them.
+          </p>
+
+          <h2>7. Encoding the policy in AGENTS.md</h2>
+          <p>
+            Project instructions can classify tasks, require evidence before escalation, and authorize bounded delegation when the environment supports it. They cannot reliably change the active main-thread reasoning selector by themselves. The instruction should therefore require Codex to state the recommended level and why, rather than claim that it silently switched levels.
+          </p>
+          <p>
+            A reusable policy fragment is available as <a href="../assets/code/gpt-5-6-reasoning-policy.md">gpt-5-6-reasoning-policy.md</a>. The main task can remain at High; an Extra High or Ultra specialist should receive only a compact, testable subproblem, and the High-level agent should integrate and verify the result.
+          </p>
+
+          <h2>8. Model selection beyond Sol</h2>
+          <p>
+            Sol is justified when errors are expensive: interpreting a difficult paper, designing a multi-stage workflow, debugging coupled numerical software, or auditing a physical conclusion. Terra is a reasonable candidate for broader engineering work when repeated evaluations show comparable project outcomes at lower cost. Luna fits high-volume, well-specified transformations and screening tasks. The correct choice should be based on a small project-specific evaluation set rather than a global leaderboard alone.
+          </p>
+          <p>A useful evaluation set contains representative tasks such as:</p>
+          <ul>
+            <li>extracting all reproducibility-critical parameters from one methods section;</li>
+            <li>finding a deliberately inserted inconsistency across input files;</li>
+            <li>diagnosing a known failed calculation from a trimmed log;</li>
+            <li>proposing a validation plan with physical and numerical checks;</li>
+            <li>editing a routine configuration without changing scientific semantics.</li>
+          </ul>
+          <p>
+            Measure task success, missed evidence, unnecessary tool calls, total latency, and usage—not answer eloquence. A lower-cost model or effort is preferable whenever it passes the same acceptance tests.
+          </p>
+
+          <h2>Conclusion</h2>
+          <p>
+            Scientific engineering benefits from adaptive inference compute, but only when it is allocated deliberately. Model scaling and reasoning-effort scaling are distinct; benchmark curves demonstrate a tradeoff, not the hidden mechanism. For sustained reproduction work, High is the practical center of gravity. Medium handles execution, Extra High handles consequential judgment, and Ultra is reserved for one well-instrumented impasse. The most important optimization is not choosing the largest setting—it is turning an open-ended research problem into a sequence of bounded decisions with explicit evidence and acceptance tests.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/reasoning#reasoning-effort" target="_blank" rel="noreferrer">Reasoning models: reasoning effort</a>.</li>
+            <li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/latest-model#update-api-and-model-parameters" target="_blank" rel="noreferrer">GPT-5.6 model guidance</a>.</li>
+            <li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning#training-metrics" target="_blank" rel="noreferrer">Reinforcement fine-tuning: training metrics</a>.</li>
+            <li>OpenAI, <a href="https://openai.com/index/learning-to-reason-with-llms/" target="_blank" rel="noreferrer">Learning to reason with LLMs</a>.</li>
+            <li>Artificial Analysis, <a href="https://artificialanalysis.ai/agents/coding-agents/" target="_blank" rel="noreferrer">Coding Agent Index</a>.</li>
+          </ol>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="nearsightedness-linear-scaling-local-ml-potentials.html">&lt;- Previous article</a>
+          <a href="../index.html">Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

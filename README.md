@@ -14,6 +14,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- gpt-5-6-reasoning-for-scientific-engineering.html
 |   |-- hefeinamd-training-hands-on-workflow.html
 |   |-- mes-pimd-geometric-phase-thermodynamics.html
 |   |-- geometric-phase-key-theory-reproductions.html
@@ -465,6 +466,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `posts/matsubara-quartic-benchmark.html`
 - `posts/spcf-rpmd-water-ir-spectrum.html`
 - `posts/allegro-mlpes-mapbi3-workflow.html`
+- `posts/gpt-5-6-reasoning-for-scientific-engineering.html`
 - `posts/nearsightedness-linear-scaling-local-ml-potentials.html`
 - `posts/dvr-wavepacket-methods.html`
 - `posts/dvr-operator-matrices.html`
