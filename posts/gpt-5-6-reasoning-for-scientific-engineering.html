@@ -48,6 +48,13 @@
             These axes should not be conflated. Moving from Luna to Sol is a model-capability decision; moving from medium to high is a test-time-compute decision. The public benchmark pattern is consistent with both training-time and inference-time scaling, but a cost-quality curve does not reveal the proprietary architecture or training recipe behind it.
           </p>
 
+          <figure>
+            <img src="../assets/img/gpt-5-6-coding-agent-cost-quality.png" alt="GPT-5.6 Sol, Terra, and Luna cost-quality points on the Artificial Analysis Coding Agent Index">
+            <figcaption>
+              Third-party cost-quality comparison redrawn by Sebastian Raschka from the Artificial Analysis Coding Agent Index v1.1. The horizontal axis is the reported API cost in USD for the benchmark workload; the vertical axis is the composite pass@1 index score across DeepSWE, Terminal-Bench v2, and SWE-Atlas-QnA. Points along each blue curve correspond to reasoning-effort settings, while the orange and purple arrows are an interpretation of training scaling and inference scaling. The figure illustrates two cost-quality directions, but it does not establish the internal training mechanism of GPT-5.6.
+            </figcaption>
+          </figure>
+
           <h2>2. What a reasoning level means—and what remains unknown</h2>
           <p>
             OpenAI documents reasoning effort as a control over how much the model thinks. Lower effort favors latency and lower token use; higher effort permits more complete reasoning, while the model still adapts token use to task difficulty. Public reinforcement-fine-tuning documentation also states that effort can limit the number of reasoning tokens used during training or evaluation.
@@ -58,6 +65,13 @@
           <p>
             It is also important to distinguish visible answer length from internal reasoning use. A high-effort run may return a concise answer after substantial hidden reasoning. Therefore, “higher effort means longer output” is not a reliable model of the product.
           </p>
+
+          <figure>
+            <img src="../assets/img/gpt-5-6-training-inference-scaling.png" alt="Conceptual comparison of model scaling and reasoning-effort scaling using Codex controls and o1 AIME curves">
+            <figcaption>
+              Conceptual montage connecting the Codex model selector to training-compute scaling and the effort selector to inference-time scaling. The lower panels reuse the qualitative form of OpenAI's o1 AIME plots: pass@1 accuracy rises with train-time compute on the left and test-time compute on the right, both shown on logarithmic horizontal axes. The overlaid GPT-5.6 controls are an analogy, not measured GPT-5.6 AIME results, and the image should not be read as evidence that Sol, Terra, and Luna are checkpoints from one disclosed training run.
+            </figcaption>
+          </figure>
 
           <h2>3. The workload map for scientific projects</h2>
           <table>
