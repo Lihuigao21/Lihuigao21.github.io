@@ -57,6 +57,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-08-04.html
 |   |-- daily-record-2026-08-03.html
 |   |-- daily-record-2026-08-02.html
 |   |-- daily-record-2026-08-01.html
@@ -93,6 +94,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-record-2026-07-01.html
 |   |-- daily-record-2026-06-30.html
 |   |-- daily-summary-2026-06-29.html
+|   |-- mind-state-build-a-framework-2026-08-04.html
 |   |-- mind-state-world-as-mirror-2026-08-03.html
 |   |-- mind-state-gender-socialization-2026-08-02.html
 |   |-- mind-state-rational-reshaping-2026-07-28.html
@@ -308,6 +310,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-08-04.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-03.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-02.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-01.html` - Chinese daily-life record note.
@@ -344,6 +347,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-record-2026-07-01.html` - Chinese daily-life record note.
 - `life/daily-record-2026-06-30.html` - Chinese daily-life record note.
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
+- `life/mind-state-build-a-framework-2026-08-04.html` - Chinese mental-state reflection note.
 - `life/mind-state-world-as-mirror-2026-08-03.html` - Chinese mental-state reflection note.
 - `life/mind-state-gender-socialization-2026-08-02.html` - Chinese mental-state reflection note.
 - `life/mind-state-rational-reshaping-2026-07-28.html` - Chinese mental-state reflection note.
