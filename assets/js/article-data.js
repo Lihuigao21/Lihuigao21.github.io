@@ -92,7 +92,7 @@ window.SITE_ARTICLES = [
   },
   {
     slug: "hefeinamd-training-hands-on-workflow",
-    title: "HefeiNAMD Training Hands-On Workflow",
+    title: "How to Prepare a HefeiNAMD Training",
     path: "posts/hefeinamd-training-hands-on-workflow.html",
     date: "2026-07-08",
     dateText: "2026.07.08",
