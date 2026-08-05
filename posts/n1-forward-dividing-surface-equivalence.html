@@ -46,13 +46,56 @@
               </tbody>
             </table>
           </div>
+          <h2>Why \(N=1\) Isolates Initialization</h2>
           <p>
-            Setting (N=1) is decisive. The bead approximation (BA), centroid approximation (CA), and ordinary single-copy FSSH all use the same nuclear coordinate and the same nonadiabatic coupling. Any remaining difference must come from initialization, history weighting, discretization, or sampling—not from averaging the NAC over beads.
+            For \(N\) beads, the free ring-polymer part of the nuclear Hamiltonian is
+          </p>
+          <div class="math-block">\[
+            H_N^{(0)}(\mathbf R,\mathbf P)=
+            \sum_{\alpha=1}^{N}\left[
+            \frac{P_\alpha^2}{2M}
+            +\frac{M\omega_N^2}{2}
+            (R_\alpha-R_{\alpha+1})^2
+            \right],
+            \qquad \omega_N=\frac{N}{\beta\hbar}.
+          \]</div>
+          <p>
+            At \(N=1\), cyclic closure gives \(R_1-R_1=0\), so the spring term vanishes and the centroid is the physical coordinate: \(\bar R=R_1\). The two electronic approximations then collapse as well:
+          </p>
+          <div class="math-block">\[
+            d_{ij}^{\mathrm{BA}}(\mathbf R)
+            =\frac{1}{N}\sum_{\alpha=1}^{N}d_{ij}(R_\alpha)
+            \xrightarrow{N=1}d_{ij}(R_1),
+            \qquad
+            d_{ij}^{\mathrm{CA}}(\mathbf R)
+            =d_{ij}(\bar R)
+            \xrightarrow{N=1}d_{ij}(R_1).
+          \]</div>
+          <p>
+            The active-surface force, momentum, NAC drive, and hopping probability are therefore those of the same single-copy FSSH trajectory. No bead average or centroid replacement survives. Any discrepancy left at \(N=1\) must come from the way paths are initialized and counted, from the backward-history likelihood ratio, or from numerical quadrature, time step, and statistics.
           </p>
 
           <h2>Why Both Estimators Target One Flux-Side Rate</h2>
+          <h3>Step 1: write the reactant-side positive-flux ensemble</h3>
           <p>
-            For one incoming state (a) and final state (b), direct thermal scattering gives
+            Put a dividing surface \(R_A\) in the reactant asymptote, where the two electronic states are degenerate and the NAC has vanished. Let \(\mathcal P_{ab}(P)\) be the probability—averaged over the stochastic FSSH decisions—that a trajectory launched with \(P>0\) in the pure electronic state \(a\) reaches products in state \(b\). The classical mixed quantum–classical flux-side rate per reactant length is
+          </p>
+          <div class="math-block">\[
+            k^{\mathrm F}_{ab}
+            =\frac{1}{2\pi Q_A}
+            \int_0^\infty dP\,
+            \frac{P}{M}\,
+            e^{-\beta[P^2/(2M)+V_a(R_A)]}
+            \mathcal P_{ab}(P).
+          \]</div>
+          <p>
+            With the asymptotic energy zero \(V_a(R_A)=0\), the two degenerate reactant electronic states give
+          </p>
+          <div class="math-block">\[
+            Q_A=2\sqrt{\frac{M}{2\pi\beta}}.
+          \]</div>
+          <p>
+            Now set \(E=P^2/(2M)\). Because \(dE=(P/M)dP\), the velocity factor is exactly the Jacobian of the momentum-to-energy transformation. Using \(d(\beta E)=\beta\,dE\) gives
           </p>
           <div class="math-block">\[
             k^{\mathrm F}_{ab}=
@@ -61,7 +104,7 @@
             \mathcal P_{ab}(E).
           \]</div>
           <p>
-            The factor (1/2) is not fitted: the two asymptotic electronic states contribute to the reactant partition function. If transmission is classically impossible below a threshold (Delta), the integral is shifted to
+            The factor \(1/2\) is therefore not fitted; it comes from the electronic degeneracy in \(Q_A\). If transmission is classically impossible below a threshold \(\Delta\), write \(E=\Delta+x/\beta\). Then \(e^{-\beta E}=e^{-\beta\Delta}e^{-x}\), so
           </p>
           <div class="math-block">\[
             k^{\mathrm F}_{ab}=
@@ -73,8 +116,29 @@
             which is evaluated deterministically by Gauss–Laguerre quadrature. This is the energy-integrated analogue of sampling an exponentially distributed above-barrier excess energy.
           </p>
 
+          <h3>Step 2: insert every positive crossing without changing a path's weight</h3>
           <p>
-            The same long-time flux-side object can instead be cut at an internal dividing surface:
+            Consider one complete reactive path \(X\), and let \(n_+[X]\) be its number of positive-direction crossings of an internal surface \(R^\ddagger\). The delta-function identity
+          </p>
+          <div class="math-block">\[
+            \int_0^\tau dt\,
+            \delta(R_t-R^\ddagger)\,
+            \dot R_t\,\Theta(\dot R_t)
+            =n_+[X]
+          \]</div>
+          <p>
+            follows from \(\delta[f(t)]=\sum_j\delta(t-t_j)/|f'(t_j)|\): every positive crossing contributes one. Thus, for the reactive-path indicator \(\chi_{ab}[X]\),
+          </p>
+          <div class="math-block">\[
+            \chi_{ab}[X]
+            =\chi_{ab}[X]\,
+            \frac{1}{n_+[X]}
+            \int_0^\tau dt\,
+            \delta(R_t-R^\ddagger)\,
+            \dot R_t\,\Theta(\dot R_t).
+          \]</div>
+          <p>
+            Inserting this identity into the reactant-launched path integral changes neither the path nor its weight. It only re-indexes the ensemble by positive crossing events. Assuming a stationary thermal path measure, time translation moves the sampled crossing to \(t=0\), producing the familiar internal-surface factorization
           </p>
           <div class="math-block">\[
             k^{\mathrm S}_{ab}=\sum_i k_i^{\mathrm{TST}}\kappa^i_{ab},
@@ -84,31 +148,69 @@
             {2\sqrt{2\pi M\beta}}.
           \]</div>
           <p>
-            A reactive path may cross (R^ddagger) in the positive direction (n_+) times. Sampling every crossing would count that path (n_+) times, so each sampled event contributes (1/n_+). The path identity is simply
+            A trajectory sampled directly at \(R^\ddagger\) sees the same physical path once for every positive crossing. The factor \(1/n_+\) is therefore not a dynamical approximation; it is the multiplicity correction that makes the event-indexed ensemble count each complete reactive path once:
           </p>
           <div class="math-block">\[
             \sum_{j\in\text{positive crossings}}\frac{1}{n_+}=1.
           \]</div>
+
+          <h3>Step 3: recover the incoming electronic boundary condition</h3>
           <p>
-            Starting in the interaction region also removes knowledge of the incoming electronic state. A trial backward history is therefore drawn from a convenient proposal (Q(H)), while the physical FSSH history has probability (P(H\mid a)). The missing measure is restored by
+            A local active state \(i\) at \(R^\ddagger\) does not identify the reactant incoming state \(a\). The electronic amplitudes at the surface are therefore obtained by inverting the unitary electronic propagator subject to
+          </p>
+          <div class="math-block">\[
+            c_a(R_A)=1,\qquad c_{j\ne a}(R_A)=0.
+          \]</div>
+          <p>
+            The auxiliary backward algorithm draws a hop/no-hop history \(H=(e_1,\ldots,e_L)\) from a proposal distribution \(Q(H)\). The corresponding physical forward FSSH history has probability \(P(H\mid a)\). If the proposal covers the target support, \(Q(H)>0\) whenever \(P(H\mid a)>0\), the Radon–Nikodym derivative is
           </p>
           <div class="math-block">\[
             W(H)=\frac{P(H\mid a)}{Q(H)},
             \qquad
-            \mathbb E_Q[W(H)F(H)]=\mathbb E_P[F(H)].
+            W(H)=\prod_{\ell=1}^{L}
+            \frac{p_\ell^{\mathrm{FSSH}}(e_\ell\mid X_{\ell-1})}
+            {q_\ell^{\mathrm{trial}}(e_\ell\mid X_\ell)},
           \]</div>
           <p>
-            With positive centroid momentum sampled from the half-Maxwell distribution, the implemented transmission coefficient is
+            and unbiased reweighting follows by direct summation:
+          </p>
+          <div class="math-block">\[
+            \mathbb E_Q[W(H)F(H)]
+            =\sum_H Q(H)\frac{P(H\mid a)}{Q(H)}F(H)
+            =\sum_H P(H\mid a)F(H)
+            =\mathbb E_P[F(H)].
+          \]</div>
+          <p>
+            This is why assigning an electronic Boltzmann population locally at the dividing surface would answer a different question: it would not enforce the pure incoming boundary condition and would not reproduce the forward FSSH path measure.
+          </p>
+
+          <h3>Step 4: convert half-Maxwell sampling into positive flux</h3>
+          <p>
+            The code samples the canonical momentum conditioned only on \(P>0\),
+          </p>
+          <div class="math-block">\[
+            q_+(P)=
+            2\sqrt{\frac{\beta}{2\pi M}}\,
+            e^{-\beta P^2/(2M)}\,\Theta(P),
+          \]</div>
+          <p>
+            rather than sampling the already flux-weighted density proportional to \(P e^{-\beta P^2/(2M)}\). Consequently, the velocity \(P/M\) must appear once in both the reactive numerator and the normalization denominator. The implemented transmission coefficient is
           </p>
           <div class="math-block">\[
             \kappa^i_{ab}=
-            \frac{\left\langle (\bar P/M)\,
+            \frac{\left\langle (P/M)\,
             \mathbf 1_a(n_{-t})\mathbf 1_B(R_t)\mathbf 1_b(n_t)
-            W/n_+\right\rangle_{R^\ddagger,i,\bar P>0}}
-            {\left\langle \bar P/M\right\rangle_{R^\ddagger,i,\bar P>0}}.
+            W/n_+\right\rangle_{q_+,R^\ddagger,i}}
+            {\left\langle P/M\right\rangle_{q_+,R^\ddagger,i}}.
           \]</div>
           <p>
-            Notice that the momentum sampler itself is not already flux weighted. The single factor (ar P/M) appears in the ratio. This avoids both missing and double-counting the flux weight.
+            Multiplying this ratio by \(k_i^{\mathrm{TST}}\) restores the Boltzmann penalty for reaching surface \(i\). Summing over all dividing-surface states \(i\), incoming states \(a\), and final states \(b\) restores the complete electronic trace. Under the same Hamiltonian and FSSH rules, correct history support and likelihood ratios, crossing correction, stationary thermal measure, and converged numerical limits,
+          </p>
+          <div class="math-block">\[
+            \boxed{k^{\mathrm F}_{ab}=k^{\mathrm S}_{ab}}.
+          \]</div>
+          <p>
+            The equality is a change of sampling measure, not a claim that the two generated microscopic histories are identical trajectory by trajectory.
           </p>
 
           <h2>What the Algorithms Actually Do</h2>
