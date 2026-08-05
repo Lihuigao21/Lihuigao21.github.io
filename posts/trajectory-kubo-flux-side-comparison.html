@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A practical method for comparing trajectory-based reaction dynamics with quantum Kubo flux-side correlations using matched dividing surfaces, rate prefactors, and long-time normalization.">
+    <meta name="description" content="A practical comparison of trajectory dynamics and quantum Kubo flux-side correlations, including executable CSSH initial sampling, electronic propagation, frustrated hops, and thermal-rate estimation.">
     <title>Comparing Trajectory Dynamics with Kubo Flux-Side Correlations | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
@@ -27,7 +27,7 @@
 
         <div class="post-content">
           <p class="lead">
-            A trajectory ensemble and a quantum Kubo correlation function are not the same microscopic object. They can nevertheless be compared at the level of a common reaction-rate observable. The essential steps are to match the Hamiltonian and dividing surfaces, keep the quantum trace unnormalized until the end, restore the rate prefactor removed by conditional trajectory sampling, and compare both transient shape and long-time plateau on one dimensionless scale.
+            A trajectory ensemble and a quantum Kubo correlation function are not the same microscopic object. They can nevertheless be compared at the level of a common reaction-rate observable. This article makes that comparison algorithmic: it derives the flux-conditioned Boltzmann initial ensemble, shows how CSSH propagates electronic amplitudes, implements accepted and frustrated hops, and restores the thermal rate prefactor removed by rare-event conditioning.
           </p>
 
           <h2>The Quantum Object</h2>
@@ -49,7 +49,7 @@
 
           <h2>The Trajectory Analogue</h2>
           <p>
-            In a trajectory calculation it is inefficient to draw an unconstrained canonical ensemble and wait for rare reactive events. Instead, one samples a forward ensemble conditioned to cross the relevant barrier, propagates it, and measures the product-side fraction
+            In a trajectory calculation it is inefficient to draw an unconstrained canonical ensemble and wait for rare reactive events. CSSH instead launches trajectories from the reactant asymptote in a pure lower electronic state, samples a forward ensemble conditioned to clear the lower centroid barrier, and measures the product-side fraction
           </p>
           <div class="math-block">\[
             P_{\mathrm{prod}}(t)=
@@ -57,7 +57,7 @@
             \Theta\!\left[x_n(t)-s_2\right].
           \]</div>
           <p>
-            Conditional sampling removes the small thermal flux from the Monte Carlo average, so the raw fraction is not a rate. The missing scale must be restored through a separately evaluated baseline rate \(k_{\mathrm{base}}\):
+            This is a conditional transmission probability, not an equilibrium population and not yet a rate. The small probability of thermally reaching the barrier has deliberately been removed from the trajectory average. It must be restored through a separately evaluated baseline rate \(k_{\mathrm{base}}\):
           </p>
           <div class="math-block">\[
             C_{fs}^{\mathrm{traj}}(t)
@@ -65,6 +65,118 @@
           \]</div>
           <p>
             For classical adiabatic dynamics, \(k_{\mathrm{base}}\) is the classical transition-state rate. For centroid molecular dynamics it is the CMD transition-state rate computed from the centroid free-energy barrier. For centroid-surface surface hopping, the same CMD prefactor is multiplied by the product fraction of hopping trajectories.
+          </p>
+
+          <h2>Why the Above-Barrier Energy Is Exponential</h2>
+          <p>
+            The rule \(E=V_c^\ddagger+\xi\) with exponentially distributed \(\xi\) is not an empirical convenience. It follows from sampling <em>positive thermal flux</em>. A canonical momentum density alone is Gaussian, but trajectories crossing a surface are additionally weighted by their velocity \(p/m\):
+          </p>
+          <div class="math-block">\[
+            \rho_{\mathrm{flux}}(p)\,dp
+            =\beta\frac{p}{m}
+            \exp\!\left[-\beta\frac{p^2}{2m}\right]dp,
+            \qquad p>0.
+          \]</div>
+          <p>
+            Under the change of variable \(K=p^2/(2m)\), \(dK=(p/m)dp\), so the positive-flux kinetic energy has the normalized density
+          </p>
+          <div class="math-block">\[
+            \rho(K)=\beta e^{-\beta K},\qquad K\ge 0.
+          \]</div>
+          <p>
+            Conditioning the total energy on being above the active centroid barrier therefore gives
+          </p>
+          <div class="math-block">\[
+            E=V_{c,a}^{\ddagger}+\xi,\qquad
+            \xi\sim\operatorname{Exp}(\text{scale}=1/\beta),
+          \]</div>
+          <pre><code>beta = 1.0 / (kB * temperature)
+barrier = centroid_surface.barrier(active_state)[1]
+excess = rng.exponential(scale=1.0 / beta, size=ntraj)
+total_energy = barrier + excess
+start_energy = centroid_surface.energy(x_start, active_state)
+p = np.sqrt(2.0 * mass * (total_energy - start_energy))</code></pre>
+          <p>
+            Merely drawing a Maxwell momentum and discarding \(p<0\) would miss the velocity weighting and produce the wrong crossing ensemble. The conditional construction is also a useful rare-event factorization: at 100 K the final thermal rate is of order \(10^{-11}\) a.u., while the conditioned CSSH transmission probability is about \(0.16\). The exponentially rare barrier access is handled by \(k_{\mathrm{CMD}}\), leaving an order-one dynamical probability for Monte Carlo. This is a major variance reduction, but it also fixes the interpretation: the raw \(P_{\mathrm{prod}}\) cannot be compared directly with an unconditional Kubo trace.
+          </p>
+          <p>
+            Real-time centroid trajectories still do not tunnel through the barrier. Nuclear quantum effects enter through the centroid free-energy barrier and the CMD prefactor. The subsequent surface-hopping trajectories estimate reflection, recrossing, and nonadiabatic transmission conditional on barrier access.
+          </p>
+
+          <h2>Electronic Propagation, Hops, and Frustrated Hops</h2>
+          <p>
+            CSSH separates the surfaces used by the nuclei from the quantities used by the electronic subsystem. Nuclear forces come from state-specific centroid free-energy surfaces \(V_{c,n}(x)\). Electronic amplitudes are propagated with the physical adiabatic energies and nonadiabatic coupling. In the trajectory-fitted formulation, the momentum of the inactive physical channel is reconstructed at the same total energy,
+          </p>
+          <div class="math-block">\[
+            p_j=\operatorname{sgn}(p)
+            \sqrt{\max\!\left[0,\,
+            p^2+2m(E_a-E_j)\right]},
+          \]</div>
+          <p>
+            and a phase-corrected two-state Hamiltonian is built as
+          </p>
+          <pre><code>arg = p**2 + 2.0 * mass * (energy[active] - energy[inactive])
+p_inactive = np.sign(p) * np.sqrt(max(0.0, arg))
+H[i, i] = -p * p_channel[i] / mass
+H[0, 1] = -1j * (p / mass) * nac[0, 1]
+H[1, 0] = -1j * (p / mass) * nac[1, 0]
+c = expm(-1j * H * dt) @ c</code></pre>
+          <p>
+            The local two-state propagator is evaluated at the nuclear midpoint. For active state \(a\) and target \(b\), the fewest-switches trial probability used in the implementation is
+          </p>
+          <div class="math-block">\[
+            g_{a\rightarrow b}
+            =\max\!\left[
+            0,\,
+            \frac{2\Delta t\,
+            \operatorname{Re}\!\left(c_a^*c_b\,v\,d_{ab}\right)}
+            {|c_a|^2}
+            \right].
+          \]</div>
+          <pre><code>coupling = (p_mid / mass) * nac[active, target]
+coherence = np.conj(c[active]) * c[target]
+g = max(0.0, 2.0 * np.real(coherence * coupling) * dt
+               / max(abs(c[active])**2, 1e-15))
+attempt_hop = rng.random() &lt; g</code></pre>
+          <p>
+            A trial hop is then judged by energy conservation on the <em>centroid</em> surfaces, because those surfaces generate the nuclear dynamics:
+          </p>
+          <pre><code>delta_v = Vc(target, x_new) - Vc(active, x_new)
+kinetic_after = p_new**2 / (2.0 * mass) - delta_v
+if kinetic_after &gt;= 0.0:
+    p_new = np.sign(p_new) * np.sqrt(2.0 * mass * kinetic_after)
+    active = target                         # accepted hop
+else:
+    p_new = -p_new                          # frustrated hop
+    # active state is unchanged</code></pre>
+          <p>
+            In one dimension, reversal is reversal along the nonadiabatic-coupling direction. This is not cosmetic bookkeeping: a frustrated upward hop can turn an otherwise transmitting trajectory back toward reactants. In the \(10^6\)-trajectory 100 K reproduction, 982,089 hops were attempted, none were energetically accepted, and all were frustrated. The successful rate agreement therefore does not mean that upward population transfer occurred; it means that the algorithm reproduced the required nonadiabatic reflection through frustrated-hop reversals. That extreme statistic should be reported explicitly because changing the frustrated-hop rule would change the observable.
+          </p>
+
+          <h2>From Conditional Transmission to a Thermal Rate</h2>
+          <p>
+            If \(N_{\mathrm{prod}}\) of \(N\) conditioned trajectories reach the product boundary, the CSSH estimator is
+          </p>
+          <div class="math-block">\[
+            \widehat P_{\mathrm{CSSH}}=\frac{N_{\mathrm{prod}}}{N},
+            \qquad
+            \widehat k_{\mathrm{CSSH}}
+            =k_{\mathrm{CMD}}\widehat P_{\mathrm{CSSH}}.
+          \]</div>
+          <p>
+            For the paper's dimensionless benchmark,
+          </p>
+          <div class="math-block">\[
+            \gamma=
+            \frac{\widehat P_{\mathrm{CSSH}}}
+            {k_{\mathrm{QM,NA}}/k_{\mathrm{QM,A}}}.
+          \]</div>
+          <pre><code>P = transmitted / ntraj
+P_se = np.sqrt(P * (1.0 - P) / ntraj)
+k_cssh = k_cmd * P
+gamma = P / exact_nonadiabatic_to_adiabatic_ratio</code></pre>
+          <p>
+            At 100 K, \(N=10^6\) gave \(P_{\mathrm{CSSH}}=0.159419\pm0.000339\) from independent trajectory blocks and \(\gamma=0.811147\pm0.001726\), compared with the published values 0.15957 and 0.81. A binomial error is useful for a single endpoint, but production uncertainty should come from independent blocks or seeds so that shared initial conditions, trajectory histories, and saved time points are not mistaken for independent samples.
           </p>
 
           <h2>A Common Dimensionless Scale</h2>
@@ -144,11 +256,9 @@
             Values at neighboring times are strongly correlated because they come from the same trajectories. A plateau uncertainty should therefore be estimated from independent trajectory blocks or replicates, rather than treating every saved time point as an independent observation.
           </p>
 
-          <h2>Code and Data</h2>
+          <h2>Algorithm Code</h2>
           <ul class="code-list">
-            <li><a href="../assets/code/mqc/kubo_trajectory_flux_side_comparison.py">kubo_trajectory_flux_side_comparison.py</a> reads the published time series and regenerates the two-panel comparison figure.</li>
-            <li><a href="../assets/img/mqc-series/kubo-trajectory-flux-side-200K.csv">kubo-trajectory-flux-side-200K.csv</a> contains the normalized 200 K quantum, CMD, and FSSH curves and trajectory standard errors.</li>
-            <li><a href="../assets/img/mqc-series/kubo-trajectory-flux-side-300K.csv">kubo-trajectory-flux-side-300K.csv</a> contains the corresponding 300 K data.</li>
+            <li><a href="../assets/code/mqc/cssh_rate_algorithm.py">cssh_rate_algorithm.py</a> is an executable, self-checking implementation of the algorithmic core: positive-flux conditional sampling, trajectory-fitted electronic propagation, fewest-switches trials, accepted/frustrated hop resolution, trajectory termination, and CSSH rate estimation.</li>
             <li><a href="dvr-flux-side-correlation.html">DVR VI: Flux-Side Kubo Correlation</a> gives the underlying DVR operator construction.</li>
             <li><a href="cmd-effective-surfaces-tully-sac.html">CMD Effective Surfaces for Tully SAC</a> explains the centroid free-energy surfaces used by the trajectory side of the comparison.</li>
           </ul>
