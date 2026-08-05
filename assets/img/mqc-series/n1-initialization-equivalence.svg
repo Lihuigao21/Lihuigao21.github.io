@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620" role="img" aria-labelledby="title desc">
+  <title id="title">N equals one forward and dividing-surface rate convergence</title>
+  <desc id="desc">Four rate estimates with one-standard-error bars: forward Gauss-Laguerre orders 16 and 24, and dividing-surface time steps 0.0036 and 0.0018 femtoseconds. The order-24 forward and half-step surface values coincide.</desc>
+  <rect width="1100" height="620" fill="#f8fafc"/>
+  <rect x="95" y="55" width="930" height="430" rx="10" fill="#ffffff" stroke="#d6dee8"/>
+  <text x="560" y="34" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#162334">N=1 incoming-state-1 thermal rate at 100 K</text>
+
+  <g stroke="#dfe6ee" stroke-width="1">
+    <line x1="135" y1="431" x2="995" y2="431"/>
+    <line x1="135" y1="377" x2="995" y2="377"/>
+    <line x1="135" y1="323" x2="995" y2="323"/>
+    <line x1="135" y1="269" x2="995" y2="269"/>
+    <line x1="135" y1="215" x2="995" y2="215"/>
+    <line x1="135" y1="162" x2="995" y2="162"/>
+    <line x1="135" y1="108" x2="995" y2="108"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="15" fill="#536273" text-anchor="end">
+    <text x="124" y="436">0.6</text><text x="124" y="382">0.7</text>
+    <text x="124" y="328">0.8</text><text x="124" y="274">0.9</text>
+    <text x="124" y="220">1.0</text><text x="124" y="167">1.1</text>
+    <text x="124" y="113">1.2</text>
+  </g>
+  <text x="32" y="280" transform="rotate(-90 32 280)" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#334155">Rate (10⁻¹¹ a.u.)</text>
+
+  <g stroke-linecap="round" stroke-width="4">
+    <g stroke="#2364aa" fill="#2364aa">
+      <line x1="270" y1="175" x2="270" y2="223"/>
+      <line x1="257" y1="175" x2="283" y2="175"/>
+      <line x1="257" y1="223" x2="283" y2="223"/>
+      <circle cx="270" cy="199" r="9"/>
+    </g>
+    <g stroke="#174a7e" fill="#174a7e">
+      <line x1="470" y1="238" x2="470" y2="284"/>
+      <line x1="457" y1="238" x2="483" y2="238"/>
+      <line x1="457" y1="284" x2="483" y2="284"/>
+      <circle cx="470" cy="261" r="9"/>
+    </g>
+    <g stroke="#d97706" fill="#d97706">
+      <line x1="700" y1="134" x2="700" y2="319"/>
+      <line x1="687" y1="134" x2="713" y2="134"/>
+      <line x1="687" y1="319" x2="713" y2="319"/>
+      <rect x="692" y="219" width="16" height="16" rx="2"/>
+    </g>
+    <g stroke="#9a4f02" fill="#9a4f02">
+      <line x1="900" y1="203" x2="900" y2="320"/>
+      <line x1="887" y1="203" x2="913" y2="203"/>
+      <line x1="887" y1="320" x2="913" y2="320"/>
+      <rect x="892" y="253" width="16" height="16" rx="2"/>
+    </g>
+  </g>
+
+  <line x1="470" y1="261" x2="900" y2="261" stroke="#16a085" stroke-width="2.5" stroke-dasharray="8 7"/>
+  <rect x="573" y="238" width="225" height="44" rx="8" fill="#e9f8f4" stroke="#77c7b5"/>
+  <text x="685" y="256" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#0d6b59">relative difference 8.55×10⁻⁶</text>
+  <text x="685" y="274" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#0d6b59">combined z = 6.71×10⁻⁵</text>
+
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <text x="270" y="516" font-size="16" font-weight="700" fill="#2364aa">Forward q=16</text>
+    <text x="270" y="538" font-size="14" fill="#536273">1.0292 ± 0.0439</text>
+    <text x="470" y="516" font-size="16" font-weight="700" fill="#174a7e">Forward q=24</text>
+    <text x="470" y="538" font-size="14" fill="#536273">0.9132 ± 0.0426</text>
+    <text x="700" y="516" font-size="16" font-weight="700" fill="#d97706">Surface dt</text>
+    <text x="700" y="538" font-size="14" fill="#536273">0.9773 ± 0.1715</text>
+    <text x="900" y="516" font-size="16" font-weight="700" fill="#9a4f02">Surface dt/2</text>
+    <text x="900" y="538" font-size="14" fill="#536273">0.9132 ± 0.1083</text>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="14">
+    <rect x="180" y="566" width="330" height="32" rx="7" fill="#fff4e5" stroke="#e5a74e"/>
+    <text x="345" y="587" text-anchor="middle" fill="#854d0e">q16→q24: 11.27% — strict 10% gate fails</text>
+    <rect x="590" y="566" width="330" height="32" rx="7" fill="#eaf7ef" stroke="#70b98c"/>
+    <text x="755" y="587" text-anchor="middle" fill="#176239">dt→dt/2: 6.56% — convergence gate passes</text>
+  </g>
+</svg>

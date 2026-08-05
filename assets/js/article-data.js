@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "n1-forward-dividing-surface-equivalence",
+    title: "From Reactants or the Dividing Surface? An N=1 Equivalence Test",
+    path: "posts/n1-forward-dividing-surface-equivalence.html",
+    date: "2026-08-05",
+    dateText: "2026.08.05",
+    description: "An algorithmic N=1 convergence test showing when reactant-launched FSSH and Tully's dividing-surface history reconstruction estimate the same thermal flux-side rate.",
+    tags: ["Flux-Side Correlation", "Surface Hopping", "Reaction Rates", "Rare-Event Sampling", "Tully Model", "Reproduction"],
+  },
+  {
     slug: "trajectory-kubo-flux-side-comparison",
     title: "Comparing Trajectory Dynamics with Kubo Flux-Side Correlations",
     path: "posts/trajectory-kubo-flux-side-comparison.html",

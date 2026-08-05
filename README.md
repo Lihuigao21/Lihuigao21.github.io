@@ -457,6 +457,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/dream-discrete-moments-2026-07-06.html` - Chinese dreams and creation note.
 - `life/dream-two-weeks-memorial-2026-07-05.html` - Chinese dreams and creation special note.
 - `life/dream-meet-again-2026-07-05.html` - Chinese dreams and creation note.
+- `posts/n1-forward-dividing-surface-equivalence.html`
 - `posts/trajectory-kubo-flux-side-comparison.html`
 - `posts/geometric-phase-key-theory-reproductions.html`
 - `posts/geometric-phase-jahn-teller-thermodynamics.html`
