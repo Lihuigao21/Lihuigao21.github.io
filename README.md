@@ -14,6 +14,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- robots.txt
 |-- sitemap.xml
 |-- posts
+|   |-- trajectory-kubo-flux-side-comparison.html
 |   |-- gpt-5-6-reasoning-for-scientific-engineering.html
 |   |-- hefeinamd-training-hands-on-workflow.html
 |   |-- mes-pimd-geometric-phase-thermodynamics.html
@@ -456,6 +457,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/dream-discrete-moments-2026-07-06.html` - Chinese dreams and creation note.
 - `life/dream-two-weeks-memorial-2026-07-05.html` - Chinese dreams and creation special note.
 - `life/dream-meet-again-2026-07-05.html` - Chinese dreams and creation note.
+- `posts/trajectory-kubo-flux-side-comparison.html`
 - `posts/geometric-phase-key-theory-reproductions.html`
 - `posts/geometric-phase-jahn-teller-thermodynamics.html`
 - `posts/hefeinamd-training-hands-on-workflow.html`

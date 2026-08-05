@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "trajectory-kubo-flux-side-comparison",
+    title: "Comparing Trajectory Dynamics with Kubo Flux-Side Correlations",
+    path: "posts/trajectory-kubo-flux-side-comparison.html",
+    date: "2026-08-05",
+    dateText: "2026.08.05",
+    description: "A practical method for placing quantum Kubo and trajectory flux-side correlations on one rate-normalized scale, with a staged Tully SAC benchmark.",
+    tags: ["Kubo Correlation", "Flux-Side Correlation", "Surface Hopping", "CMD", "Reaction Rates", "Reproduction"],
+  },
+  {
     slug: "nearsightedness-linear-scaling-local-ml-potentials",
     title: "Electronic Nearsightedness, Linear Scaling, and Local ML Potentials",
     path: "posts/nearsightedness-linear-scaling-local-ml-potentials.html",

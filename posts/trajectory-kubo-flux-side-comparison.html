@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A practical method for comparing trajectory-based reaction dynamics with quantum Kubo flux-side correlations using matched dividing surfaces, rate prefactors, and long-time normalization.">
+    <title>Comparing Trajectory Dynamics with Kubo Flux-Side Correlations | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Reaction-Rate Methods</p>
+          <h1>Comparing Trajectory Dynamics with Kubo Flux-Side Correlations</h1>
+          <p class="post-meta">2026.08.05 - Kubo Correlation / Surface Hopping / CMD</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            A trajectory ensemble and a quantum Kubo correlation function are not the same microscopic object. They can nevertheless be compared at the level of a common reaction-rate observable. The essential steps are to match the Hamiltonian and dividing surfaces, keep the quantum trace unnormalized until the end, restore the rate prefactor removed by conditional trajectory sampling, and compare both transient shape and long-time plateau on one dimensionless scale.
+          </p>
+
+          <h2>The Quantum Object</h2>
+          <p>
+            Let \(s_1\) be a reactant-side dividing surface and \(s_2\) a product-side surface. The Kubo-transformed flux-side correlation may be written as
+          </p>
+          <div class="math-block">\[
+            C_{fs}^{\mathrm K}(t)=
+            \frac{1}{\beta}\int_0^\beta d\lambda\,
+            \operatorname{Tr}\!\left[
+            e^{(\lambda-\beta)\hat H}\hat F_1
+            e^{(-\lambda+i t/\hbar)\hat H}
+            \hat h_2 e^{-i\hat Ht/\hbar}
+            \right],
+          \]</div>
+          <p>
+            where \(\hat h_i=\Theta(\hat x-s_i)\) and \(\hat F_1=(i/\hbar)[\hat H,\hat h_1]\). The flux operator selects thermal amplitude crossing \(s_1\), while the side operator asks how much of that amplitude is on the product side of \(s_2\) at time \(t\). With open scattering boundaries or a sufficiently well-controlled absorbing box, the long-time plateau is proportional to the thermal rate.
+          </p>
+
+          <h2>The Trajectory Analogue</h2>
+          <p>
+            In a trajectory calculation it is inefficient to draw an unconstrained canonical ensemble and wait for rare reactive events. Instead, one samples a forward ensemble conditioned to cross the relevant barrier, propagates it, and measures the product-side fraction
+          </p>
+          <div class="math-block">\[
+            P_{\mathrm{prod}}(t)=
+            \frac{1}{N}\sum_{n=1}^{N}
+            \Theta\!\left[x_n(t)-s_2\right].
+          \]</div>
+          <p>
+            Conditional sampling removes the small thermal flux from the Monte Carlo average, so the raw fraction is not a rate. The missing scale must be restored through a separately evaluated baseline rate \(k_{\mathrm{base}}\):
+          </p>
+          <div class="math-block">\[
+            C_{fs}^{\mathrm{traj}}(t)
+            \propto Q_r k_{\mathrm{base}}P_{\mathrm{prod}}(t).
+          \]</div>
+          <p>
+            For classical adiabatic dynamics, \(k_{\mathrm{base}}\) is the classical transition-state rate. For centroid molecular dynamics it is the CMD transition-state rate computed from the centroid free-energy barrier. For centroid-surface surface hopping, the same CMD prefactor is multiplied by the product fraction of hopping trajectories.
+          </p>
+
+          <h2>A Common Dimensionless Scale</h2>
+          <p>
+            The safest operational normalization is the long-time adiabatic quantum plateau:
+          </p>
+          <div class="math-block">\[
+            \widetilde C(t)=
+            \frac{C_{fs}(t)}{C_{fs,\mathrm{QM,A}}(\infty)}.
+          \]</div>
+          <p>
+            In the convention used for the present benchmark, \(C_{fs,\mathrm{QM,A}}(\infty)=2\pi Q_r k_{\mathrm{QM,A}}\). The trajectory curve therefore becomes
+          </p>
+          <div class="math-block">\[
+            \widetilde C_{\mathrm{traj}}(t)=
+            \frac{k_{\mathrm{base}}}{k_{\mathrm{QM,A}}}
+            P_{\mathrm{prod}}(t).
+          \]</div>
+          <p>
+            This formula separates two sources of error. The ratio \(k_{\mathrm{base}}/k_{\mathrm{QM,A}}\) tests the static barrier and thermal statistics. The product fraction tests recrossing, reflection, and nonadiabatic transmission. A trajectory method can obtain one factor correctly while failing on the other.
+          </p>
+
+          <h2>Why Finite-Box Partition Normalization Fails</h2>
+          <p>
+            A sinc-DVR calculation is usually performed in a finite box, but an open scattering rate is defined per reactant length or incoming flux. Dividing the raw Kubo trace by the canonical partition function of the numerical box introduces an arbitrary dependence on box length. Increasing the empty asymptotic region then changes the reported correlation even though the local scattering physics is unchanged.
+          </p>
+          <p>
+            The practical cure is to retain the unnormalized Kubo trace, verify convergence with box size and absorbing boundaries, and normalize only by the independently identified adiabatic quantum plateau. The box is then a numerical representation of the continuum rather than part of the physical normalization.
+          </p>
+
+          <h2>Matched Comparison Workflow</h2>
+          <ol>
+            <li><strong>Match the Hamiltonian.</strong> Use the same physical potential, mass, electronic coupling, temperature, and asymptotic energy zero in the quantum and trajectory calculations.</li>
+            <li><strong>Match the surfaces.</strong> Use the same \(s_1\) and \(s_2\). In the staged Tully benchmark they are \(s_1=-10\) and \(s_2=10\) a.u.</li>
+            <li><strong>Converge the quantum reference.</strong> Check DVR spacing, box size, time step, absorber, and the stability of the plateau window.</li>
+            <li><strong>Define the conditioned trajectory ensemble.</strong> For an above-barrier Boltzmann ensemble, sample \(E=V^\ddagger+\xi\) with \(\xi\sim\operatorname{Exp}(\beta)\), choose positive incoming momentum, and propagate from \(s_1\).</li>
+            <li><strong>Restore the prefactor.</strong> Multiply the product fraction by the classical, CMD, or other baseline rate before comparing it with the Kubo trace.</li>
+            <li><strong>Compare more than the endpoint.</strong> Inspect arrival time, rise width, recrossing, plateau height, and statistical uncertainty separately.</li>
+          </ol>
+
+          <h2>Staged Tully SAC Benchmark</h2>
+          <p>
+            The example below uses the two-state simple avoided crossing with coupling \(\Delta=0.002\), nuclear mass \(m=2000\), and 1000 trajectories per approximate method. The quantum curves are unnormalized Kubo traces divided by the converged adiabatic quantum plateau. CMD uses a centroid free-energy surface without hops. FSSH uses the physical adiabatic surfaces and phase-corrected electronic propagation. This staged comparison does not include the separate CSSH curve, which would combine centroid-surface nuclear forces with hopping.
+          </p>
+
+          <figure>
+            <img src="../assets/img/mqc-series/kubo-trajectory-flux-side-comparison.png" alt="Normalized quantum Kubo, CMD, and FSSH flux-side correlations at 300 and 200 kelvin">
+            <figcaption>Normalized flux-side correlations for the Tully simple avoided crossing at 300 K (left) and 200 K (right). Time is in atomic units. The vertical axis is \(C_{fs}(t)/(2\pi Q_r k_{\mathrm{QM,A}})\). Black dashed and solid curves are the adiabatic and nonadiabatic quantum Kubo references, blue dashed is CMD, and red is FSSH. Shaded bands are one standard error for the trajectory product fraction after rate scaling. Lowering the temperature increases the separation between the quantum and physical-surface trajectory results: CMD retains the centroid-barrier tunneling enhancement, whereas FSSH remains limited by the classical incoming flux.</figcaption>
+          </figure>
+
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Temperature</th><th>Normalized plateau</th><th>Calculated</th><th>Reference</th></tr></thead>
+              <tbody>
+                <tr><td>300 K</td><td>QM nonadiabatic</td><td>0.31029</td><td>0.311</td></tr>
+                <tr><td>300 K</td><td>CMD</td><td>0.79442</td><td>0.793</td></tr>
+                <tr><td>300 K</td><td>FSSH</td><td>\(0.07902\pm0.00337\)</td><td>0.07529</td></tr>
+                <tr><td>200 K</td><td>QM nonadiabatic</td><td>0.24148</td><td>0.243</td></tr>
+                <tr><td>200 K</td><td>CMD</td><td>0.73363</td><td>0.729</td></tr>
+                <tr><td>200 K</td><td>FSSH</td><td>\(0.01774\pm0.00080\)</td><td>0.01688</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>What Agreement Does and Does Not Mean</h2>
+          <p>
+            Agreement of the long-time plateau is agreement of a thermal rate after the chosen normalization. Agreement of the full rise is stronger evidence that the approximate ensemble also reproduces the arrival-time and recrossing structure of the observable. Neither result proves that a classical or surface-hopping trajectory is a literal realization of a quantum path. The comparison is between estimators of one operator-defined observable, not between microscopic histories.
+          </p>
+          <p>
+            Statistical interpretation also requires care. At one time point the trajectory product fraction has the binomial estimate
+          </p>
+          <div class="math-block">\[
+            \operatorname{SE}[P(t)]\approx
+            \sqrt{\frac{P(t)[1-P(t)]}{N}}.
+          \]</div>
+          <p>
+            Values at neighboring times are strongly correlated because they come from the same trajectories. A plateau uncertainty should therefore be estimated from independent trajectory blocks or replicates, rather than treating every saved time point as an independent observation.
+          </p>
+
+          <h2>Code and Data</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/mqc/kubo_trajectory_flux_side_comparison.py">kubo_trajectory_flux_side_comparison.py</a> reads the published time series and regenerates the two-panel comparison figure.</li>
+            <li><a href="../assets/img/mqc-series/kubo-trajectory-flux-side-200K.csv">kubo-trajectory-flux-side-200K.csv</a> contains the normalized 200 K quantum, CMD, and FSSH curves and trajectory standard errors.</li>
+            <li><a href="../assets/img/mqc-series/kubo-trajectory-flux-side-300K.csv">kubo-trajectory-flux-side-300K.csv</a> contains the corresponding 300 K data.</li>
+            <li><a href="dvr-flux-side-correlation.html">DVR VI: Flux-Side Kubo Correlation</a> gives the underlying DVR operator construction.</li>
+            <li><a href="cmd-effective-surfaces-tully-sac.html">CMD Effective Surfaces for Tully SAC</a> explains the centroid free-energy surfaces used by the trajectory side of the comparison.</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Miller, Schwartz, and Tromp, <em>J. Chem. Phys.</em> 79, 4889 (1983).</li>
+            <li>Tully, <em>J. Chem. Phys.</em> 93, 1061 (1990).</li>
+            <li>Zeng, Li, and Fang, <em>J. Chem. Phys.</em> 163, 224126 (2025), <a href="https://doi.org/10.1063/5.0286954" target="_blank" rel="noreferrer">doi:10.1063/5.0286954</a>.</li>
+          </ul>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
