@@ -58,6 +58,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-08-06.html
 |   |-- daily-record-2026-08-05.html
 |   |-- daily-record-2026-08-04.html
 |   |-- daily-record-2026-08-03.html
@@ -319,6 +320,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-08-06.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-05.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-04.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-03.html` - Chinese daily-life record note.
@@ -387,7 +389,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
 - `life/relationship-first-unsolved-problem-2026-08-06.html` - Chinese relationship reflection note.
-- `life/relationship-final-chapter-2026-08-06.html` - Chinese relationship reflection note.
+- `life/relationship-final-chapter-2026-08-06.html` - Pinned Chinese relationship final chapter.
 - `life/relationship-loyalty-and-uncertainty-2026-08-05.html` - Chinese relationship reflection note.
 - `life/relationship-cherish-love-2026-07-31.html` - Chinese relationship reflection note.
 - `life/relationship-three-separations-2026-07-30.html` - Chinese relationship reflection note.
