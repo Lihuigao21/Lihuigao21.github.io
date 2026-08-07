@@ -16,7 +16,7 @@ This file defines how future agents should write, revise, and publish articles f
 
 ## 生活记录 Section
 
-- The “生活记录” section is a Chinese-language public section for recording daily life. Its modules include “精神世界”, “日常”, “反思”, “感情”, “出游”, “美食”, “人生体验”, “Skill”, “正反馈”, “回忆”, “社论”, “梦与创造”, and “和 GPT 的深度聊天”.
+- The “生活记录” section is a Chinese-language public section for recording daily life. Its modules include “精神世界”, “日常”, “反思”, “感情”, “出游”, “美食”, “探索未知”, “Skill”, “正反馈”, “回忆”, “社论”, “梦与创造”, and “和 GPT 的深度聊天”.
 - Treat `life.html` as the section landing page. Treat `mind.html` as the “精神世界” module, not as a separate top-level site category. Put additional lifestyle module pages under `life/`.
 - When publishing any new life-note page, update the hand-maintained “最新十篇” list in `life.html` so it contains the newest ten life records in reverse chronological order.
 - Do not force this section into the technical-article requirements for benchmark results, code links, or reproducible computational workflows.

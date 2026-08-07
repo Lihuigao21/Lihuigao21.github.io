@@ -428,7 +428,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/travel.html` - Chinese travel module.
 - `life/food.html` - Chinese food module.
 - `life/food-xinjiang-first-day-2026-07-14.html` - Chinese food note.
-- `life/life-experience.html` - Chinese life-experience module.
+- `life/life-experience.html` - Chinese exploration-of-the-unknown module.
 - `life/skill.html` - Chinese skill-learning module.
 - `life/positive-feedback.html` - Chinese positive-feedback module.
 - `life/positive-feedback-task-list-2026-07-27.html` - Chinese positive-feedback task note.
