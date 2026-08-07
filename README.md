@@ -96,6 +96,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-record-2026-07-01.html
 |   |-- daily-record-2026-06-30.html
 |   |-- daily-summary-2026-06-29.html
+|   |-- mind-state-reshape-external-environment-2026-08-06.html
 |   |-- mind-state-sulking-and-communication-2026-08-05.html
 |   |-- mind-state-build-a-framework-2026-08-04.html
 |   |-- mind-state-world-as-mirror-2026-08-03.html
@@ -124,6 +125,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- mind-state-2026-06-30.html
 |   |-- p-to-j-plan-2026-06-29.html
 |   |-- relationship.html
+|   |-- relationship-first-unsolved-problem-2026-08-06.html
+|   |-- relationship-final-chapter-2026-08-06.html
 |   |-- relationship-loyalty-and-uncertainty-2026-08-05.html
 |   |-- relationship-cherish-love-2026-07-31.html
 |   |-- relationship-three-separations-2026-07-30.html
@@ -175,6 +178,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
 |   |-- dreams-creation.html
+|   |-- dream-primary-school-road-2026-08-06.html
 |   |-- dream-love-tide-rises-2026-08-05.html
 |   |-- dream-flowers-in-full-bloom-2026-08-01.html
 |   |-- dream-final-level-2026-07-29.html
@@ -353,6 +357,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-record-2026-07-01.html` - Chinese daily-life record note.
 - `life/daily-record-2026-06-30.html` - Chinese daily-life record note.
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
+- `life/mind-state-reshape-external-environment-2026-08-06.html` - Chinese mental-state reflection note.
 - `life/mind-state-sulking-and-communication-2026-08-05.html` - Chinese mental-state reflection note.
 - `life/mind-state-build-a-framework-2026-08-04.html` - Chinese mental-state reflection note.
 - `life/mind-state-world-as-mirror-2026-08-03.html` - Chinese mental-state reflection note.
@@ -381,6 +386,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/mind-state-2026-06-30.html` - Chinese mental-state reflection note.
 - `life/p-to-j-plan-2026-06-29.html` - Chinese daily-life pinned P-to-J plan.
 - `life/relationship.html` - Chinese relationship module.
+- `life/relationship-first-unsolved-problem-2026-08-06.html` - Chinese relationship reflection note.
+- `life/relationship-final-chapter-2026-08-06.html` - Chinese relationship reflection note.
 - `life/relationship-loyalty-and-uncertainty-2026-08-05.html` - Chinese relationship reflection note.
 - `life/relationship-cherish-love-2026-07-31.html` - Chinese relationship reflection note.
 - `life/relationship-three-separations-2026-07-30.html` - Chinese relationship reflection note.
@@ -432,6 +439,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/dream-primary-school-road-2026-08-06.html` - Chinese dreams and creation note.
 - `life/dream-love-tide-rises-2026-08-05.html` - Chinese dreams and creation note.
 - `life/dream-flowers-in-full-bloom-2026-08-01.html` - Chinese dreams and creation note.
 - `life/dream-final-level-2026-07-29.html` - Chinese dreams and creation note.
