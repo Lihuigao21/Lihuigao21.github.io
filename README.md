@@ -58,6 +58,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily.html
 |   |-- reflection.html
 |   |-- reflection-family-meal-planning-2026-07-17.html
+|   |-- daily-record-2026-08-07.html
 |   |-- daily-record-2026-08-06.html
 |   |-- daily-record-2026-08-05.html
 |   |-- daily-record-2026-08-04.html
@@ -167,6 +168,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- food.html
 |   |-- food-xinjiang-first-day-2026-07-14.html
 |   |-- life-experience.html
+|   |-- explore-gpt-chrome-integration-2026-08-07.html
 |   |-- skill.html
 |   |-- positive-feedback.html
 |   |-- positive-feedback-task-list-2026-07-27.html
@@ -179,6 +181,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- editorial.html
 |   |-- editorial-upward-comfort-zone-2026-07-12.html
 |   |-- dreams-creation.html
+|   |-- dream-white-horse-2026-08-07.html
 |   |-- dream-primary-school-road-2026-08-06.html
 |   |-- dream-love-tide-rises-2026-08-05.html
 |   |-- dream-flowers-in-full-bloom-2026-08-01.html
@@ -320,6 +323,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily.html` - Chinese daily-life module.
 - `life/reflection.html` - Chinese reflection module.
 - `life/reflection-family-meal-planning-2026-07-17.html` - Chinese reflection note.
+- `life/daily-record-2026-08-07.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-06.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-05.html` - Chinese daily-life record note.
 - `life/daily-record-2026-08-04.html` - Chinese daily-life record note.
@@ -429,6 +433,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/food.html` - Chinese food module.
 - `life/food-xinjiang-first-day-2026-07-14.html` - Chinese food note.
 - `life/life-experience.html` - Chinese exploration-of-the-unknown module.
+- `life/explore-gpt-chrome-integration-2026-08-07.html` - Chinese exploration-of-the-unknown note.
 - `life/skill.html` - Chinese skill-learning module.
 - `life/positive-feedback.html` - Chinese positive-feedback module.
 - `life/positive-feedback-task-list-2026-07-27.html` - Chinese positive-feedback task note.
@@ -441,6 +446,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/editorial.html` - Chinese editorial module.
 - `life/editorial-upward-comfort-zone-2026-07-12.html` - Chinese editorial note.
 - `life/dreams-creation.html` - Chinese dreams and creation module.
+- `life/dream-white-horse-2026-08-07.html` - Chinese dreams and creation note.
 - `life/dream-primary-school-road-2026-08-06.html` - Chinese dreams and creation note.
 - `life/dream-love-tide-rises-2026-08-05.html` - Chinese dreams and creation note.
 - `life/dream-flowers-in-full-bloom-2026-08-01.html` - Chinese dreams and creation note.
