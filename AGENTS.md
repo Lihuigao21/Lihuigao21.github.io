@@ -100,7 +100,7 @@ Before committing or pushing article changes:
 3. Check that all local links and image paths resolve.
 4. Run any compact scripts linked from the article when feasible.
 5. Verify that each article has at least one result, benchmark, or diagnostic.
-6. Update `index.html`, `sitemap.xml`, and `README.md` when adding a new published page.
+6. Update `index.html` and `sitemap.xml` when adding a new published page. Update `README.md` only when general project documentation changes; do not maintain a file-tree inventory or list individual published articles and life notes there.
 7. Check desktop and mobile layout for long titles, formulas, figures, and code blocks.
 8. Commit with a clear message and push to `origin/main` after validation by default, unless the user explicitly asks to keep the change local or not to publish.
 
