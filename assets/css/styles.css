@@ -670,6 +670,24 @@ h3 {
   line-height: 1.3;
 }
 
+.guestbook-notice {
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.guestbook-comments {
+  min-height: 240px;
+  margin-top: 34px;
+}
+
+.guestbook-fallback {
+  margin-top: 22px;
+  color: var(--subtle);
+  font-size: 0.92rem;
+}
+
 .taxonomy-block {
   margin-top: 38px;
   padding-top: 24px;

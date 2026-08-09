@@ -9,6 +9,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- index.html
 |-- life.html
 |-- mind.html
+|-- guestbook.html
 |-- tags.html
 |-- series.html
 |-- robots.txt
@@ -323,6 +324,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
+- `guestbook.html` - Public guestbook powered by Giscus and GitHub Discussions.
 - `life.html` - Chinese life-notes landing page.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
