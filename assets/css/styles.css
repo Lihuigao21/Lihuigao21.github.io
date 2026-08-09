@@ -687,6 +687,12 @@ h3 {
   font-size: 0.92rem;
 }
 
+.source-divider {
+  overflow-wrap: anywhere;
+  color: var(--line);
+  line-height: 1;
+}
+
 .taxonomy-block {
   margin-top: 38px;
   padding-top: 24px;
