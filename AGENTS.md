@@ -106,7 +106,7 @@ Before committing or pushing article changes:
 
 ## Site Boundaries
 
-- `guestbook.html` is the public Giscus-backed message board. Messages are stored in the repository's GitHub Discussions and require a GitHub account to post.
+- Individual pages under `posts/` and individual life-note pages under `life/` have separate public Giscus discussion threads, keyed by page pathname. Module landing pages do not create discussion threads.
 - `posts/` contains published HTML articles.
 - `life.html` is the public Chinese landing page for the “生活记录” section.
 - `mind.html` is the public Chinese “精神世界” module within “生活记录”.

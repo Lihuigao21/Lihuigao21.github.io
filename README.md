@@ -9,7 +9,6 @@ This is a lightweight static website for technical articles, designed for GitHub
 |-- index.html
 |-- life.html
 |-- mind.html
-|-- guestbook.html
 |-- tags.html
 |-- series.html
 |-- robots.txt
@@ -324,7 +323,6 @@ This is a lightweight static website for technical articles, designed for GitHub
 
 ## Published Notes
 
-- `guestbook.html` - Public guestbook powered by Giscus and GitHub Discussions.
 - `life.html` - Chinese life-notes landing page.
 - `mind.html` - Chinese inner-world module under life notes.
 - `life/daily.html` - Chinese daily-life module.
@@ -545,6 +543,8 @@ This is a lightweight static website for technical articles, designed for GitHub
 The homepage search plus the tag and series browsers are static GitHub Pages features powered by `assets/js/article-data.js`, `assets/js/search.js`, and `assets/js/taxonomy.js`. Search matches article titles and canonical tags only. Homepage tag labels are converted into links by `assets/js/main.js`, so tag names should match the canonical names in `article-data.js`.
 
 The `life.html`, `mind.html`, and `life/` pages form a separate Chinese-language life-notes section. It is linked from the top navigation and homepage, but it is not part of the technical article search, tag index, or benchmark/code-link article workflow.
+
+Published technical articles and individual life-note articles receive a public, per-page Giscus discussion thread through `assets/js/main.js`. Module landing pages do not create discussion threads.
 
 Keep raw source materials, notebooks, PDFs, and drafts in the local `articles/` folder. That folder is ignored by Git so working materials do not get published accidentally.
 

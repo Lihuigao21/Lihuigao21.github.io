@@ -670,20 +670,19 @@ h3 {
   line-height: 1.3;
 }
 
-.guestbook-notice {
-  padding: 14px 16px;
-  border-left: 3px solid var(--accent);
-  background: var(--surface);
-  color: var(--muted);
+.article-comments {
+  min-height: 300px;
+  margin-top: 52px;
+  padding-top: 30px;
+  border-top: 1px solid var(--line);
 }
 
-.guestbook-comments {
-  min-height: 240px;
-  margin-top: 34px;
+.article-comments .section-heading {
+  margin-bottom: 14px;
 }
 
-.guestbook-fallback {
-  margin-top: 22px;
+.article-comments-note {
+  margin: 0 0 26px;
   color: var(--subtle);
   font-size: 0.92rem;
 }
