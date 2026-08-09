@@ -99,6 +99,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- daily-record-2026-07-01.html
 |   |-- daily-record-2026-06-30.html
 |   |-- daily-summary-2026-06-29.html
+|   |-- mind-state-badeline-protects-inner-self-2026-08-08.html
 |   |-- mind-state-reshape-external-environment-2026-08-06.html
 |   |-- mind-state-sulking-and-communication-2026-08-05.html
 |   |-- mind-state-build-a-framework-2026-08-04.html
@@ -169,6 +170,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- food.html
 |   |-- food-xinjiang-first-day-2026-07-14.html
 |   |-- life-experience.html
+|   |-- explore-reaching-strangers-2026-08-08.html
 |   |-- explore-gpt-chrome-integration-2026-08-07.html
 |   |-- skill.html
 |   |-- positive-feedback.html
@@ -204,6 +206,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 |   |-- dream-wangchuan-forgetting-river-2026-07-13.html
 |   |-- gpt-deep-chat.html
 |   |-- coffee-talk.html
+|   |-- coffee-talk-first-experience-2026-08-08.html
 |   |-- gpt-chat-safety-vitality-repair-2026-07-19.html
 |   |-- gpt-chat-mature-sincerity-2026-07-19.html
 |   |-- gpt-chat-love-with-boundaries-2026-07-19.html
@@ -366,6 +369,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/daily-record-2026-07-01.html` - Chinese daily-life record note.
 - `life/daily-record-2026-06-30.html` - Chinese daily-life record note.
 - `life/daily-summary-2026-06-29.html` - Chinese daily-life summary note.
+- `life/mind-state-badeline-protects-inner-self-2026-08-08.html` - Chinese mental-state reflection note.
 - `life/mind-state-reshape-external-environment-2026-08-06.html` - Chinese mental-state reflection note.
 - `life/mind-state-sulking-and-communication-2026-08-05.html` - Chinese mental-state reflection note.
 - `life/mind-state-build-a-framework-2026-08-04.html` - Chinese mental-state reflection note.
@@ -436,6 +440,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/food.html` - Chinese food module.
 - `life/food-xinjiang-first-day-2026-07-14.html` - Chinese food note.
 - `life/life-experience.html` - Chinese exploration-of-the-unknown module.
+- `life/explore-reaching-strangers-2026-08-08.html` - Chinese exploration-of-the-unknown note.
 - `life/explore-gpt-chrome-integration-2026-08-07.html` - Chinese exploration-of-the-unknown note.
 - `life/skill.html` - Chinese skill-learning module.
 - `life/positive-feedback.html` - Chinese positive-feedback module.
@@ -471,6 +476,7 @@ This is a lightweight static website for technical articles, designed for GitHub
 - `life/dream-wangchuan-forgetting-river-2026-07-13.html` - Chinese dreams and creation note.
 - `life/gpt-deep-chat.html` - Chinese deep GPT chat module.
 - `life/coffee-talk.html` - Chinese Coffee Talk module.
+- `life/coffee-talk-first-experience-2026-08-08.html` - Chinese Coffee Talk note.
 - `life/gpt-chat-safety-vitality-repair-2026-07-19.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-mature-sincerity-2026-07-19.html` - Chinese deep GPT chat note.
 - `life/gpt-chat-love-with-boundaries-2026-07-19.html` - Chinese deep GPT chat note.
