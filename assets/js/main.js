@@ -13,6 +13,7 @@ const lifeModulePages = new Set([
   "gpt-deep-chat.html",
   "life-experience.html",
   "memories.html",
+  "people.html",
   "positive-feedback.html",
   "reflection.html",
   "relationship.html",
