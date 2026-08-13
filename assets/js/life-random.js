@@ -3,6 +3,16 @@
   const status = document.querySelector("[data-random-life-status]");
   if (!button) return;
 
+  const defaultStatus = "从已经公开的生活记录里，随机翻开一页。";
+
+  const resetButton = () => {
+    button.disabled = false;
+    button.removeAttribute("aria-busy");
+    if (status) status.textContent = defaultStatus;
+  };
+
+  window.addEventListener("pageshow", resetButton);
+
   const modulePages = new Set([
     "coffee-talk.html", "daily.html", "dreams-creation.html", "editorial.html",
     "food.html", "gpt-deep-chat.html", "life-experience.html", "memories.html",
@@ -46,8 +56,7 @@
       sessionStorage.setItem("lastRandomLifeNote", target);
       window.location.assign(target);
     } catch {
-      button.disabled = false;
-      button.removeAttribute("aria-busy");
+      resetButton();
       if (status) status.textContent = "暂时没有找到过去的记录，请稍后再试。";
     }
   });
