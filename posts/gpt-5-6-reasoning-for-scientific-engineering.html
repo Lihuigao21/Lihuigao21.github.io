@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A practical guide to choosing GPT-5.6 models and reasoning effort for literature reproduction, scientific software, simulations, and long-running research projects.">
+    <meta name="description" content="A practical guide to choosing GPT-5.6 models, reasoning effort, subagent orchestration, and Fast processing for scientific engineering projects.">
     <title>GPT-5.6 Reasoning for Scientific Engineering | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
@@ -32,12 +32,12 @@
         <header class="post-header">
           <p class="section-label">Scientific Computing Practice</p>
           <h1>GPT-5.6 Reasoning for Scientific Engineering</h1>
-          <p class="post-meta">2026.08.01 - Codex / Literature Reproduction / Research Engineering</p>
+          <p class="post-meta">2026.08.01 · Updated 2026.08.15 - Codex / Literature Reproduction / Research Engineering</p>
         </header>
 
         <div class="post-content">
           <p class="lead">
-            Literature reproduction is not one task. It alternates between reading an incomplete methods section, designing a computational workflow, editing routine inputs, diagnosing numerical failures, monitoring long calculations, and auditing a final conclusion. Using maximum reasoning for every stage wastes quota without making every stage safer. A better policy assigns model capability and inference-time effort to the uncertainty and consequence of the current decision.
+            Literature reproduction is not one task. It alternates between reading an incomplete methods section, designing a computational workflow, editing routine inputs, diagnosing numerical failures, monitoring long calculations, and auditing a final conclusion. Using maximum reasoning for every stage wastes quota without making every stage safer. A better policy independently assigns model capability, inference-time effort, agent orchestration, and processing priority to the current workload.
           </p>
 
           <h2>1. Two independent scaling axes</h2>
@@ -73,37 +73,76 @@
             </figcaption>
           </figure>
 
-          <h2>3. The workload map for scientific projects</h2>
-          <table>
-            <thead><tr><th>Work stage</th><th>Default effort</th><th>Escalate when</th></tr></thead>
-            <tbody>
-              <tr><td>File organization, path edits, plotting, report formatting</td><td>Medium</td><td>The transformation changes scientific meaning</td></tr>
-              <tr><td>Routine implementation, tests, input generation, log inspection</td><td>High</td><td>Evidence points to a cross-module or numerical cause</td></tr>
-              <tr><td>Extracting equations, assumptions, and parameters from a paper</td><td>High</td><td>The paper is internally ambiguous or omits a decisive detail</td></tr>
-              <tr><td>Workflow design and expensive-compute decisions</td><td>High</td><td>Several plausible designs have materially different scientific risks</td></tr>
-              <tr><td>Persistent disagreement with a published result</td><td>Extra High</td><td>A minimal case remains unexplained after controlled diagnostics</td></tr>
-              <tr><td>Core theoretical contradiction or stubborn numerical pathology</td><td>Ultra</td><td>Only after the problem is bounded and the evidence is compressed</td></tr>
-              <tr><td>Final evidence audit</td><td>Extra High</td><td>Ultra only for one unresolved, high-consequence claim</td></tr>
-            </tbody>
-          </table>
-
-          <h2>4. Recommended operating policy</h2>
+          <h2>3. Four controls that should not be conflated</h2>
           <p>
-            For a long literature-reproduction project, Sol at High is a strong default when the model is acting as both project manager and primary engineer. Medium is appropriate for mechanical execution. Extra High is best treated as a technical-review mode. Ultra should be a bounded consultation, not the permanent project state.
+            Model selection and reasoning effort are only two of the available controls. Agent orchestration determines whether one agent works alone or delegates independent scopes to subagents. The service tier determines how quickly the model-serving infrastructure processes each request. These controls are related operationally, but they are not interchangeable.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Control</th><th>What it changes</th><th>What it does not imply</th></tr></thead>
+              <tbody>
+                <tr><td>Model: Sol, Terra, or Luna</td><td>Base capability, cost, and workload fit</td><td>A fixed amount of reasoning for every prompt</td></tr>
+                <tr><td>Reasoning effort: Medium, High, or Extra High</td><td>Inference-time reasoning budget and behavior</td><td>Automatic parallelism</td></tr>
+                <tr><td>Orchestration: single agent, explicit delegation, or Ultra</td><td>Whether independent scopes run through subagents</td><td>That every task is safe or useful to parallelize</td></tr>
+                <tr><td>Service tier: Standard or Fast</td><td>Serving priority, latency, and price per token</td><td>A smaller model or reduced reasoning effort</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Current Codex documentation describes Ultra as more than a higher reasoning setting: it can proactively delegate work to subagents when parallel execution should materially improve speed or quality. At most other intelligence levels, including High, delegation can still be used when the user explicitly requests it or when applicable project instructions authorize it. High plus a precise delegation plan can therefore be sufficient for a broad, separable project; Ultra mainly changes how proactively the system considers multi-agent execution.
+          </p>
+          <p>
+            Fast mode is a separate serving decision. It was previously called Priority processing and uses the <code>fast</code> or <code>priority</code> service tier. OpenAI reports up to 2.5 times faster processing for GPT-5.6 Sol, with more consistent latency and a per-token premium. The public documentation does not disclose whether the lower latency comes from reserved accelerators, smaller batches, speculative decoding, or another serving optimization. The defensible interpretation is therefore a higher-priority processing lane for the same model and reasoning configuration—not less thinking disguised as speed.
+          </p>
+          <p>
+            Fast processing accelerates model turns, not the entire research wall clock. Web servers, platform rate limits, simulations, test suites, downloads, human approvals, and sequential safety gates remain external bottlenecks. A workflow with substantial tool time will consequently realize less than the headline model-serving speedup.
+          </p>
+
+          <h2>4. The workload map for scientific projects</h2>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Work stage</th><th>Default effort</th><th>Escalate when</th></tr></thead>
+              <tbody>
+                <tr><td>File organization, path edits, plotting, report formatting</td><td>Medium</td><td>The transformation changes scientific meaning</td></tr>
+                <tr><td>Routine implementation, tests, input generation, log inspection</td><td>High</td><td>Evidence points to a cross-module or numerical cause</td></tr>
+                <tr><td>Extracting equations, assumptions, and parameters from a paper</td><td>High</td><td>The paper is internally ambiguous or omits a decisive detail</td></tr>
+                <tr><td>Workflow design and expensive-compute decisions</td><td>High</td><td>Several plausible designs have materially different scientific risks</td></tr>
+                <tr><td>Persistent disagreement with a published result</td><td>Extra High</td><td>A minimal case remains unexplained after controlled diagnostics</td></tr>
+                <tr><td>Core theoretical contradiction or stubborn numerical pathology</td><td>Extra High</td><td>Delegate independent hypotheses when they can be tested separately</td></tr>
+                <tr><td>Broad multi-source or multi-platform investigation</td><td>High with explicit subagents</td><td>Use Ultra when proactive decomposition materially improves the workflow</td></tr>
+                <tr><td>Final evidence audit</td><td>Extra High</td><td>Use independent reviewers without parallelizing the final decision</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>5. Recommended operating policy</h2>
+          <p>
+            For a long literature-reproduction project, Sol at High is a strong default when the model is acting as both project manager and primary engineer. Medium is appropriate for mechanical execution. Extra High is best treated as a technical-review mode. Ultra is most useful when a large task contains genuinely independent workstreams; it should not be treated simply as a permanent maximum-reasoning setting.
           </p>
           <ol>
             <li>Start at High and build a staged plan with explicit validation gates.</li>
             <li>Drop routine transformations and documentation to Medium.</li>
             <li>Before escalating, collect the smallest failing case, relevant equations, inputs, recent logs, and competing hypotheses.</li>
             <li>Use Extra High to decide among hypotheses or to design the decisive test.</li>
-            <li>Use Ultra only when the unresolved question is singular, evidence-rich, and scientifically consequential.</li>
-            <li>Return to High immediately after the diagnosis; implementation and verification rarely require a continuous Ultra session.</li>
+            <li>Use Ultra when several independent research or implementation scopes can run concurrently and their outputs can be reconciled against a common contract.</li>
+            <li>Return integration, safety decisions, and final verification to one accountable main agent.</li>
           </ol>
           <p>
-            The compact rule is: <strong>Medium executes, High manages and engineers, Extra High reviews, and Ultra diagnoses one exceptional problem.</strong>
+            The compact rule is: <strong>Medium executes, High manages and engineers, Extra High reviews difficult decisions, and Ultra orchestrates parallel work when decomposition is genuinely useful.</strong>
           </p>
 
-          <h2>5. A reproducible escalation diagnostic</h2>
+          <h2>6. Parallelize reconnaissance, serialize risky validation</h2>
+          <p>
+            A boundary-mapping project across many semi-closed information platforms illustrates the distinction. Separate planning, implementation oversight, and acceptance agents can improve evidence quality, yet a workflow may still remain slow if each platform is forced through a complete approval gate before the next platform begins. That serialization is a governance choice, not a limitation of High reasoning.
+          </p>
+          <p>
+            The efficient pattern is hybrid. Parallel subagents can inspect public documentation, identify open-web entry points, build candidate-URL ledgers, prepare offline parsers, and design fixtures for different platforms. Live probes involving login state, rate limits, anti-bot responses, or shared safety controls should remain bounded and centrally coordinated. Shared schemas and final capability claims should also be integrated by one agent so that platform-specific success is not promoted into an unsupported platform-wide claim.
+          </p>
+          <p>
+            An explicit High-level instruction can request one independent scope per platform, prohibit agents from editing shared files, and reserve live validation for the main agent. Ultra may propose this decomposition proactively, but it still cannot override project instructions, concurrency limits, credential boundaries, or stop conditions. A practical rule is: <strong>parallelize read-only reconnaissance and offline construction; serialize credentialed access, risk stops, shared-state integration, and final approval.</strong>
+          </p>
+
+          <h2>7. A reproducible escalation diagnostic</h2>
           <p>Before increasing effort, record five fields:</p>
           <ol>
             <li><strong>Blocker:</strong> the single decision or failure preventing progress.</li>
@@ -116,23 +155,23 @@
             If these fields cannot be filled, the immediate need is usually better instrumentation rather than more reasoning. This diagnostic prevents an expensive model from spending its budget rediscovering project context or exploring an unbounded space.
           </p>
 
-          <h2>6. Long calculations need monitoring, not more reasoning</h2>
+          <h2>8. Long calculations need monitoring, not more reasoning</h2>
           <p>
-            A simulation that runs for hours does not become safer because its initiating conversation used Ultra. Reliability comes from explicit supervision: verify that the process remains alive, outputs continue to update, storage and memory remain safe, and the physical or numerical diagnostics behave as expected. Examples include energy conservation in NVE, temperature stability in NVT, SCF convergence, trajectory integrity, loss curves, and residual trends.
+            A simulation that runs for hours does not become safer because its initiating conversation used Ultra or Fast mode. Reliability comes from explicit supervision: verify that the process remains alive, outputs continue to update, storage and memory remain safe, and the physical or numerical diagnostics behave as expected. Examples include energy conservation in NVE, temperature stability in NVT, SCF convergence, trajectory integrity, loss curves, and residual trends.
           </p>
           <p>
             For expensive electronic-structure or molecular-dynamics campaigns, define the minimum downstream output set, run a smoke test, inspect actual file growth, and only then submit the full batch. Reasoning effort helps design these controls; it does not replace them.
           </p>
 
-          <h2>7. Encoding the policy in AGENTS.md</h2>
+          <h2>9. Encoding the policy in AGENTS.md</h2>
           <p>
-            Project instructions can classify tasks, require evidence before escalation, and authorize bounded delegation when the environment supports it. They cannot reliably change the active main-thread reasoning selector by themselves. The instruction should therefore require Codex to state the recommended level and why, rather than claim that it silently switched levels.
+            Project instructions can classify tasks, require evidence before escalation, and authorize bounded delegation when the environment supports it. At High and most other levels, an explicit request to delegate independent work is the clearest way to obtain subagents; Ultra may initiate that delegation proactively. Project instructions cannot reliably change the active main-thread reasoning selector or service tier by themselves, so they should require Codex to state the recommended configuration rather than claim that it silently switched controls.
           </p>
           <p>
-            A reusable policy fragment is available as <a href="../assets/code/gpt-5-6-reasoning-policy.md">gpt-5-6-reasoning-policy.md</a>. The main task can remain at High; an Extra High or Ultra specialist should receive only a compact, testable subproblem, and the High-level agent should integrate and verify the result.
+            A reusable policy fragment is available as <a href="../assets/code/gpt-5-6-reasoning-policy.md">gpt-5-6-reasoning-policy.md</a>. The main task can remain at High while explicit subagents receive independent, testable scopes. Extra High is reserved for difficult judgments; Ultra is reserved for proactive multi-agent orchestration. The main agent should integrate and verify every returned result.
           </p>
 
-          <h2>8. Model selection beyond Sol</h2>
+          <h2>10. Model selection beyond Sol</h2>
           <p>
             Sol is justified when errors are expensive: interpreting a difficult paper, designing a multi-stage workflow, debugging coupled numerical software, or auditing a physical conclusion. Terra is a reasonable candidate for broader engineering work when repeated evaluations show comparable project outcomes at lower cost. Luna fits high-volume, well-specified transformations and screening tasks. The correct choice should be based on a small project-specific evaluation set rather than a global leaderboard alone.
           </p>
@@ -150,7 +189,7 @@
 
           <h2>Conclusion</h2>
           <p>
-            Scientific engineering benefits from adaptive inference compute, but only when it is allocated deliberately. Model scaling and reasoning-effort scaling are distinct; benchmark curves demonstrate a tradeoff, not the hidden mechanism. For sustained reproduction work, High is the practical center of gravity. Medium handles execution, Extra High handles consequential judgment, and Ultra is reserved for one well-instrumented impasse. The most important optimization is not choosing the largest setting—it is turning an open-ended research problem into a sequence of bounded decisions with explicit evidence and acceptance tests.
+            Scientific engineering benefits from adaptive inference compute, but only when it is allocated deliberately. Model choice, reasoning effort, subagent orchestration, and serving priority are four different controls. For sustained reproduction work, High is the practical center of gravity and can use subagents when delegation is explicit. Medium handles mechanical execution, Extra High handles consequential judgment, Ultra proactively orchestrates separable work, and Fast reduces model-serving latency without replacing scientific validation. The most important optimization is not choosing the largest or fastest setting—it is turning an open-ended research problem into bounded decisions, parallelizing only independent work, and preserving explicit evidence and acceptance tests.
           </p>
 
           <h2>References</h2>
@@ -160,6 +199,9 @@
             <li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning#training-metrics" target="_blank" rel="noreferrer">Reinforcement fine-tuning: training metrics</a>.</li>
             <li>OpenAI, <a href="https://openai.com/index/learning-to-reason-with-llms/" target="_blank" rel="noreferrer">Learning to reason with LLMs</a>.</li>
             <li>Artificial Analysis, <a href="https://artificialanalysis.ai/agents/coding-agents/" target="_blank" rel="noreferrer">Coding Agent Index</a>.</li>
+            <li>OpenAI, <a href="https://developers.openai.com/codex/agent-configuration/subagents" target="_blank" rel="noreferrer">Codex subagents</a>.</li>
+            <li>OpenAI, <a href="https://developers.openai.com/codex/models" target="_blank" rel="noreferrer">Codex models and Ultra mode</a>.</li>
+            <li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/fast-mode" target="_blank" rel="noreferrer">Fast mode</a>.</li>
           </ol>
         </div>
 
