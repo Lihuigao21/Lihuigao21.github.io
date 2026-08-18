@@ -1,0 +1,147 @@
+{
+  "title": "FSSH：最少切换表面跳跃算法",
+  "subtitle": "单条混合量子–经典轨迹的自动布局主循环",
+  "footer": "依据：J. C. Tully, J. Chem. Phys. 93, 1061–1071 (1990), DOI 10.1063/1.459170",
+  "margin": 34,
+  "layoutOptions": {
+    "elk.direction": "DOWN",
+    "elk.edgeRouting": "ORTHOGONAL",
+    "elk.spacing.nodeNode": "90",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "86",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "40",
+    "elk.layered.cycleBreaking.strategy": "MODEL_ORDER",
+    "elk.layered.crossingMinimization.strategy": "LAYER_SWEEP",
+    "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX"
+  },
+  "nodes": [
+    {
+      "id": "start", "kind": "start", "width": 470, "height": 90,
+      "lines": ["开始一条独立轨迹"],
+      "layoutOptions": {"elk.layered.layering.layerConstraint": "FIRST"},
+      "ports": [{"id": "start.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "init", "kind": "process", "width": 760, "height": 130,
+      "lines": ["初始化核与电子自由度", "采样 R(0)、V(0)；设置 cⱼ(0)、活动态 a、Δt 与 t_f"],
+      "ports": [{"id": "init.n", "side": "NORTH"}, {"id": "init.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "electronic", "kind": "calculation", "width": 760, "height": 140,
+      "lines": ["计算当前构型的绝热电子结构", "Eⱼ(R)、活动面梯度 ∇Eₐ 与非绝热耦合 dⱼₖ"],
+      "ports": [
+        {"id": "electronic.n", "side": "NORTH"},
+        {"id": "electronic.s", "side": "SOUTH"},
+        {"id": "electronic.w", "side": "WEST"}
+      ]
+    },
+    {
+      "id": "nuclei", "kind": "process", "width": 760, "height": 125,
+      "lines": ["在活动势能面 a 上传播经典核", "M R̈ = −∇Eₐ(R)"],
+      "ports": [{"id": "nuclei.n", "side": "NORTH"}, {"id": "nuclei.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "amplitudes", "kind": "calculation", "width": 760, "height": 140,
+      "lines": ["沿核轨迹传播电子振幅", "iℏ ċⱼ = Eⱼcⱼ − iℏ Σₖ cₖ Ṙ·dⱼₖ；使用电子子步长"],
+      "ports": [{"id": "amplitudes.n", "side": "NORTH"}, {"id": "amplitudes.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "probability", "kind": "process", "width": 760, "height": 135,
+      "lines": ["计算 fewest-switches 跳跃概率", "由态间布居流得到 gₐ→ⱼ，并抽取 ξ ∈ [0,1)"],
+      "ports": [{"id": "probability.n", "side": "NORTH"}, {"id": "probability.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "hop", "kind": "decision", "width": 500, "height": 170,
+      "lines": ["ξ 是否选中候选目标态 j？"],
+      "ports": [
+        {"id": "hop.n", "side": "NORTH"},
+        {"id": "hop.w", "side": "WEST"},
+        {"id": "hop.s", "side": "SOUTH"}
+      ]
+    },
+    {
+      "id": "nohop", "kind": "muted", "width": 390, "height": 110,
+      "lines": ["不发生跳跃", "保持当前活动态 a"],
+      "ports": [{"id": "nohop.n", "side": "NORTH"}, {"id": "nohop.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "candidate", "kind": "accepted", "width": 430, "height": 110,
+      "lines": ["记录候选态 j", "能隙 ΔE = Eⱼ − Eₐ"],
+      "ports": [{"id": "candidate.n", "side": "NORTH"}, {"id": "candidate.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "energy", "kind": "decision", "width": 500, "height": 170,
+      "lines": ["能否重标速度并守恒总能量？"],
+      "ports": [
+        {"id": "energy.n", "side": "NORTH"},
+        {"id": "energy.w", "side": "WEST"},
+        {"id": "energy.e", "side": "EAST"}
+      ]
+    },
+    {
+      "id": "frustrated", "kind": "muted", "width": 420, "height": 125,
+      "lines": ["受阻跳跃（frustrated hop）", "拒绝换面，保持活动态 a"],
+      "ports": [{"id": "frustrated.n", "side": "NORTH"}, {"id": "frustrated.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "accepted", "kind": "accepted", "width": 430, "height": 135,
+      "lines": ["接受跳跃并切换活动面", "沿 dₐⱼ 方向重标速度；a ← j"],
+      "ports": [{"id": "accepted.n", "side": "NORTH"}, {"id": "accepted.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "merge", "kind": "process", "width": 190, "height": 72,
+      "lines": ["结果汇合"],
+      "ports": [
+        {"id": "merge.w", "side": "WEST"},
+        {"id": "merge.n", "side": "NORTH"},
+        {"id": "merge.e", "side": "EAST"},
+        {"id": "merge.s", "side": "SOUTH"}
+      ]
+    },
+    {
+      "id": "update", "kind": "process", "width": 690, "height": 120,
+      "lines": ["记录本步信息并推进时间", "保存 R、V、a、cⱼ；t ← t + Δt"],
+      "ports": [{"id": "update.n", "side": "NORTH"}, {"id": "update.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "continue", "kind": "decision", "width": 460, "height": 170,
+      "lines": ["t < t_f ？", "是：返回下一核时间步；否：结束"],
+      "ports": [
+        {"id": "continue.n", "side": "NORTH"},
+        {"id": "continue.w", "side": "WEST"},
+        {"id": "continue.s", "side": "SOUTH"}
+      ]
+    },
+    {
+      "id": "finish", "kind": "end", "width": 470, "height": 100,
+      "lines": ["结束当前轨迹", "计算轨迹级可观测量"],
+      "ports": [{"id": "finish.n", "side": "NORTH"}, {"id": "finish.s", "side": "SOUTH"}]
+    },
+    {
+      "id": "ensemble", "kind": "end", "width": 560, "height": 115,
+      "lines": ["汇入轨迹系综", "统计电子态布居、跃迁产率与动力学可观测量"],
+      "layoutOptions": {"elk.layered.layering.layerConstraint": "LAST"},
+      "ports": [{"id": "ensemble.n", "side": "NORTH"}]
+    }
+  ],
+  "edges": [
+    {"id": "e01", "source": "start.s", "target": "init.n"},
+    {"id": "e02", "source": "init.s", "target": "electronic.n"},
+    {"id": "e03", "source": "electronic.s", "target": "nuclei.n"},
+    {"id": "e04", "source": "nuclei.s", "target": "amplitudes.n"},
+    {"id": "e05", "source": "amplitudes.s", "target": "probability.n"},
+    {"id": "e06", "source": "probability.s", "target": "hop.n"},
+    {"id": "e07", "source": "hop.w", "target": "nohop.n", "label": "否"},
+    {"id": "e08", "source": "hop.s", "target": "candidate.n", "label": "是"},
+    {"id": "e09", "source": "candidate.s", "target": "energy.n"},
+    {"id": "e10", "source": "energy.w", "target": "frustrated.n", "label": "否"},
+    {"id": "e11", "source": "energy.e", "target": "accepted.n", "label": "是"},
+    {"id": "e12", "source": "nohop.s", "target": "merge.w"},
+    {"id": "e13", "source": "frustrated.s", "target": "merge.n"},
+    {"id": "e14", "source": "accepted.s", "target": "merge.e"},
+    {"id": "e15", "source": "merge.s", "target": "update.n"},
+    {"id": "e16", "source": "update.s", "target": "continue.n"},
+    {"id": "e17", "source": "continue.w", "target": "electronic.w", "feedback": true},
+    {"id": "e18", "source": "continue.s", "target": "finish.n"},
+    {"id": "e19", "source": "finish.s", "target": "ensemble.n"}
+  ]
+}

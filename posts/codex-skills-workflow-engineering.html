@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A practical method for turning successful Codex conversations into reliable skills, using an FSSH flowchart as a controlled comparison of prompting, review loops, and deterministic auto-layout.">
+    <title>Codex Skills as Workflow Engineering | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="../index.html#articles">Articles</a>
+        <a href="../tags.html">Tags</a>
+        <a href="../series.html">Series</a>
+        <a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a>
+        <span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Research Engineering Practice</p>
+          <h1>Codex Skills as Workflow Engineering</h1>
+          <p class="post-meta">2026.08.19 - Codex / Skills / Automatic Layout / Reproducibility</p>
+        </header>
+
+        <div class="post-content">
+          <p class="lead">
+            A good Codex skill is not a long prompt that asks the model to be more careful. It is a small workflow architecture that assigns semantic judgment to the model, deterministic transformations to software, and acceptance decisions to explicit tests. A flowchart experiment made this distinction concrete: Codex could draw a scientifically correct FSSH algorithm by hand, but reliable layout required more than better wording.
+          </p>
+
+          <h2>1. The bottleneck was not knowing the algorithm</h2>
+          <p>
+            Fewest-switches surface hopping (FSSH) is a useful stress test because its control flow is simple enough to audit yet structurally awkward to draw. A trajectory advances classical nuclei on an active electronic surface, propagates electronic amplitudes, samples a possible hop, checks energy conservation, merges accepted, frustrated, and no-hop outcomes, then returns through a time-step loop. The scientific content follows Tully's original mixed quantum-classical construction; the drawing problem is the combination of branching, merging, labels, and a long feedback edge.
+          </p>
+          <p>
+            Codex did understand this structure. In a native baseline, it directly wrote an SVG with explicit node coordinates and connector paths. The result was attractive and editable, but the first rendered pass contained a connector that ran through another node. Codex detected the defect only after viewing the rasterized output, then manually changed the polyline. This is an important distinction: the model could repair the picture, but geometry remained an iterative visual judgment rather than a guaranteed transformation.
+          </p>
+
+          <figure>
+            <img src="../assets/img/codex-skill-fssh-native.png" alt="FSSH flowchart produced by Codex with manually written SVG coordinates and connector paths">
+            <figcaption>
+              Native baseline. Codex wrote every SVG coordinate and connector path directly. The final image is usable, but a connector-through-node defect had to be found by rendering and visual inspection, then repaired by hand. The published <a href="../assets/code/codex-skills-workflow-engineering/fssh-native.svg">editable SVG source</a> is the corrected result.
+            </figcaption>
+          </figure>
+
+          <h2>2. Review automation and layout automation solve different problems</h2>
+          <p>
+            The first workflow improvement was an iterative flowchart skill. It required a requirements summary, drawing, rendering, visual inspection, independent review, and revision until approval. This removed the user from routine pass-by-pass judgment and made omissions easier to catch. However, the model still chose global coordinates and routed edges manually. The workflow automated quality control without changing the geometric source of error.
+          </p>
+          <p>
+            The next skill changed the division of labor. Codex described a semantic graph—nodes, edge meanings, ports, branch labels, merge points, and the feedback edge—while ELK performed layered node placement and orthogonal edge routing. Codex still decided what the diagram meant and which constraints mattered, but it no longer pretended that language-model intuition was a graph-layout algorithm.
+          </p>
+
+          <figure>
+            <img src="../assets/img/codex-skill-fssh-auto-layout.png" alt="FSSH flowchart generated from a semantic graph and laid out automatically with ELK">
+            <figcaption>
+              Auto-layout result. The canonical source contains 17 semantic nodes and 19 edges with downward layered flow, orthogonal routing, an explicit merge, and a designated feedback edge. ELK.js 0.11.1 generated the global coordinates; an independent reviewer returned PASS after checking scientific semantics, routing, cropping, and editability. The <a href="../assets/code/codex-skills-workflow-engineering/fssh-auto-layout.elk.json">semantic graph</a> and <a href="../assets/code/codex-skills-workflow-engineering/fssh-auto-layout.svg">editable SVG</a> are published with the article.
+            </figcaption>
+          </figure>
+
+          <h2>3. A controlled comparison</h2>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>Workflow</th><th>Model responsibility</th><th>Deterministic responsibility</th><th>Observed outcome</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Native prompt</td>
+                  <td>Semantics, coordinates, routing, styling, and self-review</td>
+                  <td>SVG parser and rasterizer only</td>
+                  <td>Usable final diagram; one connector-through-node defect required manual path repair after rendering</td>
+                </tr>
+                <tr>
+                  <td>Iterative review skill</td>
+                  <td>Semantics, coordinates, routing, and revision decisions</td>
+                  <td>Rendering and checklist execution</td>
+                  <td>User review burden decreased, but layout quality still depended on model-generated geometry</td>
+                </tr>
+                <tr>
+                  <td>Auto-layout skill</td>
+                  <td>Requirements, semantic graph, constraints, and diagnosis</td>
+                  <td>Node placement, orthogonal routing, serialization, and repeatable rendering</td>
+                  <td>Editable 17-node/19-edge artifact with explicit loop handling and independent PASS</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            This is not evidence that ELK always produces a better-looking diagram. The stronger conclusion is narrower: once the graph semantics and constraints are explicit, global geometry becomes reproducible and inspectable. When the outer loop was initially treated like an ordinary edge, the right fix was to declare model-order cycle breaking and mark the loop as feedback—not to move a collection of SVG coordinates. The correction therefore became a reusable rule in the generator rather than a one-off visual patch.
+          </p>
+
+          <h2>4. The three-layer skill architecture</h2>
+          <p>A reliable skill separates three layers that are often mixed together in one prompt.</p>
+          <ol>
+            <li><strong>Semantic contract.</strong> State what must exist, what must not be added, which ambiguities require a question, and what assumptions are allowed. For the FSSH diagram, this included the three hop outcomes, an explicit merge, energy-conserving velocity adjustment, and a time-step feedback loop.</li>
+            <li><strong>Deterministic mechanism.</strong> Move geometry, serialization, formatting, compilation, or other algorithmic work into a script or dedicated engine. The model selects options and interprets failures; the tool repeatedly applies the same transformation.</li>
+            <li><strong>Evidence-based acceptance.</strong> Validate structure, render the complete artifact, inspect high-risk regions, and compare the result with a written checklist. A reviewer should distinguish hard failures from optional aesthetic suggestions.</li>
+          </ol>
+          <p>
+            The layers communicate through explicit artifacts: a requirements ledger, a canonical semantic source, a generated editable file, a rendered preview, and an acceptance result. This artifact chain is more useful than asking Codex to “remember what looked wrong last time.”
+          </p>
+
+          <h2>5. Use an intermediate representation</h2>
+          <p>
+            The most important technical choice was not ELK itself; it was introducing a semantic intermediate representation. Node identifiers remained stable across revisions. Edges named their source and target ports. Branches and merges were first-class objects. The rendered SVG was an output, not the only source of truth.
+          </p>
+          <p>
+            This pattern generalizes well. A document skill can use a structured outline before DOCX rendering. A simulation skill can use a validated configuration schema before writing engine-specific inputs. A website skill can use content data before generating cards and metadata. An intermediate representation gives Codex a compact surface for reasoning and gives software a deterministic surface for execution.
+          </p>
+          <p>A good canonical source should have:</p>
+          <ul>
+            <li>stable identifiers that survive layout or style changes;</li>
+            <li>semantic fields rather than generated coordinates whenever possible;</li>
+            <li>enough constraints to prevent unsafe freedom, but not a transcript of every past edit;</li>
+            <li>a validator that can catch missing references, duplicate identifiers, or unsupported options before rendering.</li>
+          </ul>
+
+          <h2>6. Write the skill around decisions, not prose</h2>
+          <p>
+            OpenAI's current guidance describes a skill as a directory containing a required <code>SKILL.md</code> and optional scripts, references, and assets. Codex initially sees the name and description, then loads the full instructions when the task matches. This progressive-disclosure model favors concise routing instructions over a monolithic manual.
+          </p>
+          <p>An effective <code>SKILL.md</code> should therefore answer operational questions:</p>
+          <ul>
+            <li><strong>Trigger:</strong> which tasks should activate the skill, and which nearby tasks should not?</li>
+            <li><strong>Input contract:</strong> what information is required before execution?</li>
+            <li><strong>Canonical source:</strong> which artifact is edited when the result is wrong?</li>
+            <li><strong>Tool boundary:</strong> which deterministic work belongs to scripts or engines?</li>
+            <li><strong>Acceptance:</strong> what observations produce PASS or REVISE?</li>
+            <li><strong>Stop condition:</strong> when should the workflow report a remaining conflict instead of tuning forever?</li>
+          </ul>
+          <p>
+            Long domain explanations, option catalogs, and examples can live under <code>references/</code>. Stable generators and validators belong under <code>scripts/</code>. Templates and style assets belong under <code>assets/</code>. The main instruction file should route Codex through the workflow and tell it which supporting resource to load when needed.
+          </p>
+          <pre><code>my-skill/
+├── SKILL.md          # trigger, contracts, stages, acceptance, stop rules
+├── scripts/          # deterministic generation and validation
+├── references/       # domain rules and tool-specific options
+└── assets/           # templates and reusable visual resources</code></pre>
+
+          <h2>7. Verification must be designed, not appended</h2>
+          <p>
+            “Review the result carefully” is too vague to be reliable. The flowchart skill converted review into observable questions: Are all required branches present? Do they enter an explicit merge? Does an edge pass through a node or label? Is the feedback direction unambiguous? Are the SVG groups still editable? Does the output record the layout engine and version?
+          </p>
+          <p>
+            Independent review is most useful when the reviewer receives the requirements and artifacts but not the drawing agent's conclusions. The reviewer should begin with PASS or REVISE, list hard issues separately from suggestions, and cite concrete nodes or edges. A bounded revision loop prevents optional aesthetic preferences from expanding into endless polishing.
+          </p>
+          <p>
+            Preserve the older workflow when making a material architectural change. A downgraded or frozen control is not clutter: it makes it possible to test whether a new skill truly improved reliability or merely changed style.
+          </p>
+
+          <h2>8. Choose the right extension mechanism</h2>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Need</th><th>Best starting point</th><th>Reason</th></tr></thead>
+              <tbody>
+                <tr><td>One-off, low-risk task</td><td>Prompt</td><td>The setup cost of a reusable workflow is not justified</td></tr>
+                <tr><td>Repeated task with domain rules and acceptance criteria</td><td>Skill</td><td>Preserves instructions, examples, resources, and scripts across tasks</td></tr>
+                <tr><td>Stable transformation or calculation</td><td>Script or CLI inside a skill</td><td>Deterministic code is easier to test than repeated natural-language execution</td></tr>
+                <tr><td>Authenticated external system or live data source</td><td>Connector, MCP server, or plugin</td><td>The task needs a capability and permission boundary, not only instructions</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            A skill should orchestrate these mechanisms rather than replace them. In the flowchart case, the skill did not make Codex into a layout engine; it taught Codex when and how to call one, how to express constraints, how to inspect the output, and how to preserve evidence.
+          </p>
+
+          <h2>9. A reusable construction recipe</h2>
+          <ol>
+            <li>Start from one working conversation or manually completed example.</li>
+            <li>Extract the successful decision sequence; do not preserve the entire debugging transcript.</li>
+            <li>Write a requirements ledger and explicit acceptance checklist.</li>
+            <li>Identify steps that should be deterministic and move them into scripts or dedicated engines.</li>
+            <li>Introduce a canonical intermediate representation with stable identifiers.</li>
+            <li>Generate both an editable artifact and a rendered preview.</li>
+            <li>Inspect the whole artifact plus risk-heavy crops or diagnostics.</li>
+            <li>Use an independent PASS/REVISE review with hard issues separated from suggestions.</li>
+            <li>Revise the smallest responsible semantic rule or tool option.</li>
+            <li>Freeze a successful version and keep the previous workflow as a comparison when the architecture changes.</li>
+          </ol>
+          <p>
+            A compact, domain-neutral starting point is available as <a href="../assets/code/codex-skills-workflow-engineering/verified-artifact-skill-template.md">verified-artifact-skill-template.md</a>. It defines an input contract, canonical source, deterministic generation step, bounded verification loop, evidence bundle, and division of responsibilities.
+          </p>
+
+          <h2>10. Result and limitation</h2>
+          <p>
+            The final auto-layout FSSH artifact passed an independent review for scientific completeness, branch/merge structure, feedback direction, line routing, cropping, editability, and engine metadata. The experiment also showed why a skill should not be judged only by its final screenshot. The stronger result was architectural: a layout defect could be corrected by changing semantic constraints and generator behavior, then regenerated consistently.
+          </p>
+          <p>
+            Skills do not eliminate model judgment. Codex still has to interpret the scientific method, choose the appropriate abstraction, diagnose whether a bad result comes from semantics or layout, and decide when a reviewer suggestion is optional. A skill improves reliability by concentrating judgment at explicit decision points and removing work that software can perform more predictably.
+          </p>
+
+          <h2>Conclusion</h2>
+          <p>
+            The most effective way to write a Codex skill is to treat it as workflow engineering. Begin with a demonstrated success, separate semantic reasoning from deterministic execution, make the intermediate state editable, and turn quality into observable acceptance checks. The goal is not to make Codex follow more prose. The goal is to give it a small, testable operating system for one class of problems.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li>OpenAI, <a href="https://learn.chatgpt.com/docs/build-skills" target="_blank" rel="noreferrer">Build skills</a>.</li>
+            <li>OpenAI, <a href="https://learn.chatgpt.com/use-cases/reusable-codex-skills" target="_blank" rel="noreferrer">Save workflows as skills</a>.</li>
+            <li>Eclipse Layout Kernel, <a href="https://eclipse.dev/elk/reference/options/org-eclipse-elk-layered-cycleBreaking-strategy.html" target="_blank" rel="noreferrer">Layered cycle-breaking strategy</a>.</li>
+            <li>Graphviz, <a href="https://graphviz.org/docs/layouts/dot/" target="_blank" rel="noreferrer">DOT hierarchical layout documentation</a>.</li>
+            <li>J. C. Tully, <a href="https://doi.org/10.1063/1.459170" target="_blank" rel="noreferrer">Molecular dynamics with electronic transitions</a>, J. Chem. Phys. 93, 1061–1071 (1990).</li>
+          </ol>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation">
+          <a href="n1-forward-dividing-surface-equivalence.html">&lt;- Previous article</a>
+          <a href="../index.html">Back to article list</a>
+        </nav>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

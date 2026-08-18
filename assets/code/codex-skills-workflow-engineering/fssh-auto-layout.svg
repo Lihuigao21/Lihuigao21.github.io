@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1310" height="3580" viewBox="0 0 1310 3580" data-layout-engine="elkjs" data-layout-version="0.11.1">
+<defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 z" fill="#26465f"/></marker><filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#17324d" flood-opacity="0.12"/></filter></defs>
+<rect width="100%" height="100%" fill="#f4f8fb"/>
+<text x="655" y="48" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="30" font-weight="700" fill="#17324d">FSSH：最少切换表面跳跃算法</text>
+<text x="655" y="76" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" fill="#4d6575">单条混合量子–经典轨迹的自动布局主循环</text>
+<g id="edge-e01" data-edge-id="e01">
+<path d="M 761 246 L 761 332" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e02" data-edge-id="e02">
+<path d="M 761 462 L 761 548" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e03" data-edge-id="e03">
+<path d="M 761 688 L 761 774" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e04" data-edge-id="e04">
+<path d="M 761 899 L 761 985" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e05" data-edge-id="e05">
+<path d="M 761 1125 L 761 1211" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e06" data-edge-id="e06">
+<path d="M 761 1346 L 761 1432" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e07" data-edge-id="e07">
+<path d="M 511 1517 L 280 1517 L 280 2026" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="241" y="1686" width="42" height="30" rx="10" fill="#f4f8fb"/>
+<text x="262" y="1707" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" font-weight="700" fill="#26465f">否</text>
+</g>
+<g id="edge-e08" data-edge-id="e08">
+<path d="M 761 1602 L 761 1800" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="722" y="1686" width="42" height="30" rx="10" fill="#f4f8fb"/>
+<text x="743" y="1707" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" font-weight="700" fill="#26465f">是</text>
+</g>
+<g id="edge-e09" data-edge-id="e09">
+<path d="M 761 1910 L 761 1996" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e10" data-edge-id="e10">
+<path d="M 511 2081 L 501 2081 L 501 2369" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="462" y="2250" width="42" height="30" rx="10" fill="#f4f8fb"/>
+<text x="483" y="2271" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" font-weight="700" fill="#26465f">否</text>
+</g>
+<g id="edge-e11" data-edge-id="e11">
+<path d="M 1011 2081 L 1021 2081 L 1021 2364" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="982" y="2250" width="42" height="30" rx="10" fill="#f4f8fb"/>
+<text x="1003" y="2271" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" font-weight="700" fill="#26465f">是</text>
+</g>
+<g id="edge-e12" data-edge-id="e12">
+<path d="M 280 2136 L 280 2621 L 406 2621" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e13" data-edge-id="e13">
+<path d="M 501 2494 L 501 2585" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e14" data-edge-id="e14">
+<path d="M 1021 2499 L 1021 2621 L 596 2621" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e15" data-edge-id="e15">
+<path d="M 501 2657 L 501 2743" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e16" data-edge-id="e16">
+<path d="M 501 2863 L 501 2949" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e17" data-edge-id="e17">
+<path d="M 271 3034 L 74 3034 L 74 618 L 381 618" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e18" data-edge-id="e18">
+<path d="M 501 3119 L 501 3205" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e19" data-edge-id="e19">
+<path d="M 501 3305 L 501 3391" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="node-start" data-node-id="start">
+<rect x="526" y="156" width="470" height="90" rx="45" fill="#d9edf4" stroke="#1c6680" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="210" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">开始一条独立轨迹</text>
+</g>
+<g id="node-init" data-node-id="init">
+<rect x="381" y="332" width="760" height="130" rx="22" fill="#ffffff" stroke="#3d7892" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="391" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">初始化核与电子自由度</text>
+<text x="761" y="421" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">采样 R(0)、V(0)；设置 cⱼ(0)、活动态 a、Δt 与 t_f</text>
+</g>
+<g id="node-electronic" data-node-id="electronic">
+<rect x="381" y="548" width="760" height="140" rx="22" fill="#e7f3f7" stroke="#2c718d" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="612" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">计算当前构型的绝热电子结构</text>
+<text x="761" y="642" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">Eⱼ(R)、活动面梯度 ∇Eₐ 与非绝热耦合 dⱼₖ</text>
+</g>
+<g id="node-nuclei" data-node-id="nuclei">
+<rect x="381" y="774" width="760" height="125" rx="22" fill="#ffffff" stroke="#3d7892" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="830.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">在活动势能面 a 上传播经典核</text>
+<text x="761" y="860.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">M R̈ = −∇Eₐ(R)</text>
+</g>
+<g id="node-amplitudes" data-node-id="amplitudes">
+<rect x="381" y="985" width="760" height="140" rx="22" fill="#e7f3f7" stroke="#2c718d" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="1049" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">沿核轨迹传播电子振幅</text>
+<text x="761" y="1079" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">iℏ ċⱼ = Eⱼcⱼ − iℏ Σₖ cₖ Ṙ·dⱼₖ；使用电子子步长</text>
+</g>
+<g id="node-probability" data-node-id="probability">
+<rect x="381" y="1211" width="760" height="135" rx="22" fill="#ffffff" stroke="#3d7892" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="1272.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">计算 fewest-switches 跳跃概率</text>
+<text x="761" y="1302.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">由态间布居流得到 gₐ→ⱼ，并抽取 ξ ∈ [0,1)</text>
+</g>
+<g id="node-hop" data-node-id="hop">
+<polygon points="761,1432 1011,1517 761,1602 511,1517" fill="#fff1df" stroke="#b86a32" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="1526" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">ξ 是否选中候选目标态 j？</text>
+</g>
+<g id="node-nohop" data-node-id="nohop">
+<rect x="85" y="2026" width="390" height="110" rx="22" fill="#edf2f5" stroke="#6c8391" stroke-width="4" filter="url(#shadow)"/>
+<text x="280" y="2075" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">不发生跳跃</text>
+<text x="280" y="2105" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">保持当前活动态 a</text>
+</g>
+<g id="node-candidate" data-node-id="candidate">
+<rect x="546" y="1800" width="430" height="110" rx="22" fill="#fce9dd" stroke="#c45d2d" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="1849" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">记录候选态 j</text>
+<text x="761" y="1879" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">能隙 ΔE = Eⱼ − Eₐ</text>
+</g>
+<g id="node-energy" data-node-id="energy">
+<polygon points="761,1996 1011,2081 761,2166 511,2081" fill="#fff1df" stroke="#b86a32" stroke-width="4" filter="url(#shadow)"/>
+<text x="761" y="2090" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">能否重标速度并守恒总能量？</text>
+</g>
+<g id="node-frustrated" data-node-id="frustrated">
+<rect x="291" y="2369" width="420" height="125" rx="22" fill="#edf2f5" stroke="#6c8391" stroke-width="4" filter="url(#shadow)"/>
+<text x="501" y="2425.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">受阻跳跃（frustrated hop）</text>
+<text x="501" y="2455.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">拒绝换面，保持活动态 a</text>
+</g>
+<g id="node-accepted" data-node-id="accepted">
+<rect x="806" y="2364" width="430" height="135" rx="22" fill="#fce9dd" stroke="#c45d2d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1021" y="2425.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">接受跳跃并切换活动面</text>
+<text x="1021" y="2455.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">沿 dₐⱼ 方向重标速度；a ← j</text>
+</g>
+<g id="node-merge" data-node-id="merge">
+<rect x="406" y="2585" width="190" height="72" rx="22" fill="#ffffff" stroke="#3d7892" stroke-width="4" filter="url(#shadow)"/>
+<text x="501" y="2630" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">结果汇合</text>
+</g>
+<g id="node-update" data-node-id="update">
+<rect x="156" y="2743" width="690" height="120" rx="22" fill="#ffffff" stroke="#3d7892" stroke-width="4" filter="url(#shadow)"/>
+<text x="501" y="2797" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">记录本步信息并推进时间</text>
+<text x="501" y="2827" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">保存 R、V、a、cⱼ；t ← t + Δt</text>
+</g>
+<g id="node-continue" data-node-id="continue">
+<polygon points="501,2949 731,3034 501,3119 271,3034" fill="#fff1df" stroke="#b86a32" stroke-width="4" filter="url(#shadow)"/>
+<text x="501" y="3028" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">t &lt; t_f ？</text>
+<text x="501" y="3058" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">是：返回下一核时间步；否：结束</text>
+</g>
+<g id="node-finish" data-node-id="finish">
+<rect x="266" y="3205" width="470" height="100" rx="22" fill="#dcefe8" stroke="#2f8065" stroke-width="4" filter="url(#shadow)"/>
+<text x="501" y="3249" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">结束当前轨迹</text>
+<text x="501" y="3279" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">计算轨迹级可观测量</text>
+</g>
+<g id="node-ensemble" data-node-id="ensemble">
+<rect x="221" y="3391" width="560" height="115" rx="22" fill="#dcefe8" stroke="#2f8065" stroke-width="4" filter="url(#shadow)"/>
+<text x="501" y="3442.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">汇入轨迹系综</text>
+<text x="501" y="3472.5" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">统计电子态布居、跃迁产率与动力学可观测量</text>
+</g>
+<text x="34" y="3568" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="15" fill="#5c7180">依据：J. C. Tully, J. Chem. Phys. 93, 1061–1071 (1990), DOI 10.1063/1.459170</text>
+</svg>

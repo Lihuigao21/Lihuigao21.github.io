@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="2380" viewBox="0 0 1200 2380" role="img" aria-labelledby="title desc">
+  <title id="title">FSSH 算法流程图（Codex 原生手工布局基线）</title>
+  <desc id="desc">Tully fewest switches surface hopping 的单条轨迹时间推进、跃迁判定、能量检查和轨迹系综流程。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#eef3f8"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#18324a" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11 Z" fill="#26394a"/>
+    </marker>
+    <style>
+      .title { font: 700 38px 'Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill:#102a43; }
+      .subtitle { font: 400 18px 'Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill:#526777; }
+      .node { fill:#fff; stroke:#315a78; stroke-width:2.6; filter:url(#shadow); }
+      .quantum { fill:#edf7ff; stroke:#1677a7; }
+      .classical { fill:#effbf3; stroke:#2f855a; }
+      .decision { fill:#fff8df; stroke:#b7791f; stroke-width:2.8; filter:url(#shadow); }
+      .outcome { fill:#f7f2ff; stroke:#7450a8; }
+      .terminal { fill:#163b5c; stroke:#102a43; stroke-width:2.8; filter:url(#shadow); }
+      .merge { fill:#26394a; stroke:#fff; stroke-width:5; filter:url(#shadow); }
+      .text { font: 600 23px 'Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill:#17324a; text-anchor:middle; }
+      .small { font: 400 18px 'Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill:#40586b; text-anchor:middle; }
+      .terminalText { font: 700 23px 'Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill:#fff; text-anchor:middle; }
+      .edge { fill:none; stroke:#26394a; stroke-width:3.2; marker-end:url(#arrow); stroke-linejoin:round; }
+      .feedback { fill:none; stroke:#176b87; stroke-width:3.5; marker-end:url(#arrow); stroke-linejoin:round; stroke-dasharray:12 8; }
+      .labelBox { fill:#fff; stroke:#cad6df; stroke-width:1.2; rx:8; }
+      .label { font: 700 18px 'Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill:#26394a; text-anchor:middle; }
+      .section { font: 700 16px 'Microsoft YaHei','Noto Sans CJK SC',sans-serif; fill:#60798c; letter-spacing:2px; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="2380" fill="url(#bg)"/>
+  <text class="title" x="600" y="58" text-anchor="middle">FSSH：最少切换表面跳跃</text>
+  <text class="subtitle" x="600" y="91" text-anchor="middle">单条混合量子–经典轨迹的时间推进与随机跃迁</text>
+
+  <text class="section" x="930" y="145">初始化</text>
+  <ellipse class="terminal" cx="600" cy="150" rx="160" ry="48"/>
+  <text class="terminalText" x="600" y="158">开始一条轨迹</text>
+
+  <path class="edge" d="M600 198 V242"/>
+  <rect class="node" x="315" y="245" width="570" height="112" rx="18"/>
+  <text class="text" x="600" y="282">初始化核与电子自由度</text>
+  <text class="small" x="600" y="316">R(0)、V(0)、活动态 a、电子振幅 c(0)</text>
+  <text class="small" x="600" y="342">选择核时间步 Δt 与终止时间 t<tspan baseline-shift="sub" font-size="14">f</tspan></text>
+
+  <text class="section" x="930" y="414">每个核时间步</text>
+  <path class="edge" d="M600 357 V414"/>
+  <rect class="node quantum" x="270" y="417" width="660" height="126" rx="18"/>
+  <text class="text" x="600" y="456">在当前核构型计算电子信息</text>
+  <text class="small" x="600" y="491">绝热能 E<tspan baseline-shift="sub" font-size="14">j</tspan>(R)、活动面力 −∇E<tspan baseline-shift="sub" font-size="14">a</tspan></text>
+  <text class="small" x="600" y="520">非绝热耦合向量 d<tspan baseline-shift="sub" font-size="14">jk</tspan>(R)</text>
+
+  <path class="edge" d="M600 543 V600"/>
+  <rect class="node classical" x="315" y="603" width="570" height="105" rx="18"/>
+  <text class="text" x="600" y="642">沿当前活动面推进经典核</text>
+  <text class="small" x="600" y="677">M R̈ = −∇E<tspan baseline-shift="sub" font-size="14">a</tspan>(R)</text>
+
+  <path class="edge" d="M600 708 V765"/>
+  <rect class="node quantum" x="270" y="768" width="660" height="118" rx="18"/>
+  <text class="text" x="600" y="807">传播电子振幅 / 密度矩阵</text>
+  <text class="small" x="600" y="842">求解含非绝热耦合项的含时电子方程</text>
+  <text class="small" x="600" y="870">可使用比核时间步更小的电子子步长</text>
+
+  <path class="edge" d="M600 886 V943"/>
+  <rect class="node quantum" x="270" y="946" width="660" height="112" rx="18"/>
+  <text class="text" x="600" y="986">计算 fewest-switches 跃迁概率</text>
+  <text class="small" x="600" y="1022">由活动态 a 到其他态 j 的布居流得到 g<tspan baseline-shift="sub" font-size="14">a→j</tspan></text>
+  <text class="small" x="600" y="1047">生成均匀随机数 ξ ∈ [0,1)</text>
+
+  <path class="edge" d="M600 1058 V1105"/>
+  <polygon class="decision" points="600,1108 820,1200 600,1292 380,1200"/>
+  <text class="text" x="600" y="1188">ξ 是否落入某个</text>
+  <text class="text" x="600" y="1222">跃迁概率区间？</text>
+
+  <path class="edge" d="M380 1200 H205 V1325"/>
+  <rect class="labelBox" x="274" y="1173" width="64" height="35"/>
+  <text class="label" x="306" y="1197">否</text>
+  <rect class="node outcome" x="70" y="1328" width="270" height="105" rx="18"/>
+  <text class="text" x="205" y="1370">无跃迁</text>
+  <text class="small" x="205" y="1403">保持活动态 a</text>
+
+  <path class="edge" d="M600 1292 V1335"/>
+  <rect class="labelBox" x="617" y="1299" width="64" height="35"/>
+  <text class="label" x="649" y="1323">是</text>
+  <rect class="node outcome" x="420" y="1338" width="360" height="105" rx="18"/>
+  <text class="text" x="600" y="1380">选定候选目标态 j</text>
+  <text class="small" x="600" y="1413">计算能隙 ΔE = E<tspan baseline-shift="sub" font-size="14">j</tspan>−E<tspan baseline-shift="sub" font-size="14">a</tspan></text>
+
+  <path class="edge" d="M600 1443 V1485"/>
+  <polygon class="decision" points="600,1488 800,1572 600,1656 400,1572"/>
+  <text class="text" x="600" y="1561">沿 d<tspan baseline-shift="sub" font-size="15">aj</tspan> 的动能</text>
+  <text class="text" x="600" y="1595">足以满足能量守恒？</text>
+
+  <path class="edge" d="M400 1572 H315 V1692"/>
+  <rect class="labelBox" x="330" y="1545" width="64" height="35"/>
+  <text class="label" x="362" y="1569">否</text>
+  <rect class="node outcome" x="150" y="1695" width="330" height="112" rx="18"/>
+  <text class="text" x="315" y="1738">受挫跃迁</text>
+  <text class="small" x="315" y="1772">拒绝切换，仍处于活动态 a</text>
+
+  <path class="edge" d="M800 1572 H885 V1692"/>
+  <rect class="labelBox" x="806" y="1545" width="64" height="35"/>
+  <text class="label" x="838" y="1569">是</text>
+  <rect class="node outcome" x="720" y="1695" width="330" height="112" rx="18"/>
+  <text class="text" x="885" y="1738">接受跃迁 a → j</text>
+  <text class="small" x="885" y="1770">沿 d<tspan baseline-shift="sub" font-size="13">aj</tspan> 调整速度以守恒总能量</text>
+  <text class="small" x="885" y="1795">将 j 设为新活动态</text>
+
+  <path class="edge" d="M205 1433 H105 V1860 H572"/>
+  <path class="edge" d="M315 1807 V1860 H572"/>
+  <path class="edge" d="M885 1807 V1860 H628"/>
+  <circle class="merge" cx="600" cy="1860" r="26"/>
+
+  <path class="edge" d="M600 1886 V1930"/>
+  <rect class="node" x="390" y="1933" width="420" height="92" rx="18"/>
+  <text class="text" x="600" y="1972">完成当前步并更新 t ← t + Δt</text>
+  <text class="small" x="600" y="2004">记录 R、V、活动态与电子布居</text>
+
+  <path class="edge" d="M600 2025 V2064"/>
+  <polygon class="decision" points="600,2067 790,2145 600,2223 410,2145"/>
+  <text class="text" x="600" y="2135">t &lt; t<tspan baseline-shift="sub" font-size="15">f</tspan> ？</text>
+  <text class="small" x="600" y="2170">是：下一核时间步；否：结束</text>
+
+  <path class="feedback" d="M410 2145 H45 V480 H267"/>
+  <rect class="labelBox" x="58" y="2107" width="142" height="38"/>
+  <text class="label" x="129" y="2133">是 / 下一步</text>
+
+  <path class="edge" d="M600 2223 V2260"/>
+  <rect class="labelBox" x="618" y="2225" width="64" height="35"/>
+  <text class="label" x="650" y="2249">否</text>
+  <rect class="terminal" x="390" y="2263" width="420" height="82" rx="41"/>
+  <text class="terminalText" x="600" y="2296">结束该轨迹</text>
+  <text class="terminalText" x="600" y="2326">汇入轨迹系综并统计观测量</text>
+
+  <text class="subtitle" x="1165" y="2325" text-anchor="end">手工 SVG 布局 · native baseline</text>
+</svg>

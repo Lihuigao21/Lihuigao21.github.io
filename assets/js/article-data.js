@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "codex-skills-workflow-engineering",
+    title: "Codex Skills as Workflow Engineering",
+    path: "posts/codex-skills-workflow-engineering.html",
+    date: "2026-08-19",
+    dateText: "2026.08.19",
+    description: "A controlled FSSH flowchart case study on turning successful Codex conversations into semantic contracts, deterministic tools, and evidence-based acceptance loops.",
+    tags: ["Codex", "Skills", "Workflow Engineering", "Automatic Layout", "Reproducibility"],
+  },
+  {
     slug: "n1-forward-dividing-surface-equivalence",
     title: "From Reactants or the Dividing Surface? An N=1 Equivalence Test",
     path: "posts/n1-forward-dividing-surface-equivalence.html",
