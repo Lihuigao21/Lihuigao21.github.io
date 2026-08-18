@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://lihuigao21.github.io/</loc>
-    <lastmod>2026-08-09</lastmod>
+    <lastmod>2026-08-19</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/n1-forward-dividing-surface-equivalence.html</loc>
@@ -18,7 +18,7 @@
   </url>
   <url>
     <loc>https://lihuigao21.github.io/life.html</loc>
-    <lastmod>2026-08-15</lastmod>
+    <lastmod>2026-08-19</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/mind.html</loc>
@@ -777,5 +777,9 @@
   <url>
     <loc>https://lihuigao21.github.io/life/coffee-talk-game-industry-data-2026-08-16.html</loc>
     <lastmod>2026-08-16</lastmod>
+  </url>
+  <url>
+    <loc>https://lihuigao21.github.io/life/art-reviews.html</loc>
+    <lastmod>2026-08-19</lastmod>
   </url>
 </urlset>
