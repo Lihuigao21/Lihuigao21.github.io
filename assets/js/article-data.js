@@ -45,6 +45,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "learning-generator-pinn-mmst-dynamics",
+    title: "Learning the Generator: PINN-MMST Dynamics",
+    path: "posts/learning-generator-pinn-mmst-dynamics.html",
+    date: "2026-08-25",
+    dateText: "2026.08.25",
+    description: "A generator-learning view of MLPES and physics-informed MMST dynamics, with a reproducible small-N spin-boson benchmark and an accuracy-adjusted acceleration framework.",
+    tags: ["MMST", "PINN", "Machine Learning Potentials", "Nonadiabatic Dynamics", "Mapping Dynamics", "Reproduction"],
+  },
+  {
     slug: "codex-skills-workflow-engineering",
     title: "Codex Skills as Workflow Engineering",
     path: "posts/codex-skills-workflow-engineering.html",

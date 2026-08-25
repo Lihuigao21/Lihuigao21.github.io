@@ -1,0 +1,81 @@
+{
+  "case_id": "zeng_2025_dd_pinn_smalln_cmm_stage2",
+  "status": "constrained_smalln_baseline_not_paper_scale_reproduction",
+  "paper": {
+    "title": "Data-Driven Versus Physics-Informed Neural Networks for Nonadiabatic Semiclassical Mapping Dynamics",
+    "doi": "10.4208/cicc.2025.152.01",
+    "pdf_sha256": "64b49daf6918cf3e8c114a98ebaf83195e0d728aa844279f6901e6dceeaf8b97",
+    "equation_scope": [2, 3, 6, 7, 8, 10, 11, 16, 17, 18, 20, 22, 23, 24]
+  },
+  "model": {
+    "n_modes": 4,
+    "n_electronic_states": 2,
+    "epsilon": 1.0,
+    "gamma_electronic_coupling": 1.0,
+    "kondo_xi": 0.1,
+    "omega_c": 2.5,
+    "beta": 5.0,
+    "hbar": 1.0,
+    "mass": 1.0,
+    "mapping_zpe_gamma": 0.5,
+    "initial_electronic_state": 0,
+    "mapping_sampling": "uniform_on_2F_minus_1_sphere",
+    "nuclear_sampling": "thermal_wigner",
+    "project_mapping_after_rk4": true
+  },
+  "data": {
+    "dt": 0.01,
+    "fine_dt": 0.005,
+    "trajectory_steps": 500,
+    "train_trajectories": 256,
+    "validation_trajectories": 64,
+    "test_batches": 2,
+    "test_trajectories_per_batch": 256,
+    "seed": 20260825
+  },
+  "network": {
+    "hidden_sizes": [256, 256],
+    "activation": "sigmoid",
+    "dd_form": "residual_fcn_predicting_normalized_one_step_increment",
+    "pinn_form": "two_fcn_potential_and_gradient_maps_inside_constrained_primitive_mmst_rk4",
+    "pinn_learned_scalars": ["mass", "mapping_zpe_gamma"],
+    "pinn_project_mapping_after_step": true
+  },
+  "training": {
+    "epochs": 300,
+    "batch_size": 8192,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "gradient_clip_norm": 10.0,
+    "mapping_constraint_weight": 1.0,
+    "device": "cuda",
+    "torch_seed": 20260826
+  },
+  "predeclared_thresholds": {
+    "finite_all_outputs": true,
+    "initial_mapping_sphere_max_abs_error": 1e-12,
+    "reference_mapping_sphere_max_abs_drift": 1e-8,
+    "reference_relative_energy_max_abs_drift": 0.0001,
+    "reference_dt_halving_population_max_abs_difference": 0.01,
+    "pinn_validation_increment_nrmse": 0.20,
+    "pinn_rollout_state_nrmse": 0.35,
+    "pinn_population_rmse": 0.08,
+    "pinn_mapping_sphere_max_abs_drift": 0.05,
+    "pinn_population_rmse_not_worse_than_dd_factor": 1.0,
+    "independent_test_batch_population_max_abs_difference": 0.15,
+    "curve_roughness_rms_fraction": 0.02,
+    "curve_roughness_max_fraction": 0.08,
+    "curve_isolated_spike_fraction": 0.08,
+    "curve_endpoint_roughness_max_fraction": 0.08
+  },
+  "scope_limits": [
+    "N=4 rather than the paper's N=100 bath discretization",
+    "256 rather than 1024 units in each hidden layer",
+    "256 rather than 500 CMM training trajectories",
+    "500 rather than 1000 training steps per trajectory",
+    "FCN comparison only",
+    "increment-normalized optimization is used",
+    "Eq. 16 mapping-constraint loss and mapping-sphere projection are numerical stabilizers not explicitly reported in the paper",
+    "no claim of reproducing the paper's published figures"
+  ]
+}
