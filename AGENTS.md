@@ -67,6 +67,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 
 - All code used by an article must be linked inside the article.
 - Prefer compact, executable scripts under `assets/code/` for published examples.
+- When publishing code copied from another repository, test it from the website repository context. Vendor or document the minimal reusable dependencies instead of assuming the source repository package remains importable.
 - Keep raw notebooks, PDFs, drafts, and large binary files in `articles/`; this folder is ignored by git and should not be published wholesale.
 - Do not publish huge dumps such as `.npz`, cache folders, or notebook outputs unless they are intentionally cleaned, documented, and small enough for GitHub Pages.
 - When adapting code from a notebook, make a clean script that can run from the repository root or from its own path.
