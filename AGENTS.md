@@ -77,6 +77,8 @@ Avoid purely theoretical articles with no result. If the source material is theo
 ## Series Logic
 
 - Articles in the same series must progress step by step. Avoid logical jumps.
+- The first article of a new technical series must establish why the series exists before entering taxonomy or formalism: introduce the scientific background, the motivating confusion or source, the questions the series will answer, and a compact roadmap. Use a more narrative opening than a standalone methods note while keeping claims precise.
+- Do not force a synthetic benchmark, figure, or code attachment into a conceptual series opener when it interrupts the narrative. A concrete comparison framework or validation checklist can provide the required practical result when that better serves the article's purpose.
 - Each series article should briefly say how it depends on previous parts and what new idea it adds.
 - Update every article in the series when adding a new part:
   - top `series-nav`,
