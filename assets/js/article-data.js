@@ -1,5 +1,11 @@
 window.SITE_SERIES = [
   {
+    id: "hydrogen-transfer",
+    title: "Hydrogen Transfer Series",
+    label: "Observables, Quantum Effects, and Rate Theory",
+    description: "Experimental observables, kinetic isotope effects, nuclear quantum dynamics, diabatic states, rate theories, and seam-space diagnostics for hydrogen transfer.",
+  },
+  {
     id: "cmd",
     title: "CMD Series",
     label: "Centroid Molecular Dynamics",
@@ -44,6 +50,16 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    slug: "hydrogen-transfer-observables-model-validation",
+    title: "Hydrogen Transfer I: Observables and Model Validation",
+    path: "posts/hydrogen-transfer-observables-model-validation.html",
+    date: "2026-09-04",
+    dateText: "2026.09.04",
+    description: "What hydrogen-transfer experiments actually observe, why microscopic calculations are needed, and how rates, isotope effects, spectra, and structures should validate a model.",
+    tags: ["Hydrogen Transfer", "Kinetic Isotope Effects", "Reaction Rates", "Spectroscopy", "Model Validation", "Nuclear Quantum Effects"],
+    series: "hydrogen-transfer",
+  },
   {
     slug: "learning-generator-pinn-mmst-dynamics",
     title: "Learning the Generator: PINN-MMST Dynamics",

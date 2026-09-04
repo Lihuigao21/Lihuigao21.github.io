@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Hydrogen Transfer series part I: what experiments observe, why molecular calculations are needed, and how theory should be compared with rates, isotope effects, spectra, and structures.">
+    <title>Hydrogen Transfer I: Observables and Model Validation | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Hydrogen Transfer Series - Part I</p>
+          <h1>Observables and Model Validation</h1>
+          <p class="post-meta">2026.09.04 - Hydrogen Transfer / Kinetic Isotope Effects / Model Validation</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Hydrogen Transfer series navigation">
+            <a href="hydrogen-transfer-observables-model-validation.html">I. Observables and Model Validation</a>
+          </nav>
+
+          <p class="lead">
+            An experiment does not directly display a reaction coordinate, a tunneling pathway, a diabatic coupling, or a transition-state geometry. It records counts, currents, intensities, concentrations, and arrival times. Molecular theory is needed to connect those signals to microscopic mechanisms—but that connection is an inverse problem, and it is rarely unique. This first note separates what is observed from what is inferred, then gives a practical protocol for comparing hydrogen-transfer calculations with experiment.
+          </p>
+
+          <h2>1. Three levels that should not be conflated</h2>
+          <p>
+            In casual discussion, a rate constant is often called a direct observable. Strictly, even a rate constant is already a fitted quantity. It is useful to distinguish three levels:
+          </p>
+          <ol>
+            <li><strong>Raw signals:</strong> detector counts, absorbance, fluorescence, current, pressure, mass-to-charge intensity, neutron or X-ray scattering intensity, and NMR voltage.</li>
+            <li><strong>Processed observables:</strong> concentration traces, spectra, equilibrium constants, apparent rate constants, kinetic isotope effects, product branching ratios, structural distributions, and state lifetimes.</li>
+            <li><strong>Mechanistic latent variables:</strong> transition-state structures, free-energy barriers, tunneling transmission coefficients, diabatic couplings, reorganization energies, donor–acceptor distance distributions, and “tunneling-ready” configurations.</li>
+          </ol>
+          <p>
+            The first two levels are tied to a measurement protocol. The third is obtained only after adopting a physical model. A large H/D kinetic isotope effect can strongly constrain a mechanism, but it is not itself a direct measurement of a tunneling fraction: zero-point energy, equilibrium isotope effects, commitment factors, hidden intermediates, and a change of rate-determining step can all modify the measured ratio.
+          </p>
+
+          <h2>2. What can experiments observe?</h2>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>Experimental family</th><th>Processed observable</th><th>What it constrains</th><th>What remains model-dependent</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Steady-state and pre-steady-state kinetics</td><td>\(k_{\mathrm{obs}}(T,\mathrm{pH},p,\eta)\), rate law, activation parameters</td><td>Reaction order, saturation, kinetic bottlenecks, competing channels</td><td>Which microscopic step owns the measured rate</td></tr>
+                <tr><td>H/D/T labeling and KIE</td><td>\(\mathrm{KIE}=k_H/k_D\), label location in products</td><td>Whether H motion is involved in a kinetically important region</td><td>Separation of zero-point, tunneling, pre-equilibrium, and commitment effects</td></tr>
+                <tr><td>Product and competition measurements</td><td>Yield, regioselectivity, stereoselectivity, branching ratio</td><td>Which channels survive to products and which step controls selectivity</td><td>Transient intermediates and recrossing before product formation</td></tr>
+                <tr><td>Equilibrium and electrochemical measurements</td><td>\(K_{\mathrm{eq}}\), \(pK_a\), redox potential, current–potential relation</td><td>Driving forces, protonation states, thermodynamic coupling</td><td>Microscopic path and individual reorganization coordinates</td></tr>
+                <tr><td>IR, Raman, NMR, EPR, microwave, and tunneling-splitting spectroscopy</td><td>Peak positions, widths, splittings, exchange rates, state populations</td><td>Local bonding, nuclear delocalization, exchange, and quantum-state structure</td><td>Assignment of a peak or splitting to a unique geometry or pathway</td></tr>
+                <tr><td>Transient absorption, time-resolved IR, XAS, and scattering</td><td>State lifetimes and time-dependent site- or structure-sensitive signals</td><td>Ordering of electronic, protonic, solvent, and skeletal events</td><td>Conversion of a spectral component into a unique charge and geometry</td></tr>
+                <tr><td>X-ray, neutron, and electron scattering</td><td>Average structure, density, pair correlations, disorder</td><td>Proton positions, hydrogen bonds, and structural populations</td><td>The rare transition region and its dynamical probability flux</td></tr>
+                <tr><td>Controlled perturbations</td><td>Response to substitution, pressure, viscosity, mutation, solvent, or potential</td><td>Causal sensitivity and possible gating coordinates</td><td>Whether correlated changes arise from the proposed microscopic variable</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Orthogonality matters more than the sheer number of measurements. KIE constrains nuclear motion; a rate law constrains network topology; a site-specific transient spectrum constrains event order; a product distribution constrains surviving channels. A recent aqueous PCET study made this point experimentally: thermodynamics, KIEs, and rate laws alone were insufficient to resolve the pathway, so optical spectroscopy, nitrogen K-edge XAS, time-resolved X-ray solution scattering, electronic structure, and molecular dynamics were combined.
+          </p>
+
+          <h2>3. Why is calculation necessary?</h2>
+          <h3>The experiment-to-mechanism map is many-to-one</h3>
+          <p>
+            Different microscopic networks can produce nearly the same single-exponential decay or the same room-temperature KIE. Recovering a mechanism from a small set of observables is therefore an underdetermined inverse problem. Calculation supplies a forward model: assume a mechanism and molecular Hamiltonian, predict the observables, and ask whether the prediction survives new conditions.
+          </p>
+
+          <h3>Many useful questions are counterfactual</h3>
+          <p>
+            We may want to know how much the rate would change if nuclear tunneling were “turned off,” if one solvent coordinate were frozen, or if the donor–acceptor distance distribution were narrowed without changing the electronic structure. These interventions cannot usually be performed cleanly in the laboratory. They can be defined computationally, but their answers belong to the chosen model and must not be presented as direct measurements.
+          </p>
+
+          <h3>Microscopic variables are hidden</h3>
+          <p>
+            A transition-state ensemble, a diabatic crossing seam, a vibronic coupling \(V(\mathbf R)\), or a solvent reorganization coordinate is not read directly from a detector. Theory converts such hidden variables into predicted rates, isotope effects, spectra, or structural distributions that can be tested. The value of the hidden-variable picture is proportional to the number of independent observables it predicts—not to how intuitively attractive its molecular animation appears.
+          </p>
+
+          <h2>4. A minimal measurement equation</h2>
+          <p>
+            A useful abstraction is
+          </p>
+          <div class="math-block">\[
+            y_{\mathrm{obs}}(x)
+            =
+            \mathcal I\!\left[
+              \left\langle \hat O(x) \right\rangle_{\rho(\boldsymbol\theta)}
+            \right]
+            + b(x)+\epsilon(x).
+          \]</div>
+          <p>
+            Here \(\boldsymbol\theta\) contains the microscopic model parameters and state populations; \(\rho\) specifies the ensemble or nonequilibrium state; \(\hat O\) is the observable operator or kinetic output; \(\mathcal I\) represents instrumental convolution and finite resolution; \(b\) is background; and \(\epsilon\) is noise. A fair comparison requires the calculation to reproduce the right-hand side at the same temperature, composition, pressure, isotope substitution, time resolution, and preparation protocol as the experiment.
+          </p>
+          <p>
+            Comparing a computed electronic barrier directly with an observed rate skips almost this entire equation. The rate additionally depends on statistical populations, entropy, transmission or nonadiabatic factors, recrossing, solvent response, and the surrounding kinetic network.
+          </p>
+
+          <h2>5. A reproducible identifiability test</h2>
+          <p>
+            The following synthetic example is deliberately simple. Model A is a single effective transfer step. Model B contains an isotope-insensitive gate followed by an isotope-sensitive transfer. Both are calibrated at 300 K to
+          </p>
+          <div class="math-block">\[
+            k_H=100\ \mathrm{s}^{-1},
+            \qquad
+            k_D=20\ \mathrm{s}^{-1},
+            \qquad
+            \mathrm{KIE}=5.
+          \]</div>
+          <p>
+            For the serial model, the reported effective rate is the inverse mean first-passage time,
+          </p>
+          <div class="math-block">\[
+            k_{\mathrm{eff}}
+            =
+            \left(\frac{1}{k_{\mathrm{gate}}}+\frac{1}{k_{\mathrm{transfer}}}\right)^{-1}.
+          \]</div>
+
+          <figure>
+            <img src="../assets/img/hydrogen-transfer/observable-identifiability.png" alt="Synthetic identifiability comparison of a one-step hydrogen transfer and a gated two-step mechanism">
+            <figcaption>
+              Synthetic mechanism-identifiability diagnostic; these curves are not a fit to a particular experiment. Panel (a): effective H rate in s<sup>-1</sup> versus temperature. The solid blue one-step model and dashed red gate-plus-transfer model are both fixed at 100 s<sup>-1</sup> at 300 K but separate away from that temperature. Panel (b): H/D KIE versus temperature; both equal 5 at 300 K, yet their temperature dependences are opposite because the gated model mixes isotope-insensitive and isotope-sensitive timescales. Panel (c): H-product population versus time in milliseconds at 300 K. The one-step model is a single exponential; the serial model uses \(k_{\mathrm{gate}}=125\ \mathrm{s}^{-1}\) and \(k_{\mathrm{transfer}}=500\ \mathrm{s}^{-1}\), has the same inverse mean first-passage rate, but exhibits an initial lag. One rate and one KIE at one temperature cannot identify the mechanism; temperature dependence or time resolution can.
+            </figcaption>
+          </figure>
+
+          <p>
+            The result is not that temperature-dependent KIE or ultrafast spectroscopy always determines a unique mechanism. It shows why a mechanism that matches one number has barely been tested. Additional observables should be chosen to maximize separation between competing forward predictions.
+          </p>
+
+          <h2>6. How should calculation be compared with experiment?</h2>
+          <ol>
+            <li><strong>Match the chemical object.</strong> Verify isotope placement, protonation state, conformer, electronic state, solvent composition, concentration regime, and electrode or photon preparation.</li>
+            <li><strong>Predict the measured quantity.</strong> Convert energies and couplings into \(k(T)\), KIE, a spectrum, a lifetime, or a structural distribution. Do not validate a coupling by comparing it with an experimental rate without the rate theory that connects them.</li>
+            <li><strong>Reproduce experimental averaging.</strong> Include conformer populations, orientations, solvent and protein configurations, isotope mixtures, instrumental response, and time-window integration when they matter.</li>
+            <li><strong>Distinguish apparent from intrinsic kinetics.</strong> Embed the calculated elementary step in a microkinetic model whenever diffusion, binding, pre-equilibrium, commitment factors, or multiple channels contribute to \(k_{\mathrm{obs}}\).</li>
+            <li><strong>Use calibration and validation separately.</strong> Parameters fitted to the 300 K H rate have not predicted that datum. Test them against D/T substitution, temperature, pressure, driving force, spectra, or a held-out perturbation.</li>
+            <li><strong>Carry uncertainty to the observable.</strong> Propagate electronic-structure error, finite sampling, rate-theory approximation, parameter uncertainty, and experimental error. Agreement within an unexplained factor is not a mechanism proof.</li>
+            <li><strong>Compare alternatives.</strong> Ask whether a different mechanism can explain the same observations. A mechanistic claim becomes stronger when a new observable is predicted to distinguish the alternatives and then succeeds experimentally.</li>
+          </ol>
+
+          <h2>7. Where does V-SHAKE enter this chain?</h2>
+          <p>
+            The motivating V-SHAKE work samples geometries satisfying the NEO diabatic vibronic crossing condition
+          </p>
+          <div class="math-block">\[
+            E_R(\mathbf R)=E_P(\mathbf R)
+          \]</div>
+          <p>
+            and evaluates the geometry-dependent vibronic coupling \(V(\mathbf R)=\Delta(\mathbf R)/2\). This answers a computational diagnostic question: does a single minimum-energy crossing point, a constant coupling, or one donor–acceptor coordinate adequately represent the crossing region? The resulting seam point cloud and coupling distribution are not themselves experimental observables, equilibrium probabilities, or rates.
+          </p>
+          <p>
+            To confront experiment, the seam information must be given statistically meaningful weights and inserted into a rate theory or spectral forward model. That model should then predict \(k_H(T)\), \(k_D(T)\), KIE, or another measured response. This distinction is central: V-SHAKE can audit assumptions inside a rate theory without yet validating the final rate prediction.
+          </p>
+
+          <h2>8. A compact validation checklist</h2>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Question</th><th>Minimum evidence</th></tr></thead>
+              <tbody>
+                <tr><td>Did we model the measured chemical step?</td><td>Rate law or microkinetic assignment plus isotope/product tracing</td></tr>
+                <tr><td>Is nuclear motion kinetically important?</td><td>KIE under controlled conditions, preferably over temperature or another perturbation</td></tr>
+                <tr><td>Is the proposed event order correct?</td><td>Time- and site-sensitive spectroscopy or scattering</td></tr>
+                <tr><td>Is the computed ensemble relevant?</td><td>Structural or spectroscopic population checks under the experimental conditions</td></tr>
+                <tr><td>Does the hidden-variable model make a testable prediction?</td><td>A held-out rate, isotope, spectrum, pressure, solvent, potential, or mutation response</td></tr>
+                <tr><td>Is the mechanism identifiable?</td><td>Explicit comparison with plausible alternative mechanisms across multiple observables</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Code and data used in this note</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/hydrogen-transfer/observable_identifiability.py">observable_identifiability.py</a> generates the two synthetic mechanisms, the temperature scan, the transient product populations, and the figure.</li>
+            <li><a href="../assets/img/hydrogen-transfer/observable-identifiability.csv">observable-identifiability.csv</a> contains the temperature-dependent H/D rates and KIE values plotted in panels (a) and (b).</li>
+          </ul>
+
+          <h2>References</h2>
+          <ul>
+            <li>Dickinson, Paenurk, and Hammes-Schiffer, “Diabatic Seam Space Sampling for Hydrogen Tunneling Systems with Nuclear–Electronic Orbital Theory,” <a href="https://arxiv.org/abs/2609.03942">arXiv:2609.03942v1</a> (2026).</li>
+            <li>Hammes-Schiffer and co-workers, “Nuclear–Electronic Orbital General Rate Theory: Predicting Hydrogen Kinetic Isotope Effects in the Deep Tunneling Regime,” <a href="https://doi.org/10.1021/acs.jctc.6c01175"><em>J. Chem. Theory Comput.</em> (2026)</a>.</li>
+            <li>Tyburski, Liu, Glover, and Hammarström, “Proton-Coupled Electron Transfer Guidelines, Fair and Square,” <a href="https://doi.org/10.1021/jacs.0c09106"><em>J. Am. Chem. Soc.</em> 143, 560–576 (2021)</a>.</li>
+            <li>Migliore, Polizzi, Therien, and Beratan, “Biochemistry and Theory of Proton-Coupled Electron Transfer,” <a href="https://doi.org/10.1021/cr4006654"><em>Chem. Rev.</em> 114, 3381–3465 (2014)</a>.</li>
+            <li>“Electronic and solvent reorganization in proton-coupled electron transfer captured by ultrafast X-rays,” <a href="https://www.nature.com/articles/s41467-026-75943-4"><em>Nature Communications</em> (2026)</a>.</li>
+            <li>Kopf et al., “Recent Developments for the Deuterium and Tritium Labeling of Organic Molecules,” <a href="https://doi.org/10.1021/acs.chemrev.1c00795"><em>Chem. Rev.</em> 122, 6634–6718 (2022)</a>, for the scope and interpretation of primary and secondary isotope effects.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="hydrogen-transfer-series-map">
+            <h2 id="hydrogen-transfer-series-map">Hydrogen Transfer series map</h2>
+            <ol class="series-list">
+              <li><a href="hydrogen-transfer-observables-model-validation.html">Part I: Observables and Model Validation</a> - what experiments measure, why microscopic calculations are needed, and how forward predictions should be tested.</li>
+              <li>Part II: From KIE to Nuclear Quantum Effects - planned.</li>
+              <li>Part III: What Rate Theories Actually Compute - planned.</li>
+              <li>Part IV: Diabatic States, MECPs, and Vibronic Coupling - planned.</li>
+              <li>Part V: V-SHAKE and Diabatic Seam Sampling - planned.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
