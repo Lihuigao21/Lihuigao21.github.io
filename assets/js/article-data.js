@@ -56,7 +56,7 @@ window.SITE_ARTICLES = [
     path: "posts/hydrogen-transfer-barrier-to-rate.html",
     date: "2026-09-04",
     dateText: "2026.09.04",
-    description: "How Arrhenius and transition-state theory turned an energy barrier into a rate, tested against a reproducible one-dimensional sinc-DVR benchmark.",
+    description: "A derivation-led route from Arrhenius and transition-state theory to a reproducible one-dimensional sinc-DVR rate benchmark.",
     tags: ["Hydrogen Transfer", "Transition-State Theory", "DVR", "Reaction Rates", "Flux-Side Correlation", "Reproduction"],
     series: "hydrogen-transfer",
   },

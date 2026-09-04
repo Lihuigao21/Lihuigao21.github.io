@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Hydrogen Transfer series part II: how Arrhenius and transition-state theory turned an energy barrier into a rate, tested against a reproducible one-dimensional DVR benchmark.">
+    <meta name="description" content="Hydrogen Transfer series part II: a derivation-led route from Arrhenius and transition-state theory to a reproducible one-dimensional DVR rate benchmark.">
     <title>Hydrogen Transfer II: From a Barrier to a Rate | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
@@ -43,10 +43,30 @@
             In 1889, Arrhenius expressed a regularity already visible in kinetic measurements:
           </p>
           <div class="math-block">\[
-            k(T)=A\exp\!\left(-\frac{E_a}{RT}\right).
+            k_{\mathrm{obs}}(T)=A\exp\!\left(-\frac{E_a}{RT}\right).
           \]</div>
           <p>
-            A plot of \(\ln k\) against \(1/T\) turns the temperature dependence into a slope, \(-E_a/R\), and an intercept, \(\ln A\). This is extraordinarily useful, but it does not yet tell us what the molecule does. The activation energy is obtained from the variation of a rate with temperature; it is not automatically the height of a particular saddle point, and the prefactor collects everything the simple exponential has left out.
+            Here I write \(k_{\mathrm{obs}}\) deliberately: this is the rate extracted from an experimental kinetic model. Taking a logarithm does not make \(k\) logarithmic in \(T\). It produces a linear relation between \(\ln k_{\mathrm{obs}}\) and the inverse temperature:
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \ln k_{\mathrm{obs}}
+              &=\ln\!\left[Ae^{-E_a/(RT)}\right]\\
+              &=\ln A-\frac{E_a}{R}\frac{1}{T}.
+            \end{aligned}
+          \]</div>
+          <p>
+            If we define \(x=1/T\), this has the elementary straight-line form \(y=b+mx\):
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \frac{d\ln k_{\mathrm{obs}}}{d(1/T)}&=-\frac{E_a}{R},\\
+            E_a&=-R\frac{d\ln k_{\mathrm{obs}}}{d(1/T)},\\
+               &=RT^2\frac{d\ln k_{\mathrm{obs}}}{dT}.
+            \end{aligned}
+          \]</div>
+          <p>
+            Thus the activation energy is a slope extracted from the temperature dependence of a rate. It is not automatically the height of a particular saddle point. If the Arrhenius plot bends, the derivative above still defines a local, temperature-dependent apparent activation energy. The prefactor \(A\) collects everything the simple exponential has left out.
           </p>
           <p>
             In other words, Arrhenius gave kinetics a compact empirical coordinate. The next problem was to give that coordinate a molecular meaning.
@@ -54,18 +74,109 @@
 
           <h2>2. Putting the reaction on an energy landscape</h2>
           <p>
-            By the 1930s, quantum mechanics and statistical mechanics made it natural to imagine a reaction moving on a potential-energy surface. Reactants occupy one region; products occupy another; between them lies a bottleneck. The 1935 formulations of Eyring and of Evans and Polanyi turned that picture into the expression now usually written
+            By the 1930s, quantum mechanics and statistical mechanics made it natural to imagine a reaction moving on a potential-energy surface. Reactants occupy one region; products occupy another; between them lies a bottleneck. The 1935 formulations of Eyring and of Evans and Polanyi converted the equilibrium population of that bottleneck into a rate.
+          </p>
+
+          <h3>Step 1: count configurations at the bottleneck</h3>
+          <p>
+            Let \(Q_R\) be the reactant partition function and \(Q^{\ddagger}\) the partition function at the dividing surface, with the unstable reaction-coordinate mode omitted. Under the quasi-equilibrium assumption, their population ratio is
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            K^{\ddagger}
+              &=\frac{N^{\ddagger}}{N_R}\\
+              &=\frac{Q^{\ddagger}}{Q_R}
+                \exp\!\left[-\beta(E^{\ddagger}-E_R)\right],\\
+            \beta&=\frac{1}{k_{\mathrm B}T}.
+            \end{aligned}
+          \]</div>
+          <p>
+            Appropriate standard-state factors are understood in this compact notation. The exponential pays the energetic cost of reaching the bottleneck; the partition-function ratio counts how many thermally accessible configurations exist there relative to the reactant region.
+          </p>
+
+          <h3>Step 2: turn that population into one-way flux</h3>
+          <p>
+            At the dividing surface, only positive momentum along the reaction coordinate contributes to forward flux. Its classical phase-space factor is
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \nu_+(T)
+              &=\frac{1}{h}\int_0^{\infty}dp\,
+                \frac{p}{m}\exp\!\left(-\beta\frac{p^2}{2m}\right)\\
+              &=\frac{1}{h}\int_0^{\infty}dE\,e^{-\beta E}
+               =\frac{1}{\beta h}
+               =\frac{k_{\mathrm B}T}{h},
+            \end{aligned}
+          \]</div>
+          <p>
+            where \(E=p^2/(2m)\) and therefore \(dE=(p/m)dp\). Multiplying this one-way crossing frequency by the bottleneck population gives
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            k_{\mathrm{TST}}(T)
+              &=\frac{k_{\mathrm B}T}{h}
+                \frac{Q^{\ddagger}}{Q_R}\\
+              &\quad\times
+                \exp\!\left[-\beta(E^{\ddagger}-E_R)\right].
+            \end{aligned}
+          \]</div>
+          <p>
+            This derivation shows exactly where the famous prefactor comes from. The unstable coordinate is not included as an equilibrium vibration in \(Q^{\ddagger}\); it is replaced by the positive flux through the dividing surface.
+          </p>
+
+          <h3>Step 3: rewrite the molecular bookkeeping as a free energy</h3>
+          <p>
+            The activation free energy is defined so that the energetic and statistical factors satisfy
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \exp\!\left(-\frac{\Delta G^{\ddagger}}{RT}\right)
+              &\equiv \frac{Q^{\ddagger}}{Q_R}\\
+              &\quad\times
+              \exp\!\left[-\beta(E^{\ddagger}-E_R)\right].
+            \end{aligned}
+          \]</div>
+          <p>
+            Consequently the same TST result can be written in its familiar Eyring form,
           </p>
           <div class="math-block">\[
             k_{\mathrm{TST}}(T)
             =\frac{k_{\mathrm B}T}{h}
-             \frac{Q^{\ddagger}}{Q_R}
-             \exp\!\left[-\beta\left(E^{\ddagger}-E_R\right)\right]
-            =\frac{k_{\mathrm B}T}{h}
              \exp\!\left(-\frac{\Delta G^{\ddagger}}{RT}\right).
           \]</div>
           <p>
-            The two forms say the same thing in different bookkeeping languages. The first displays an energetic barrier and the ratio of partition functions. The second folds energetic and entropic effects into an activation free energy. The unstable motion along the reaction coordinate is omitted from \(Q^{\ddagger}\); its one-way passage through the dividing surface supplies the factor \(k_{\mathrm B}T/h\).
+            Using \(\Delta G^{\ddagger}=\Delta H^{\ddagger}-T\Delta S^{\ddagger}\) then gives
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            k_{\mathrm{TST}}(T)
+              &=\frac{k_{\mathrm B}T}{h}
+                \exp\!\left(\frac{\Delta S^{\ddagger}}{R}\right)\\
+              &\quad\times
+                \exp\!\left(-\frac{\Delta H^{\ddagger}}{RT}\right).
+            \end{aligned}
+          \]</div>
+          <p>
+            Taking the logarithm explains why an Eyring plot is not an ordinary Arrhenius plot:
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \ln\!\left(\frac{k_{\mathrm{TST}}}{T}\right)
+              &=\ln\!\left(\frac{k_{\mathrm B}}{h}\right)
+                +\frac{\Delta S^{\ddagger}}{R}\\
+              &\quad-\frac{\Delta H^{\ddagger}}{R}\frac{1}{T}.
+            \end{aligned}
+          \]</div>
+          <p>
+            If \(\Delta H^{\ddagger}\) and \(\Delta S^{\ddagger}\) are nearly constant, \(\ln(k/T)\) is linear in \(1/T\). For the same assumptions, differentiating \(\ln k\) yields the connection to the Arrhenius slope:
+          </p>
+          <div class="math-block">\[
+            E_a
+            =RT^2\frac{d\ln k_{\mathrm{TST}}}{dT}
+            =\Delta H^{\ddagger}+RT.
+          \]</div>
+          <p>
+            Arrhenius and Eyring are therefore not contradictory temperature laws. Arrhenius summarizes the slope of \(\ln k\); Eyring explains that slope using an activation enthalpy, an activation entropy, and the additional \(T\) prefactor. Heat-capacity changes, changing mechanisms, or temperature-dependent transmission factors can curve either plot.
           </p>
           <p>
             This is the conceptual leap: a rate is no longer inferred only from a fitted slope. It is assembled from molecular energies and statistical populations. A geometry optimization can locate a saddle, vibrational analysis can approximate the partition functions, and the result can be compared with a measured elementary rate.
@@ -88,7 +199,10 @@
             It is therefore helpful to write a more honest rate as
           </p>
           <div class="math-block">\[
-            k(T)=\kappa(T)\,k_{\mathrm{TST}}(T),
+            \begin{aligned}
+            k(T)&=\kappa(T)\,k_{\mathrm{TST}}(T),\\
+            \kappa(T)&\equiv\frac{k(T)}{k_{\mathrm{TST}}(T)}.
+            \end{aligned}
           \]</div>
           <p>
             where \(\kappa\) is not a universal “tunneling number.” It is a compact record of the dynamical physics absent from the chosen TST model. Depending on the system and convention, finite-barrier transmission can raise the rate, while reflection, recrossing, friction, or a poor dividing surface can lower it.
@@ -104,42 +218,259 @@
           <p>
             with a proton mass, \(V_0=0.010\ E_h=6.28\ \mathrm{kcal\ mol^{-1}}\), and \(a=1.50\ a_0^{-1}\). This is not intended to represent a particular molecule. It is a controlled question: if two theories see exactly the same smooth barrier, what changes when one treats the passage as a dividing-surface count and the other propagates quantum mechanics on the entire coordinate?
           </p>
+          <p>
+            The parameters have transparent meanings. Since \(\operatorname{sech}(0)=1\) and \(\operatorname{sech}(ax)\to0\) as \(|x|\to\infty\), the barrier height is \(V(0)=V_0\) and the asymptotes lie at zero. Expanding around the top,
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \cosh(ax)&=1+\frac{a^2x^2}{2}+O(x^4),\\
+            V(x)&=V_0-V_0a^2x^2+O(x^4).
+            \end{aligned}
+          \]</div>
+          <p>
+            Comparing this with an inverted harmonic barrier,
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            V(x)&\simeq V_0-\frac{1}{2}m\omega_b^2x^2,\\
+            \omega_b&=a\sqrt{\frac{2V_0}{m}}.
+            \end{aligned}
+          \]</div>
+          <p>
+            shows that \(a\) controls the barrier curvature and width. Two barriers with the same \(V_0\) but different \(a\) have the same TST exponential in this reduced model, yet need not have the same dynamical transmission.
+          </p>
 
           <h3>The TST estimate</h3>
           <p>
-            We set the model partition-function ratio \(Q^{\ddagger}/Q_R=1\), so that only the common barrier is being compared:
+            We choose \(Q^{\ddagger}=Q_R=1\) for the reduced one-dimensional normalization, so that only the common barrier is being compared. The TST expression becomes
           </p>
           <div class="math-block">\[
             k_{\mathrm{TST}}(T)=\frac{k_{\mathrm B}T}{h}\exp(-\beta V_0).
           \]</div>
           <p>
-            At 300 K this gives \(1.68\times10^8\ \mathrm{s^{-1}}\). The number should be read as a model rate under a specified normalization, not as a prediction for an experimental solution reaction.
-          </p>
-
-          <h3>The DVR benchmark</h3>
-          <p>
-            For the second calculation, the coordinate is represented by 701 sinc-DVR grid points. The potential is diagonal on this grid, while the kinetic-energy operator connects the points. Diagonalizing
+            At 300 K, \(k_{\mathrm B}T/h=6.25\times10^{12}\ \mathrm{s^{-1}}\), while \(RT=0.596\ \mathrm{kcal\ mol^{-1}}\). Therefore
           </p>
           <div class="math-block">\[
-            \hat H=\frac{\hat p^2}{2m}+V(\hat x)
+            \begin{aligned}
+            \beta V_0&=\frac{6.28}{0.596}=10.53,\\
+            k_{\mathrm{TST}}
+              &=(6.25\times10^{12})e^{-10.53}\\
+              &=1.68\times10^8\ \mathrm{s^{-1}}.
+            \end{aligned}
           \]</div>
           <p>
-            gives a numerical representation of the quantum states of the full barrier. We then define a side operator \(\hat h=\Theta(\hat x)\), which asks whether the system is on the product side, and the associated flux operator
+            This number is a model rate under a specified normalization, not a prediction for an experimental solution reaction.
+          </p>
+
+          <h3>From a continuous Hamiltonian to a sinc-DVR matrix</h3>
+          <p>
+            For the second calculation, the coordinate is sampled on equally spaced points \(x_i=x_{\min}+i\Delta x\). A sinc-DVR basis function centered at \(x_i\) is
+          </p>
+          <div class="math-block">\[
+            \phi_i(x)=\frac{1}{\sqrt{\Delta x}}
+            \operatorname{sinc}\!\left[\frac{\pi(x-x_i)}{\Delta x}\right].
+          \]</div>
+          <p>
+            Because \(\phi_i(x_j)=\delta_{ij}/\sqrt{\Delta x}\), the coordinate and potential operators are diagonal under the DVR quadrature:
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            x_{ij}&=x_i\delta_{ij},\\
+            V_{ij}&\simeq V(x_i)\delta_{ij}.
+            \end{aligned}
+          \]</div>
+          <p>
+            Applying \(-\hbar^2\partial_x^2/(2m)\) to the cardinal sine functions gives the analytic kinetic-energy matrix
+          </p>
+          <div class="math-block">\[
+            T_{ij}
+            =\frac{\Delta x}{2\pi}
+             \int_{-\pi/\Delta x}^{\pi/\Delta x}dk\,
+             \frac{\hbar^2k^2}{2m}
+             e^{ik(x_i-x_j)}.
+          \]</div>
+          <p>
+            After including the Fourier normalization, the \(i=j\) integral gives \(\pi^2/(3\Delta x^2)\). For \(i\ne j\), writing \(n=i-j\) gives \((2\pi)^{-1}\int_{-\pi}^{\pi}u^2e^{inu}du=2(-1)^n/n^2\). Hence
+          </p>
+          <div class="math-block">\[
+            T_{ij}=\frac{\hbar^2}{2m\Delta x^2}
+            \begin{cases}
+              \displaystyle \frac{\pi^2}{3}, & i=j,\\[6pt]
+              \displaystyle \frac{2(-1)^{i-j}}{(i-j)^2}, & i\ne j.
+            \end{cases}
+          \]</div>
+          <p>
+            The numerical Hamiltonian used here is consequently
+          </p>
+          <div class="math-block">\[
+            H_{ij}=T_{ij}+V(x_i)\delta_{ij}.
+          \]</div>
+          <p>
+            We use 701 grid points over \([-35,35]\ a_0\) and retain the lowest 300 eigenstates,
+          </p>
+          <div class="math-block">\[
+            \mathbf H\mathbf c_n=E_n\mathbf c_n.
+          \]</div>
+
+          <h3>From product population to a flux operator</h3>
+          <p>
+            Define \(\hat h=\Theta(\hat x)\), which equals zero on the reactant side and one on the product side. In the Heisenberg picture,
+          </p>
+          <div class="math-block">\[
+            \hat h(t)=e^{i\hat Ht/\hbar}\hat h e^{-i\hat Ht/\hbar}.
+          \]</div>
+          <p>
+            Differentiating with respect to time gives the rate of change of product-side population:
+          </p>
+          <div class="math-block">\[
+            \frac{d\hat h(t)}{dt}
+            =\frac{i}{\hbar}[\hat H,\hat h(t)].
+          \]</div>
+          <p>
+            At \(t=0\), this derivative is the flux operator,
           </p>
           <div class="math-block">\[
             \hat F=\frac{i}{\hbar}[\hat H,\hat h].
           \]</div>
           <p>
-            The thermal flux–side correlation function follows that initially crossing flux and asks how much remains on the product side:
+            The thermal flux–side correlation function correlates an initial crossing with product occupancy at a later time:
           </p>
           <div class="math-block">\[
-            C_{fs}(t)=\operatorname{Tr}\!\left[
-              e^{-\beta\hat H}\hat F\,
-              e^{i\hat Ht/\hbar}\hat h e^{-i\hat Ht/\hbar}
-            \right].
+            \begin{aligned}
+            C_{fs}(t)
+              &=\operatorname{Re}\operatorname{Tr}\!\left[
+                e^{-\beta\hat H}\hat F\,\hat h(t)
+                \right],\\
+            \hat h(t)
+              &=e^{i\hat Ht/\hbar}\hat h e^{-i\hat Ht/\hbar}.
+            \end{aligned}
           \]</div>
           <p>
-            After a short transient, the correlation reaches a plateau before waves return from the edge of the finite box. That plateau gives \(kQ_R\). Dividing by the same reactant normalization used in the TST expression gives the DVR rate; taking the ratio removes the arbitrary one-dimensional standard-state factor altogether. Because the Eckart barrier has an analytic transmission probability, the calculation also has an independent answer against which the numerical plateau can be checked.
+            This trace can be evaluated directly from the DVR eigenpairs. If \(h_{nm}=\langle n|\hat h|m\rangle\), then
+          </p>
+          <div class="math-block">\[
+            F_{nm}=\frac{i}{\hbar}(E_n-E_m)h_{nm}
+          \]</div>
+          <p>
+            and insertion of two energy-basis resolutions of the identity gives
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            C_{fs}(t)
+              &=\operatorname{Re}\sum_{n,m}
+                e^{-\beta E_n}\frac{i(E_n-E_m)}{\hbar}\\
+              &\quad\times |h_{nm}|^2
+                e^{i(E_m-E_n)t/\hbar}.
+            \end{aligned}
+          \]</div>
+          <p>
+            This is the finite sum evaluated by the accompanying script. After a short transient, the correlation reaches a plateau before waves return from the edge of the finite box. In that time window,
+          </p>
+          <div class="math-block">\[
+            k(T)Q_R=\lim_{t\to t_{\mathrm{plateau}}}C_{fs}(t).
+          \]</div>
+          <p>
+            Dividing by the same reactant normalization used in TST gives the DVR rate. The ratio of the two rates does not depend on that shared normalization.
+          </p>
+
+          <h3>The scattering formula that unifies TST and DVR</h3>
+          <p>
+            For one-dimensional scattering, the same thermal flux can be written as an energy average of the transmission probability \(P(E)\). Begin with positive incident momenta:
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            k(T)Q_R
+              &=\frac{1}{h}\int_0^{\infty}dp\,
+                \frac{p}{m}\\
+              &\quad\times e^{-\beta p^2/(2m)}P(E).
+            \end{aligned}
+          \]</div>
+          <p>
+            Using \(E=p^2/(2m)\) and \(dE=(p/m)dp\) gives
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            k(T)Q_R
+              &=\frac{1}{h}\int_0^{\infty}dE\,e^{-\beta E}P(E)\\
+              &=\frac{1}{2\pi\hbar}
+                \int_0^{\infty}dE\,e^{-\beta E}P(E).
+            \end{aligned}
+          \]</div>
+          <p>
+            TST replaces the real, smooth transmission function by an ideal threshold:
+          </p>
+          <div class="math-block">\[
+            P_{\mathrm{TST}}(E)=\Theta(E-V_0).
+          \]</div>
+          <p>
+            Substitution immediately recovers the reduced TST expression:
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            k_{\mathrm{TST}}Q_R
+              &=\frac{1}{h}\int_{V_0}^{\infty}dE\,e^{-\beta E}\\
+              &=\frac{e^{-\beta V_0}}{\beta h}
+               =\frac{k_{\mathrm B}T}{h}e^{-\beta V_0}.
+            \end{aligned}
+          \]</div>
+          <p>
+            The exact Eckart barrier provides a smooth transmission probability,
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            S(E)&=\sinh\!\left(\frac{\pi k_E}{a}\right),\\
+            C&=\cosh\!\left(\frac{\pi\lambda}{2}\right),\\
+            k_E&=\frac{\sqrt{2mE}}{\hbar},\\
+            \lambda&=\sqrt{\frac{8mV_0}{\hbar^2a^2}-1},\\[3pt]
+            P_{\mathrm{Eckart}}(E)&=\frac{S(E)^2}{S(E)^2+C^2}.
+            \end{aligned}
+          \]</div>
+          <p>
+            The route to this closed form is short in concept, although the intermediate algebra uses special functions. Insert \(y=ax\) into the stationary Schrödinger equation and define
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            q&=\frac{k_E}{a},
+            &\eta&=\frac{2mV_0}{\hbar^2a^2},\\
+            \frac{d^2\psi}{dy^2}
+              &+\left[q^2-\eta\operatorname{sech}^2y\right]\psi=0.
+            \end{aligned}
+          \]</div>
+          <p>
+            The substitution \(z=(1+\tanh y)/2\) maps the two asymptotes to \(z=0\) and \(z=1\), with \(\operatorname{sech}^2y=4z(1-z)\). Factoring out the traveling-wave behavior,
+          </p>
+          <div class="math-block">\[
+            \psi(z)
+            =z^{iq/2}(1-z)^{-iq/2}f(z),
+          \]</div>
+          <p>
+            converts the remaining equation for \(f\) into the Gauss hypergeometric equation. Matching its \(z\to0\) and \(z\to1\) connection coefficients gives incident, reflected, and transmitted amplitudes. Reducing their gamma-function ratios with
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            |\Gamma(iy)|^2&=\frac{\pi}{y\sinh(\pi y)},\\
+            \left|\Gamma\!\left(\frac12+iy\right)\right|^2
+              &=\frac{\pi}{\cosh(\pi y)}
+            \end{aligned}
+          \]</div>
+          <p>
+            yields the compact \(S^2/(S^2+C^2)\) expression above, with \(\lambda=\sqrt{4\eta-1}\). The analytic curve is used only to validate the DVR plateau; it is not supplied to the DVR Hamiltonian.
+          </p>
+          <p>
+            Finally, dividing the exact thermal flux by the TST flux produces the transmission factor plotted below:
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \kappa(T)
+              &=\frac{k(T)}{k_{\mathrm{TST}}(T)}\\
+              &=\frac{\displaystyle
+                  \int_0^{\infty}dE\,e^{-\beta E}P(E)}
+                {\displaystyle
+                  \int_{V_0}^{\infty}dE\,e^{-\beta E}}\\
+              &=\beta e^{\beta V_0}
+                \int_0^{\infty}dE\,e^{-\beta E}P(E).
+            \end{aligned}
+          \]</div>
           </p>
 
           <figure>
@@ -187,6 +518,27 @@
             <li>Embed the elementary rate in the kinetic network that produces \(k_{\mathrm{obs}}\).</li>
             <li>Test the result across temperature, isotopic substitution, solvent, pressure, or another held-out perturbation rather than only matching one fitted rate.</li>
           </ol>
+          <p>
+            The fourth step can already matter in the smallest possible network. Suppose the observed reactant pool contains a rapidly equilibrating inactive form \(R\) and reactive form \(I\), followed by the calculated chemical step:
+          </p>
+          <div class="math-block">\[
+            \begin{aligned}
+            R&\rightleftharpoons I,\\
+            K&=\frac{[I]}{[R]},\\
+            I&\xrightarrow{k_{\mathrm{chem}}}P.
+            \end{aligned}
+          \]</div>
+          <p>
+            Because \([R]_{\mathrm{tot}}=[R]+[I]=(1+K)[R]\) and \(d[P]/dt=k_{\mathrm{chem}}[I]=k_{\mathrm{chem}}K[R]\), the fitted first-order rate is
+          </p>
+          <div class="math-block">\[
+            k_{\mathrm{obs}}
+            =\frac{1}{[R]_{\mathrm{tot}}}\frac{d[P]}{dt}
+            =k_{\mathrm{chem}}\frac{K}{1+K}.
+          \]</div>
+          <p>
+            Even a perfect calculation of \(k_{\mathrm{chem}}\) therefore need not equal the measured \(k_{\mathrm{obs}}\). The equilibrium population factor can also be temperature- and isotope-dependent.
+          </p>
           <p>
             This also explains why comparing a computed electronic saddle-point energy directly with an experimental Arrhenius activation energy is unsafe. One belongs to a potential-energy surface; the other is a derivative of an observed rate. Free energy, quantum nuclear effects, recrossing, and network kinetics lie between them.
           </p>
