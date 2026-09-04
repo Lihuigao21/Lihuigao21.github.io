@@ -52,11 +52,11 @@ window.SITE_SERIES = [
 window.SITE_ARTICLES = [
   {
     slug: "hydrogen-transfer-observables-model-validation",
-    title: "Hydrogen Transfer I: Observables and Model Validation",
+    title: "Hydrogen Transfer I: What Can We Actually Observe?",
     path: "posts/hydrogen-transfer-observables-model-validation.html",
     date: "2026-09-04",
     dateText: "2026.09.04",
-    description: "What hydrogen-transfer experiments actually observe, why microscopic calculations are needed, and how rates, isotope effects, spectra, and structures should validate a model.",
+    description: "Why this series begins with experiment, what hydrogen-transfer measurements can actually observe, and how microscopic calculations should meet those observables.",
     tags: ["Hydrogen Transfer", "Kinetic Isotope Effects", "Reaction Rates", "Spectroscopy", "Model Validation", "Nuclear Quantum Effects"],
     series: "hydrogen-transfer",
   },
