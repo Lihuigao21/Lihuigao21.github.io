@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Hydrogen Transfer series part II: how Arrhenius and transition-state theory turned an energy barrier into a rate, tested against a reproducible one-dimensional DVR benchmark.">
+    <title>Hydrogen Transfer II: From a Barrier to a Rate | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Hydrogen Transfer Series - Part II</p>
+          <h1>From a Barrier to a Rate</h1>
+          <p class="post-meta">2026.09.04 - Transition-State Theory / DVR / Reaction Rates</p>
+        </header>
+
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Hydrogen Transfer series navigation">
+            <a href="hydrogen-transfer-observables-model-validation.html">I. What Can We Actually Observe?</a>
+            <a href="hydrogen-transfer-barrier-to-rate.html">II. From a Barrier to a Rate</a>
+          </nav>
+
+          <p class="lead">
+            The first article began at the experimental end of the problem: a detector gives us a signal, not a transition state. We now take the first historical step in the opposite direction. Long before PCET, instantons, NEO, or seam-space sampling, physical chemists faced a deceptively simple question: if a reaction has to cross an energetic bottleneck, how can that bottleneck be turned into a number with units of inverse time?
+          </p>
+          <p>
+            This is where the modern computational story really starts. Arrhenius organized the temperature dependence of measured rates. Transition-state theory then connected that dependence to a molecular energy landscape. The result was not merely another fitting law: it was a calculational machine. Give it a reactant ensemble and a dividing surface, and it returns a rate. Its power—and its assumptions—are easiest to see by placing it beside a small quantum calculation on exactly the same barrier.
+          </p>
+
+          <h2>1. Before the molecular path: Arrhenius</h2>
+          <p>
+            In 1889, Arrhenius expressed a regularity already visible in kinetic measurements:
+          </p>
+          <div class="math-block">\[
+            k(T)=A\exp\!\left(-\frac{E_a}{RT}\right).
+          \]</div>
+          <p>
+            A plot of \(\ln k\) against \(1/T\) turns the temperature dependence into a slope, \(-E_a/R\), and an intercept, \(\ln A\). This is extraordinarily useful, but it does not yet tell us what the molecule does. The activation energy is obtained from the variation of a rate with temperature; it is not automatically the height of a particular saddle point, and the prefactor collects everything the simple exponential has left out.
+          </p>
+          <p>
+            In other words, Arrhenius gave kinetics a compact empirical coordinate. The next problem was to give that coordinate a molecular meaning.
+          </p>
+
+          <h2>2. Putting the reaction on an energy landscape</h2>
+          <p>
+            By the 1930s, quantum mechanics and statistical mechanics made it natural to imagine a reaction moving on a potential-energy surface. Reactants occupy one region; products occupy another; between them lies a bottleneck. The 1935 formulations of Eyring and of Evans and Polanyi turned that picture into the expression now usually written
+          </p>
+          <div class="math-block">\[
+            k_{\mathrm{TST}}(T)
+            =\frac{k_{\mathrm B}T}{h}
+             \frac{Q^{\ddagger}}{Q_R}
+             \exp\!\left[-\beta\left(E^{\ddagger}-E_R\right)\right]
+            =\frac{k_{\mathrm B}T}{h}
+             \exp\!\left(-\frac{\Delta G^{\ddagger}}{RT}\right).
+          \]</div>
+          <p>
+            The two forms say the same thing in different bookkeeping languages. The first displays an energetic barrier and the ratio of partition functions. The second folds energetic and entropic effects into an activation free energy. The unstable motion along the reaction coordinate is omitted from \(Q^{\ddagger}\); its one-way passage through the dividing surface supplies the factor \(k_{\mathrm B}T/h\).
+          </p>
+          <p>
+            This is the conceptual leap: a rate is no longer inferred only from a fitted slope. It is assembled from molecular energies and statistical populations. A geometry optimization can locate a saddle, vibrational analysis can approximate the partition functions, and the result can be compared with a measured elementary rate.
+          </p>
+
+          <h2>3. The bargain made by transition-state theory</h2>
+          <p>
+            TST is useful because it replaces a dynamical problem with an equilibrium counting problem. That replacement comes with a clear bargain:
+          </p>
+          <ol>
+            <li>The reactant region and the configurations near the dividing surface are treated as being in thermal quasi-equilibrium.</li>
+            <li>A suitable dividing surface separates reactants from products.</li>
+            <li>A trajectory counted as moving forward through that surface is assumed to form product without being counted again after a return.</li>
+            <li>The coordinates not designated as the reaction coordinate can be represented by their equilibrium partition functions.</li>
+          </ol>
+          <p>
+            These statements are more informative than the slogan “find a barrier and exponentiate it.” They tell us what must be tested. Is the selected surface really a bottleneck? Do trajectories recross it? Are the other modes equilibrated and approximately separable? Does a finite-width barrier transmit a wave in the same way as an infinitely sharp threshold?
+          </p>
+          <p>
+            It is therefore helpful to write a more honest rate as
+          </p>
+          <div class="math-block">\[
+            k(T)=\kappa(T)\,k_{\mathrm{TST}}(T),
+          \]</div>
+          <p>
+            where \(\kappa\) is not a universal “tunneling number.” It is a compact record of the dynamical physics absent from the chosen TST model. Depending on the system and convention, finite-barrier transmission can raise the rate, while reflection, recrossing, friction, or a poor dividing surface can lower it.
+          </p>
+
+          <h2>4. A miniature calculation: one barrier, two rate estimates</h2>
+          <p>
+            To make the comparison concrete, consider a one-dimensional Eckart barrier,
+          </p>
+          <div class="math-block">\[
+            V(x)=V_0\,\operatorname{sech}^2(ax),
+          \]</div>
+          <p>
+            with a proton mass, \(V_0=0.010\ E_h=6.28\ \mathrm{kcal\ mol^{-1}}\), and \(a=1.50\ a_0^{-1}\). This is not intended to represent a particular molecule. It is a controlled question: if two theories see exactly the same smooth barrier, what changes when one treats the passage as a dividing-surface count and the other propagates quantum mechanics on the entire coordinate?
+          </p>
+
+          <h3>The TST estimate</h3>
+          <p>
+            We set the model partition-function ratio \(Q^{\ddagger}/Q_R=1\), so that only the common barrier is being compared:
+          </p>
+          <div class="math-block">\[
+            k_{\mathrm{TST}}(T)=\frac{k_{\mathrm B}T}{h}\exp(-\beta V_0).
+          \]</div>
+          <p>
+            At 300 K this gives \(1.68\times10^8\ \mathrm{s^{-1}}\). The number should be read as a model rate under a specified normalization, not as a prediction for an experimental solution reaction.
+          </p>
+
+          <h3>The DVR benchmark</h3>
+          <p>
+            For the second calculation, the coordinate is represented by 701 sinc-DVR grid points. The potential is diagonal on this grid, while the kinetic-energy operator connects the points. Diagonalizing
+          </p>
+          <div class="math-block">\[
+            \hat H=\frac{\hat p^2}{2m}+V(\hat x)
+          \]</div>
+          <p>
+            gives a numerical representation of the quantum states of the full barrier. We then define a side operator \(\hat h=\Theta(\hat x)\), which asks whether the system is on the product side, and the associated flux operator
+          </p>
+          <div class="math-block">\[
+            \hat F=\frac{i}{\hbar}[\hat H,\hat h].
+          \]</div>
+          <p>
+            The thermal flux–side correlation function follows that initially crossing flux and asks how much remains on the product side:
+          </p>
+          <div class="math-block">\[
+            C_{fs}(t)=\operatorname{Tr}\!\left[
+              e^{-\beta\hat H}\hat F\,
+              e^{i\hat Ht/\hbar}\hat h e^{-i\hat Ht/\hbar}
+            \right].
+          \]</div>
+          <p>
+            After a short transient, the correlation reaches a plateau before waves return from the edge of the finite box. That plateau gives \(kQ_R\). Dividing by the same reactant normalization used in the TST expression gives the DVR rate; taking the ratio removes the arbitrary one-dimensional standard-state factor altogether. Because the Eckart barrier has an analytic transmission probability, the calculation also has an independent answer against which the numerical plateau can be checked.
+          </p>
+
+          <figure>
+            <picture>
+              <source media="(max-width: 700px)" srcset="../assets/img/hydrogen-transfer/tst-vs-dvr-rate-mobile.png">
+              <img src="../assets/img/hydrogen-transfer/tst-vs-dvr-rate.png" alt="Eckart barrier, the DVR flux-side plateau at 300 kelvin, and the temperature-dependent ratio of the DVR and TST rates">
+            </picture>
+            <figcaption>
+              A deliberately small benchmark. Left: the shared Eckart barrier. Middle: at 300 K the DVR flux–side correlation settles onto the independently known exact flux; the shaded interval is averaged. Right: the transmission factor \(\kappa=k_{\mathrm{DVR}}/k_{\mathrm{TST}}\). DVR points and the analytic Eckart result are visually indistinguishable.
+            </figcaption>
+          </figure>
+
+          <h2>5. Reading the result</h2>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Temperature</th><th>\(k_{\mathrm{TST}}\) (s\(^{-1}\))</th><th>\(k_{\mathrm{DVR}}\) (s\(^{-1}\))</th><th>\(\kappa\)</th></tr></thead>
+              <tbody>
+                <tr><td>250 K</td><td>\(1.70\times10^7\)</td><td>\(1.05\times10^8\)</td><td>6.19</td></tr>
+                <tr><td>300 K</td><td>\(1.68\times10^8\)</td><td>\(5.80\times10^8\)</td><td>3.46</td></tr>
+                <tr><td>400 K</td><td>\(3.11\times10^9\)</td><td>\(6.24\times10^9\)</td><td>2.01</td></tr>
+                <tr><td>500 K</td><td>\(1.88\times10^{10}\)</td><td>\(2.97\times10^{10}\)</td><td>1.58</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Three points matter more than the individual numbers.
+          </p>
+          <ol>
+            <li><strong>The barrier height alone does not specify the rate.</strong> TST uses the height and equilibrium statistics at the bottleneck. DVR additionally responds to barrier width, shape, mass, and coherent dynamics.</li>
+            <li><strong>The discrepancy is temperature-dependent.</strong> At high temperature, more of the thermal distribution lies near or above the barrier and the two descriptions approach each other. Cooling makes the detailed transmission of the finite barrier increasingly important.</li>
+            <li><strong>The benchmark is numerically controlled.</strong> The DVR plateau differs from the analytic Eckart thermal flux by about \(0.01\%\) or less at all four temperatures. We are therefore comparing physical approximations, not an unconverged grid with a formula.</li>
+          </ol>
+          <p>
+            This example should not be turned into the claim that TST always underestimates a rate. The model has one smooth coordinate and no solvent or internal modes. In a multidimensional system, recrossing and environmental friction can push \(\kappa\) below one, while nuclear delocalization and sub-barrier transmission can push it above one. What \(\kappa\) means depends on what was already included in \(k_{\mathrm{TST}}\).
+          </p>
+
+          <h2>6. What would be compared with experiment?</h2>
+          <p>
+            The small calculation clarifies the chain, but a molecular application has several additional links:
+          </p>
+          <ol>
+            <li>Compute or sample the relevant molecular free-energy surface under the experimental conditions.</li>
+            <li>Evaluate reactant and transition-region partition functions consistently, including conformers and environmental configurations.</li>
+            <li>Apply a dynamical treatment appropriate to the question: a transmission correction, trajectories, an instanton, a flux correlation function, or a nonadiabatic rate expression.</li>
+            <li>Embed the elementary rate in the kinetic network that produces \(k_{\mathrm{obs}}\).</li>
+            <li>Test the result across temperature, isotopic substitution, solvent, pressure, or another held-out perturbation rather than only matching one fitted rate.</li>
+          </ol>
+          <p>
+            This also explains why comparing a computed electronic saddle-point energy directly with an experimental Arrhenius activation energy is unsafe. One belongs to a potential-energy surface; the other is a derivative of an observed rate. Free energy, quantum nuclear effects, recrossing, and network kinetics lie between them.
+          </p>
+
+          <h2>7. What this first theoretical step accomplished</h2>
+          <p>
+            Arrhenius told us how rates often vary with temperature. Transition-state theory supplied the first broadly useful bridge from a molecular landscape to an absolute rate. Exact quantum dynamics then gave us a way to audit the bridge without assuming that the dividing surface had captured all the dynamics.
+          </p>
+          <p>
+            The enduring lesson is not that one of these descriptions must defeat the others. They answer nested questions. Arrhenius summarizes a trend. TST attributes the trend to equilibrium population at a bottleneck. DVR dynamics tests what happens after the full Hamiltonian is allowed to move that population. The next article will follow the chronology into the difficulty hidden by this one-dimensional example: a molecule has many coordinates, and the location of the best bottleneck need not be obvious.
+          </p>
+
+          <h2>Reproduce the calculation</h2>
+          <ul>
+            <li><a href="../assets/code/hydrogen-transfer/tst_vs_dvr_rate.py">Python script: TST versus sinc-DVR rate</a></li>
+            <li><a href="../assets/data/hydrogen-transfer/tst-vs-dvr-rate.csv">Numerical results (CSV)</a></li>
+          </ul>
+          <p>
+            The script contains the model parameters, sinc-DVR kinetic matrix, flux–side calculation, plateau window, analytic Eckart check, and figure generation. It requires NumPy, SciPy, and Matplotlib.
+          </p>
+
+          <h2>References</h2>
+          <ul>
+            <li>Arrhenius, “Über die Reaktionsgeschwindigkeit bei der Inversion von Rohrzucker durch Säuren,” <a href="https://doi.org/10.1515/zpch-1889-0416"><em>Zeitschrift für Physikalische Chemie</em> 4, 226–248 (1889)</a>.</li>
+            <li>Eyring, “The Activated Complex in Chemical Reactions,” <a href="https://doi.org/10.1063/1.1749604"><em>J. Chem. Phys.</em> 3, 107–115 (1935)</a>.</li>
+            <li>Evans and Polanyi, “Some Applications of the Transition State Method to the Calculation of Reaction Velocities, Especially in Solution,” <a href="https://doi.org/10.1039/TF9353100875"><em>Trans. Faraday Soc.</em> 31, 875–894 (1935)</a>.</li>
+            <li>Eckart, “The Penetration of a Potential Barrier by Electrons,” <a href="https://doi.org/10.1103/PhysRev.35.1303"><em>Phys. Rev.</em> 35, 1303–1309 (1930)</a>.</li>
+            <li>Miller, Schwartz, and Tromp, “Quantum Mechanical Rate Constants for Bimolecular Reactions,” <a href="https://doi.org/10.1063/1.445581"><em>J. Chem. Phys.</em> 79, 4889–4898 (1983)</a>.</li>
+            <li>Colbert and Miller, “A Novel Discrete Variable Representation for Quantum Mechanical Reactive Scattering via the S-Matrix Kohn Method,” <a href="https://doi.org/10.1063/1.462100"><em>J. Chem. Phys.</em> 96, 1982–1991 (1992)</a>.</li>
+            <li>IUPAC Gold Book, <a href="https://doi.org/10.1351/goldbook.T06470">“transition state theory”</a>.</li>
+          </ul>
+
+          <section class="series-footer" aria-labelledby="hydrogen-transfer-series-map">
+            <h2 id="hydrogen-transfer-series-map">Hydrogen Transfer series map</h2>
+            <ol class="series-list">
+              <li><a href="hydrogen-transfer-observables-model-validation.html">Part I: What Can We Actually Observe?</a> - the experimental end of the theory–measurement bridge.</li>
+              <li><a href="hydrogen-transfer-barrier-to-rate.html">Part II: From a Barrier to a Rate</a> - Arrhenius, transition-state theory, and a one-dimensional DVR audit.</li>
+              <li>Part III: When One Coordinate Is Not Enough - reaction paths, recrossing, and variational transition-state ideas.</li>
+              <li>Part IV: Diabatic States and Vibronic Rate Theories - crossings, PCET, and the Golden Rule viewpoint.</li>
+              <li>Part V: NEO-GRT and V-SHAKE - quantized protons and sampling a diabatic crossing seam.</li>
+            </ol>
+          </section>
+        </div>
+
+        <nav class="post-nav" aria-label="Article navigation"><a href="hydrogen-transfer-observables-model-validation.html">&lt;- Previous: Experimental observables</a><a href="../index.html">Back to article list</a></nav>
+      </article>
+    </main>
+
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

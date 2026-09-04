@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "hydrogen-transfer-barrier-to-rate",
+    title: "Hydrogen Transfer II: From a Barrier to a Rate",
+    path: "posts/hydrogen-transfer-barrier-to-rate.html",
+    date: "2026-09-04",
+    dateText: "2026.09.04",
+    description: "How Arrhenius and transition-state theory turned an energy barrier into a rate, tested against a reproducible one-dimensional sinc-DVR benchmark.",
+    tags: ["Hydrogen Transfer", "Transition-State Theory", "DVR", "Reaction Rates", "Flux-Side Correlation", "Reproduction"],
+    series: "hydrogen-transfer",
+  },
+  {
     slug: "hydrogen-transfer-observables-model-validation",
     title: "Hydrogen Transfer I: What Can We Actually Observe?",
     path: "posts/hydrogen-transfer-observables-model-validation.html",
