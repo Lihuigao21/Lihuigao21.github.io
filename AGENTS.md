@@ -83,6 +83,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 - For the chemical-reaction computation series, follow historically important questions and explorations without assuming a predetermined endpoint such as NEO or a particular paper. Distinguish overlapping historical strands from a single succession of methods.
 - In trajectory-versus-quantum benchmarks, match the Hamiltonian, initial ensemble, and measured outcomes. Check that outgoing channels have separated, report sampling uncertainty separately from discretization error, and scope any use of “exact” to the model and convergence tests actually performed.
 - For free-energy benchmarks, distinguish equilibrium reweighting from physical kinetics; do not label Monte Carlo sweeps or biased-trajectory time as reaction time. Separate histogram-bin effects from sampling noise, leave unsupported bins undefined, and label independent-run spread distinctly from uncertainty in the mean.
+- For quantum-nuclear rate benchmarks, distinguish ring-polymer discretization convergence from semiclassical or dynamical approximation error. Imaginary-time beads are not real-time snapshots; equilibrium PIMD, a stationary instanton with its prefactor, and RPMD propagation are distinct calculations. Label analytic-path discretization tests as such, and test approximation validity near crossover rather than assuming more beads make the rate exact.
 - Update every article in the series when adding a new part:
   - top `series-nav`,
   - bottom `DVR series map`,

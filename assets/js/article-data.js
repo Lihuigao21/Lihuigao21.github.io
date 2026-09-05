@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "reaction-dynamics-instantons",
+    title: "Reaction Computation V: From Barrier Penetration to Imaginary-Time Instantons",
+    path: "posts/reaction-dynamics-instantons.html",
+    date: "2026-09-05",
+    dateText: "2026.09.05",
+    description: "From WKB transmission to periodic imaginary-time paths: a derivation-led instanton benchmark against exact Eckart scattering, including its crossover limitations.",
+    tags: ["Chemical Reactions", "Instantons", "WKB", "Path Integrals", "Reaction Rates", "Reproduction"],
+    series: "hydrogen-transfer",
+  },
+  {
     slug: "reaction-dynamics-free-energy-sampling",
     title: "Reaction Computation IV: Free Energy and the Events We Rarely See",
     path: "posts/reaction-dynamics-free-energy-sampling.html",
