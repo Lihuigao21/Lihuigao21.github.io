@@ -1,9 +1,9 @@
 window.SITE_SERIES = [
   {
     id: "hydrogen-transfer",
-    title: "Hydrogen Transfer Series",
-    label: "Observables, Quantum Effects, and Rate Theory",
-    description: "Experimental observables, kinetic isotope effects, nuclear quantum dynamics, diabatic states, rate theories, and seam-space diagnostics for hydrogen transfer.",
+    title: "Chemical Reaction Computation",
+    label: "Observables, Dynamics, and Statistical Mechanics",
+    description: "A historical exploration of chemical reaction calculations, beginning with hydrogen transfer and continuing through rate theory, nonadiabatic dynamics, free-energy sampling, and quantum nuclear effects.",
   },
   {
     id: "cmd",
@@ -50,6 +50,16 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    slug: "reaction-dynamics-nonadiabatic",
+    title: "Reaction Computation III: When One Electronic State Is Not Enough",
+    path: "posts/reaction-dynamics-nonadiabatic.html",
+    date: "2026-09-05",
+    dateText: "2026.09.05",
+    description: "From 1970s surface hopping to multistate reaction dynamics: derivative couplings, a fewest-switches derivation, and a matched-ensemble quantum scattering benchmark.",
+    tags: ["Chemical Reactions", "Nonadiabatic Dynamics", "Surface Hopping", "Quantum Scattering", "DVR", "Reproduction"],
+    series: "hydrogen-transfer",
+  },
   {
     slug: "hydrogen-transfer-barrier-to-rate",
     title: "Hydrogen Transfer II: From a Barrier to a Rate",

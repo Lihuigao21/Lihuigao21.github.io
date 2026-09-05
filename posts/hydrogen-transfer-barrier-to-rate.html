@@ -20,19 +20,20 @@
     <main id="top">
       <article class="post">
         <header class="post-header">
-          <p class="section-label">Hydrogen Transfer Series - Part II</p>
+          <p class="section-label">Chemical Reaction Computation - Part II</p>
           <h1>From a Barrier to a Rate</h1>
           <p class="post-meta">2026.09.04 - Transition-State Theory / DVR / Reaction Rates</p>
         </header>
 
         <div class="post-content">
-          <nav class="series-nav" aria-label="Hydrogen Transfer series navigation">
+          <nav class="series-nav" aria-label="Chemical Reaction Computation series navigation">
             <a href="hydrogen-transfer-observables-model-validation.html">I. What Can We Actually Observe?</a>
             <a href="hydrogen-transfer-barrier-to-rate.html">II. From a Barrier to a Rate</a>
+            <a href="reaction-dynamics-nonadiabatic.html">III. When One Electronic State Is Not Enough</a>
           </nav>
 
           <p class="lead">
-            The first article began at the experimental end of the problem: a detector gives us a signal, not a transition state. We now take the first historical step in the opposite direction. Long before PCET, instantons, NEO, or seam-space sampling, physical chemists faced a deceptively simple question: if a reaction has to cross an energetic bottleneck, how can that bottleneck be turned into a number with units of inverse time?
+            The first article began at the experimental end of the problem: a detector gives us a signal, not a transition state. We now take the first historical step in the opposite direction. Physical chemists faced a deceptively simple question: if a reaction has to cross an energetic bottleneck, how can that bottleneck be turned into a number with units of inverse time?
           </p>
           <p>
             This is where the modern computational story really starts. Arrhenius organized the temperature dependence of measured rates. Transition-state theory then connected that dependence to a molecular energy landscape. The result was not merely another fitting law: it was a calculational machine. Give it a reactant ensemble and a dividing surface, and it returns a rate. Its power—and its assumptions—are easiest to see by placing it beside a small quantum calculation on exactly the same barrier.
@@ -548,7 +549,7 @@
             Arrhenius told us how rates often vary with temperature. Transition-state theory supplied the first broadly useful bridge from a molecular landscape to an absolute rate. Exact quantum dynamics then gave us a way to audit the bridge without assuming that the dividing surface had captured all the dynamics.
           </p>
           <p>
-            The enduring lesson is not that one of these descriptions must defeat the others. They answer nested questions. Arrhenius summarizes a trend. TST attributes the trend to equilibrium population at a bottleneck. DVR dynamics tests what happens after the full Hamiltonian is allowed to move that population. The next article will follow the chronology into the difficulty hidden by this one-dimensional example: a molecule has many coordinates, and the location of the best bottleneck need not be obvious.
+            The enduring lesson is not that one of these descriptions must defeat the others. They answer nested questions. Arrhenius summarizes a trend. TST attributes the trend to equilibrium population at a bottleneck. DVR dynamics tests what happens after the full Hamiltonian is allowed to move that population. The next article follows another major historical exploration: multistate reactions and nonadiabatic dynamics, where one potential-energy surface is no longer enough. Later we will return to free energy and rare-event sampling, and explore tunneling and quantum nuclear dynamics.
           </p>
 
           <h2>Reproduce the calculation</h2>
@@ -572,13 +573,13 @@
           </ul>
 
           <section class="series-footer" aria-labelledby="hydrogen-transfer-series-map">
-            <h2 id="hydrogen-transfer-series-map">Hydrogen Transfer series map</h2>
+            <h2 id="hydrogen-transfer-series-map">Chemical Reaction Computation series map</h2>
             <ol class="series-list">
               <li><a href="hydrogen-transfer-observables-model-validation.html">Part I: What Can We Actually Observe?</a> - the experimental end of the theory–measurement bridge.</li>
               <li><a href="hydrogen-transfer-barrier-to-rate.html">Part II: From a Barrier to a Rate</a> - Arrhenius, transition-state theory, and a one-dimensional DVR audit.</li>
-              <li>Part III: When One Coordinate Is Not Enough - reaction paths, recrossing, and variational transition-state ideas.</li>
-              <li>Part IV: Diabatic States and Vibronic Rate Theories - crossings, PCET, and the Golden Rule viewpoint.</li>
-              <li>Part V: NEO-GRT and V-SHAKE - quantized protons and sampling a diabatic crossing seam.</li>
+              <li><a href="reaction-dynamics-nonadiabatic.html">Part III: When One Electronic State Is Not Enough</a> - multistate reactions and nonadiabatic dynamics.</li>
+              <li>Planned next: Free Energy and Rare-Event Sampling - exploring developments from the 1970s onward.</li>
+              <li>Further reading planned: Tunneling and Quantum Nuclear Reaction Dynamics.</li>
             </ol>
           </section>
         </div>

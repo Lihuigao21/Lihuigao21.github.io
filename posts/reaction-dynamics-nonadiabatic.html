@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Chemical Reaction Computation III: why reactions need multiple electronic states, how nonadiabatic coupling and surface hopping work, and a reproducible quantum-grid scattering benchmark.">
+    <title>Reaction Computation III: When One Electronic State Is Not Enough | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Chemical Reaction Computation - Part III</p>
+          <h1>When One Electronic State Is Not Enough</h1>
+          <p class="post-meta">2026.09.05 - Nonadiabatic Dynamics / Surface Hopping / Quantum Scattering</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Chemical Reaction Computation series navigation">
+            <a href="hydrogen-transfer-observables-model-validation.html">I. What Can We Actually Observe?</a>
+            <a href="hydrogen-transfer-barrier-to-rate.html">II. From a Barrier to a Rate</a>
+            <a href="reaction-dynamics-nonadiabatic.html">III. When One Electronic State Is Not Enough</a>
+          </nav>
+
+          <p class="lead">Imagine preparing a molecule with a short pulse of light. Some molecules return to their original structure; others rearrange or break a bond. A barrier on the ground-state energy surface cannot, by itself, tell us which outcome wins. The molecule was prepared elsewhere, and its electrons and nuclei can change their motion together before a product is formed.</p>
+          <p>Part II asked how a landscape becomes a reaction rate. Here the question changes: <em>what if one landscape is not enough?</em> We follow a major line of exploration from trajectory surface hopping in the early 1970s to later mixed quantum–classical and wavepacket methods. This series began with hydrogen transfer, but its subject is now the broader history of calculating chemical reactions. There is no chosen method waiting at the end of the story.</p>
+
+          <h2>1. A new question: where does the population go?</h2>
+          <p>For a thermally activated reaction on one electronic state, a useful target is a rate constant. For an electronically excited molecule, equally natural targets are the lifetime of an excited population, the fractions reaching different products, and the energy carried by each outgoing fragment. Electron transfer and changes of spin introduce related questions, although spin-changing dynamics also require the appropriate spin–orbit interactions.</p>
+          <p>These questions predate the 1970s: the Born–Oppenheimer framework and the Landau–Zener crossing models already supplied important foundations. The historical step emphasized here is making coupled electronic and nuclear motion into a practical molecular simulation. In 1971, Tully and Preston applied trajectory surface hopping to the reaction of a proton with a deuterium molecule. In 1990, Tully introduced the fewest-switches algorithm used in the example below. These are distinct milestones, not two dates for the same algorithm. See the original <a href="https://doi.org/10.1063/1.1675788">1971 paper</a> and <a href="https://doi.org/10.1063/1.459170">1990 paper</a>.</p>
+          <p>The central compromise is easy to state: retain quantum amplitudes for electronic states, while describing the much larger set of nuclear coordinates with trajectories. The difficult part is making the two descriptions influence each other consistently.</p>
+
+          <h2>2. Where does nonadiabatic coupling come from?</h2>
+          <p>We can see the issue with one nuclear coordinate \(x\), mass \(M\), and electronic coordinates \(r\). The electronic Hamiltonian below includes the nucleus-dependent potential terms. At each fixed nuclear position, solve</p>
+          <div class="math-block">\[
+            \hat H_e(x)\phi_j(r;x)=E_j(x)\phi_j(r;x).
+          \]</div>
+          <p>The functions \(E_j(x)\) are adiabatic potential-energy curves. “Adiabatic” here labels an electronic eigenbasis at each geometry; it does not yet impose single-state dynamics. Expand the full molecular wavefunction in that basis:</p>
+          <div class="math-block">\[
+            \Psi(r,x,t)=\sum_j\chi_j(x,t)\phi_j(r;x).
+          \]</div>
+          <p>The nuclear kinetic operator differentiates both factors. The product rule is the whole origin of the additional coupling:</p>
+          <div class="math-block">\[
+            \partial_x^2(\chi_j\phi_j)
+            =\phi_j\chi_j''+2\phi_j'\chi_j'+\phi_j''\chi_j.
+          \]</div>
+          <p>Insert the expansion into the molecular Schrödinger equation and multiply by \(\phi_i^*\), integrating over the electrons. Define</p>
+          <div class="math-block">\[
+            d_{ij}=\langle\phi_i|\partial_x\phi_j\rangle_r,
+            \qquad
+            \tau_{ij}=\langle\phi_i|\partial_x^2\phi_j\rangle_r.
+          \]</div>
+          <p>Orthonormality removes the electronic overlap from the first term, giving coupled nuclear equations:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            i\hbar\partial_t\chi_i
+            &=\left[-\frac{\hbar^2}{2M}\partial_x^2+E_i\right]\chi_i\\
+            &\quad-\frac{\hbar^2}{2M}\sum_j
+            \left(2d_{ij}\partial_x+\tau_{ij}\right)\chi_j.
+            \end{aligned}
+          \]</div>
+          <p>This expansion is exact with a complete electronic basis. A practical calculation truncates the states; a single-surface treatment additionally neglects coupling to the other surfaces. Nonadiabatic dynamics asks what happens when that latter step is not justified. The coupling is not an extra empirical force or a synonym for friction: it follows from the geometry dependence of the electronic wavefunctions.</p>
+          <h3>Why are small electronic gaps important?</h3>
+          <p>Differentiate the electronic eigenvalue equation and project onto a different eigenstate, \(i\ne j\). The term containing \(E_j'\) vanishes by orthogonality:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \langle\phi_i|\partial_x\hat H_e|\phi_j\rangle
+               +E_i d_{ij}&=E_jd_{ij},\\
+            d_{ij}&=\frac{\langle\phi_i|\partial_x\hat H_e|\phi_j\rangle}
+                           {E_j-E_i}.
+            \end{aligned}
+          \]</div>
+          <p>A small gap can therefore amplify the coupling, but only in conjunction with the numerator and the actual nuclear motion. At an exact degeneracy this nondegenerate expression is not valid. A crossing geometry alone does not supply a reaction probability, a population lifetime, or a product yield.</p>
+
+          <h2>3. Two representations of the same problem</h2>
+          <p>A small two-state model keeps the distinction concrete. In a fixed diabatic basis, write the potential as</p>
+          <div class="math-block">\[
+            V(x)=\begin{pmatrix}z(x)&u(x)\\u(x)&-z(x)\end{pmatrix}.
+          \]</div>
+          <p>The off-diagonal potential \(u\) couples the two basis states. Diagonalization gives the adiabatic curves. Indeed,</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \det[V-EI]&=E^2-z^2-u^2=0,\\
+            E_\pm(x)&=\pm\sqrt{z(x)^2+u(x)^2}.
+            \end{aligned}
+          \]</div>
+          <p>When the diabatic diagonal elements cross at \(z=0\), the adiabatic gap is \(2|u|\). The avoided crossing and the diabatic crossing are thus not contradictory pictures. One uses diagonal electronic energies and derivative couplings; the other uses a coupled potential matrix. They describe the same model when every transformed term is retained.</p>
+          <p>For completeness, choose a continuous mixing angle \(\theta=\operatorname{atan2}(u,z)\), with lower and upper eigenvectors \((-\sin\frac\theta2,\cos\frac\theta2)\) and \((\cos\frac\theta2,\sin\frac\theta2)\). Differentiation yields</p>
+          <div class="math-block">\[
+            d_{-+}=\frac{\theta'}{2}
+             =\frac{zu'-uz'}{2(z^2+u^2)}.
+          \]</div>
+          <p>Reversing an eigenvector's sign also changes the corresponding coupling and amplitude signs; observables remain unchanged if the convention is consistent. Globally eliminating derivative couplings is not always possible for a multidimensional molecule. Our fixed two-state diabatic Hamiltonian is a deliberately simple model, not a claim that every molecular diabatization is exact.</p>
+
+          <h2>4. From quantum amplitudes to nuclear trajectories</h2>
+          <p>Suppose we approximate the nuclei by a trajectory \(x(t)\) and expand its electronic state as \(\psi_e(t)=\sum_jc_j(t)\phi_j[x(t)]\). Now the chain rule gives a time derivative of the moving electronic basis. Projection leads to</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            i\hbar\left(\dot c_i+\dot x\sum_jd_{ij}c_j\right)&=E_ic_i,\\
+            \dot c_i&=-\frac{i}{\hbar}E_ic_i-\dot x\sum_jd_{ij}c_j.
+            \end{aligned}
+          \]</div>
+          <p>Even though the adiabatic electronic Hamiltonian is diagonal, nuclear motion transfers amplitude through \(\dot x d_{ij}\). In many dimensions this becomes \(\dot{\mathbf R}\cdot\mathbf d_{ij}\): direction matters as well as speed.</p>
+          <h3>One average force, or different outgoing branches?</h3>
+          <p>The Ehrenfest mean-field choice uses the expectation of the electronic force. It follows from Ehrenfest's equation for nuclear momentum after replacing its nuclear coordinate distribution by a trajectory:</p>
+          <div class="math-block">\[
+            M\ddot x=-\langle\psi_e|\partial_x\hat H_e|\psi_e\rangle.
+          \]</div>
+          <p>This is a self-consistent feedback loop: the trajectory changes the electronic amplitudes, which change the force. The expectation includes coherence terms; it is not generally just a population-weighted average of the surface gradients.</p>
+          <p>But a single mean-field trajectory does not split into distinct nuclear packets. If one electronic branch reflects and another transmits, an average trajectory need not represent either outgoing channel. Surface hopping makes a different approximation: each trajectory follows one active surface at a time, while an ensemble can separate into branches. Neither construction is the exact coupled wavefunction.</p>
+
+          <h2>5. How fewest-switches surface hopping chooses a hop</h2>
+          <p>For a real adiabatic basis with zero diagonal derivative couplings, differentiate the electronic population \(\rho_{aa}=|c_a|^2\). The energy term contributes only a phase and cancels:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot\rho_{aa}
+              &=2\operatorname{Re}(c_a^*\dot c_a)\\
+              &=-\sum_{b\ne a}J_{a\to b},\\
+            J_{a\to b}
+              &=2\operatorname{Re}(c_a^*c_b\dot x d_{ab}).
+            \end{aligned}
+          \]</div>
+          <p>A positive \(J_{a\to b}\) is outgoing electronic population flow. If a fraction \(\rho_{aa}\) of otherwise equivalent trajectories occupies state \(a\), switching a fraction \(g_{a\to b}\) of them transfers \(\rho_{aa}g_{a\to b}\). Matching this to the outward population change over a short time gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \rho_{aa}g_{a\to b}&\simeq J_{a\to b}\Delta t,\\
+            g_{a\to b}&=\max\!\left(0,
+                      \frac{J_{a\to b}\Delta t}{\rho_{aa}}\right).
+            \end{aligned}
+          \]</div>
+          <p>This motivates the fewest-switches rule: use the required outward flow without adding compensating pairs of needless switches. It does not require every trajectory to follow identical amplitudes. Once their paths diverge, active-state fractions and averaged electronic populations need not agree exactly; frustrated hops add another inconsistency. Surface hopping is an approximation, not an exact probabilistic rewriting of quantum dynamics.</p>
+          <p>A successful hop must also exchange electronic potential energy with nuclear kinetic energy. In one dimension, conservation gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \frac{p'^2}{2M}+E_b&=\frac{p^2}{2M}+E_a,\\
+            p'&=\operatorname{sgn}(p)
+                \sqrt{p^2-2M(E_b-E_a)}.
+            \end{aligned}
+          \]</div>
+          <p>If the square root is not real, the proposed upward hop is frustrated. In our implementation it is rejected and the momentum is left unchanged. For more nuclear coordinates, a standard choice rescales momentum along the derivative-coupling direction. Time steps must resolve the population flow; routinely clipping probabilities above one would hide an integration problem.</p>
+          <p>In practice the loop is: sample initial positions and momenta; evaluate energies, forces, and couplings; advance nuclei and electronic amplitudes; draw hops and rescale momentum; repeat until the outgoing channels separate; then count outcomes. Thousands of trajectories reduce sampling noise, but cannot remove the physical approximations.</p>
+
+          <h2>6. A calculation small enough to audit</h2>
+          <p>We use Tully's simple avoided-crossing model, in atomic units, with \(M=2000\):</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            z(x)&=A\operatorname{sgn}(x)(1-e^{-B|x|}),\\
+            u(x)&=Ce^{-Dx^2},\\
+            A&=0.01,\quad B=1.6,\\
+            C&=0.005,\quad D=1.
+            \end{aligned}
+          \]</div>
+          <p>The nuclei arrive from the left on the lower electronic state. We compare three descriptions: classical motion confined to that lower surface, fewest-switches surface hopping without a decoherence correction, and a two-component quantum wavepacket. The potential, mass, and incoming distribution are the same in all three. These are new calculations of the standard model, not digitized data from the original paper.</p>
+          <h3>Match the preparation before comparing the answers</h3>
+          <p>The incident quantum packet has mean position \(x_0=-12\), width \(\sigma=1\), and mean momentum \(p_0\):</p>
+          <div class="math-block">\[
+            \chi(x,0)=(2\pi\sigma^2)^{-1/4}
+            e^{-(x-x_0)^2/(4\sigma^2)}
+            e^{ip_0(x-x_0)/\hbar}.
+          \]</div>
+          <p>Squaring the envelope gives a position variance \(\sigma^2\). Fourier transformation gives momentum variance \(\hbar^2/(4\sigma^2)\). Its positive Gaussian Wigner function therefore allows trajectory initialization with independent samples</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            x&\sim\mathcal N(x_0,\sigma^2),\\
+            p&\sim\mathcal N\!\left(p_0,\frac{\hbar^2}{4\sigma^2}\right).
+            \end{aligned}
+          \]</div>
+          <p>The packet starts in diabatic component 1, which is indistinguishable from the lower adiabatic state this far from the coupling region. The benchmark uses \(p_0=6,12,20,30\), with 4,000 trajectories per momentum and method. A finite-width packet averages over incident energies. Comparing it with one strictly monochromatic trajectory would mix a preparation difference into a method comparison.</p>
+          <h3>What is “exact” here?</h3>
+          <p>For the quantum reference, propagate the two-component wavefunction under the same Hamiltonian:</p>
+          <div class="math-block">\[
+            \hat H=-\frac{\hbar^2}{2M}\partial_x^2 I+V(x).
+          \]</div>
+          <p>A Fourier grid, also called a Fourier DVR, represents position and momentum on dual grids. The kinetic step is diagonal in momentum; the potential step is a local two-by-two matrix in position. Symmetric splitting follows by matching the short-time exponential expansion through second order:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            e^{-i\hat H\Delta t/\hbar}
+            &=e^{-iV\Delta t/(2\hbar)}
+             e^{-i\hat T\Delta t/\hbar}
+             \\&\quad\times e^{-iV\Delta t/(2\hbar)}
+             +O(\Delta t^3).
+            \end{aligned}
+          \]</div>
+          <p>There is no hopping rule in this propagation. Nuclear reflection, splitting, and coherent evolution all follow from the coupled Hamiltonian. The splitting has a finite time-step error, and the grid has a finite spatial error, so “exact” means a numerically converged result for <em>this one-coordinate, two-state model</em>. It does not mean exact chemistry or error-free arithmetic.</p>
+          <p>The reported reference uses 4,096 points on \([-64,64)\) and \(\Delta t=0.25\). We compare it with 2,048 points and \(\Delta t=0.5\), and with a larger box and later observation. The script also records probability near the box edges, unseparated central probability, and norm conservation. No absorber is used; observations must precede significant periodic-boundary return.</p>
+          <h3>Count the same outgoing channels</h3>
+          <p>Let \(r_V=\sqrt{z^2+u^2}\). Since \(V^2=r_V^2I\), its adiabatic projectors are</p>
+          <div class="math-block">\[
+            P_\pm(x)=\frac12\left[I\pm\frac{V(x)}{r_V(x)}\right].
+          \]</div>
+          <p>This follows by applying the expression to an eigenvector with eigenvalue \(\pm r_V\): the matching projector returns one and the other zero. Once the packets have separated, integrate on either side:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            T_\pm&=\int_{x>4}\Psi^\dagger P_\pm\Psi\,dx,\\
+            R_\pm&=\int_{x<-4}\Psi^\dagger P_\pm\Psi\,dx.
+            \end{aligned}
+          \]</div>
+          <p>For trajectories, the corresponding quantities are fractions exiting to the right or left on the specified active surface. The electronic coefficient \(|c_+|^2\) on one hopping trajectory is not itself an outgoing-channel count.</p>
+
+          <figure>
+            <picture>
+              <source media="(max-width: 640px)" srcset="../assets/img/reaction-dynamics/nonadiabatic-scattering-mobile.png" width="1020" height="1870">
+              <img src="../assets/img/reaction-dynamics/nonadiabatic-scattering.png" alt="Two-state potentials and quantum versus surface-hopping scattering probabilities" width="2380" height="731" loading="lazy">
+            </picture>
+            <figcaption>Left: the two diabatic diagonal potentials (dashed gray) and adiabatic eigenvalues (solid navy and rust), in hartree versus position in bohr. Middle and right: upper-state transmission and lower-state reflection versus mean incident momentum, in atomic units. Navy circles are quantum-grid results; rust squares are FSSH; gray triangles are trajectories restricted to the lower surface. Trajectory bars are 95% Wilson binomial sampling intervals, not total error bounds. The reflection panel uses an expanded vertical scale; gray and rust results there overlap. Lines connect calculated points as guides to the eye.</figcaption>
+          </figure>
+          <div class="table-scroll" role="region" aria-label="Scattering probabilities; scroll horizontally on small screens" tabindex="0">
+            <table>
+              <thead><tr><th>Mean \(p_0\) (a.u.)</th><th>Quantum \(T_+\)</th><th>FSSH \(T_+\)</th><th>Quantum \(R_-\)</th><th>FSSH \(R_-\)</th></tr></thead>
+              <tbody>
+                <tr><td>6</td><td>\(&lt;10^{-8}\)</td><td>0 observed</td><td>0.02235</td><td>0.00175</td></tr>
+                <tr><td>12</td><td>0.21866</td><td>\(0.2243\pm0.0066\)</td><td>\(8.1\times10^{-7}\)</td><td>0 observed</td></tr>
+                <tr><td>20</td><td>0.49299</td><td>\(0.5088\pm0.0079\)</td><td>\(8.6\times10^{-9}\)</td><td>0 observed</td></tr>
+                <tr><td>30</td><td>0.71538</td><td>\(0.7195\pm0.0071\)</td><td>\(2.6\times10^{-10}\)</td><td>0 observed</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The table's \(\pm\) values are one sampling standard error, \(\sqrt{\hat P(1-\hat P)/N}\), obtained from the variance of a binomial count divided by \(N^2\). They are narrower than the figure's 95% intervals. Zero observed events does not prove a zero underlying probability: with 4,000 trials, the Wilson upper limit is about \(9.6\times10^{-4}\). Tiny quantum reflection values should likewise be read as negligible at this benchmark's accuracy, not as relatively converged predictions to every printed digit.</p>
+          <p>At \(p_0=12\) and 30, FSSH captures upper-state transmission to within the sampled uncertainty. At \(p_0=20\), the difference is about 0.016, roughly two standard errors; halving the time step gives 0.5025, so this small ensemble does not cleanly resolve a systematic bias there. The low-momentum reflection is a clearer failure: at \(p_0=6\), the quantum result is 2.23%, whereas both trajectory methods give 0.175%. Adding electronic hops has not supplied full quantum nuclear dynamics.</p>
+          <p>Why does upper-state transmission grow with speed? On the far left, diabatic state 1 is the lower adiabatic state; on the far right, it is the upper one. A fast passage can retain much of its original diabatic character while changing its adiabatic label. “An electronic transition” therefore needs a specified basis; it does not always mean a sudden change of chemical charge localization.</p>
+          <p>The largest absolute channel-probability change in the grid/time-step check is \(6.7\times10^{-7}\); the larger-box/later-time check changes a channel by less than \(1.2\times10^{-7}\). At most \(2.0\times10^{-6}\) of the quantum probability remains in the central region. Norm drift is below \(10^{-11}\), all trajectory exit counts are resolved, and the largest trajectory energy drift is below \(4.1\times10^{-7}\) hartree. These checks support the displayed probability precision, not a universal guarantee about either method.</p>
+
+          <h2>7. What this comparison can—and cannot—establish</h2>
+          <p>The one-surface model has no mechanism for populating the upper surface: its \(T_+\) is identically zero. Allowing electronic transitions opens a channel that was missing structurally, not merely underestimated through a slightly inaccurate barrier. Agreement with the coupled quantum result tests whether the hopping dynamics allocates population sensibly for this preparation.</p>
+          <p>It does not establish that surface hopping is universally accurate. Independent classical trajectories do not retain the relative nuclear phases needed for interference between separated packets. Their electronic amplitudes can also stay coherent after the associated nuclear branches have separated, motivating decoherence treatments. Frustrated-hop choices, classically forbidden nuclear motion, repeated passages, and electronic-structure errors can all matter in other regimes. Increasing the trajectory count only addresses statistical uncertainty.</p>
+          <p>Most importantly, the plotted numbers are probabilities, not rate constants. “Upper” is an electronic-state label and “transmitted” is a model scattering label; neither automatically denotes a chemically distinct product. To calculate an experimental reaction yield, a molecular application must define product structures and prepare the same initial ensemble as the experiment.</p>
+          <p>For an isolated excited population following a single exponential law, the bridge to a lifetime is simple. If \(dP_e/dt=-kP_e\), separating variables and integrating gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \ln\frac{P_e(t)}{P_e(0)}&=-kt,\\
+            P_e(t)&=P_e(0)e^{-kt},\qquad \tau=1/k.
+            \end{aligned}
+          \]</div>
+          <p>But coherent transfer, back transfer, or multiple channels need not produce an exponential. Nor is a measured transient absorption signal generally equal to a state population: transition strengths, nuclear geometry, pulse characteristics, and the instrument response enter the forward model. The observable-first lesson of Part I still applies.</p>
+
+          <h2>8. An important exploration, not a final answer</h2>
+          <p>Surface hopping is one answer to a cost problem, not the only answer to multistate dynamics. Another line keeps an explicit nuclear wavefunction while seeking a more economical representation. Meyer, Manthe, and Cederbaum's <a href="https://doi.org/10.1016/0009-2614(90)87014-I">1990 MCTDH work</a> used time-dependent configurations to address multidimensional propagation. Multiple-spawning methods developed a different strategy: moving nuclear basis functions with additional branches generated when needed; <a href="https://doi.org/10.1021/jp994174i">Ben-Nun, Quenneville, and Martínez's 2000 article</a> connects that approach to first-principles photochemistry. These developments pursued different balances between quantum detail and molecular scale.</p>
+          <p>The next subject in this series is free energy and rare-event sampling: even with a usable Hamiltonian, how do we discover and count events that ordinary trajectories almost never see? After that, we will explore work on tunneling and quantum nuclear reaction dynamics. These strands overlap historically—the next article returns to developments of the 1970s—and neither is simply a replacement for nonadiabatic dynamics.</p>
+
+          <h2>Reproduce and inspect</h2>
+          <ul>
+            <li><a href="../assets/code/reaction-dynamics/nonadiabatic_scattering.py">Standalone Python calculation and figure script</a> — NumPy, SciPy, and Matplotlib.</li>
+            <li><a href="../assets/data/reaction-dynamics/nonadiabatic-scattering.csv">Channel probabilities and trajectory diagnostics (CSV)</a>.</li>
+            <li><a href="../assets/data/reaction-dynamics/nonadiabatic-convergence.csv">Quantum convergence and FSSH half-time-step checks (CSV)</a>.</li>
+          </ul>
+          <pre><code>python assets/code/reaction-dynamics/nonadiabatic_scattering.py</code></pre>
+          <p>The script defines the Hamiltonian, initial ensemble, random seed, propagators, exit rules, error checks, and figures. More specialized implementation notes are available in the separate <a href="fssh-tully-benchmark.html">FSSH</a> and <a href="ehrenfest-tully-benchmark.html">Ehrenfest</a> articles; their earlier benchmark setups are not interchangeable with the matched-ensemble calculation here.</p>
+
+          <h2>Historical sources</h2>
+          <ul>
+            <li>Tully and Preston, “Trajectory Surface Hopping Approach to Nonadiabatic Molecular Collisions: The Reaction of H<sup>+</sup> with D<sub>2</sub>,” <a href="https://doi.org/10.1063/1.1675788"><em>J. Chem. Phys.</em> 55, 562–572 (1971)</a>.</li>
+            <li>Tully, “Molecular Dynamics with Electronic Transitions,” <a href="https://doi.org/10.1063/1.459170"><em>J. Chem. Phys.</em> 93, 1061–1071 (1990)</a>.</li>
+            <li>Meyer, Manthe, and Cederbaum, “The Multi-Configurational Time-Dependent Hartree Approach,” <a href="https://doi.org/10.1016/0009-2614(90)87014-I"><em>Chem. Phys. Lett.</em> 165, 73–78 (1990)</a>.</li>
+            <li>Ben-Nun, Quenneville, and Martínez, “Ab Initio Multiple Spawning: Photochemistry from First Principles Quantum Molecular Dynamics,” <a href="https://doi.org/10.1021/jp994174i"><em>J. Phys. Chem. A</em> 104, 5161–5175 (2000)</a>.</li>
+          </ul>
+          <section class="series-footer" aria-labelledby="reaction-series-map">
+            <h2 id="reaction-series-map">Chemical Reaction Computation series map</h2>
+            <ol class="series-list">
+              <li><a href="hydrogen-transfer-observables-model-validation.html">Part I: What Can We Actually Observe?</a> — the series begins with hydrogen-transfer experiments.</li>
+              <li><a href="hydrogen-transfer-barrier-to-rate.html">Part II: From a Barrier to a Rate</a> — Arrhenius, TST, and a quantum rate benchmark.</li>
+              <li><a href="reaction-dynamics-nonadiabatic.html">Part III: When One Electronic State Is Not Enough</a> — multistate reactions and nonadiabatic dynamics.</li>
+              <li>Planned next: Free Energy and Rare-Event Sampling — exploring developments from the 1970s onward.</li>
+              <li>Further reading planned: Tunneling and Quantum Nuclear Reaction Dynamics.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="hydrogen-transfer-barrier-to-rate.html">&lt;- Previous: From a barrier to a rate</a><a href="../index.html">Back to article list</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
