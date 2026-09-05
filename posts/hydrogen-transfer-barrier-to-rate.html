@@ -265,76 +265,11 @@
             This number is a model rate under a specified normalization, not a prediction for an experimental solution reaction.
           </p>
 
-          <h3>From a continuous Hamiltonian to a sinc-DVR matrix</h3>
-          <p>
-            For the second calculation, the coordinate is sampled on equally spaced points \(x_i=x_{\min}+i\Delta x\). A sinc-DVR basis function centered at \(x_i\) is
-          </p>
-          <div class="math-block">\[
-            \phi_i(x)=\frac{1}{\sqrt{\Delta x}}
-            \operatorname{sinc}\!\left[\frac{\pi(x-x_i)}{\Delta x}\right].
-          \]</div>
-          <p>
-            Because \(\phi_i(x_j)=\delta_{ij}/\sqrt{\Delta x}\), the coordinate and potential operators are diagonal under the DVR quadrature:
-          </p>
-          <div class="math-block">\[
-            \begin{aligned}
-            x_{ij}&=x_i\delta_{ij},\\
-            V_{ij}&\simeq V(x_i)\delta_{ij}.
-            \end{aligned}
-          \]</div>
-          <p>
-            Applying \(-\hbar^2\partial_x^2/(2m)\) to the cardinal sine functions gives the analytic kinetic-energy matrix
-          </p>
-          <div class="math-block">\[
-            T_{ij}
-            =\frac{\Delta x}{2\pi}
-             \int_{-\pi/\Delta x}^{\pi/\Delta x}dk\,
-             \frac{\hbar^2k^2}{2m}
-             e^{ik(x_i-x_j)}.
-          \]</div>
-          <p>
-            After including the Fourier normalization, the \(i=j\) integral gives \(\pi^2/(3\Delta x^2)\). For \(i\ne j\), writing \(n=i-j\) gives \((2\pi)^{-1}\int_{-\pi}^{\pi}u^2e^{inu}du=2(-1)^n/n^2\). Hence
-          </p>
-          <div class="math-block">\[
-            T_{ij}=\frac{\hbar^2}{2m\Delta x^2}
-            \begin{cases}
-              \displaystyle \frac{\pi^2}{3}, & i=j,\\[6pt]
-              \displaystyle \frac{2(-1)^{i-j}}{(i-j)^2}, & i\ne j.
-            \end{cases}
-          \]</div>
-          <p>
-            The numerical Hamiltonian used here is consequently
-          </p>
-          <div class="math-block">\[
-            H_{ij}=T_{ij}+V(x_i)\delta_{ij}.
-          \]</div>
-          <p>
-            We use 701 grid points over \([-35,35]\ a_0\) and retain the lowest 300 eigenstates,
-          </p>
-          <div class="math-block">\[
-            \mathbf H\mathbf c_n=E_n\mathbf c_n.
-          \]</div>
+          <h3 id="dvr-rate-convention">Using DVR to evaluate this rate</h3>
+          <p>The <a href="dvr-operator-matrices.html#kinetic-energy">DVR operator note</a> derives the sinc kinetic matrix and assembles \(H_{ij}=T_{ij}+V(x_i)\delta_{ij}\). We use that construction here with 701 points on \([-35,35]\ a_0\), retaining the lowest 300 eigenstates. The numerical question is now whether those eigenpairs reproduce the thermal reaction flux—not how to discretize the Hamiltonian again.</p>
+          <p>Likewise, the <a href="dvr-operator-matrices.html#flux-operator">side and flux operators</a> give \(\hat h=\Theta(\hat x)\) and \(\hat F=(i/\hbar)[\hat H,\hat h]\). The step marks products; its time derivative measures flux through the dividing surface.</p>
+          <p>One convention needs to be explicit. <a href="dvr-flux-side-correlation.html#kubo-flux-side">DVR VI</a> evaluates a <em>Kubo-transformed</em> flux–side correlation, with an imaginary-time average. The present script uses the real part of the <em>ordinary Boltzmann-weighted</em> correlation below. Their finite-time formulas and spectral weights are not interchangeable. We therefore retain this calculation's actual spectral expression and plateau normalization.</p>
 
-          <h3>From product population to a flux operator</h3>
-          <p>
-            Define \(\hat h=\Theta(\hat x)\), which equals zero on the reactant side and one on the product side. In the Heisenberg picture,
-          </p>
-          <div class="math-block">\[
-            \hat h(t)=e^{i\hat Ht/\hbar}\hat h e^{-i\hat Ht/\hbar}.
-          \]</div>
-          <p>
-            Differentiating with respect to time gives the rate of change of product-side population:
-          </p>
-          <div class="math-block">\[
-            \frac{d\hat h(t)}{dt}
-            =\frac{i}{\hbar}[\hat H,\hat h(t)].
-          \]</div>
-          <p>
-            At \(t=0\), this derivative is the flux operator,
-          </p>
-          <div class="math-block">\[
-            \hat F=\frac{i}{\hbar}[\hat H,\hat h].
-          \]</div>
           <p>
             The thermal flux–side correlation function correlates an initial crossing with product occupancy at a later time:
           </p>
@@ -376,7 +311,7 @@
             Dividing by the same reactant normalization used in TST gives the DVR rate. The ratio of the two rates does not depend on that shared normalization.
           </p>
 
-          <h3>The scattering formula that unifies TST and DVR</h3>
+          <h3 id="thermal-scattering-rate">The scattering formula that unifies TST and DVR</h3>
           <p>
             For one-dimensional scattering, the same thermal flux can be written as an energy average of the transmission probability \(P(E)\). Begin with positive incident momenta:
           </p>
@@ -416,7 +351,7 @@
                =\frac{k_{\mathrm B}T}{h}e^{-\beta V_0}.
             \end{aligned}
           \]</div>
-          <p>
+          <p id="eckart-transmission">
             The exact Eckart barrier provides a smooth transmission probability,
           </p>
           <div class="math-block">\[

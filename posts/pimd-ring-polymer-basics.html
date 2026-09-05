@@ -39,7 +39,7 @@
             Path-integral molecular dynamics turns an equilibrium quantum Boltzmann problem into a classical sampling problem over a ring polymer. This first note keeps the scope deliberately static: it derives the ring-polymer Hamiltonian, writes the sampling equations of motion, and tests the bead-number convergence of a harmonic-oscillator potential estimator.
           </p>
 
-          <h2>Quantum Boltzmann trace</h2>
+          <h2 id="quantum-boltzmann-trace">Quantum Boltzmann trace</h2>
           <p>For a one-dimensional Hamiltonian</p>
           <div class="math-block">\[
             \hat H=\frac{\hat p^2}{2m}+V(\hat q),
@@ -49,7 +49,19 @@
             Z=\operatorname{Tr}\left[e^{-\beta \hat H}\right]
             =\int dq\,\langle q|e^{-\beta\hat H}|q\rangle .
           \]</div>
-          <p>The path-integral construction applies the Trotter factorization with \(P\) imaginary-time slices, \(\beta_P=\beta/P\), and closes the path by setting \(q_{P+1}=q_1\). Integrating out the short-time momentum kernels gives</p>
+          <p>For a short imaginary-time interval \(\Delta\tau\), a symmetric kinetic–potential splitting gives a free-particle Gaussian kernel multiplied by two half-step potential weights:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            K_{\Delta\tau}(q,q')&\simeq
+              \sqrt{\frac{m}{2\pi\hbar\Delta\tau}}\,
+              e^{-g_{\Delta\tau}(q,q')},\\
+            g_{\Delta\tau}(q,q')&=
+              \frac{m(q-q')^2}{2\hbar\Delta\tau}\\
+              &\quad+\frac{\Delta\tau[V(q)+V(q')]}{2\hbar}.
+            \end{aligned}
+          \]</div>
+          <p>Split the full Boltzmann operator into \(P\) factors with \(\Delta\tau=\beta\hbar/P\), insert a coordinate resolution between each pair, and take the trace. The trace identifies the final and initial coordinates, closing the path. Multiplication combines adjacent half-step potential factors and produces the spring-linked weight below; the omitted normalization is \([m/(2\pi\hbar\Delta\tau)]^{P/2}\).</p>
+          <p>Writing \(\beta_P=\beta/P\) and \(q_{P+1}=q_1\), the result is</p>
           <div class="math-block">\[
             Z_P \propto
             \int dq_1\cdots dq_P\,

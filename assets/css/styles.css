@@ -19,6 +19,10 @@ html {
   scroll-behavior: smooth;
 }
 
+.post-content [id] {
+  scroll-margin-top: 6.5rem;
+}
+
 body {
   margin: 0;
   background: var(--bg);

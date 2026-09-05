@@ -72,7 +72,7 @@
             The Metropolis move changes one bead, then shifts the entire path so that the centroid returns exactly to \(Q\). This keeps the constrained ensemble well defined without adding a penalty potential. In this benchmark the highest PMF level used \(P=8\) beads and \(15000\) Monte Carlo steps per grid point and state. The adaptive centroid grid has 66 points over \([-7,7]\), with spacing \(0.1\) in the coupling region \([-2.221,2.221]\) and spacing \(0.5\) outside.
           </p>
 
-          <h2>Mean Force and PMF Integration</h2>
+          <h2 id="mean-force-pmf">Mean Force and PMF Integration</h2>
           <p>
             The PMF is reconstructed from a constrained mean force, not from a simple average of adiabatic energies. For a sampled path, the bead-averaged force on state \(s\) is
           </p>
@@ -108,6 +108,18 @@
             <img src="../assets/img/mqc-series/cmd-sac-pmf-vs-adiabatic.png" alt="CMD PMF compared with ordinary adiabatic energies for Tully simple avoided crossing">
             <figcaption>CMD PMF surfaces compared with ordinary adiabatic energies. The horizontal axis is the centroid coordinate \(Q\); the vertical axis is energy in hartree. Dashed black curves are ordinary adiabatic energies and colored solid curves are CMD PMFs. The gray band marks \(|Q|\le 0.5\), the barrier region used for the numerical estimate. The lower state is nearly unchanged in the asymptotic region but is lowered around the avoided crossing by \(4.83\times 10^{-4}\) hartree, consistent with a quantum-delocalization reduction of the effective reaction barrier.</figcaption>
           </figure>
+
+          <h3 id="classical-pmf-bridge">The classical counterpart—and the ensemble distinction</h3>
+          <p>For a classical Cartesian coordinate \(x\) and remaining coordinates \(y\), define \(Z_x=\int dy\,e^{-\beta U(x,y)}\) and \(F(x)=-\beta^{-1}\ln Z_x+C\). Differentiating under the integral gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            F'(x)&=-\beta^{-1}\frac{Z_x'}{Z_x}\\
+              &=\frac{\int dy\,(\partial_xU)e^{-\beta U}}
+                      {\int dy\,e^{-\beta U}}\\
+              &=\langle\partial_xU\rangle_x.
+            \end{aligned}
+          \]</div>
+          <p>This explains the common mean-force logic, but not an identity of the two ensembles. The CMD average above constrains a quantum path's centroid; this classical average constrains a physical coordinate. Nonlinear collective variables also require their geometric measure. <a href="reaction-dynamics-free-energy-sampling.html">Reaction Computation IV</a> uses the classical case to isolate entropy and test umbrella reconstruction.</p>
 
           <h2>Interpolating a Continuous \(E(Q)\) and \(F(Q)\)</h2>
           <p>

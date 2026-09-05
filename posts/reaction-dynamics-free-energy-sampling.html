@@ -41,35 +41,17 @@
           <p>There are therefore two separate questions. First, which configurations matter, and how common are they at equilibrium? Second, how does the physical system move between them? Umbrella sampling primarily addresses the first. Keeping this distinction visible will prevent a common mistake later: interpreting the clock of a biased simulation as the clock of the chemical reaction.</p>
 
           <h2>2. From a potential energy to a free energy</h2>
-          <p>Let \(\mathbf R\) contain the molecular coordinates and \(U(\mathbf R)\) their potential energy. In a classical canonical ensemble at fixed temperature and volume, after integrating out momenta, the configurational density is</p>
+          <p>The <a href="cmd-effective-surfaces-tully-sac.html#mean-force-pmf">CMD effective-surface note</a> already introduced a PMF through a constrained mean force. Here we need a different ensemble: a <em>classical</em> configurational marginal, not a quantum centroid distribution. For coordinates \(\mathbf R\), potential \(U\), and a selected collective variable \(s=\xi(\mathbf R)\),</p>
           <div class="math-block">\[
             \begin{aligned}
-            \pi(\mathbf R)&=Z^{-1}e^{-\beta U(\mathbf R)},\\
-            Z&=\int d\mathbf R\,e^{-\beta U(\mathbf R)},\qquad
-            \beta=(k_{\mathrm B}T)^{-1}.
+            p(s)&=\frac1Z\int d\mathbf R\,
+              \delta[s-\xi(\mathbf R)]e^{-\beta U(\mathbf R)},\\
+            F(s)-F(s_0)&=-k_{\mathrm B}T\ln\frac{p(s)}{p(s_0)},\\
+            \beta&=(k_{\mathrm B}T)^{-1}.
             \end{aligned}
           \]</div>
-          <p>Suppose we describe progress using a collective variable \(s=\xi(\mathbf R)\): a distance, a difference of distances, or another chosen function. Many molecular configurations share the same value of \(s\). To obtain its probability density, sum over all of them:</p>
-          <div class="math-block">\[
-            p(s)=\frac1Z\int d\mathbf R\,
-            \delta\!\left[s-\xi(\mathbf R)\right]e^{-\beta U(\mathbf R)}.
-          \]</div>
-          <p>The potential of mean force, or free-energy profile along this coordinate, is defined by the logarithm of that marginal density. Taking a ratio removes both the normalization and the arbitrary reference constant:</p>
-          <div class="math-block">\[
-            F(s)-F(s_0)
-            =-k_{\mathrm B}T\ln\frac{p(s)}{p(s_0)}.
-          \]</div>
-          <p>This is not the energy of a single optimized structure. It contains the statistical weight of all the configurations hidden behind each value of \(s\). A region can be unfavorable because its configurations have high energy, because there are few accessible configurations there, or both. The profile also depends on the coordinate and its measure: nonlinear reparameterization introduces a probability-density Jacobian. A distance histogram, for example, cannot be interpreted without considering the associated geometric measure.</p>
-          <p>For a Cartesian coordinate \(x\) and remaining coordinates \(y\), the same definition connects free energy to a mean force. Write \(Z_x=\int dy\,e^{-\beta U(x,y)}\); differentiating under the integral gives</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            F'(x)&=-\beta^{-1}\frac{Z_x'}{Z_x}\\
-              &=\frac{\int dy\,(\partial_xU)e^{-\beta U}}
-                      {\int dy\,e^{-\beta U}}\\
-              &=\langle\partial_xU\rangle_x.
-            \end{aligned}
-          \]</div>
-          <p>Thus \(-F'(x)\) is a conditional mean force. General nonlinear collective variables require the corresponding geometric terms; the simple expression above is for the Cartesian model used here.</p>
+          <p>The delta function sums over every configuration with the same collective-variable value. Taking the logarithm turns that statistical weight into a free-energy profile. This is not the energy of one optimized structure: a region can be unfavorable because its configurations cost energy, because few configurations are accessible there, or both.</p>
+          <p>The <a href="cmd-effective-surfaces-tully-sac.html#classical-pmf-bridge">classical mean-force identity</a> gives \(F'(x)=\langle\partial_xU\rangle_x\) for a Cartesian coordinate. The measure matters: nonlinear reparameterization introduces a density Jacobian, and general collective variables require geometric terms. We will use Cartesian coordinates so that the entropy can be isolated analytically.</p>
 
           <h2>3. A model where the missing entropy can be calculated</h2>
           <p>Use reduced units with \(k_{\mathrm B}T=1\), and two dimensionless coordinates:</p>

@@ -40,8 +40,22 @@
             The useful thing about DVR is that the important quantum operators become inspectable matrices. Kinetic energy is dense and structured, local potentials are diagonal, side operators are projectors, and flux operators appear as commutators around a dividing surface.
           </p>
 
-          <h2>Kinetic energy</h2>
-          <p>For the infinite-domain sinc DVR convention used in the code,</p>
+          <h2 id="kinetic-energy">Kinetic energy</h2>
+          <p>Use equally spaced points \(x_i=x_{\min}+i\Delta x\). The cardinal basis \(\phi_i(x)=\Delta x^{-1/2}\operatorname{sinc}[\pi(x-x_i)/\Delta x]\), with \(\operatorname{sinc}u=\sin u/u\), gives diagonal coordinate and potential matrices under DVR quadrature. Its band-limited Fourier representation supplies the kinetic matrix:</p>
+          <div class="math-block">\[
+            T_{ij}=\frac{\Delta x}{2\pi}
+              \int_{-\pi/\Delta x}^{\pi/\Delta x}
+              \frac{\hbar^2k^2}{2m}e^{ik(x_i-x_j)}\,dk.
+          \]</div>
+          <p>Set \(u=k\Delta x\) and \(n=i-j\). The remaining integral is elementary:</p>
+          <div class="math-block">\[
+            \frac1{2\pi}\int_{-\pi}^{\pi}u^2e^{inu}\,du
+            =\begin{cases}
+              \pi^2/3,&n=0,\\
+              2(-1)^n/n^2,&n\ne0.
+            \end{cases}
+          \]</div>
+          <p>The off-diagonal result follows by two integrations by parts. Substitution gives the infinite-domain sinc convention used in the code:</p>
           <div class="math-block">\[
             T_{ii'}=\frac{\hbar^2}{2m\Delta x^2}(-1)^{i-i'}
             \begin{cases}
@@ -87,8 +101,8 @@
             </figure>
           </div>
 
-          <h2>Flux operator</h2>
-          <p>The flux through the dividing surface is the time derivative of the side operator. In operator form,</p>
+          <h2 id="flux-operator">Flux operator</h2>
+          <p>In the Heisenberg picture, \(h(t)=e^{iHt/\hbar}he^{-iHt/\hbar}\). Differentiating the two exponentials gives \(\dot h(t)=(i/\hbar)[H,h(t)]\). At \(t=0\), the rate of change of product-side occupancy is the flux operator:</p>
           <div class="math-block">\[
             F=\frac{i}{\hbar}[H,h].
           \]</div>

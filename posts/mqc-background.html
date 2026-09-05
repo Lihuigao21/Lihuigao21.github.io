@@ -59,12 +59,17 @@
           \]</div>
           <p>This approximation is useful because the nuclei move on a single potential energy surface. It fails when the electronic basis changes rapidly along the nuclear path, especially near small energy gaps. MQC methods can be viewed as controlled attempts to keep some of the dropped coupling while avoiding fully quantum nuclear dynamics.</p>
 
-          <h2>Born-Huang Couplings</h2>
+          <h2 id="born-huang-couplings">Born-Huang Couplings</h2>
           <p>The exact adiabatic expansion is</p>
           <div class="math-block">\[
             \Psi(r,R,t)=\sum_j \chi_j(R,t)\phi_j(r;R).
           \]</div>
-          <p>Substitution into the time-dependent Schrodinger equation gives coupled nuclear channels. For one nuclear coordinate, the coupling structure is schematically</p>
+          <p>The nuclear kinetic operator differentiates both the nuclear coefficient and the electronic basis. For one coordinate \(R\), the product rule gives</p>
+          <div class="math-block">\[
+            \partial_R^2(\chi_j\phi_j)
+              =\phi_j\chi_j''+2\phi_j'\chi_j'+\phi_j''\chi_j.
+          \]</div>
+          <p>Insert the expansion into the molecular Schrödinger equation, multiply by \(\phi_i^*\), and integrate over electronic coordinates. Orthonormality selects the ordinary kinetic term, while the other two derivatives produce the coupled-channel structure:</p>
           <div class="math-block">\[
             i\hbar\dot\chi_i =
             \left[\hat T_n+E_i(R)\right]\chi_i
@@ -81,12 +86,17 @@
           \]</div>
           <p>The strict BO approximation drops the off-diagonal channel couplings and often absorbs or neglects the diagonal correction. Nonadiabatic dynamics begins when those derivative terms cannot be ignored.</p>
 
-          <h2>NAC Working Formulas</h2>
+          <h2 id="nac-formulas">NAC Working Formulas</h2>
           <p>The first-derivative coupling, or NAC vector, is</p>
           <div class="math-block">\[
             d_{ij}(R)=\langle\phi_i(r;R)|\nabla_R\phi_j(r;R)\rangle.
           \]</div>
-          <p>For nondegenerate adiabatic states, the Hellmann-Feynman form makes the avoided-crossing problem explicit:</p>
+          <p>To obtain a working expression, differentiate \(\hat H_e\phi_j=E_j\phi_j\) and project onto a different eigenstate. The derivative of \(E_j\) drops out by orthogonality:</p>
+          <div class="math-block">\[
+            \langle\phi_i|\nabla_R\hat H_e|\phi_j\rangle
+              +E_i d_{ij}=E_jd_{ij},\qquad i\ne j.
+          \]</div>
+          <p>For nondegenerate adiabatic states, rearrangement gives the Hellmann–Feynman form:</p>
           <div class="math-block">\[
             d_{ij}(R)=
             \frac{\langle\phi_i|\nabla_R\hat H_e|\phi_j\rangle}
@@ -114,12 +124,17 @@
           \]</div>
           <p>which reduces to the usual antisymmetric real-state expression after phase matching. In complex or spin-orbit-coupled calculations, the conjugated overlap convention must be handled carefully. The formula is practical, but it is not a substitute for state tracking: arbitrary sign flips, root reordering, and near-degenerate subspaces can turn a clean NAC estimate into numerical noise.</p>
 
-          <h2>Classical Nuclei</h2>
+          <h2 id="classical-nuclei">Classical Nuclei</h2>
           <p>MQC replaces the nuclear wavepacket by trajectories \((R(t),P(t))\), while the electronic state is expanded along each moving path:</p>
           <div class="math-block">\[
             |\psi_e(t)\rangle=\sum_j c_j(t)|\phi_j(R(t))\rangle.
           \]</div>
-          <p>In an adiabatic representation, the electronic coefficients obey</p>
+          <p>Differentiate both the coefficients and the moving basis. Since \(\dot\phi_k=\dot R\cdot\nabla_R\phi_k\), projection onto state \(j\) gives</p>
+          <div class="math-block">\[
+            i\hbar\left(\dot c_j+
+              \sum_k\dot R\cdot d_{jk}\,c_k\right)=E_jc_j.
+          \]</div>
+          <p>Rearranging gives the coefficient equation used by the trajectory methods:</p>
           <div class="math-block">\[
             \dot c_j=
             -\frac{i}{\hbar}E_j(R)c_j

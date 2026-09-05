@@ -62,21 +62,16 @@
           <p>Unlike the barrier height alone, this integral sees the width and shape of the barrier and the moving mass. At a fixed energy and fixed potential, replacing \(m\) by \(2m\) multiplies \(W\) by \(\sqrt2\). That already suggests strong isotope sensitivity, but it is not yet a thermal kinetic isotope effect: the contributing energies and reactant populations also need to be averaged.</p>
 
           <h2>3. Temperature selects a compromise, not just the lowest energy</h2>
-          <p>Use a one-channel scattering model with equal asymptotic potentials on the two sides. Let \(Q_R\) be a consistently normalized reactant partition function. The thermal flux numerator \(\mathcal F=kQ_R\) is</p>
+          <p><a href="hydrogen-transfer-barrier-to-rate.html#thermal-scattering-rate">Part II derived the thermal scattering formula</a> and showed how step-function transmission recovers classical TST. We reuse those results for the same one-channel barrier, with a common reactant normalization \(Q_R\):</p>
           <div class="math-block">\[
             \begin{aligned}
-            \mathcal F(T)&=\frac{1}{2\pi\hbar}
+            \mathcal F(T)=kQ_R&=\frac{1}{2\pi\hbar}
               \int_0^\infty e^{-\beta E}P(E)\,dE,\\
-            \beta&=(k_{\mathrm B}T)^{-1}.
+            \mathcal F_{\mathrm{TST}}&=
+              \frac{e^{-\beta V_0}}{2\pi\beta\hbar}.
             \end{aligned}
           \]</div>
-          <p>The prefactor can be seen by putting incident states in a long interval of length \(L\). Their positive-momentum density is \(L\,dp/(2\pi\hbar)\), and their incident crossing frequency is \(v/L\). Multiplication cancels \(L\); since \(v\,dp=dE\), each energy interval supplies \(dE/(2\pi\hbar)\), weighted by its Boltzmann factor and transmission probability. Dividing by the reactant partition function converts this flux numerator to the chosen rate normalization.</p>
-          <p>Classical TST for this isolated one-dimensional barrier replaces \(P(E)\) by a step: zero below \(V_0\), one above. The integral is elementary:</p>
-          <div class="math-block">\[
-            \mathcal F_{\mathrm{TST}}
-            =\frac{1}{2\pi\hbar}\int_{V_0}^{\infty}e^{-\beta E}\,dE
-            =\frac{e^{-\beta V_0}}{2\pi\beta\hbar}.
-          \]</div>
+          <p>Here \(\beta=(k_{\mathrm B}T)^{-1}\). The new step is to approximate the energy integral itself: can a narrow range of energies account for most of the reaction flux?</p>
           <p>Below the barrier, WKB instead makes the integrand \(e^{-\Phi(E)}\), where</p>
           <div class="math-block">\[
             \Phi(E)=\beta E+\frac{W(E)}{\hbar}.
@@ -138,37 +133,15 @@
           <p>The optimal energy in the transmission integral and the periodic imaginary-time path describe the same leading exponent. This is the useful content of the instanton picture. It does <em>not</em> mean that a nucleus literally crosses the barrier and comes back during the physical reaction, or that \(\beta\hbar\) is a measured reaction duration.</p>
           <p>Nor does an equilibrium partition function, by itself, determine a rate. The reactive contribution and its flux normalization must be selected. Here the scattering integral supplies that selection explicitly; a general path-integral rate derivation must do the analogous work.</p>
 
-          <h2>5. Why a ring polymer appears—and what it does not mean</h2>
-          <p>To compute imaginary-time paths numerically, divide their duration into \(N\) intervals, \(\Delta\tau=\beta\hbar/N\). A symmetric short-time splitting of kinetic and potential operators gives the coordinate kernel</p>
+          <h2>5. The same ring, a different computational task</h2>
+          <p><a href="pimd-ring-polymer-basics.html#quantum-boltzmann-trace">PIMD I derives the ring-polymer representation</a> from the short-time Boltzmann kernel, and <a href="pimc-sho-metropolis.html">PIMC</a> samples its equilibrium weight. We reuse that representation rather than construct it again. With \(N\) beads, \(\Delta\tau=\beta\hbar/N\), and \(x_N=x_0\), the action needed for our numerical check is</p>
           <div class="math-block">\[
-            \begin{aligned}
-            K_{\Delta\tau}(x,x')&\simeq
-              \sqrt{\frac{m}{2\pi\hbar\Delta\tau}}\,
-              e^{-g_{\Delta\tau}(x,x')},\\
-            g_{\Delta\tau}(x,x')&=
-              \frac{m(x-x')^2}{2\hbar\Delta\tau}\\
-              &\quad+\frac{\Delta\tau[V(x)+V(x')]}{2\hbar}.
-            \end{aligned}
-          \]</div>
-          <p>The first exponential is the free-particle imaginary-time propagator; the two potential factors come from the half steps on either side. Insert intermediate coordinates and multiply the kernels. A trace closes the endpoints, \(x_N=x_0\), producing</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            S_N&=\sum_{j=1}^N\left[
+            S_N=\sum_{j=1}^N\left[
               \frac{m(x_j-x_{j-1})^2}{2\Delta\tau}
-              +\Delta\tau V(x_j)\right],\\
-            Z_N&=\left(\frac{m}{2\pi\hbar\Delta\tau}\right)^{N/2}
-              \int dx_1\cdots dx_N\,e^{-S_N/\hbar}.
-            \end{aligned}
+              +\Delta\tau V(x_j)\right].
           \]</div>
-          <p>Adjacent coordinates are joined by quadratic terms, which look like springs. The last coordinate connects back to the first. That is the ring polymer: a discretized representation of one quantum coordinate, not \(N\) extra physical nuclei. For a bound or box-normalized system, the partition function converges to the quantum result as the discretization is refined.</p>
-          <p>Writing \(\beta_N=\beta/N\) and \(\omega_N=N/(\beta\hbar)\) makes the familiar classical-looking form explicit:</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            \frac{S_N}{\hbar}&=\beta_N U_N,\\
-            U_N&=\sum_j\left[
-              \tfrac12m\omega_N^2(x_j-x_{j-1})^2+V(x_j)\right].
-            \end{aligned}
-          \]</div>
+          <p>This is the same weight as in the PIMC note: its dimensionless action is \(S_N/\hbar\). The older notes label the bead number \(P\) instead of \(N\). In the present notation their weight is \(e^{-\beta_NU_N}\), where \(\beta_N=\beta/N\) and \(U_N\) is the ring-polymer potential, including springs. Thus \(S_N/\hbar=\beta_NU_N\); the two notations describe the same distribution.</p>
+          <p>The new task is to select a <em>reactive stationary path</em> and its fluctuations, rather than sample the full equilibrium distribution. Beads still label imaginary-time slices; they do not become snapshots of a real reaction trajectory.</p>
           <p>What we do with this representation distinguishes the methods:</p>
           <div class="table-scroll" role="region" aria-label="Different uses of ring polymers" tabindex="0">
             <table>
@@ -229,17 +202,7 @@
             \end{aligned}
           \]</div>
           <p>For this potential, a nontrivial subbarrier periodic orbit exists only for \(T&lt;T_c\). As \(T\) approaches \(T_c\) from below, it shrinks toward the barrier top. This statement concerns the orbit and the ordinary thermal saddle approximation, not the disappearance of quantum transmission above \(T_c\). More complicated potentials can have richer orbit branches.</p>
-          <p>The independent reference is the known analytic Eckart scattering result. Define dimensionless parameters \(u\) and \(d\):</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            u&=\frac{\pi\sqrt{2mE}}{\hbar a},\\
-            d&=\frac{\pi}{2}
-              \sqrt{\frac{8mV_0}{\hbar^2a^2}-1},\\
-            P_{\mathrm{exact}}(E)&=
-              \frac{\sinh^2u}{\sinh^2u+\cosh^2d}.
-            \end{aligned}
-          \]</div>
-          <p>This expression is quoted from the analytic scattering solution, not derived by the WKB approximation. The displayed real-\(d\) form applies to our parameters. As a separate implementation check, the script integrates the stationary Schrödinger equation with an outgoing right boundary and extracts incident and reflected amplitudes on the left. It then integrates \(P_{\mathrm{exact}}\) thermally using the same flux formula as the approximations.</p>
+          <p>The independent reference is the <a href="hydrogen-transfer-barrier-to-rate.html#eckart-transmission">analytic Eckart transmission used in Part II</a>, thermally integrated with the same flux formula. It is a solution of the scattering equation, not of WKB or the instanton approximation. As a separate implementation check, the script integrates the stationary Schrödinger equation with an outgoing right boundary and extracts incident and reflected amplitudes on the left. Thus the new semiclassical approximation is tested against an independently known reference.</p>
 
           <h2>7. The calculation: what improves, and where does it fail?</h2>
           <p>The workflow is small enough to reproduce in one script. Evaluate exact transmission; integrate it over thermal energies; repeat with leading WKB below \(V_0\) and unit transmission above; evaluate the Gaussian instanton expression for \(T&lt;T_c\); finally sample the analytic orbit with successively more beads to test the discretized action. The elementary WKB curve includes the overbarrier integral, whereas the displayed instanton formula is the subbarrier saddle contribution, with no extra TST term added.</p>
@@ -278,7 +241,7 @@
           <p>A practical multidimensional calculation needs more than drawing that path: an adequate potential surface, a converged reactive saddle, fluctuation prefactors, reactant partition functions, and appropriate treatment of competing paths and environmental coordinates. A leading harmonic fluctuation treatment may be insufficient. Standard single-surface instanton theory also does not automatically solve the multielectronic-state problem from Part III.</p>
           <p>The experimental target remains a rate, its temperature dependence, or an isotope effect—not the bead arrangement itself. For isotopes on the same Born–Oppenheimer surface, both the optimal path and statistical factors can change. A measured isotope effect is thus not obtained by inserting a new mass into one fixed action and ignoring everything else. Similarly, a thermal reaction rate and a tunneling splitting in a bound double well are different observables, even though both admit instanton treatments.</p>
           <p>The main advance is a change in what we try to compute: from the entire quantum motion to a dominant contribution selected by thermal statistics and barrier penetration. The benchmark also sets the boundary of that change. A well-converged path is not necessarily an accurate rate, and an accurate rate for an Eckart barrier is not yet validation of a molecular mechanism.</p>
-          <p>Next we will ask what happens if we <em>propagate</em> the ring polymer instead of finding a stationary reactive path. That is the entry point to RPMD rate theory, its dynamical correction, and a new comparison with exact results. The common ring representation explains the family resemblance; it does not make RPMD and instanton theory interchangeable.</p>
+          <p>The existing <a href="rpmd-sho-correlation.html#rpmd-estimator">PIMD V article</a> already introduces RPMD propagation and tests its position correlation on a harmonic oscillator. The next reaction-computation article will build on that foundation: how do we obtain a <em>reaction rate</em>, separate the statistical bottleneck from a recrossing correction, and compare with exact scattering? It will not restart the RPMD introduction. Sharing the ring representation does not make an RPMD trajectory and an instanton saddle interchangeable.</p>
 
           <h2>Reproduce and inspect</h2>
           <ul>

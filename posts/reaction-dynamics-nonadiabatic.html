@@ -40,47 +40,15 @@
           <p>These questions predate the 1970s: the Born–Oppenheimer framework and the Landau–Zener crossing models already supplied important foundations. The historical step emphasized here is making coupled electronic and nuclear motion into a practical molecular simulation. In 1971, Tully and Preston applied trajectory surface hopping to the reaction of a proton with a deuterium molecule. In 1990, Tully introduced the fewest-switches algorithm used in the example below. These are distinct milestones, not two dates for the same algorithm. See the original <a href="https://doi.org/10.1063/1.1675788">1971 paper</a> and <a href="https://doi.org/10.1063/1.459170">1990 paper</a>.</p>
           <p>The central compromise is easy to state: retain quantum amplitudes for electronic states, while describing the much larger set of nuclear coordinates with trajectories. The difficult part is making the two descriptions influence each other consistently.</p>
 
-          <h2>2. Where does nonadiabatic coupling come from?</h2>
-          <p>We can see the issue with one nuclear coordinate \(x\), mass \(M\), and electronic coordinates \(r\). The electronic Hamiltonian below includes the nucleus-dependent potential terms. At each fixed nuclear position, solve</p>
+          <h2>2. What changes when one surface is not enough?</h2>
+          <p><a href="mqc-background.html#born-huang-couplings">MQC 0</a> develops the Born–Huang expansion and derives the coupling terms. The essential point for this historical question is that nuclear motion differentiates the geometry-dependent electronic basis as well as the nuclear wavefunction. Keeping several electronic states therefore produces coupled nuclear channels, rather than independent trajectories on unrelated energy curves.</p>
+          <p>For nondegenerate states, the <a href="mqc-background.html#nac-formulas">derivative-coupling expression</a> summarizes where the single-surface picture can become fragile:</p>
           <div class="math-block">\[
-            \hat H_e(x)\phi_j(r;x)=E_j(x)\phi_j(r;x).
+            d_{ij}(x)=
+            \frac{\langle\phi_i|\partial_x\hat H_e|\phi_j\rangle}
+                 {E_j-E_i},\qquad i\ne j.
           \]</div>
-          <p>The functions \(E_j(x)\) are adiabatic potential-energy curves. “Adiabatic” here labels an electronic eigenbasis at each geometry; it does not yet impose single-state dynamics. Expand the full molecular wavefunction in that basis:</p>
-          <div class="math-block">\[
-            \Psi(r,x,t)=\sum_j\chi_j(x,t)\phi_j(r;x).
-          \]</div>
-          <p>The nuclear kinetic operator differentiates both factors. The product rule is the whole origin of the additional coupling:</p>
-          <div class="math-block">\[
-            \partial_x^2(\chi_j\phi_j)
-            =\phi_j\chi_j''+2\phi_j'\chi_j'+\phi_j''\chi_j.
-          \]</div>
-          <p>Insert the expansion into the molecular Schrödinger equation and multiply by \(\phi_i^*\), integrating over the electrons. Define</p>
-          <div class="math-block">\[
-            d_{ij}=\langle\phi_i|\partial_x\phi_j\rangle_r,
-            \qquad
-            \tau_{ij}=\langle\phi_i|\partial_x^2\phi_j\rangle_r.
-          \]</div>
-          <p>Orthonormality removes the electronic overlap from the first term, giving coupled nuclear equations:</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            i\hbar\partial_t\chi_i
-            &=\left[-\frac{\hbar^2}{2M}\partial_x^2+E_i\right]\chi_i\\
-            &\quad-\frac{\hbar^2}{2M}\sum_j
-            \left(2d_{ij}\partial_x+\tau_{ij}\right)\chi_j.
-            \end{aligned}
-          \]</div>
-          <p>This expansion is exact with a complete electronic basis. A practical calculation truncates the states; a single-surface treatment additionally neglects coupling to the other surfaces. Nonadiabatic dynamics asks what happens when that latter step is not justified. The coupling is not an extra empirical force or a synonym for friction: it follows from the geometry dependence of the electronic wavefunctions.</p>
-          <h3>Why are small electronic gaps important?</h3>
-          <p>Differentiate the electronic eigenvalue equation and project onto a different eigenstate, \(i\ne j\). The term containing \(E_j'\) vanishes by orthogonality:</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            \langle\phi_i|\partial_x\hat H_e|\phi_j\rangle
-               +E_i d_{ij}&=E_jd_{ij},\\
-            d_{ij}&=\frac{\langle\phi_i|\partial_x\hat H_e|\phi_j\rangle}
-                           {E_j-E_i}.
-            \end{aligned}
-          \]</div>
-          <p>A small gap can therefore amplify the coupling, but only in conjunction with the numerator and the actual nuclear motion. At an exact degeneracy this nondegenerate expression is not valid. A crossing geometry alone does not supply a reaction probability, a population lifetime, or a product yield.</p>
+          <p>A small gap can amplify coupling, but the numerator and the speed and direction of nuclear motion still matter. At an exact degeneracy this formula is not valid. Most importantly, a crossing geometry alone does not supply a product yield or a population lifetime. Those require a dynamical calculation of where population goes.</p>
 
           <h2>3. Two representations of the same problem</h2>
           <p>A small two-state model keeps the distinction concrete. In a fixed diabatic basis, write the potential as</p>
@@ -102,53 +70,23 @@
           \]</div>
           <p>Reversing an eigenvector's sign also changes the corresponding coupling and amplitude signs; observables remain unchanged if the convention is consistent. Globally eliminating derivative couplings is not always possible for a multidimensional molecule. Our fixed two-state diabatic Hamiltonian is a deliberately simple model, not a claim that every molecular diabatization is exact.</p>
 
-          <h2>4. From quantum amplitudes to nuclear trajectories</h2>
-          <p>Suppose we approximate the nuclei by a trajectory \(x(t)\) and expand its electronic state as \(\psi_e(t)=\sum_jc_j(t)\phi_j[x(t)]\). Now the chain rule gives a time derivative of the moving electronic basis. Projection leads to</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            i\hbar\left(\dot c_i+\dot x\sum_jd_{ij}c_j\right)&=E_ic_i,\\
-            \dot c_i&=-\frac{i}{\hbar}E_ic_i-\dot x\sum_jd_{ij}c_j.
-            \end{aligned}
-          \]</div>
-          <p>Even though the adiabatic electronic Hamiltonian is diagonal, nuclear motion transfers amplitude through \(\dot x d_{ij}\). In many dimensions this becomes \(\dot{\mathbf R}\cdot\mathbf d_{ij}\): direction matters as well as speed.</p>
-          <h3>One average force, or different outgoing branches?</h3>
-          <p>The Ehrenfest mean-field choice uses the expectation of the electronic force. It follows from Ehrenfest's equation for nuclear momentum after replacing its nuclear coordinate distribution by a trajectory:</p>
-          <div class="math-block">\[
-            M\ddot x=-\langle\psi_e|\partial_x\hat H_e|\psi_e\rangle.
-          \]</div>
-          <p>This is a self-consistent feedback loop: the trajectory changes the electronic amplitudes, which change the force. The expectation includes coherence terms; it is not generally just a population-weighted average of the surface gradients.</p>
-          <p>But a single mean-field trajectory does not split into distinct nuclear packets. If one electronic branch reflects and another transmits, an average trajectory need not represent either outgoing channel. Surface hopping makes a different approximation: each trajectory follows one active surface at a time, while an ensemble can separate into branches. Neither construction is the exact coupled wavefunction.</p>
+          <h2>4. One average force, or different outgoing branches?</h2>
+          <p>The <a href="mqc-background.html#classical-nuclei">moving-basis electronic equation</a> already tells us how amplitudes evolve along a prescribed nuclear trajectory. The unresolved approximation is the feedback: which force should those amplitudes exert on the nuclei?</p>
+          <p><a href="ehrenfest-tully-benchmark.html">Ehrenfest dynamics</a> uses the expectation of the electronic force operator. This includes coherence contributions; it is not generally just a population-weighted average of surface gradients. The force is smooth, but one mean-field trajectory cannot split into distinct outgoing nuclear packets. If one branch reflects and another transmits, the average trajectory need not represent either outcome.</p>
+          <p>Surface hopping chooses a different closure: each trajectory follows one active surface, while an ensemble can separate into branches. Electronic amplitudes and active-surface labels are different bookkeeping layers. This is a practical way to represent branching, not an exact rewriting of the coupled wavefunction.</p>
 
-          <h2>5. How fewest-switches surface hopping chooses a hop</h2>
-          <p>For a real adiabatic basis with zero diagonal derivative couplings, differentiate the electronic population \(\rho_{aa}=|c_a|^2\). The energy term contributes only a phase and cancels:</p>
+          <h2>5. The hopping rule—and the choices behind the benchmark</h2>
+          <p>The <a href="fssh-tully-benchmark.html#fewest-switches">MQC I derivation</a> obtains the fewest-switches rule from outgoing electronic population flow. In the real adiabatic convention used here, recall</p>
           <div class="math-block">\[
             \begin{aligned}
-            \dot\rho_{aa}
-              &=2\operatorname{Re}(c_a^*\dot c_a)\\
-              &=-\sum_{b\ne a}J_{a\to b},\\
-            J_{a\to b}
-              &=2\operatorname{Re}(c_a^*c_b\dot x d_{ab}).
+            J_{a\to b}&=2\operatorname{Re}(c_a^*c_b\dot x d_{ab}),\\
+            g_{a\to b}&=\max\left(0,
+              \frac{J_{a\to b}\Delta t}{|c_a|^2}\right).
             \end{aligned}
           \]</div>
-          <p>A positive \(J_{a\to b}\) is outgoing electronic population flow. If a fraction \(\rho_{aa}\) of otherwise equivalent trajectories occupies state \(a\), switching a fraction \(g_{a\to b}\) of them transfers \(\rho_{aa}g_{a\to b}\). Matching this to the outward population change over a short time gives</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            \rho_{aa}g_{a\to b}&\simeq J_{a\to b}\Delta t,\\
-            g_{a\to b}&=\max\!\left(0,
-                      \frac{J_{a\to b}\Delta t}{\rho_{aa}}\right).
-            \end{aligned}
-          \]</div>
-          <p>This motivates the fewest-switches rule: use the required outward flow without adding compensating pairs of needless switches. It does not require every trajectory to follow identical amplitudes. Once their paths diverge, active-state fractions and averaged electronic populations need not agree exactly; frustrated hops add another inconsistency. Surface hopping is an approximation, not an exact probabilistic rewriting of quantum dynamics.</p>
-          <p>A successful hop must also exchange electronic potential energy with nuclear kinetic energy. In one dimension, conservation gives</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            \frac{p'^2}{2M}+E_b&=\frac{p^2}{2M}+E_a,\\
-            p'&=\operatorname{sgn}(p)
-                \sqrt{p^2-2M(E_b-E_a)}.
-            \end{aligned}
-          \]</div>
-          <p>If the square root is not real, the proposed upward hop is frustrated. In our implementation it is rejected and the momentum is left unchanged. For more nuclear coordinates, a standard choice rescales momentum along the derivative-coupling direction. Time steps must resolve the population flow; routinely clipping probabilities above one would hide an integration problem.</p>
-          <p>In practice the loop is: sample initial positions and momenta; evaluate energies, forces, and couplings; advance nuclei and electronic amplitudes; draw hops and rescale momentum; repeat until the outgoing channels separate; then count outcomes. Thousands of trajectories reduce sampling noise, but cannot remove the physical approximations.</p>
+          <p>The new issue is what this rule predicts for an experimentally motivated outcome, not the algebra of deriving it again. Active-state fractions need not exactly track averaged electronic populations once trajectories diverge, and frustrated hops create an additional inconsistency.</p>
+          <p>To make the comparison reproducible, our calculation uses the standard active-surface force, no decoherence correction, and energy-conserving momentum rescaling after an accepted hop. An energetically impossible upward hop is rejected with momentum unchanged. Other frustrated-hop prescriptions can change results; the rule is part of the model being tested. Time steps must resolve the population flow rather than routinely clipping probabilities above one.</p>
+          <p>The computational loop is: sample the incoming ensemble; advance nuclei and electronic amplitudes; draw hops and rescale accepted momenta; continue until channels separate; count reflected and transmitted outcomes on each surface. More trajectories reduce sampling noise, but cannot remove the physical approximations.</p>
 
           <h2>6. A calculation small enough to audit</h2>
           <p>We use Tully's simple avoided-crossing model, in atomic units, with \(M=2000\):</p>

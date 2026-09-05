@@ -53,14 +53,22 @@
           \]</div>
           <p>Electronic amplitudes and active surfaces are therefore different bookkeeping layers. The coefficients describe coherent population flow; the active state determines the classical force used by that trajectory.</p>
 
-          <h2>Fewest-Switches Rule</h2>
-          <p>Let \(\rho_{ij}=c_i c_j^*\). Under the real two-state convention used in the benchmark script, the population flux from active state \(a\) toward state \(b\) is</p>
+          <h2 id="fewest-switches">Fewest-Switches Rule</h2>
+          <p>Let \(\rho_{ij}=c_i c_j^*\). Differentiate the active-state population using the coefficient equation above. The diagonal energy term only changes phase and cancels from the population derivative:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot\rho_{aa}&=2\operatorname{Re}(c_a^*\dot c_a)\\
+              &=-\sum_{b\ne a}2\operatorname{Re}
+                (c_a^*c_b\,\dot R\cdot d_{ab}).
+            \end{aligned}
+          \]</div>
+          <p>Under the real-basis convention used here, the real part is unchanged by conjugating the electronic coherence. Thus the outgoing population flux can be written in the script's notation as</p>
           <div class="math-block">\[
             J_{a\to b}=2\,\mathrm{Re}\!\left[
             \rho_{ab}\,\dot R\cdot d_{ab}
             \right].
           \]</div>
-          <p>The attempted hop probability during one time step is the positive part of this outgoing flux divided by the active population:</p>
+          <p>If a fraction \(\rho_{aa}\) of otherwise equivalent trajectories occupies state \(a\), switching a fraction \(g_{a\to b}\) transfers \(\rho_{aa}g_{a\to b}\). Matching this to \(J_{a\to b}\Delta t\), and retaining only outward flow, gives the attempted hop probability:</p>
           <div class="math-block">\[
             g_{a\to b}=
             \max\left(0,\frac{\Delta t\,J_{a\to b}}{\rho_{aa}}\right).
@@ -71,7 +79,7 @@
             =
             \frac{P^2}{2M}+E_a(R).
           \]</div>
-          <p>If the kinetic energy is insufficient for an upward hop, the hop is frustrated and the trajectory remains on its original surface. In multidimensional simulations, this rescaling is normally done along the nonadiabatic-coupling direction.</p>
+          <p>For a one-dimensional accepted hop this gives \(P'=\operatorname{sgn}(P)\sqrt{P^2-2M(E_b-E_a)}\). If the kinetic energy is insufficient for an upward hop, the hop is frustrated and the trajectory remains on its original surface. In multidimensional simulations, this rescaling is normally done along the nonadiabatic-coupling direction.</p>
 
           <h2>Tully SAC Model</h2>
           <p>The test uses Tully's simple avoided crossing in a diabatic basis,</p>
