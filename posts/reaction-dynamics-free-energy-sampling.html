@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Reaction Computation IV: the historical move to non-Boltzmann sampling, a derivation of free energy and umbrella reweighting, a WHAM benchmark with an analytic reference, and why free energy alone is not a rate.">
+    <title>Reaction Computation IV: Free Energy and the Events We Rarely See | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Chemical Reaction Computation - Part IV</p>
+          <h1>Free Energy and the Events We Rarely See</h1>
+          <p class="post-meta">2026.09.05 - Free Energy / Umbrella Sampling / Rare Events</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Chemical Reaction Computation series navigation">
+            <a href="hydrogen-transfer-observables-model-validation.html">I. What Can We Actually Observe?</a>
+            <a href="hydrogen-transfer-barrier-to-rate.html">II. From a Barrier to a Rate</a>
+            <a href="reaction-dynamics-nonadiabatic.html">III. When One Electronic State Is Not Enough</a>
+            <a href="reaction-dynamics-free-energy-sampling.html">IV. Free Energy and Rare Events</a>
+          </nav>
+
+          <p class="lead">You start a molecular simulation and watch it move. Bonds vibrate, solvent molecules rotate, and the energy fluctuates without anything obviously going wrong. Yet the event you care about never happens. Is the reaction impossible, is the model wrong, or have you simply spent the entire calculation watching one small part of a much larger equilibrium ensemble?</p>
+          <p>This is a different difficulty from the one in Part III. Even if the relevant electronic states and forces were known perfectly, a simulation could still fail by visiting the wrong proportions of configurations. We now return to another historical strand that grew during the 1970s: changing <em>where we sample</em> so that a finite calculation can reveal otherwise inaccessible thermodynamics. The worked example will recover a free-energy profile from a two-coordinate model with an analytic answer. We will then ask what is still missing before that profile can become a reaction time.</p>
+
+          <h2>1. The historical shift: do we have to sample naturally?</h2>
+          <p>Equilibrium statistical mechanics tells us how to weight configurations. It does not require our computational procedure to spend its effort in those same proportions. Torrie and Valleau's <a href="https://doi.org/10.1016/0009-2614(74)80109-0">1974 non-Boltzmann sampling work</a>, followed by their <a href="https://doi.org/10.1016/0021-9991(77)90121-8">1977 umbrella-sampling paper</a>, made that distinction productive: deliberately sample a more useful distribution, then correct the weights when estimating the original equilibrium properties.</p>
+          <p>The idea did not begin as a theory of one particular chemical reaction. Its significance for reaction calculations is that configurations around a bottleneck can be scientifically decisive while being statistically rare. Repeatedly sampling a reactant basin tells us about that basin; it may tell us almost nothing about the bottleneck or the relative weight of another basin.</p>
+          <p>There are therefore two separate questions. First, which configurations matter, and how common are they at equilibrium? Second, how does the physical system move between them? Umbrella sampling primarily addresses the first. Keeping this distinction visible will prevent a common mistake later: interpreting the clock of a biased simulation as the clock of the chemical reaction.</p>
+
+          <h2>2. From a potential energy to a free energy</h2>
+          <p>Let \(\mathbf R\) contain the molecular coordinates and \(U(\mathbf R)\) their potential energy. In a classical canonical ensemble at fixed temperature and volume, after integrating out momenta, the configurational density is</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \pi(\mathbf R)&=Z^{-1}e^{-\beta U(\mathbf R)},\\
+            Z&=\int d\mathbf R\,e^{-\beta U(\mathbf R)},\qquad
+            \beta=(k_{\mathrm B}T)^{-1}.
+            \end{aligned}
+          \]</div>
+          <p>Suppose we describe progress using a collective variable \(s=\xi(\mathbf R)\): a distance, a difference of distances, or another chosen function. Many molecular configurations share the same value of \(s\). To obtain its probability density, sum over all of them:</p>
+          <div class="math-block">\[
+            p(s)=\frac1Z\int d\mathbf R\,
+            \delta\!\left[s-\xi(\mathbf R)\right]e^{-\beta U(\mathbf R)}.
+          \]</div>
+          <p>The potential of mean force, or free-energy profile along this coordinate, is defined by the logarithm of that marginal density. Taking a ratio removes both the normalization and the arbitrary reference constant:</p>
+          <div class="math-block">\[
+            F(s)-F(s_0)
+            =-k_{\mathrm B}T\ln\frac{p(s)}{p(s_0)}.
+          \]</div>
+          <p>This is not the energy of a single optimized structure. It contains the statistical weight of all the configurations hidden behind each value of \(s\). A region can be unfavorable because its configurations have high energy, because there are few accessible configurations there, or both. The profile also depends on the coordinate and its measure: nonlinear reparameterization introduces a probability-density Jacobian. A distance histogram, for example, cannot be interpreted without considering the associated geometric measure.</p>
+          <p>For a Cartesian coordinate \(x\) and remaining coordinates \(y\), the same definition connects free energy to a mean force. Write \(Z_x=\int dy\,e^{-\beta U(x,y)}\); differentiating under the integral gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            F'(x)&=-\beta^{-1}\frac{Z_x'}{Z_x}\\
+              &=\frac{\int dy\,(\partial_xU)e^{-\beta U}}
+                      {\int dy\,e^{-\beta U}}\\
+              &=\langle\partial_xU\rangle_x.
+            \end{aligned}
+          \]</div>
+          <p>Thus \(-F'(x)\) is a conditional mean force. General nonlinear collective variables require the corresponding geometric terms; the simple expression above is for the Cartesian model used here.</p>
+
+          <h2>3. A model where the missing entropy can be calculated</h2>
+          <p>Use reduced units with \(k_{\mathrm B}T=1\), and two dimensionless coordinates:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            U(x,y)&=U_0(x)+\frac12a(x)y^2,\\
+            U_0(x)&=8(x^2-1)^2,\\
+            a(x)&=e^{4(1-x^2)}.
+            \end{aligned}
+          \]</div>
+          <p>The coordinate \(x\) connects two basins. The second coordinate represents an environmental or internal degree of freedom whose accessible width changes with \(x\). At fixed \(x\), the minimum-energy value is \(y=0\), so an optimized potential-energy scan returns only \(U_0(x)\).</p>
+          <p>For the free energy we must integrate, not minimize. The elementary Gaussian integral gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            Z_x&=e^{-\beta U_0(x)}\int_{-\infty}^{\infty}
+                   e^{-\beta a(x)y^2/2}\,dy\\
+               &=e^{-\beta U_0(x)}
+                   \sqrt{\frac{2\pi}{\beta a(x)}}.
+            \end{aligned}
+          \]</div>
+          <p>Taking \(-k_{\mathrm B}T\ln Z_x\), and choosing the reference at \(x=1\), yields the analytic answer:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            F(x)-F(1)
+              &=U_0(x)-U_0(1)
+                +\frac{k_{\mathrm B}T}{2}\ln\frac{a(x)}{a(1)}\\
+              &=8(x^2-1)^2+2(1-x^2).
+            \end{aligned}
+          \]</div>
+          <p>At the center, the potential-energy increase relative to \(x=1\) is 8, but the free-energy increase is 10. The additional 2 comes from the narrower accessible distribution of \(y\), not a higher minimum potential energy. The free-energy minima are slightly displaced from \(x=\pm1\); throughout the numerical table we compare \(F(0)-F(1)\), not the barrier measured from the optimized free-energy minimum.</p>
+          <p>The associated equilibrium density ratio follows immediately:</p>
+          <div class="math-block">\[
+            \frac{p(0)}{p(1)}=e^{-10}\simeq4.54\times10^{-5}.
+          \]</div>
+          <p>This is a ratio of densities in the chosen coordinate, not a transition probability per unit time. It already tells us why collecting a well-resolved histogram at the center is demanding. Symmetry independently fixes the integrated right-basin probability, \(P(x&gt;0)=1/2\), providing a second exact check.</p>
+
+          <h2>4. Add a bias, then remove its statistical effect</h2>
+          <p>A harmonic umbrella window adds a known potential around a chosen coordinate value:</p>
+          <div class="math-block">\[
+            w_i(s)=\frac12K_i(s-s_i)^2.
+          \]</div>
+          <p>Sampling with \(U+w_i\) holds the system near window \(i\), including regions it would otherwise rarely visit. Because the bias depends only on \(s\), it can be taken outside the integral over configurations at fixed \(s\). The resulting marginal is</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            p_i(s)&=\frac{p(s)e^{-\beta w_i(s)}}{c_i},\\
+            c_i&=\int ds\,p(s)e^{-\beta w_i(s)}.
+            \end{aligned}
+          \]</div>
+          <p>Rearranging shows how the original distribution is recovered within a sampled window:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            p(s)&=c_i\,p_i(s)e^{\beta w_i(s)},\\
+            F(s)&=-k_{\mathrm B}T\ln p_i(s)-w_i(s)+C_i.
+            \end{aligned}
+          \]</div>
+          <p>The sign matters: subtract the umbrella potential from the free energy inferred from its biased histogram. But each window has an unknown constant \(C_i\). Overlapping windows supply the information needed to determine their relative offsets. Without overlap, two beautifully sampled local profiles can still have an undetermined relative height.</p>
+          <p>The same change of measure also gives an observable estimator. Substitute the biased distribution into the target average, then use the identical substitution to normalize it:</p>
+          <div class="math-block">\[
+            \langle A\rangle_0
+            =\frac{\langle A e^{\beta w_i}\rangle_i}
+                   {\langle e^{\beta w_i}\rangle_i}.
+          \]</div>
+          <p>This identity is not a license to extrapolate from absent data. If important configurations have effectively never been sampled, their large formal weights do not conjure them into existence. A useful bias improves coverage; a correct reweighting formula alone cannot repair missing coverage.</p>
+
+          <h2>5. Joining windows: the WHAM equations</h2>
+          <p>The weighted histogram analysis method, WHAM, gave an organized way to combine overlapping simulations. Kumar and colleagues' <a href="https://doi.org/10.1002/jcc.540130812">1992 formulation for biomolecular free-energy calculations</a> built on multiple-histogram ideas. It should not be conflated with the original 1970s proposal to sample non-Boltzmann distributions.</p>
+          <p>For equal-width bins, let \(p_k\) be the unknown unbiased probability <em>mass</em> in bin \(k\), \(H_{ik}\) the count from window \(i\), and \(N_i=\sum_kH_{ik}\). Approximate the bias as constant across a bin and set \(b_{ik}=\beta w_i(s_k)\), \(f_i=-\ln c_i\). The biased probability is then</p>
+          <div class="math-block">\[
+            q_{ik}=p_k e^{f_i-b_{ik}},\qquad
+            e^{-f_i}=\sum_kp_ke^{-b_{ik}}.
+          \]</div>
+          <p>To see the estimator, write the histogram log likelihood, dropping constants independent of \(p\):</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \ell&=\sum_k H_k\ln p_k
+                -\sum_iN_i\ln c_i+C,\\
+            H_k&=\sum_iH_{ik}.
+            \end{aligned}
+          \]</div>
+          <p>Since \(\partial c_i/\partial p_k=e^{-b_{ik}}\), stationarity gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            0&=\frac{H_k}{p_k}
+               -\sum_i\frac{N_i e^{-b_{ik}}}{c_i},\\
+            p_k&=\frac{\sum_iH_{ik}}
+                         {\sum_iN_i e^{f_i-b_{ik}}}.
+            \end{aligned}
+          \]</div>
+          <p>The likelihood is unchanged by a common rescaling of \(p\), so normalization fixes that freedom. Iterate the last expression with the equation for \(f_i\), enforcing \(\sum_kp_k=1\). Finally convert bin masses to density:</p>
+          <div class="math-block">\[
+            F(s_k)=-k_{\mathrm B}T\ln\frac{p_k}{\Delta s}+C.
+          \]</div>
+          <p>This elementary likelihood treats observations as independent. Molecular samples are correlated; efficient weighting and uncertainty estimation must account for that. Our equal-length-window implementation uses the basic equations for the central estimate and independently repeated <em>whole calculations</em> for uncertainty. Saving every fifth sweep reduces storage, but does not establish independence. A small WHAM iteration residual only means the equations were solved—not that the molecular sampling was adequate.</p>
+
+          <h2>6. The actual calculation</h2>
+          <p>The sampler sees only \(U(x,y)\) and the added umbrella, never the analytic free energy. Each sweep first draws \(y\) from its exact conditional Gaussian, then proposes a local Gaussian displacement of \(x\). For a symmetric proposal, detailed balance is satisfied by the Metropolis acceptance rule:</p>
+          <div class="math-block">\[
+            P_{\mathrm{acc}}=\min\left[1,
+              e^{-\beta\{[U+w]_{\mathrm{new}}-[U+w]_{\mathrm{old}}\}}\right].
+          \]</div>
+          <p>The target-density ratio is the exponential, and the symmetric proposal probabilities cancel. These are equilibrium Monte Carlo updates, not a physical dynamical model. Exact conditional updates also make this toy example unusually forgiving: a real solvent may have slow hidden coordinates that this sampler avoids by construction.</p>
+          <ol>
+            <li>Place 21 umbrella centers from \(-1.5\) to \(1.5\), with spring constant 60. Initialize each window at its center.</li>
+            <li>For each window, discard 5,000 sweeps, collect 40,000 production sweeps, and save a histogram observation every five sweeps. Use a proposed \(x\)-displacement standard deviation of 0.14.</li>
+            <li>For the unbiased baseline, run 21 independent chains with the same updates and the same per-chain budget, all initially at \(x=-1\), but with no umbrella.</li>
+            <li>Repeat both complete protocols independently 12 times. Each repetition supplies 168,000 saved observations per method; these are correlated observations, not 168,000 independent configurations.</li>
+            <li>Solve WHAM, align at \(x=1\), inspect window overlap, compare independent repetitions, and test histogram-bin sensitivity.</li>
+          </ol>
+          <p>The comparison fixes the number of potential evaluations and saved observations. It does not establish an implementation-independent speedup, and many short left-initialized chains are not equivalent to one sufficiently equilibrated long chain. The purpose is to expose finite-budget trapping, not to claim that unbiased sampling can never work.</p>
+
+          <figure>
+            <picture>
+              <source media="(max-width: 640px)" srcset="../assets/img/reaction-dynamics/umbrella-free-energy-mobile.png" width="1088" height="2550">
+              <img src="../assets/img/reaction-dynamics/umbrella-free-energy.png" width="2040" height="1360" alt="Potential versus free energy, trapped unbiased chains, overlapping umbrella windows, and reconstructed free energies" loading="lazy">
+            </picture>
+            <figcaption>A: minimum potential energy (dashed gray-blue) and analytic free energy (navy), both referenced at \(x=1\), in units of \(k_{\mathrm B}T\). B: the first four unbiased chains of the first repetition, shown against Monte Carlo sweeps, not physical time. C: normalized biased histograms; each colored curve is one umbrella window, pooled over repetitions. D: analytic free energy (navy), mean WHAM reconstruction (rust), and the unbiased pooled-histogram estimate (dotted gray-blue). Shading is one standard deviation across 12 independent WHAM runs, not a pointwise confidence guarantee. Unvisited bins are left undefined; their free energies are not set to zero.</figcaption>
+          </figure>
+          <div class="table-scroll" role="region" aria-label="Equilibrium benchmark results" tabindex="0">
+            <table>
+              <thead><tr><th>Quantity</th><th>Analytic reference</th><th>Unbiased sampling</th><th>Umbrella + WHAM</th></tr></thead>
+              <tbody>
+                <tr><td>Right-side probability, \(P(x&gt;0)\)</td><td>0.5000</td><td>\(0.0381\pm0.0466\)</td><td>\(0.5038\pm0.0166\)</td></tr>
+                <tr><td>\([F(0)-F(1)]/(k_{\mathrm B}T)\)</td><td>10.000</td><td>Not reliably resolved</td><td>\(10.013\pm0.052\)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The \(\pm\) values are the standard deviations of the 12 independent run estimates, not the standard errors of their mean. The potential-energy difference alone would give 8 rather than 10. For the unbiased run, the problem is more severe than a noisy barrier estimate: the relative population of the two basins is wrong. Its histogram looks locally plausible while failing the simplest global equilibrium test.</p>
+          <p>All neighboring umbrella windows overlap substantially: the smallest observed overlap coefficient \(\sum_k\sqrt{q_{ik}q_{i+1,k}}\) is 0.684. The coefficient is one for identical normalized histograms and zero for disjoint support. It is a useful coverage diagnostic, not proof that all hidden coordinates equilibrated.</p>
+          <p>The primary bin width is 0.012. Halving it changes the mean sampled \(F(0)-F(1)\) from 10.013 to 10.025, while increasing the run-to-run spread because each bin contains fewer observations. To separate discretization from sampling noise, a second diagnostic supplies WHAM with analytically integrated, noiseless window histograms: it returns 9.99820 for width 0.012 and 9.99955 for width 0.006, approaching the exact value 10. These are validation inputs only; the production sampler and reconstruction do not receive the analytic reference.</p>
+          <p>Here “exact” refers to the analytic marginal of the specified classical model. This is not a DVR calculation: quantum mechanics is not needed to establish the reference equilibrium distribution for the sampling question we chose. The test isolates a sampling error from a Hamiltonian error or a nuclear-quantum approximation.</p>
+
+          <h2>7. A correct free energy still does not determine a clock</h2>
+          <p>We can make this limitation quantitative. Define a <em>separate</em> one-dimensional overdamped diffusion model on the same \(F(x)\), with constant diffusion coefficient \(D\):</p>
+          <div class="math-block">\[
+            dx_t=-D\beta F'(x_t)\,dt+\sqrt{2D}\,dW_t.
+          \]</div>
+          <p>Here \(W_t\) is a Wiener process, with an increment variance equal to elapsed time. This stochastic equation is a new dynamical assumption; it is not inferred from the Monte Carlo updates and is not claimed to be the exact projection of the original two-coordinate system.</p>
+          <p>Its probability current is \(J=-D(\beta F'p+\partial_xp)\). Setting the equilibrium current to zero gives \(\partial_x\ln p=-\beta F'\), hence \(p_{\mathrm{eq}}\propto e^{-\beta F}\), regardless of the value of \(D\). Changing \(D\) can therefore change the clock while leaving the equilibrium landscape unchanged.</p>
+          <h3>Derive a first-passage time</h3>
+          <p>Let \(\tau(x)\) be the mean time to reach an absorbing boundary \(b\), with a reflecting boundary \(a\) on the left. Over a short time, \(\tau(x)=dt+\mathbb E[\tau(x+dx)]\). Taylor expansion with \(\mathbb E[dx]=-D\beta F'dt\) and \(\mathbb E[(dx)^2]=2Ddt\) yields</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            D\left[\tau''-\beta F'\tau'\right]&=-1,\\
+            \tau'(a)&=0,\qquad\tau(b)=0.
+            \end{aligned}
+          \]</div>
+          <p>Multiply by the integrating factor \(e^{-\beta F}\) and integrate once from the reflecting boundary:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \left(e^{-\beta F}\tau'\right)'&=-D^{-1}e^{-\beta F},\\
+            \tau'(y)&=-\frac{e^{\beta F(y)}}{D}
+                        \int_a^y dz\,e^{-\beta F(z)}.
+            \end{aligned}
+          \]</div>
+          <p>Integrating again and imposing \(\tau(b)=0\) gives</p>
+          <div class="math-block">\[
+            \tau(x)=\frac1D\int_x^bdy\,e^{\beta F(y)}
+                         \int_a^y dz\,e^{-\beta F(z)}.
+          \]</div>
+          <p>Numerical quadrature for \(a=-1.6\), \(b=1\), and initial \(x=-1\) gives:</p>
+          <div class="table-scroll" role="region" aria-label="Diffusion and first-passage time" tabindex="0">
+            <table>
+              <thead><tr><th>\(D\), reduced units</th><th>Equilibrium \(F(x)\)</th><th>Mean first-passage time</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Unchanged</td><td>3212.00</td></tr>
+                <tr><td>0.1</td><td>Unchanged</td><td>32120.01</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The factor of ten follows exactly from \(\tau\propto D^{-1}\); refining the quadrature changes these values by less than \(10^{-8}\) in the stated time units. The equilibrium comparison here is for the same closed-domain model before introducing the absorbing boundary. Once probability is absorbed, the surviving process is not an equilibrium ensemble.</p>
+          <p>This is why a well-converged umbrella profile is not, on its own, a measured reaction rate. A real projected coordinate may have position-dependent diffusivity or memory, and the selected coordinate may miss the event that actually limits progress. Even \(1/\tau\) is not automatically a phenomenological first-order rate constant: the initial ensemble, absorbing boundary, and separation of relaxation and escape times must be specified.</p>
+
+          <h2>8. The exploration branches: configurations or pathways?</h2>
+          <p>Once non-Boltzmann sampling became a practical tool, several distinct questions remained. How should a bias be chosen? How can hidden slow variables be detected? Can we sample the rare <em>trajectories</em> themselves without replacing their physical dynamics?</p>
+          <p>The <a href="https://doi.org/10.1039/A801266K">1998 transition-path sampling work of Bolhuis, Dellago, and Chandler</a> illustrates the latter direction. Instead of only sampling configurations, it samples an ensemble of reactive paths. Stable regions must still be defined, and path-space sampling must converge, but an entire reaction mechanism need not be supplied as a one-dimensional progress coordinate in advance. Obtaining a rate additionally requires the appropriate path probabilities and normalization, not merely a collection of successful trajectories.</p>
+          <p><a href="https://doi.org/10.1073/pnas.202427399">Laio and Parrinello's 2002 metadynamics work</a> pursued adaptive exploration of free-energy landscapes with a history-dependent bias in selected collective variables. It addresses the problem of repeatedly revisiting already explored regions. It does not make the choice of variables irrelevant, nor does the biased simulation automatically preserve physical reaction times.</p>
+          <p>Umbrella sampling, adaptive biasing, and path sampling thus should not be arranged as “old method, better method, final method.” One organizes equilibrium coverage in chosen windows; another adapts exploration; another changes the sampled object from configurations to trajectories. Their usefulness depends on whether the scientific question concerns populations, mechanisms, or rates.</p>
+
+          <h2>9. Returning to experimental observables</h2>
+          <p>For two chemically defined basins, a reconstructed equilibrium distribution can predict their population ratio. Integrate before taking the logarithm:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            P_A&=\int_A p(s)\,ds,\qquad P_B=\int_Bp(s)\,ds,\\
+            F_B-F_A&=-k_{\mathrm B}T\ln\frac{P_B}{P_A}.
+            \end{aligned}
+          \]</div>
+          <p>A difference between two basin free energies is not generally the difference between the values at their minima: basin widths and additional configurations matter. For binding, solution reactions, or other changes in molecular number, standard-state and ensemble conventions must also match experiment.</p>
+          <p>Equilibrium populations can be tested against appropriately interpreted structural or spectroscopic measurements. Reaction times require dynamical information as well. A narrow, smooth profile is therefore not the finish line. We should ask whether its basins mean the same thing as the experimentally distinguished species, whether slow hidden coordinates have equilibrated, and what observable would reveal an incorrect population or mechanism.</p>
+          <p>The next part turns to tunneling and quantum nuclear reaction dynamics. That is a different question again: not just how to sample rare configurations efficiently, but when a classical description of the nuclei is inadequate. We will keep a small controlled calculation and an explicit reference, without treating any one method as the destination of the series.</p>
+
+          <h2>Reproduce and inspect</h2>
+          <ul>
+            <li><a href="../assets/code/reaction-dynamics/umbrella_free_energy.py">Standalone Python script: sampler, WHAM, analytic checks, first-passage quadrature, and figures</a>.</li>
+            <li><a href="../assets/data/reaction-dynamics/umbrella-replicates.csv">Independent-run estimates and overlap diagnostics</a>; <a href="../assets/data/reaction-dynamics/umbrella-profile.csv">free-energy profiles</a>.</li>
+            <li><a href="../assets/data/reaction-dynamics/umbrella-windows.csv">Window histograms</a>; <a href="../assets/data/reaction-dynamics/umbrella-plain-traces.csv">the four displayed unbiased chains</a>.</li>
+            <li><a href="../assets/data/reaction-dynamics/umbrella-bin-check.csv">Noiseless histogram-bin check</a>; <a href="../assets/data/reaction-dynamics/free-energy-mfpt.csv">first-passage times and quadrature check</a>.</li>
+          </ul>
+          <pre><code>python assets/code/reaction-dynamics/umbrella_free_energy.py</code></pre>
+          <p>Requires NumPy, SciPy, and Matplotlib. The random seed and complete sampling budget are fixed in the script. Only compact data and figures are written; raw sampling trajectories are not needed for the published analysis. Undefined histogram values are recorded as NaN, not interpreted as finite free energies.</p>
+
+          <h2>Historical sources</h2>
+          <ul>
+            <li>Torrie and Valleau, “Monte Carlo Free Energy Estimates Using Non-Boltzmann Sampling: Application to the Sub-Critical Lennard-Jones Fluid,” <a href="https://doi.org/10.1016/0009-2614(74)80109-0"><em>Chem. Phys. Lett.</em> 28, 578–581 (1974)</a>.</li>
+            <li>Torrie and Valleau, “Nonphysical Sampling Distributions in Monte Carlo Free-Energy Estimation: Umbrella Sampling,” <a href="https://doi.org/10.1016/0021-9991(77)90121-8"><em>J. Comput. Phys.</em> 23, 187–199 (1977)</a>.</li>
+            <li>Kumar, Rosenberg, Bouzida, Swendsen, and Kollman, “The Weighted Histogram Analysis Method for Free-Energy Calculations on Biomolecules. I. The Method,” <a href="https://doi.org/10.1002/jcc.540130812"><em>J. Comput. Chem.</em> 13, 1011–1021 (1992)</a>.</li>
+            <li>Bolhuis, Dellago, and Chandler, “Sampling Ensembles of Deterministic Transition Pathways,” <a href="https://doi.org/10.1039/A801266K"><em>Faraday Discuss.</em> 110, 421–436 (1998)</a>.</li>
+            <li>Laio and Parrinello, “Escaping Free-Energy Minima,” <a href="https://doi.org/10.1073/pnas.202427399"><em>PNAS</em> 99, 12562–12566 (2002)</a>.</li>
+          </ul>
+          <section class="series-footer" aria-labelledby="reaction-series-map">
+            <h2 id="reaction-series-map">Chemical Reaction Computation series map</h2>
+            <ol class="series-list">
+              <li><a href="hydrogen-transfer-observables-model-validation.html">Part I: What Can We Actually Observe?</a> — the experimental starting point.</li>
+              <li><a href="hydrogen-transfer-barrier-to-rate.html">Part II: From a Barrier to a Rate</a> — Arrhenius, TST, and a quantum rate benchmark.</li>
+              <li><a href="reaction-dynamics-nonadiabatic.html">Part III: When One Electronic State Is Not Enough</a> — multistate reactions and nonadiabatic dynamics.</li>
+              <li><a href="reaction-dynamics-free-energy-sampling.html">Part IV: Free Energy and the Events We Rarely See</a> — equilibrium coverage, umbrella sampling, and the missing dynamical clock.</li>
+              <li>Next subject: Tunneling and Quantum Nuclear Reaction Dynamics.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="reaction-dynamics-nonadiabatic.html">&lt;- Previous: Nonadiabatic dynamics</a><a href="../index.html">Back to article list</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

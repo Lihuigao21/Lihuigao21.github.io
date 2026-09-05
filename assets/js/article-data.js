@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "reaction-dynamics-free-energy-sampling",
+    title: "Reaction Computation IV: Free Energy and the Events We Rarely See",
+    path: "posts/reaction-dynamics-free-energy-sampling.html",
+    date: "2026-09-05",
+    dateText: "2026.09.05",
+    description: "From non-Boltzmann sampling to WHAM: derive and reconstruct a free-energy profile against an analytic reference, then test why the landscape alone does not determine a reaction time.",
+    tags: ["Chemical Reactions", "Free Energy", "Umbrella Sampling", "WHAM", "Rare Events", "Reproduction"],
+    series: "hydrogen-transfer",
+  },
+  {
     slug: "reaction-dynamics-nonadiabatic",
     title: "Reaction Computation III: When One Electronic State Is Not Enough",
     path: "posts/reaction-dynamics-nonadiabatic.html",
