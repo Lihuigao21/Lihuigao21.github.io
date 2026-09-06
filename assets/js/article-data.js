@@ -56,7 +56,7 @@ window.SITE_ARTICLES = [
     path: "posts/reaction-dynamics-instantons.html",
     date: "2026-09-05",
     dateText: "2026.09.05",
-    description: "From WKB transmission to periodic imaginary-time paths: a derivation-led instanton benchmark against exact Eckart scattering, including its crossover limitations.",
+    description: "What instanton theory calculates, why a dominant energy is not yet a rate, and what imaginary-time paths are for: one barrier tested with instanton, DVR, WKB, and TST.",
     tags: ["Chemical Reactions", "Instantons", "WKB", "Path Integrals", "Reaction Rates", "Reproduction"],
     series: "hydrogen-transfer",
   },
