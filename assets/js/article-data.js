@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "reaction-dynamics-uniform-instantons",
+    title: "Reaction Computation VI: Instanton Rates Across Crossover",
+    path: "posts/reaction-dynamics-uniform-instantons.html",
+    date: "2026-09-06",
+    dateText: "2026.09.06",
+    description: "The step from a stationary energy to a rate: Richardson SC3, Lawrence uniform asymptotics, and an independently quantum-checked Eckart benchmark across crossover.",
+    tags: ["Chemical Reactions", "Instantons", "Uniform Asymptotics", "Reaction Rates", "Reproduction"],
+    series: "hydrogen-transfer",
+  },
+  {
     slug: "reaction-dynamics-instantons",
     title: "Reaction Computation V: From Barrier Penetration to Imaginary-Time Instantons",
     path: "posts/reaction-dynamics-instantons.html",

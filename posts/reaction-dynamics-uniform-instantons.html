@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Where ordinary instanton theory stops, and what Richardson and Lawrence change: a rate-first derivation and a reproducible Eckart benchmark across crossover.">
+    <title>Reaction Computation VI: Instanton Rates Across Crossover | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Chemical Reaction Computation - Part VI</p>
+          <h1>Instanton Rates Across Crossover</h1>
+          <p class="post-meta">2026.09.06 - Reaction Rates / Uniform Asymptotics / Instantons</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Chemical Reaction Computation series navigation">
+            <a href="hydrogen-transfer-observables-model-validation.html">I. What Can We Actually Observe?</a>
+            <a href="hydrogen-transfer-barrier-to-rate.html">II. From a Barrier to a Rate</a>
+            <a href="reaction-dynamics-nonadiabatic.html">III. When One Electronic State Is Not Enough</a>
+            <a href="reaction-dynamics-free-energy-sampling.html">IV. Free Energy and Rare Events</a>
+            <a href="reaction-dynamics-instantons.html">V. Imaginary-Time Instantons</a>
+            <a href="reaction-dynamics-uniform-instantons.html" aria-current="page">VI. Rates Across Crossover</a>
+          </nav>
+          <p class="lead">The ordinary instanton curve in Part V stopped at a vertical line marked \(T_c\). It did not become infinite there: we stopped drawing a formula outside its domain of validity. But the physical reaction rate does not stop. What has to change in the calculation?</p>
+          <p>We already have a useful answer to what an instanton does: find the important contribution, estimate its neighborhood, and obtain a rate. This article stays with that logic. We will locate the approximation that fails, distinguish two ways of repairing it, and test them on the same one-dimensional barrier. No new derivation of the thermal rate formula, WKB attenuation, or the ring-polymer Hamiltonian is needed; their homes are <a href="hydrogen-transfer-barrier-to-rate.html#thermal-scattering-rate">Part II</a>, <a href="reaction-dynamics-instantons.html#energy-competition">Part V</a>, and the <a href="pimd-ring-polymer-basics.html#quantum-boltzmann-trace">path-integral introduction</a>.</p>
+          <p>Two landmarks organize the discussion: Jeremy Richardson's <a href="https://doi.org/10.1039/C6FD00119J">2016 microcanonical approach</a> and Joseph Lawrence's <a href="https://doi.org/10.1063/5.0237368">2024 uniform thermal theory</a>. They are not simply two versions of the same numerical integration. The first retains energy-resolved information and integrates it; the second develops a controlled approximation to the integral that survives a change in its dominant contribution.</p>
+
+          <h2 id="which-step">1. The step between finding an energy and obtaining a rate</h2>
+          <p>Recall just the target and the ordinary one-dimensional approximation:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \mathcal F(T)&\equiv k(T)Q_R(T)=\frac{1}{2\pi\hbar}\int_0^\infty P(E)e^{-\beta E}\,dE,\\
+            \Phi(E)&=\beta E+W(E)/\hbar,\qquad \Phi'(E_*)=0,\\
+            \mathcal F_{\mathrm{inst}}&\simeq\frac{e^{-\Phi(E_*)}}{2\pi\hbar}
+              \sqrt{\frac{2\pi}{\Phi''(E_*)}}.
+            \end{aligned}
+          \]</div>
+          <p>Finding \(E_*\) is the first job. Turning the local peak into an area is the second. The last line follows by replacing the below-barrier integral with a Gaussian and extending its limits:</p>
+          <div class="math-block">\[
+            \int_0^{V_0}e^{-\Phi(E)}\,dE
+            \ \longrightarrow\ e^{-\Phi(E_*)}
+            \int_{-\infty}^{\infty}e^{-\Phi''(E_*)(E-E_*)^2/2}\,dE.
+          \]</div>
+          <p><strong>This arrow is the central issue.</strong> It is sensible when the important neighborhood is well inside the integration interval. When the peak approaches \(V_0\), the extension includes energies outside the domain of the below-barrier approximation. A number can still come out of the formula even though this step is no longer justified.</p>
+          <p>For the Eckart model in Part V, \(E_*/V_0=(T/T_c)^2\). Its formal continuation is therefore above the barrier for \(T&gt;T_c\). This is not an admissible ordinary below-barrier instanton. The curve has a finite left-hand limit at \(T_c\); loss of validity and numerical divergence are different statements.</p>
+
+          <h2 id="ordinary-high-temperature">2. What ordinarily replaces the instanton above crossover?</h2>
+          <p>For a smooth barrier whose nontrivial periodic orbit collapses continuously to the transition state, the required imaginary period \(\tau=\beta\hbar\) reaches \(\tau_c=2\pi/\omega_b\) at \(T_c\). A shorter nontrivial orbit of that family is unavailable. The standard instanton formula itself does not prescribe a high-temperature continuation.</p>
+          <p>A practical calculation may switch to classical TST or to its inverted-parabolic-barrier correction:</p>
+          <div class="math-block">\[
+            k_{\mathrm{pb}}=
+            \frac{\beta\hbar\omega_b/2}{\sin(\beta\hbar\omega_b/2)}k_{\mathrm{TST}},
+            \qquad T&gt;T_c.
+          \]</div>
+          <p>This is a different approximation, not a collapsed point inserted into the ordinary instanton formula. Its denominator vanishes as \(T\to T_c^+\). Thus the ordinary instanton need not diverge, while this high-temperature replacement does. Switching between them leaves the crossover region unresolved.</p>
+
+          <h2 id="richardson">3. Richardson: improve transmission, then integrate it</h2>
+          <p>Richardson's 2016 one-dimensional SC3 construction makes two changes. It replaces the leading transmission exponential by a Kemble-type expression below the barrier, uses the local inverted parabola above it, and evaluates the thermal integral numerically:</p>
+          <div class="math-block">\[
+            P_{\mathrm{SC3}}(E)=
+            \begin{cases}
+              [1+e^{W(E)/\hbar}]^{-1},&0&lt;E&lt;V_0,\\
+              [1+e^{2\pi(V_0-E)/(\hbar\omega_b)}]^{-1},&E\ge V_0.
+            \end{cases}
+          \]</div>
+          <p>The second line is exact for an inverted parabola. It is a local quadratic approximation for a general barrier, not an exact rule that every barrier must transmit half the incident flux at its top. The first line uses the actual action and can retain nonparabolic barrier shape. Deep below the barrier it reduces to \(e^{-W/\hbar}\). Equations (17) and (19) of Richardson's paper specify this one-dimensional route.</p>
+          <p>The gain is not obtained merely by integrating the old WKB exponential more accurately: the input transmission has changed too. One computes a family of action values, constructs \(P(E)\), and reuses it for different thermal weights. In several dimensions the microcanonical problem also requires a consistent accounting of energy in transverse vibrations; the scalar one-dimensional expression is not the whole molecular theory.</p>
+
+          <h2 id="lawrence-step">4. Lawrence: repair the peak-to-area approximation</h2>
+          <p>Could we retain a compact thermal approximation instead of numerically resolving the entire energy dependence? Lawrence's answer is to treat the stationary point and the integration boundary together. The clearest entry point for our model is Appendix A of the <a href="https://arxiv.org/html/2409.02820v2">2024 paper</a>. Its main derivation instead starts from a real-time flux-correlation function and establishes the multidimensional result.</p>
+          <p>Below the barrier, the improved transmission has a geometric expansion:</p>
+          <div class="math-block">\[
+            \frac{1}{1+e^{W/\hbar}}
+            =\sum_{n=1}^{\infty}(-1)^{n+1}e^{-nW/\hbar},\qquad W&gt;0.
+          \]</div>
+          <p>The ordinary deep-barrier approximation keeps its first term. Each term leads to an integral and a stationary condition:</p>
+          <div class="math-block">\[
+            I_n=\frac{1}{2\pi\hbar}\int_0^{V_0}
+            e^{-[nW(E)+\tau E]/\hbar}\,dE,
+            \qquad -nW'(E_n^*)=\tau.
+          \]</div>
+          <p>For \(n=1\), this is the same \(E_*\) condition as before. The main repair is not a better root finder. It is a better way to evaluate the integral when that root approaches its boundary. For \(E&gt;V_0\), the continued action is negative and a different convergent geometric expansion is used. Keeping both sides consistently is essential; continuing only the first exponential is not the new theory.</p>
+
+          <h3>A small integral that explains the error function</h3>
+          <p>Consider a Gaussian whose center moves relative to a fixed boundary. This is a mathematical illustration, not the final reaction-rate formula:</p>
+          <div class="math-block">\[
+            J(a)=\int_0^\infty e^{-(x-a)^2/(2\sigma^2)}\,dx.
+          \]</div>
+          <p>With \(z=(x-a)/(\sqrt2\sigma)\), its lower limit becomes \(-a/(\sqrt2\sigma)\), so</p>
+          <div class="math-block">\[
+            J(a)=\sigma\sqrt{\frac\pi2}\,
+            \operatorname{erfc}\!\left(-\frac{a}{\sqrt2\sigma}\right),
+            \qquad \operatorname{erfc}(z)=\frac2{\sqrt\pi}\int_z^\infty e^{-s^2}\,ds.
+          \]</div>
+          <p>Far inside the interval, the result is essentially the full Gaussian area. At the boundary it is half that area. With the center outside, the remaining tail still contributes. Nothing in the integral is required to disappear or diverge when the center crosses the endpoint.</p>
+          <p>Lawrence uses Bleistein's uniform asymptotic method to handle the corresponding transition in the rate integral. Importantly, simply multiplying an old instanton rate by a truncated-Gaussian factor is insufficient: the prefactor and boundary contribution must be treated consistently too.</p>
+          <details>
+            <summary>The new mathematical step: match the prefactor at both locations</summary>
+            <p>In the paper's time-domain derivation, a variable \(v=e^{-\omega_b t}\) places the long-real-time boundary at \(v=0\). This \(v\) is not an energy. An action-preserving transformation maps the boundary to \(u=0\) and the stationary point to \(u=b\):</p>
+            <div class="math-block">\[
+              S(v)=\tfrac12u^2-bu+c,\qquad
+              \mathcal F\sim\frac{e^{-c/\hbar}}{\hbar}
+              \int_0^\infty g(u)e^{-(u^2/2-bu)/\hbar}\,du.
+            \]</div>
+            <p>This is a change of variable, not an assumption that the original potential is harmonic. Instead of replacing the entire prefactor by its stationary value, retain a linear function matching both relevant points:</p>
+            <div class="math-block">\[
+              g(u)\simeq g(b)+(u-b)\frac{g(b)-g(0)}{b}.
+            \]</div>
+            <p>The remaining terms vanish at both locations and are higher order in this expansion. Completing the square gives the error-function integral; integrating \((u-b)e^{-(u^2/2-bu)/\hbar}\) gives \(\hbar\). Together these yield</p>
+            <div class="math-block">\[
+              \begin{aligned}
+              \mathcal F\sim e^{-c/\hbar}\bigg[&
+              \frac{g(b)}{\hbar}\sqrt{2\pi\hbar}\,e^{b^2/(2\hbar)}
+              \frac12\operatorname{erfc}\!\left(-\frac{b}{\sqrt{2\hbar}}\right)\\
+              &+\frac{g(b)-g(0)}{b}\bigg].
+              \end{aligned}
+            \]</div>
+            <p>The second term explains why the repair is not just “half a Gaussian.” At \(b=0\), the difference quotient is taken by its finite limit. This follows the structure of Lawrence's equations (36)–(41); it is the local uniform construction, not yet the complete multi-orbit rate.</p>
+          </details>
+
+          <h2 id="all-temperatures">5. What actually happens above \(T_c\)?</h2>
+          <p>The stationary contribution dominates at low temperature. Near crossover, stationary and endpoint contributions must be combined. On the high-temperature side, endpoint behavior takes over and connects to the parabolic correction to TST. The combined result is finite even though some separately written terms are singular.</p>
+          <p>No ordinary real-coordinate high-temperature periodic instanton has been resurrected. Where the formula calls for an action beyond the ordinary orbit's domain, it uses analytic continuation. In general this requires additional treatment; Lawrence discusses extrapolation from crossover data. Our symmetric Eckart example has an analytic action, so that continuation is explicit. This convenience must not be mistaken for a universally automatic molecular algorithm.</p>
+          <details>
+            <summary>The complete one-dimensional formula used in the benchmark</summary>
+            <p>Write \(\mathcal F_n=k_{n,\mathrm{inst}}Q_R\). In one dimension there is no transverse vibrational factor, and Lawrence's equations (51)–(54) become</p>
+            <div class="math-block">\[
+              \begin{aligned}
+              S_n(\tau)&=nS_1(\tau/n),\\
+              \Delta S_n&=\tau V_0-S_n(\tau),\\
+              \mathcal F_n&=\frac{e^{-S_n/\hbar}}{\sqrt{2\pi\hbar}}
+                  \sqrt{-S_n''(\tau)},\\
+              \mathcal F_{\mathrm L}&\sim\mathcal F_{\mathrm{pb}}+
+              \sum_{n=1}^{\infty}(-1)^{n+1}\mathcal F_n
+              \left[\frac{\operatorname{sgn}(\tau-n\tau_c)e^{-\Delta S_n/\hbar}}
+              {\sqrt{4\pi\Delta S_n/\hbar}}\right.\\
+              &\hspace{2em}\left.+\frac12\operatorname{erfc}\!\left(
+              \operatorname{sgn}(n\tau_c-\tau)\sqrt{\Delta S_n/\hbar}\right)\right],\\
+              \mathcal F_{\mathrm{pb}}&=
+              \frac{\omega_b}{4\pi\sin(\omega_b\tau/2)}e^{-\tau V_0/\hbar}.
+              \end{aligned}
+            \]</div>
+            <p>The ordinary instanton is the \(n=1\) contribution in its low-temperature regime. Repeated orbits, indexed by \(n\), are repeated auxiliary trajectories, not \(n\) successive chemical reactions. Their alternating signs originate in the transmission expansion.</p>
+            <p>Why retain more than one? The parabolic term has poles at \(\tau=n\tau_c\), or \(T=T_c/n\). Near each pole it contains a term proportional to \((-1)^n/(\tau-n\tau_c)\); the corresponding endpoint correction has the opposite coefficient. They cancel in the sum. Keeping only the one-orbit version repairs the first crossing but leaves later poles. Our implementation includes the converged multi-orbit sum and evaluates the cancellation algebraically, not by deleting singular temperatures.</p>
+          </details>
+          <p>“All temperatures” describes uniform semiclassical behavior across these crossovers, not an exact quantum solution or a theorem for every potential. The derivation assumes a family that collapses smoothly to the transition state. Interacting instantons and other bifurcation structures require further work; numerical convergence does not remove those assumptions.</p>
+
+          <h2 id="benchmark">6. One barrier: does the repaired formula work?</h2>
+          <p>We retain the Hamiltonian from Part V:</p>
+          <div class="math-block">\[
+            V(x)=V_0\operatorname{sech}^2(ax),\quad
+            V_0=0.01\ E_h,\quad a=1.5\ a_0^{-1},\quad m=1836.152673\ m_e.
+          \]</div>
+          <p>Here \(T_c=248.799654\) K. The observable remains the thermal flux \(\mathcal F=kQ_R\) in atomic units; all rate ratios use the same reactant normalization. This is a scattering benchmark, not an absolute molecular rate in s\(^{-1}\).</p>
+          <figure>
+            <picture><source media="(max-width: 700px)" srcset="../assets/img/reaction-dynamics/eckart-uniform-mobile.png"><img src="../assets/img/reaction-dynamics/eckart-uniform.png" alt="Eckart thermal flux and relative errors: ordinary instanton ends at crossover, an invalid extrapolation rises away from the reference, and SC3 and Lawrence remain smooth." loading="lazy"></picture>
+            <figcaption>Left: thermal flux against temperature, with an independent analytic quantum-scattering reference (dark), numerical DVR points, ordinary instanton (solid orange), Richardson SC3 (dashed green), and Lawrence uniform theory (blue). The dotted orange continuation is deliberately invalid, included only to distinguish extrapolation from divergence; it is not a high-temperature prediction. SC3 and Lawrence almost overlap. Right: relative errors against analytic quantum scattering; the invalid continuation is omitted. The vertical line marks \(T_c\). The narrow error view exposes differences hidden by the logarithmic flux scale.</figcaption>
+          </figure>
+          <p>The table gives approximate flux divided by exact quantum flux. A value of 1 means agreement. “WKB” retains the deliberately simple convention of Part V: exponential transmission below the barrier, unit transmission above it, and numerical thermal averaging.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Temperature (K)</th><th>Ordinary instanton</th><th>WKB</th><th>SC3</th><th>Lawrence</th></tr></thead>
+            <tbody>
+              <tr><td>100</td><td>0.8239</td><td>0.8240</td><td>0.8239</td><td>0.8239</td></tr>
+              <tr><td>150</td><td>0.8377</td><td>0.8335</td><td>0.8244</td><td>0.8244</td></tr>
+              <tr><td>200</td><td>1.0453</td><td>0.9040</td><td>0.8350</td><td>0.8350</td></tr>
+              <tr><td>240</td><td>1.7213</td><td>0.9845</td><td>0.8490</td><td>0.8490</td></tr>
+              <tr><td>248.799654 (\(T_c\))</td><td>Not used</td><td>1.0012</td><td>0.8522</td><td>0.8522</td></tr>
+              <tr><td>260</td><td>Not used</td><td>1.0213</td><td>0.8563</td><td>0.8563</td></tr>
+              <tr><td>300</td><td>Not used</td><td>1.0806</td><td>0.8701</td><td>0.8701</td></tr>
+              <tr><td>400</td><td>Not used</td><td>1.1585</td><td>0.8975</td><td>0.8975</td></tr>
+            </tbody>
+          </table></div>
+          <p>At 240 K the ordinary instanton overestimates the flux by 72%, while Lawrence is about 15% low. At \(T_c\), the ordinary formula's formal value is still finite—about twice exact—but is not an admissible interior-saddle estimate. Lawrence is finite there without a special plot cutoff. At 400 K it remains about 10% low. The improvement is a reliable crossover construction, not elimination of all semiclassical error.</p>
+          <p>The old WKB result is actually closer to exact at some intermediate temperatures. Errors in transmission and thermal integration can compensate, and a valid asymptotic construction need not win pointwise for a finite barrier. This benchmark should not be read as a ranking in which every new method must beat every older number.</p>
+          <p>SC3 and Lawrence differ by less than 0.006% at the tabulated temperatures. That is a property of this particularly simple model and these two implementations, not a proof that the general theories are equivalent. Lawrence was evaluated from the uniform action formula, not assigned the SC3 quadrature result. The two evaluations are implemented separately.</p>
+
+          <h3 id="implementation">How the numerical calculation is organized</h3>
+          <ol>
+            <li><strong>Keep the model fixed.</strong> Reuse the potential, mass, action, and scattering conventions from Part V.</li>
+            <li><strong>Compute SC3 independently.</strong> Integrate its piecewise transmission over energy with Boltzmann weights.</li>
+            <li><strong>Compute Lawrence independently.</strong> Use the analytic Eckart action and its derivatives in the uniform multi-orbit expression. Converge the sum and test the combined limits at \(T_c\) and \(T_c/2\).</li>
+            <li><strong>Check against quantum mechanics.</strong> Integrate the exact analytic transmission and separately solve the sinc-DVR Hamiltonian, using the symmetrically thermalized flux–side plateau from <a href="reaction-dynamics-instantons.html#dvr-validation">Part V</a>.</li>
+          </ol>
+          <details>
+            <summary>A pole-free specialization that makes the code reproducible</summary>
+            <p>In atomic units \(\hbar=1\), define \(r=\tau/\tau_c=T_c/T\) and \(\alpha=\tau_cV_0\). The analytic action and its derivatives give</p>
+            <div class="math-block">\[
+              S_n=\alpha(2n-n^2/r),\quad
+              \Delta S_n=\frac{\alpha(r-n)^2}{r},\quad
+              -S_n''=\frac{2\alpha n^2}{\tau_c^2r^3}.
+            \]</div>
+            <p>For this special action, the two endpoint terms in Lawrence's equation (A14) combine to \(-\mathcal F_{\mathrm{TST}}\); equation (A17) contributes \(J_n=\mathcal F_{\mathrm{TST}}r/(n+r)\). Combining terms before summation yields</p>
+            <div class="math-block">\[
+              \begin{aligned}
+              \frac{\mathcal F_{\mathrm L}}{\mathcal F_{\mathrm{TST}}}
+              &=1+\sum_{n=1}^{\infty}(-1)^{n+1}
+              \left[n\sqrt{\frac{\pi\alpha}{r}}\operatorname{erfcx}(z_n)
+              -1-\frac{r}{n+r}\right],\\
+              z_n&=(n-r)\sqrt{\alpha/r},\qquad
+              \operatorname{erfcx}(z)=e^{z^2}\operatorname{erfc}(z).
+              \end{aligned}
+            \]</div>
+            <p>This is an algebraic specialization of the uniform approximation, not an exact quantum formula. The bracket decays as \(n^{-2}\); unlike separate pole terms, it can be evaluated at integer \(r\). The script checks it against a direct transcription of equation (51) away from the poles. The agreement does not substitute for comparison with exact quantum scattering.</p>
+          </details>
+          <p>The 512-to-1024-term change is below \(6.4\times10^{-7}\) relative at the tabulated temperatures. The pole-free expression agrees with the direct equation-(51) evaluation at 4096 terms to \(1.4\times10^{-8}\) relative at the tested non-pole points. Direct evaluations on both sides of \(T_c\) and \(T_c/2\) remain continuous; there is no interpolation or removal of those temperatures.</p>
+          <p>We reran DVR at all eight tabulated temperatures, including \(T_c\) and 400 K. The base grid is 1001 points on \([-50,50]\) bohr, with energies below 0.06 Ha and a 6000–10000 atomic-time-unit plateau window. A finer grid, smaller box, higher state cutoff, and later window change the result by at most 0.014%. The largest tested DVR deviation from analytic scattering is 0.0351%, at 100 K—far smaller than the semiclassical discrepancies. This is a fresh numerical check, not an analytic result labeled “DVR.”</p>
+
+          <h2 id="takeaway">7. What has changed, and what has not?</h2>
+          <p>The observable has not changed. Nor has the physical system acquired a new trajectory at a special temperature. What changes is the approximation used between locating an important contribution and assigning it an integrated weight.</p>
+          <p><strong>Ordinary instanton:</strong> find an interior saddle and use its full Gaussian neighborhood. <strong>Richardson:</strong> construct improved energy-resolved reaction information and integrate it numerically. <strong>Lawrence:</strong> build a uniform approximation that keeps the saddle and the boundary consistent as their relative importance changes.</p>
+          <p>That is why the sixth article belongs after the fifth. The extra machinery is not an unrelated theory introduced after we had nearly obtained a rate. It repairs a specific approximation in the route to that same rate.</p>
+
+          <h2>Code, data, and sources</h2>
+          <p>Save <a href="../assets/code/reaction-dynamics/eckart_uniform.py">eckart_uniform.py</a> and its shared model/DVR module <a href="../assets/code/reaction-dynamics/eckart_four_methods.py">eckart_four_methods.py</a> in the same directory. With NumPy, SciPy, and Matplotlib installed, run:</p>
+          <pre><code>python eckart_uniform.py --dvr</code></pre>
+          <p>The flag recomputes DVR and its convergence checks. Without it, the script runs the semiclassical and analytic calculations and may reuse available DVR data; it does not claim a fresh DVR computation. Download the <a href="../assets/data/reaction-dynamics/eckart-uniform.csv">flux table</a>, <a href="../assets/data/reaction-dynamics/eckart-uniform-checks.json">numerical checks</a>, and <a href="../assets/data/reaction-dynamics/eckart-uniform-dvr-checks.csv">DVR convergence data</a>. The example specializes the theory to an analytic one-dimensional action; it does not implement a molecular ring-polymer optimizer.</p>
+          <ul>
+            <li>J. O. Richardson, <a href="https://doi.org/10.1039/C6FD00119J">“Microcanonical and thermal instanton rate theory for chemical reactions at all temperatures,” <em>Faraday Discussions</em> 195, 49–67 (2016)</a>. Sections 3–5 distinguish transmission, microcanonical, and thermal approximations.</li>
+            <li>J. E. Lawrence, <a href="https://doi.org/10.1063/5.0237368">“Semiclassical instanton theory for reaction rates at any temperature: How a rigorous real-time derivation solves the crossover temperature problem,” <em>J. Chem. Phys.</em> 161, 184115 (2024)</a>; <a href="https://arxiv.org/html/2409.02820v2">open manuscript, version 2</a>. Equations (36)–(41), (51)–(54), and Appendix A are the main derivation locators used here.</li>
+            <li>C. Eckart, <a href="https://doi.org/10.1103/PhysRev.35.1303">“The Penetration of a Potential Barrier by Electrons,” <em>Phys. Rev.</em> 35, 1303–1309 (1930)</a>. The analytic scattering reference used independently of DVR and the semiclassical formulas.</li>
+          </ul>
+          <section class="series-footer" aria-labelledby="reaction-series-map">
+            <h2 id="reaction-series-map">Chemical Reaction Computation series map</h2>
+            <ol class="series-list">
+              <li><a href="hydrogen-transfer-observables-model-validation.html">Part I: What Can We Actually Observe?</a> — the experimental starting point.</li>
+              <li><a href="hydrogen-transfer-barrier-to-rate.html">Part II: From a Barrier to a Rate</a> — Arrhenius, TST, and a quantum rate benchmark.</li>
+              <li><a href="reaction-dynamics-nonadiabatic.html">Part III: When One Electronic State Is Not Enough</a> — multistate reactions and nonadiabatic dynamics.</li>
+              <li><a href="reaction-dynamics-free-energy-sampling.html">Part IV: Free Energy and the Events We Rarely See</a> — equilibrium sampling and the missing dynamical clock.</li>
+              <li><a href="reaction-dynamics-instantons.html">Part V: From Barrier Penetration to Imaginary-Time Instantons</a> — the dominant contribution and its fluctuations.</li>
+              <li><a href="reaction-dynamics-uniform-instantons.html">Part VI: Instanton Rates Across Crossover</a> — what changes when the saddle reaches a boundary.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="reaction-dynamics-instantons.html">&lt;- Previous: Imaginary-time instantons</a><a href="../index.html">Back to article list</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

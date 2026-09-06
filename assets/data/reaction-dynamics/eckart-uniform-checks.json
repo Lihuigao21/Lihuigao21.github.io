@@ -1,0 +1,14 @@
+{
+  "Tc_K": 248.79965391436042,
+  "alpha": 12.6919398753742,
+  "series_512_to_1024_max_relative_change": 6.36939706977202e-07,
+  "sc3_quadrature_max_relative_change": 4.324646196707249e-10,
+  "direct_eq51_max_relative_difference": 1.3621954009224169e-08,
+  "crossover_relative_changes": [
+    9.818727710886321e-07,
+    7.824769923114872e-07
+  ],
+  "interpretation": "Model semiclassical benchmark, not a molecular rate or full-dimensional implementation",
+  "DVR_max_relative_error_exact": 0.00035091752455440606,
+  "DVR_max_relative_change": 0.0001386474304971852
+}
