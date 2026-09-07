@@ -3,7 +3,7 @@
 Units hbar=mx=my=kB=1. V=2 sech(x)^2+(y-c exp(-x*x))^2/2.
 The coupled orbit is solved numerically, not from a 1D action formula.
 No coupled exact quantum calculation or DVR is claimed here.
-Run with NumPy, SciPy and Matplotlib; all outputs remain beside this script.
+Run with NumPy, SciPy and Matplotlib; --output selects the results directory.
 """
 from pathlib import Path
 import json
