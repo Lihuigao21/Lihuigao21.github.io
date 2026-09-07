@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "reaction-dynamics-multidimensional-instantons",
+    title: "Reaction Computation VII: Multidimensional Instantons",
+    path: "posts/reaction-dynamics-multidimensional-instantons.html",
+    date: "2026-09-07",
+    dateText: "2026.09.07",
+    description: "Solve a coupled 2D instanton with explicit Newton updates, transverse fluctuations, and a continuous-orbit numerical cross-check.",
+    tags: ["Chemical Reactions", "Instantons", "Numerical Methods", "Reaction Rates", "Reproduction"],
+    series: "hydrogen-transfer",
+  },
+  {
     slug: "reaction-dynamics-uniform-instantons",
     title: "Reaction Computation VI: Instanton Rates Across Crossover",
     path: "posts/reaction-dynamics-uniform-instantons.html",

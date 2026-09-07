@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A worked coupled two-dimensional instanton: solve the stationary path with Newton updates, compute its fluctuation prefactor, and check the numerical rate.">
+    <title>Reaction Computation VII: Multidimensional Instantons | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Chemical Reaction Computation - Part VII</p>
+          <h1>Multidimensional Instantons: A Coupled 2D Calculation</h1>
+          <p class="post-meta">2026.09.07 - Instantons / Numerical Algorithms / Reaction Rates</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Chemical Reaction Computation series navigation">
+            <a href="hydrogen-transfer-observables-model-validation.html">I. What Can We Actually Observe?</a>
+            <a href="hydrogen-transfer-barrier-to-rate.html">II. From a Barrier to a Rate</a>
+            <a href="reaction-dynamics-nonadiabatic.html">III. When One Electronic State Is Not Enough</a>
+            <a href="reaction-dynamics-free-energy-sampling.html">IV. Free Energy and Rare Events</a>
+            <a href="reaction-dynamics-instantons.html">V. Imaginary-Time Instantons</a>
+            <a href="reaction-dynamics-uniform-instantons.html">VI. Rates Across Crossover</a>
+            <a href="reaction-dynamics-multidimensional-instantons.html" aria-current="page">VII. Multidimensional Instantons</a>
+          </nav>
+          <p class="lead">In one dimension, an instanton rate can be obtained by finding one important energy and estimating the width of its contribution. In a molecule, the same energy can support many different arrangements of moving atoms. Which collective displacement matters, and how does a computer actually find it?</p>
+          <p>Rather than introduce another abstract picture, we will solve one coupled two-dimensional model from beginning to end. We will start with a potential and a temperature, move a set of initially misplaced nodes until they satisfy the stationary equations, and turn the resulting path into a thermal flux. The path, its turning points, and its energy will all be outputs.</p>
+          <p><a href="reaction-dynamics-instantons.html#peak-to-rate">Part V</a> already derived the dominant-energy approximation and explained why a peak needs a width. <a href="reaction-dynamics-uniform-instantons.html">Part VI</a> addressed its crossover boundary. Here we return to ordinary instanton theory well below that boundary. The new work is the multidimensional solver and its transverse fluctuations, not another derivation of WKB or the Boltzmann path integral. Historically, this is the nonseparable-rate question already central to <a href="https://doi.org/10.1063/1.430676">Miller's 1975 formulation</a>, made concrete through a discretized path calculation.</p>
+
+          <h2 id="model">1. A potential that cannot be split into two independent problems</h2>
+          <div class="math-block">\[
+            V(x,y)=2\operatorname{sech}^2x+\frac12[y-g(x)]^2,
+            \qquad g(x)=0.6e^{-x^2}.
+          \]</div>
+          <p>Use dimensionless units \(\hbar=m_x=m_y=k_B=1\). The reaction connects the negative- and positive-\(x\) scattering channels. At each fixed \(x\), the potential is lowest at \(y=g(x)\): a curved valley. Moving in \(x\) changes the preferred transverse position, and moving in \(y\) changes the force along \(x\). No analytic instanton path or action is used for this coupled model.</p>
+          <p>The potential itself has a simple formula; its periodic orbit does not follow by substituting into the earlier one-dimensional Eckart answer. Even the coordinate change \(z=y-g(x)\) does not separate the Hamiltonian: the kinetic energy becomes \([\dot x^2+(\dot z+g'\dot x)^2]/2\), which couples the new coordinates.</p>
+          <div class="math-block">\[
+            \mathbf q^\ddagger=(0,0.6),\quad V^\ddagger=2,\quad
+            V''(\mathbf q^\ddagger)=
+            \begin{pmatrix}-4&0\\0&1\end{pmatrix}.
+          \]</div>
+          <p>Thus \(\omega_b=2\), \(T_c=1/\pi\), and our chosen \(T=1/(2\pi)=T_c/2\) fixes the imaginary-time period \(\tau=\beta\hbar=2\pi\). Temperature specifies the period, not the unknown turning-point positions.</p>
+          <figure>
+            <picture><source media="(max-width: 700px)" srcset="../assets/img/reaction-dynamics/coupled-potential-mobile.png"><img src="../assets/img/reaction-dynamics/coupled-potential.png" alt="Coupled potential surface and contour view, with the optimized instanton departing from the curved fixed-x valley." loading="lazy"></picture>
+            <figcaption>The same potential in a surface view and a top view; \(x,y,V\) are dimensionless. The dashed dark curve marks the minimum of \(V\) at each fixed \(x\), not an independently calculated IRC. The dotted purple line is the initial guess. The red curve is the solved 512-node instanton; its outgoing and returning legs overlap geometrically. Squares mark the turning points and the cross marks the potential saddle. Near \(x=0\), the path leaves the valley: minimizing potential energy point by point is not the stationary-action condition.</figcaption>
+          </figure>
+
+          <h2 id="target">2. Keep the rate in sight</h2>
+          <p>The calculation still targets \(\mathcal F=kQ_R\), with the reactant normalization stated below. For this two-coordinate model, ordinary instanton theory gives</p>
+          <div class="math-block">\[
+            \boxed{\mathcal F_{\rm inst}=
+            e^{-S_*/\hbar}
+            \sqrt{\frac{-S_*''(\tau)}{2\pi\hbar}}\,
+            Z_{\rm inst}(\tau).}
+          \]</div>
+          <p>There are three jobs: compute the stationary action \(S_*\); obtain the longitudinal width from its variation with period; calculate the transverse fluctuation factor \(Z_{\rm inst}\). A path alone supplies only the first. The standard expression and stability-parameter form are stated in <a href="https://arxiv.org/html/2409.02820v2">Lawrence's equations (4)–(5)</a>; we use the ordinary formula reviewed there, not the all-temperature construction.</p>
+          <p>Recall the imaginary-time action from <a href="reaction-dynamics-instantons.html#path-to-rate">Part V</a>:</p>
+          <div class="math-block">\[
+            S[\mathbf q]=\int_0^\tau
+            \left[\frac12|\dot{\mathbf q}(s)|^2+V(\mathbf q(s))\right]ds,
+            \qquad \mathbf q(0)=\mathbf q(\tau).
+          \]</div>
+          <p>Here \(s\) labels imaginary time; it is not a measured reaction duration. The stationary condition is \(-\ddot{\mathbf q}+\nabla V=0\), or auxiliary motion on the inverted potential. We seek the noncollapsed, time-reversal-symmetric orbit that traverses the forbidden region and returns. This orbit does not extend to the asymptotic reactant and product channels, and it is not a real-time molecular trajectory.</p>
+
+          <h2 id="discrete-equations">3. Replace an unknown curve by unknown coordinates</h2>
+          <p>Place \(N\) nodes at equal imaginary-time intervals \(\Delta s=\tau/N\), with \(\mathbf q_N=\mathbf q_0\). The <a href="pimd-ring-polymer-basics.html#quantum-boltzmann-trace">path-integral introduction</a> explains the origin of the spring-linked discretization. Here we use it to solve a saddle, not to sample an equilibrium distribution:</p>
+          <div class="math-block">\[
+            S_N=\sum_{j=0}^{N-1}
+            \left[\frac{|\mathbf q_{j+1}-\mathbf q_j|^2}{2\Delta s}
+            +\Delta s\,V(\mathbf q_j)\right].
+          \]</div>
+          <p>There are initially \(2N\) unknown coordinates. Neither \(y=0\) nor \(y=g(x)\) is imposed. The turning points also move. The first term penalizes rapid displacement between neighboring nodes; the second accounts for potential energy along the entire path. Following a lower but more curved valley can increase the displacement cost.</p>
+          <p>Each node appears in two neighboring links. Differentiating those links and its potential term gives the equations the program must solve:</p>
+          <div class="math-block">\[
+            \boxed{\mathbf G_j\equiv\frac{\partial S_N}{\partial\mathbf q_j}
+            =\frac{2\mathbf q_j-\mathbf q_{j-1}-\mathbf q_{j+1}}{\Delta s}
+            +\Delta s\,\nabla V(\mathbf q_j)=0.}
+          \]</div>
+          <p>In other words, the local potential gradient and the two link gradients must balance at every node simultaneously. Small residual means these equations are satisfied; it does not yet establish a converged continuum path or an accurate quantum rate.</p>
+          <details>
+            <summary>All potential derivatives used by the solver</summary>
+            <p>Write \(d=y-g(x)\) and \(a_x=\operatorname{sech}^2x\). Analytic derivatives of the potential are available even though the orbit is solved numerically:</p>
+            <div class="math-block">\[
+              \begin{aligned}
+              g'&=-2xg,&g''&=(4x^2-2)g,\\
+              V_x&=-4a_x\tanh x-dg',&V_y&=d,\\
+              V_{xx}&=8a_x-12a_x^2+(g')^2-dg'',\\
+              V_{xy}&=-g',&V_{yy}&=1.
+              \end{aligned}
+            \]</div>
+            <p>At the independent test point \((0.7,0.2)\), central finite differences agree with the gradient and Hessian to maximum absolute differences of \(8.8\times10^{-11}\) and \(3.1\times10^{-10}\), respectively. This checks the implementation at that point, not every location on an arbitrary surface.</p>
+          </details>
+
+          <h2 id="newton">4. An initial guess is the start of a nonlinear solve</h2>
+          <p>Initialize a geometrical path, without its final energy or an analytic orbit:</p>
+          <div class="math-block">\[
+            x_j^{(0)}=1.15\cos(2\pi j/N),\qquad y_j^{(0)}=0.1.
+          \]</div>
+          <p>It is a horizontal line traced out and back, not a proposed physical mechanism. The task is to correct all its coordinates. Collect the independent coordinates in \(z\). Linearizing the residual at the current iterate gives</p>
+          <div class="math-block">\[
+            G_r(z+\Delta z)\simeq G_r(z)+H_r(z)\Delta z,
+            \qquad \boxed{H_r\Delta z=-G_r.}
+          \]</div>
+          <p>The last equation is a linear system, solved with <code>numpy.linalg.solve</code>; the code does not form an explicit inverse. The new path is \(z+\alpha\Delta z\). Recalculate the gradient and Hessian there, and repeat. Thus “guess a path” does not mean repeatedly drawing arbitrary alternatives: each correction is determined by a local linearization of the equations.</p>
+          <p>In node order, the full action Hessian consists of blocks</p>
+          <div class="math-block">\[
+            H_{jj}=\frac2{\Delta s}I+\Delta s\,V''(\mathbf q_j),
+            \qquad H_{j,j\pm1}=-\frac1{\Delta s}I.
+          \]</div>
+          <p>Non-neighbor blocks vanish; the first and last nodes are neighbors. The implementation stores all \(x\) coordinates before all \(y\) coordinates, which only changes the matrix ordering. It uses dense linear algebra for this small example; large systems can exploit the sparse structure.</p>
+          <details>
+            <summary>Time origin, negative mode, step control, and stopping</summary>
+            <p>A shift of the imaginary-time origin describes the same continuous orbit and produces a zero mode. For the turning-point-to-turning-point orbit sought here, impose time reflection \(\mathbf q_j=\mathbf q_{N-j}\). The independent half-ring has \(N/2+1\) nodes, each with two free coordinates. This fixes the time origin and uses the orbit's reversal symmetry; it is not a restriction valid for every possible periodic orbit, and it does not freeze transverse motion.</p>
+            <p>If \(P\) copies the independent half into the full ring, with \(P_{j\ell}=1\) for \(\ell=\min(j,N-j)\), use \(\widetilde P=\operatorname{diag}(P,P)\) in the coordinate ordering above:</p>
+            <div class="math-block">\[
+              G_r=\widetilde P^TG,\qquad
+              H_r=\widetilde P^TH\widetilde P.
+            \]</div>
+            <p>This sums both mirrored nodes' contributions rather than simply discarding half the gradient. At \(N=32\), the Newton system has 34 unknowns. After convergence we check the full \(2N\)-coordinate residual and Hessian.</p>
+            <p>This is a reactive saddle solve, not unrestricted minimization. Keep the negative Hessian direction; replacing negative eigenvalues by their absolute values changes the Newton equation. The full 512-node Hessian has one negative eigenvalue and one near-zero eigenvalue (about \(-1.4\times10^{-13}\)); the remaining modes are positive.</p>
+            <p>Start a trial step at \(\alpha=\min[1,0.35/\|\Delta z\|_\infty]\). Define \(M(z)=\|G_r(z)\|_2^2/2\) and accept only if</p>
+            <div class="math-block">\[
+              M(z+\alpha\Delta z)\le(1-10^{-4}\alpha)M(z).
+            \]</div>
+            <p>Otherwise halve \(\alpha\), allowing at most 30 trials. We require residual decrease, not action decrease. Stop when the full \(\|G\|_\infty&lt;2\times10^{-11}\), allowing at most 60 Newton iterations. The script also rejects a collapsed solution with an \(x\)-span below 1; that amplitude threshold is specific to this model. A constant path at the potential saddle also solves the stationarity equations, so a small residual alone is insufficient.</p>
+          </details>
+
+          <h2 id="actual-updates">5. Watch one node, then the whole path</h2>
+          <p>For \(N=32\), the initial node \(j=8\) is at \((0,0.1)\). Its two neighbors have the same \(y\), so its transverse link gradient vanishes. The potential gradient is \(V_y=0.1-0.6=-0.5\), giving</p>
+          <div class="math-block">\[
+            G_{8,y}=\Delta s(-0.5)=-0.09817477.
+          \]</div>
+          <p>The node must move, but not directly to \(y=0.6\): that would alter its links to neighbors, whose coordinates must also change. Solving the full reduced linear system gives the first update \(\Delta y_8=0.21532426\). The node moves to \(y_8=0.31532426\), and later updates finish the correction.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Newton updates</th><th>Middle-node \(y\)</th><th>Right turning point \((x,y)\)</th><th>\(\|G\|_\infty\)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0.100000</td><td>(1.150000, 0.100000)</td><td>\(2.17\times10^{-1}\)</td></tr>
+              <tr><td>1</td><td>0.315324</td><td>(1.318001, 0.222203)</td><td>\(4.38\times10^{-2}\)</td></tr>
+              <tr><td>2</td><td>0.324006</td><td>(1.305080, 0.233664)</td><td>\(4.37\times10^{-4}\)</td></tr>
+              <tr><td>3</td><td>0.324102</td><td>(1.304937, 0.233779)</td><td>\(3.68\times10^{-8}\)</td></tr>
+              <tr><td>4</td><td>0.324102</td><td>(1.304937, 0.233779)</td><td>\(8.88\times10^{-16}\)</td></tr>
+            </tbody>
+          </table></div>
+          <figure>
+            <picture><source media="(max-width: 700px)" srcset="../assets/img/reaction-dynamics/coupled-newton-mobile.png"><img src="../assets/img/reaction-dynamics/coupled-newton.png" alt="Actual Newton iterates on the potential contours, and the residual falling after four updates." loading="lazy"></picture>
+            <figcaption>Left: node positions after updates 0, 1, 2, and 4 on dimensionless potential contours; the dashed curve is the fixed-\(x\) valley. Both coordinates and both turning points are free to move. Right: maximum full action-gradient residual on a logarithmic scale against Newton update count. Four full steps were accepted in this run. These are solver iterations, not physical or imaginary-time propagation steps.</figcaption>
+          </figure>
+          <p>Three additional seeds, with amplitude/transverse offset \((1,0)\), \((1.4,0.5)\), and \((1.2,-0.1)\), converge to the same 64-node action. This is a useful branch check, not proof that every competing instanton has been found.</p>
+
+          <h2 id="prefactor">6. The path is found; now calculate its neighborhood</h2>
+          <h3 id="longitudinal">The exponent and the longitudinal width</h3>
+          <p>Substituting the converged coordinates into \(S_N\) gives the exponent. To obtain its period dependence, keep \(N\) fixed and solve new paths at \(\tau\pm h\) and \(\tau\pm2h\), with \(h=0.002\tau\). Each path is reoptimized; changing the time interval while freezing the coordinates would not give the required derivative of the stationary action.</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            S_*''(\tau)\simeq\frac{1}{12h^2}\big[&
+            -S_*(\tau+2h)+16S_*(\tau+h)-30S_*(\tau)\\
+            &+16S_*(\tau-h)-S_*(\tau-2h)\big].
+            \end{aligned}
+          \]</div>
+          <p>The corresponding first derivative yields \(E_*=\partial S_*/\partial\tau\). Energy is now an output of the orbit family, not an independently guessed input. This is the same longitudinal width as in the <a href="reaction-dynamics-instantons.html#peak-to-rate">one-dimensional energy calculation</a>: the Legendre relation \(S_*=W(E_*)+\tau E_*\), with \(W'(E_*)=-\tau\), gives \(S_*'=E_*\) and \(S_*''=-1/W''(E_*)\). We have changed representation, not added a second selection of the dominant energy.</p>
+          <p>At 512 nodes, \(S_*=9.49502087\), \(E_*=0.51925015\), and \(-S_*''=0.16578835\). Hence \(e^{-S_*}=7.52254565\times10^{-5}\) and \(\sqrt{-S_*''/(2\pi)}=0.16243779\).</p>
+
+          <h3 id="transverse">Transverse fluctuations without guessing more paths</h3>
+          <p>Write a nearby path as \(\mathbf q_*+\eta\). The stationary path removes the first-order term, leaving</p>
+          <div class="math-block">\[
+            S[\mathbf q_*+\eta]\simeq S_*+
+            \frac12\int_0^\tau
+            \left[|\dot\eta|^2+\eta^TV''(\mathbf q_*(s))\eta\right]ds.
+          \]</div>
+          <p>This specifies how small displacements change the path weight. The required curvature is evaluated along the whole orbit, not just at the potential saddle. A narrow allowed neighborhood and a broad one do not contribute equally even if their central actions match.</p>
+          <p>The code evaluates this quadratic fluctuation contribution through the equivalent linear stability equations. Linearize the auxiliary orbit equation, \(\delta\ddot{\mathbf q}=V''(\mathbf q_*)\delta\mathbf q\), and propagate the fundamental matrix:</p>
+          <div class="math-block">\[
+            \frac{dM}{ds}=
+            \begin{pmatrix}0&I\\V''(\mathbf q_*(s))&0\end{pmatrix}M,
+            \qquad M(0)=I_4.
+          \]</div>
+          <p>The four columns track the response to four independent initial position/velocity perturbations. Integrating this 4-by-4 matrix once gives the linear response around the orbit; we do not randomly sample a cloud of new paths. The program interpolates the nodes with a periodic cubic spline and integrates using adaptive DOP853 with relative tolerance \(2\times10^{-10}\), absolute tolerance \(2\times10^{-12}\), and maximum step \(\tau/100\).</p>
+          <p>For this orbit there is one transverse pair of multipliers \(\lambda,\lambda^{-1}\), with \(\lambda&gt;1\), and a longitudinal neutral pair. The transverse Gaussian factor is represented by</p>
+          <div class="math-block">\[
+            u=\ln\lambda,\qquad Z_{\rm inst}=\frac{1}{2\sinh(u/2)}.
+          \]</div>
+          <p>The 512-node result is \(u=6.40483343\) and \(Z_{\rm inst}=0.0407311630\). Although \(V_{yy}=1\), the coupled equations have \(V_{xy}\ne0\); replacing the entire calculation by a constant transverse frequency would be incorrect. The longitudinal zero and negative modes are handled by the standard rate expression, not multiplied as ordinary positive Gaussian eigenvalues.</p>
+          <details>
+            <summary>A diagnostic that separates interpolation error from physical instability</summary>
+            <p>On an exact continuous orbit, the two longitudinal multipliers are 1. A spline through discrete stationary nodes is not itself an exact continuous solution. At 512 nodes this pair is \(0.998537\pm0.054069i\), while the auxiliary conserved-energy range is about \(1.67\times10^{-4}\). These deviations must not be mislabeled as physical instability.</p>
+            <p>An independent continuous-orbit calculation described below restores the pair to approximately 0.99999866 and 1.00000134 and reduces the energy variation to \(2.3\times10^{-12}\). Its transverse multiplier is 604.76898, giving \(u=6.40484653\). The finite-node transverse factor and total flux agree with this check after refinement. The 512-node matrix also satisfies the symplectic identity \(M^TJM=J\), with \(J=\left(\begin{smallmatrix}0&I\\-I&0\end{smallmatrix}\right)\), to maximum absolute error \(6.4\times10^{-10}\); this identity alone does not establish orbit accuracy.</p>
+          </details>
+
+          <h2 id="result">7. Assemble the flux, then test the discretization</h2>
+          <div class="math-block">\[
+            \begin{aligned}
+            \mathcal F_{512}
+            &=0.16243779\times0.0407311630
+              \times7.52254565\times10^{-5}\\
+            &=4.97712693\times10^{-7}.
+            \end{aligned}
+          \]</div>
+          <p>Now refine the path, not just the Newton residual. Each refined grid starts from a periodic interpolation of the preceding solution and is reoptimized. All entries below include the longitudinal and transverse factors.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Nodes \(N\)</th><th>Action \(S_*\)</th><th>\(E_*\)</th><th>Thermal flux \(\mathcal F\)</th></tr></thead>
+            <tbody>
+              <tr><td>32</td><td>9.48129546</td><td>0.51499248</td><td>\(5.05962791\times10^{-7}\)</td></tr>
+              <tr><td>64</td><td>9.49165252</td><td>0.51821506</td><td>\(4.99712782\times10^{-7}\)</td></tr>
+              <tr><td>128</td><td>9.49422019</td><td>0.51900468</td><td>\(4.98186551\times10^{-7}\)</td></tr>
+              <tr><td>256</td><td>9.49486080</td><td>0.51920111</td><td>\(4.97807348\times10^{-7}\)</td></tr>
+              <tr><td>512</td><td>9.49502087</td><td>0.51925015</td><td>\(4.97712693\times10^{-7}\)</td></tr>
+              <tr><td>Continuous-orbit check</td><td>9.49507422</td><td>0.51926650</td><td>\(4.97681154\times10^{-7}\)</td></tr>
+            </tbody>
+          </table></div>
+          <p>The 256-to-512 flux change is 0.0190%; the 512-node flux differs from the independent continuous-orbit check by 0.00634%. Halving the action-difference interval changes the flux by about \(3.1\times10^{-10}\) relative; tightening the stability integration changes its transverse factor by \(2.0\times10^{-10}\).</p>
+          <p>The continuous turning points are \((\pm1.30391124,0.23497778)\), and the path crosses \(x=0\) at \(y=0.32445930\), not at the saddle's \(y=0.6\). Its potential there is 2.03796134, slightly higher than the saddle energy 2. A path can accept higher potential while reducing displacement cost. This is a multidimensional effect that prescribing the fixed-\(x\) valley would exclude.</p>
+          <details>
+            <summary>How the continuous-orbit cross-check works</summary>
+            <p>This is an independent numerical boundary-value check, not a mandatory second stage of every ring-polymer calculation. Start near the computed right turning point with both velocities zero. Integrate \(\dot q=v,\ \dot v=\nabla V(q)\) to \(\tau/2\), and use a two-variable root solve to adjust the initial coordinates until both final velocities vanish. Integrate \(\dot A=|v|^2/2+V\) alongside the orbit; the complete action is \(2A(\tau/2)\). Time reversal closes the returning leg.</p>
+            <p>The code uses <code>scipy.optimize.root</code> for the two initial coordinates and DOP853 with relative/absolute tolerances \(2\times10^{-12}/2\times10^{-14}\), maximum step \(\tau/150\). It verifies the entire-period closure to \(9.5\times10^{-14}\). Turning-point energies from neighboring periods give \(S_*''=dE_*/d\tau\), and the stability matrix is reintegrated along the continuous trajectory. Shooting is manageable here; it need not remain well conditioned for larger or more unstable systems.</p>
+          </details>
+
+          <h2 id="normalization">8. From an open-channel flux to a rate coefficient</h2>
+          <p>Far into the reactant channel, \(V\to y^2/2\). The transverse oscillator contributes \(Z_{y,R}=1/[2\sinh(\beta/2)]\). Free motion along \(x\) contributes \(1/\sqrt{2\pi\beta}\) per unit length, so</p>
+          <div class="math-block">\[
+            q_R\equiv Q_R/L=
+            \frac{1}{\sqrt{2\pi\beta}}\frac{1}{2\sinh(\beta/2)}
+            =0.00689057646.
+          \]</div>
+          <p>Using the continuous-orbit flux, the rate coefficient normalized by reactant line density is</p>
+          <div class="math-block">\[
+            k_\rho=\mathcal F/q_R=7.22263452\times10^{-5}.
+          \]</div>
+          <p>Its units are model length per model time. For a long, uniformly populated reactant channel of length \(L\), \(Q_R\simeq Lq_R\) and the corresponding first-order rate is \(k_\rho/L\). These are not molecular rates in s\(^{-1}\) without a physical unit mapping and reactant normalization.</p>
+
+          <h2 id="limits">9. What this example establishes</h2>
+          <p>The numerical sequence is now complete: specify the surface, masses, and temperature; solve the coordinates of a stationary periodic path; evaluate its action and both fluctuation factors; assemble a flux; divide by the reactant normalization. In one dimension an analytic \(W(E)\) made a scalar energy solve convenient. In several dimensions the coordinate solve determines the collective motion as well as its energy.</p>
+          <p>However, numerical convergence is not quantum exactness. <strong>No coupled two-dimensional DVR or exact quantum-scattering reference has been calculated here.</strong> The 0.00634% agreement tests two numerical representations of ordinary instanton theory, not the theory's error against quantum mechanics. The additional \(g=0\) test recovers the known separable ordinary-instanton flux to 0.00545%; that is an implementation limit check, not a substitute quantum benchmark.</p>
+          <p>We found one basic time-reversal-symmetric branch. More complicated surfaces can have competing paths, bifurcations, or unstable transverse structure; an initial-guess study does not prove global completeness. The local quadratic fluctuation approximation and the ordinary theory's crossover boundary also remain. Adding nodes cannot remove these approximation errors.</p>
+
+          <h2 id="code">Code, data, and sources</h2>
+          <p>Download the standalone <a href="../assets/code/reaction-dynamics/coupled_instanton.py">coupled_instanton.py</a> and run with NumPy, SciPy, and Matplotlib:</p>
+          <pre><code>python coupled_instanton.py --output coupled-instanton-output</code></pre>
+          <p>The script recomputes the paths, iteration history, fluctuation factors, continuous-orbit check, and figures. The <a href="../assets/data/reaction-dynamics/coupled-instanton-results.json">complete compact results file</a> includes node coordinates, Newton snapshots, stability matrices, and convergence diagnostics. It contains no preassigned coupled analytic trajectory or quantum reference.</p>
+          <ul>
+            <li>W. H. Miller, <a href="https://doi.org/10.1063/1.430676">“Semiclassical Limit of Quantum Mechanical Transition State Theory for Nonseparable Systems,” <em>J. Chem. Phys.</em> 62, 1899–1906 (1975)</a>: the historical nonseparable-rate problem.</li>
+            <li>J. O. Richardson, <a href="https://doi.org/10.1063/1.4943866">“Derivation of Instanton Rate Theory from First Principles,” <em>J. Chem. Phys.</em> 144, 114106 (2016)</a>: a rate-theory derivation rather than an identification of a path exponent with the full rate.</li>
+            <li>J. E. Lawrence, <a href="https://doi.org/10.1063/5.0237368">“Semiclassical instanton theory for reaction rates at any temperature,” <em>J. Chem. Phys.</em> 161, 184115 (2024)</a>; <a href="https://arxiv.org/html/2409.02820v2">open version 2, equations (4)–(5)</a>: the ordinary multidimensional rate and stability-factor formulas used here. The coupled potential and numerical workflow in this article are our illustrative construction, not that paper's benchmark.</li>
+          </ul>
+          <section class="series-footer" aria-labelledby="reaction-series-map">
+            <h2 id="reaction-series-map">Chemical Reaction Computation series map</h2>
+            <ol class="series-list">
+              <li><a href="hydrogen-transfer-observables-model-validation.html">Part I: What Can We Actually Observe?</a> — the experimental starting point.</li>
+              <li><a href="hydrogen-transfer-barrier-to-rate.html">Part II: From a Barrier to a Rate</a> — Arrhenius, TST, and a quantum rate benchmark.</li>
+              <li><a href="reaction-dynamics-nonadiabatic.html">Part III: When One Electronic State Is Not Enough</a> — multistate reactions and nonadiabatic dynamics.</li>
+              <li><a href="reaction-dynamics-free-energy-sampling.html">Part IV: Free Energy and the Events We Rarely See</a> — equilibrium sampling and the missing dynamical clock.</li>
+              <li><a href="reaction-dynamics-instantons.html">Part V: From Barrier Penetration to Imaginary-Time Instantons</a> — the dominant contribution and its fluctuations.</li>
+              <li><a href="reaction-dynamics-uniform-instantons.html">Part VI: Instanton Rates Across Crossover</a> — what changes when the saddle reaches a boundary.</li>
+              <li><a href="reaction-dynamics-multidimensional-instantons.html">Part VII: Multidimensional Instantons</a> — a coupled 2D path solve, fluctuations, and numerical rate checks.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="reaction-dynamics-uniform-instantons.html">&lt;- Previous: Rates across crossover</a><a href="../index.html">Back to article list</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
