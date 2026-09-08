@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "reaction-dynamics-rpmd",
+    title: "Reaction Computation VIII: Instantons and RPMD",
+    path: "posts/reaction-dynamics-rpmd.html",
+    date: "2026-09-08",
+    dateText: "2026.09.08",
+    description: "Connect instanton statistics with RPMD trajectories, signed recrossing, and a same-barrier quantum benchmark.",
+    tags: ["Chemical Reactions", "RPMD", "Instantons", "Reaction Rates", "Reproduction"],
+    series: "hydrogen-transfer",
+  },
+  {
     slug: "reaction-dynamics-multidimensional-instantons",
     title: "Reaction Computation VII: Multidimensional Instantons",
     path: "posts/reaction-dynamics-multidimensional-instantons.html",

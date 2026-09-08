@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How instanton and RPMD rate calculations connect: constrained statistical weight, signed reactive flux, and a reproducible Eckart comparison with DVR.">
+  <title>Reaction Computation VIII: Instantons and RPMD | Lihui Gao</title>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]}};</script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+    <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a></nav>
+  </header>
+  <main id="top"><article class="post">
+    <header class="post-header">
+      <p class="section-label">Chemical Reaction Computation - Part VIII</p>
+      <h1>Instantons and RPMD: Two Ways to Calculate a Rate</h1>
+      <p class="post-meta">2026.09.08 - RPMD / Instantons / Reaction Rates</p>
+    </header>
+    <div class="post-content">
+      <nav class="series-nav" aria-label="Chemical Reaction Computation series navigation">
+        <a href="hydrogen-transfer-observables-model-validation.html">I. What Can We Actually Observe?</a>
+        <a href="hydrogen-transfer-barrier-to-rate.html">II. From a Barrier to a Rate</a>
+        <a href="reaction-dynamics-nonadiabatic.html">III. When One Electronic State Is Not Enough</a>
+        <a href="reaction-dynamics-free-energy-sampling.html">IV. Free Energy and Rare Events</a>
+        <a href="reaction-dynamics-instantons.html">V. Imaginary-Time Instantons</a>
+        <a href="reaction-dynamics-uniform-instantons.html">VI. Rates Across Crossover</a>
+        <a href="reaction-dynamics-multidimensional-instantons.html">VII. Multidimensional Instantons</a>
+        <a href="reaction-dynamics-rpmd.html" aria-current="page">VIII. Instantons and RPMD</a>
+      </nav>
+      <p class="lead">The previous calculation ended with a stationary ring of coordinates and a fluctuation prefactor. A familiar alternative starts with an ensemble, propagates trajectories, and extracts a rate from a correlation plateau. RPMD follows that second route. Why, then, does it keep appearing next to instanton theory?</p>
+      <p>The connection is in the statistical structure, not an instruction to animate the optimized instanton. Both calculations use spring-linked imaginary-time configurations. Ordinary instanton theory evaluates a dominant saddle and its fluctuations; RPMD samples a distribution and estimates reactive flux with auxiliary real-time dynamics. These are different approximations, and neither automatically becomes exact because the ring contains more beads.</p>
+
+      <h2 id="existing">1. What we can already reuse</h2>
+      <p>Three earlier articles supply the foundations. They are prerequisites and useful comparisons, not three implementations of the same method.</p>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Existing article</th><th>Already established</th><th>What remains here</th></tr></thead>
+        <tbody>
+          <tr><td><a href="rpmd-sho-correlation.html">PIMD V: From PIMD to RPMD</a></td><td>The Hamiltonian, thermal momenta, trajectory estimator, and harmonic position-correlation test.</td><td>A reactive dividing surface and an absolute thermal flux, rather than a position autocorrelation.</td></tr>
+          <tr><td><a href="trajectory-kubo-flux-side-comparison.html">Comparing Trajectory Dynamics with Kubo Flux-Side Correlations</a></td><td>Flux-conditioned sampling, CSSH propagation, and restoring the rate prefactor.</td><td>The many-bead nuclear ensemble and its recrossing correction. CSSH is not relabeled as RPMD.</td></tr>
+          <tr><td><a href="n1-forward-dividing-surface-equivalence.html">From Reactants or the Dividing Surface? An N=1 Equivalence Test</a></td><td>A change of sampling measure between two launch constructions for a fixed one-bead hopping model.</td><td>Finite-bead convergence and the approximation made by RPMD dynamics. That earlier forward-quadrature convergence gate remains open.</td></tr>
+        </tbody>
+      </table></div>
+      <p>We therefore do not repeat the path-integral or Kubo derivations. We keep the same convention: \(\beta_N=\beta/N\), \(\omega_N=N/(\beta\hbar)\), and the Hamiltonian \(H_N\) is the <em>sum</em> over beads. Its equilibrium weight is \(e^{-\beta_N H_N}\). Physical masses are used for the production dynamics.</p>
+
+      <h2 id="connection">2. The common object, and the point of departure</h2>
+      <p>Recall the coordinate part \(U_N\) of that Hamiltonian and compare it with the discretized imaginary-time action in <a href="reaction-dynamics-multidimensional-instantons.html#discrete-equations">Part VII</a>:</p>
+      <div class="math-block">\[
+        U_N=\sum_j\left[\frac{m\omega_N^2}{2}(q_{j+1}-q_j)^2+V(q_j)\right],
+        \qquad \frac{S_N}{\hbar}=\beta_N U_N.
+      \]</div>
+      <p>This identity explains why the same extended configurations appear in both methods. A stationary instanton is a stationary point of this coordinate function. It does <em>not</em> imply that every equilibrium ring is an instanton, or that the imaginary-time orbit is a physical trajectory.</p>
+      <p>Ordinary instanton theory finds a relevant noncollapsed saddle, expands around it, treats its special modes appropriately, and combines the action with fluctuation factors to obtain a rate. RPMD instead samples the thermal distribution on a dividing surface and releases its configurations under \(H_N\). It does not require a quadratic approximation to that sampled distribution, but its subsequent dynamics is approximate quantum dynamics.</p>
+      <p><a href="https://doi.org/10.1063/1.3267318">Richardson and Althorpe (2009)</a> established a deep-tunneling connection between ring-polymer rate theory and semiclassical instanton theory. The common saddle helps explain the connection; it is not an equality of all prefactors or of the two numerical rates at arbitrary temperatures. Our small example below tests a crossover neighborhood, not the full deep-tunneling asymptotic result.</p>
+
+      <h2 id="rate">3. A rate needs both weight and commitment</h2>
+      <p>Choose the centroid dividing surface \(f(\mathbf q)=\bar q=N^{-1}\sum_jq_j=0\), with products on the positive side. Its velocity is \(\dot f=\bar p/m\). In the phase-space convention just recalled, define</p>
+      <div class="math-block">\[
+        C_{fs}^{\rm RP}(t)=\frac{1}{(2\pi\hbar)^N}\int d\mathbf q\,d\mathbf p\;
+        e^{-\beta_NH_N}\delta(\bar q)\frac{\bar p}{m}\,
+        h[\bar q(t)].
+      \]</div>
+      <p>The initial velocity is <em>signed</em>. A negative-going crossing contributes negatively if its later trajectory is on the product side. Counting positive launches that end in products, without the corresponding negative-flux term or a justified equivalent estimator, does not evaluate this expression.</p>
+      <div class="math-block">\[
+        \mathcal F_{\rm RP}=k_{\rm RP}Q_R
+        =\underbrace{C_{fs}^{\rm RP}(0^+)}_{\mathcal F_{\rm RP\text{-}TST}}
+        \underbrace{\frac{C_{fs}^{\rm RP}(t_{\rm plateau})}
+        {C_{fs}^{\rm RP}(0^+)}}_{\kappa_{\rm RP}}.
+      \]</div>
+      <p>The first factor is the positive equilibrium flux through the surface: how often the system reaches it. The second removes crossings that do not contribute to sustained transfer. This is the useful computational split in <a href="https://doi.org/10.1063/1.1954769">Craig and Manolopoulos's refined rate formulation (2005)</a>. Changing a dividing surface changes the two factors; the properly converged RPMD rate is surface-independent under the usual rate-plateau conditions.</p>
+      <p>Do not confuse \(\kappa_{\rm RP}\), a dynamical recrossing correction to <em>ring-polymer</em> TST, with \(k_{\rm quantum}/k_{\rm classical\,TST}\) in Part II. The latter can be much greater than one even when the former is close to one.</p>
+      <p>Nor is the finite-bead expression above literally the exact ordinary Kubo flux-side trace from the earlier article: the centroid side function and its nonzero \(0^+\) limit need that distinction. Different rate correlation functions can share a plateau without having identical short-time curves. Here we compare plateaus, not microscopic time traces between incompatible definitions.</p>
+
+      <h2 id="algorithm">4. A complete, small calculation</h2>
+      <p>Reuse the single-surface Eckart barrier of <a href="reaction-dynamics-instantons.html">Part V</a>: \(V(q)=0.01\operatorname{sech}^2(1.5q)\), \(m=1836.152673\), in atomic units. Its \(T_c\) is about 249 K. There are no electronic hops. The observable is the thermal flux numerator \(\mathcal F=kQ_R\), not a molecular first-order rate obtained from the arbitrary length of a numerical box.</p>
+      <p>For this simple open channel, free-ring configurations provide a convenient reference ensemble. Fix their centroid to zero and sample their nonzero normal modes independently. The normal-coordinate variance is \(N/(\beta m\Omega_k^2)\), where \(\Omega_k=2\omega_N\sin(\pi k/N)\). Set the centroid mode exactly to zero.</p>
+      <p>Let \(\langle\cdot\rangle_{0,c}\) denote this normalized free-ring ensemble. Only the physical potential is missing from its probability density. Consequently, its reweighting factor and the absolute positive flux are</p>
+      <div class="math-block">\[
+        w(\mathbf q)=e^{-\beta_N\sum_j V(q_j)},\qquad
+        \mathcal F_{\rm RP\text{-}TST}
+        =\frac{1}{2\pi\beta\hbar}\langle w\rangle_{0,c}.
+      \]</div>
+      <p>The prefactor is not fitted. The free coordinate density per unit length is \(\sqrt{m/(2\pi\beta\hbar^2)}\); the positive Maxwell velocity integral is \(1/\sqrt{2\pi\beta m}\). Their product gives it. For \(N=1\), every constrained configuration is \(q=0\), so the formula reduces exactly to \(e^{-\beta V_0}/(2\pi\beta\hbar)\), classical TST.</p>
+      <ol>
+        <li><strong>Measure the statistical factor.</strong> Draw 131,072 independent free rings per seed, evaluate their weights, and average them. Record the importance effective sample size \((\sum w)^2/\sum w^2\).</li>
+        <li><strong>Prepare the surface ensemble.</strong> Resample 1,024 configurations with probabilities proportional to those weights. This is importance sampling of the interacting constrained distribution, not an optimized instanton with noise added.</li>
+        <li><strong>Attach flux-conditioned momenta.</strong> Internal modes have Gaussian momenta. Draw positive centroid momentum from \(\rho_+(\bar p)=(\beta\bar p/m)e^{-\beta\bar p^2/(2m)}\), or equivalently \(\bar p^2/(2m)\sim\mathrm{Exp}(\beta)\).</li>
+        <li><strong>Launch both signs.</strong> Propagate each pair \((\mathbf q,\mathbf p)\) and \((\mathbf q,-\mathbf p)\). The unbiased conditional estimator is the average of \(h[\bar q_t(\mathbf q,\mathbf p)]-h[\bar q_t(\mathbf q,-\mathbf p)]\). Momentum reversal preserves the thermal measure and supplies the missing negative-flux contribution.</li>
+        <li><strong>Read a plateau and restore the weight.</strong> Multiply this \(\kappa(t)\) by the independently estimated static factor. Use independent whole-run seeds to estimate uncertainty in their product, including both sampling stages.</li>
+      </ol>
+      <p>Production uses a symmetric potential-kick / exact free-ring normal-mode evolution / potential-kick splitting, with no thermostat and no centroid constraint after release. Propagate to 120 fs; compare the 40–80 and 80–120 fs windows. The two time labels must remain separate: bead index labels imaginary time, whereas this 120 fs is the auxiliary real-time propagation duration.</p>
+      <p>Direct free-ring importance sampling is convenient here, not a general molecular algorithm. At lower temperatures or on more complicated surfaces it may miss rare, high-weight rings. Then constrained equilibrium sampling and a free-energy calculation are needed. A large number of launched trajectories cannot repair a poorly sampled initial distribution.</p>
+
+      <h2 id="result">5. What the numerical comparison tells us</h2>
+      <p>Each quoted uncertainty is one standard error from four independent complete runs, not the spread of saved points along one plateau. The production results use 64 beads and a 4-a.u. step (0.0968 fs).</p>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Temperature</th><th>Classical TST flux</th><th>Ordinary instanton flux</th><th>RPMD flux ± SE</th><th>DVR flux</th><th>RPMD / DVR</th></tr></thead>
+        <tbody>
+          <tr><td>200 K</td><td>\(1.401\times10^{-11}\)</td><td>\(2.912\times10^{-10}\)</td><td>\((2.119\pm0.014)\times10^{-10}\)</td><td>\(2.786\times10^{-10}\)</td><td>0.761</td></tr>
+          <tr><td>260 K</td><td>\(6.963\times10^{-10}\)</td><td>Outside ordinary formula's range</td><td>\((3.138\pm0.005)\times10^{-9}\)</td><td>\(3.719\times10^{-9}\)</td><td>0.844</td></tr>
+          <tr><td>300 K</td><td>\(4.057\times10^{-9}\)</td><td>Outside ordinary formula's range</td><td>\((1.2248\pm0.0022)\times10^{-8}\)</td><td>\(1.4030\times10^{-8}\)</td><td>0.873</td></tr>
+        </tbody>
+      </table></div>
+      <p>The recrossing factors are 0.9907, 0.9976, and 0.9978, respectively. Most of the enhancement over classical TST is already in the sampled statistical factor; the dynamical correction is small on this symmetric barrier. Nevertheless, RPMD underestimates the DVR flux by about 24%, 16%, and 13%. At 200 K the ordinary instanton approximation is closer to DVR than RPMD is. There is no universal ranking implied by using more sampling.</p>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Numerical check</th><th>Observed result</th><th>Scope</th></tr></thead>
+        <tbody>
+          <tr><td>32 → 64 beads</td><td>Flux changes: 0.45%, 0.29%, 0.07% at 200, 260, 300 K.</td><td>Two-level discretization check, not an infinite-bead extrapolation.</td></tr>
+          <tr><td>4 → 2 a.u. step, paired seeds at 200 K</td><td>The 80–120 fs rate estimates coincide at the sampled resolution; maximum energy drift per bead falls from \(1.37\times10^{-6}\) to \(3.62\times10^{-7}\) Ha.</td><td>Checks both the target flux and integration error; identical endpoint classifications do not prove zero time-step error.</td></tr>
+          <tr><td>40–80 versus 80–120 fs</td><td>The largest change of the mean \(\kappa\) is 0.00015.</td><td>Plateau-window stability over the tested interval.</td></tr>
+          <tr><td>Importance sampling</td><td>Minimum effective sample size exceeds 8,500 out of 131,072 proposals across these runs.</td><td>Independent-seed errors include reweighting noise; this does not certify colder or higher-dimensional sampling.</td></tr>
+          <tr><td>One-bead limit at 300 K</td><td>\(\kappa=1\); the computed flux agrees with classical TST to floating-point precision.</td><td>A normalization and launch-estimator check for this single barrier.</td></tr>
+        </tbody>
+      </table></div>
+      <figure>
+        <picture><source media="(max-width: 700px)" srcset="../assets/data/reaction-dynamics/rpmd/rpmd-comparison-mobile.png"><img src="../assets/data/reaction-dynamics/rpmd/rpmd-comparison.png" alt="RPMD recrossing plateaus and thermal flux compared with TST, instanton, and independent DVR." loading="lazy"></picture>
+        <figcaption>Left: the signed centroid-flux recrossing factor at three temperatures, with one-standard-error bands across four independent complete runs; gray shading marks the 80–120 fs averaging window. Right: the same model's thermal flux numerator in atomic units. Squares show 64-bead RPMD with one-standard-error bars, dark dots the previously computed Hamiltonian-based DVR plateaus, and lines classical TST and the ordinary one-dimensional energy-saddle instanton formula. The dotted vertical line is \(T_c\); the ordinary instanton curve stops there by its stated validity restriction, not because RPMD propagation stops.</figcaption>
+      </figure>
+      <p>The DVR points are reused from the actual sinc-DVR Hamiltonian calculation in Part V, with its <a href="../assets/data/reaction-dynamics/eckart-four-methods-convergence.csv">box, grid, cutoff, and plateau checks</a>. Its symmetrically thermalized flux-side function is not the RPMD curve on the left. Their common comparison quantity is the rate numerator on the right. No new lower-temperature DVR result is claimed.</p>
+      <p>A stable RPMD plateau answers whether the auxiliary flux has settled. A bead comparison tests discretization. A time-step comparison tests propagation. None alone proves agreement with quantum dynamics. The gap against DVR is therefore a result to report, not something to eliminate by renormalizing the trajectory count.</p>
+
+      <h2 id="limits">6. What RPMD adds—and what it does not</h2>
+      <p>Compared with ordinary instanton theory, RPMD replaces a local saddle evaluation by a sampled equilibrium factor and adds an explicit recrossing calculation. It remains defined above the ordinary instanton crossover. That is a change of computational approximation, not a guarantee of a smaller error everywhere.</p>
+      <p>Compared with classical trajectories, it carries a finite-temperature quantum-nuclear statistical distribution in an extended phase space. But the individual beads are not independent atoms, and their trajectories are not exact quantum paths. Quantum interference, coherent dynamics, and method-dependent dynamical artifacts are not repaired simply by increasing \(N\).</p>
+      <p>Finally, this example has one potential surface. Nonadiabatic ring-polymer methods require additional electronic variables or approximations. The existence of an earlier CSSH reproduction does not validate those extensions. The useful question for any next calculation is still: which initial measure, which dynamics, and which rate estimator are actually being tested?</p>
+
+      <h2 id="code">Code and data</h2>
+      <p>Download <a href="../assets/code/reaction-dynamics/eckart_rpmd.py">eckart_rpmd.py</a> and its sibling <a href="../assets/code/reaction-dynamics/eckart_four_methods.py">eckart_four_methods.py</a>. In the website checkout, with NumPy, SciPy, and Matplotlib installed:</p>
+      <pre><code>python assets/code/reaction-dynamics/eckart_rpmd.py --output assets/data/reaction-dynamics/rpmd</code></pre>
+      <p>The plot also reads the published <a href="../assets/data/reaction-dynamics/eckart-four-methods.csv">Part V reference CSV</a>. The linked script records <a href="../assets/data/reaction-dynamics/rpmd/rpmd-blocks.csv">individual independent runs</a>, <a href="../assets/data/reaction-dynamics/rpmd/rpmd-summary.csv">summary and numerical diagnostics</a>, and <a href="../assets/data/reaction-dynamics/rpmd/rpmd-plateaus.csv">the full saved recrossing curves</a>. The 200 K half-step calculation uses the same seeds and initial samples as its full-step counterpart for a paired check.</p>
+      <section class="series-footer" aria-labelledby="reaction-series-map">
+        <h2 id="reaction-series-map">Chemical Reaction Computation series map</h2>
+        <ol class="series-list">
+          <li><a href="hydrogen-transfer-observables-model-validation.html">I. What Can We Actually Observe?</a></li>
+          <li><a href="hydrogen-transfer-barrier-to-rate.html">II. From a Barrier to a Rate</a></li>
+          <li><a href="reaction-dynamics-nonadiabatic.html">III. When One Electronic State Is Not Enough</a></li>
+          <li><a href="reaction-dynamics-free-energy-sampling.html">IV. Free Energy and Rare Events</a></li>
+          <li><a href="reaction-dynamics-instantons.html">V. Imaginary-Time Instantons</a></li>
+          <li><a href="reaction-dynamics-uniform-instantons.html">VI. Rates Across Crossover</a></li>
+          <li><a href="reaction-dynamics-multidimensional-instantons.html">VII. Multidimensional Instantons</a></li>
+          <li><a href="reaction-dynamics-rpmd.html">VIII. Instantons and RPMD</a></li>
+        </ol>
+      </section>
+    </div>
+    <nav class="post-nav" aria-label="Article navigation"><a href="reaction-dynamics-multidimensional-instantons.html">&lt;- Previous: Multidimensional instantons</a><a href="../index.html">Back to article list</a></nav>
+  </article></main>
+  <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
