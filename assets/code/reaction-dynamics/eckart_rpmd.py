@@ -99,7 +99,7 @@ def main():
             print(json.dumps(row),flush=True)
     def save(name,rows):
         with (args.output/name).open('w',newline='',encoding='utf-8') as f:
-            w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+            w=csv.DictWriter(f,fieldnames=list(rows[0]),lineterminator='\n');w.writeheader();w.writerows(rows)
     save('rpmd-blocks.csv',blocks); save('rpmd-plateaus.csv',curves)
     summary=[]
     for t,n,dt in variants:
