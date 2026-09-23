@@ -34,6 +34,7 @@ This file defines how future agents should write, revise, and publish articles f
 - Treat the website as fully public. Do not publish private local filesystem paths, absolute machine paths, usernames, email addresses beyond the intentional public contact already in the site chrome, account names, tokens, API keys, internal URLs, or other personal information.
 - Article text, captions, code snippets, and linked example scripts must avoid machine-specific paths such as local workspace directories. Use repository-relative paths, published URLs, or generic placeholders when a path is necessary.
 - Before publishing, scan new article text and code blocks for private paths, personal identifiers, raw terminal prompts, environment dumps, and accidental credentials.
+- Credential scans must inspect the matched token and nearby context before reporting a leak. Do not treat ordinary page slugs such as `sk-list-...` as API keys merely because they begin with `sk-`; use a sufficiently specific secret pattern and separately verify every hit.
 
 ## Article Shape
 
