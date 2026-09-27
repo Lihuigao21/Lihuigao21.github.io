@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "heom-theory-sac-dvr",
+    title: "HEOM: Theory, Boundaries, and DVR Tests",
+    path: "posts/heom-theory-sac-dvr.html",
+    date: "2026-09-27",
+    dateText: "2026.09.27",
+    description: "Derive Gaussian HEOM, identify its boundaries for original Tully SAC, and distinguish harmonic-bath validation from explicit nuclear-basis checks.",
+    tags: ["HEOM", "Open Quantum Systems", "DVR", "Nonadiabatic Dynamics"],
+    series: "",
+  },
+  {
     slug: "reaction-dynamics-rpmd",
     title: "Reaction Computation VIII: Instantons and RPMD",
     path: "posts/reaction-dynamics-rpmd.html",

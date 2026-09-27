@@ -1,0 +1,103 @@
+{
+  "description": "Raw-byte SHA-256 checksums; numerical sources are unchanged. New package initializers isolate the minimal dependency subset.",
+  "files": {
+    "toymodel/benchmarks/curve_quality.py": {
+      "sha256": "829c302f784a0eab33d7f527eb89e6f41331280e86ec8a50f72ab4583a281bf1",
+      "sources": [
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "harmonic-control/validation/attempt-01",
+          "path": "src/toymodel/benchmarks/curve_quality.py"
+        },
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "sac-wavepacket/validation/attempt-20260927T075514Z-d148018e",
+          "path": "src/toymodel/benchmarks/curve_quality.py"
+        }
+      ]
+    },
+    "toymodel/benchmarks/heom_harmonic.py": {
+      "sha256": "232494f127bb05bcb8f565819e8112192e4972a369d344908edc766aac98ae99",
+      "sources": [
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "harmonic-control/validation/attempt-01",
+          "path": "src/toymodel/benchmarks/heom_harmonic.py"
+        }
+      ]
+    },
+    "toymodel/DVRmethods/DVRBASE.py": {
+      "sha256": "960d3871ed2b950f879ebefbebeffb854f28944f8af6d54b4f601089144061b7",
+      "sources": [
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "harmonic-control/validation/attempt-01",
+          "path": "src/toymodel/DVRmethods/DVRBASE.py"
+        },
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "sac-wavepacket/validation/attempt-20260927T075514Z-d148018e",
+          "path": "src/toymodel/DVRmethods/DVRBASE.py"
+        }
+      ]
+    },
+    "toymodel/methods/heom.py": {
+      "sha256": "a737945a31b0af950e2805de4b3b955395b9ac90ba1796e582995efa39b5967a",
+      "sources": [
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "harmonic-control/validation/attempt-01",
+          "path": "src/toymodel/methods/heom.py"
+        }
+      ]
+    },
+    "toymodel/benchmarks/heom_sac.py": {
+      "sha256": "4737d9cc8100690a8f0eb261a14406fb448615b98f1d8ee696f505e9d44cc48e",
+      "sources": [
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "sac-wavepacket/validation/attempt-20260927T075514Z-d148018e",
+          "path": "src/toymodel/benchmarks/heom_sac.py"
+        }
+      ]
+    },
+    "toymodel/methods/finite_bath_hierarchy.py": {
+      "sha256": "7f1454d3c013d0ab6bbbfb9d55459691efc905c32647f0e2ff13a17fd5331a7a",
+      "sources": [
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "sac-wavepacket/validation/attempt-20260927T075514Z-d148018e",
+          "path": "src/toymodel/methods/finite_bath_hierarchy.py"
+        }
+      ]
+    },
+    "toymodel/model/tully_model.py": {
+      "sha256": "7fe2434cd8660d15dfc224bf8a6967e41b4baf6d8017d6798846707a0a0cb14d",
+      "sources": [
+        {
+          "kind": "accepted source snapshot",
+          "attempt": "sac-wavepacket/validation/attempt-20260927T075514Z-d148018e",
+          "path": "src/toymodel/model/tully_model.py"
+        }
+      ]
+    },
+    "toymodel/model/modelbase.py": {
+      "sha256": "41d37860bea1392c12306d62ab096a9012035e4c815d4a95242235b482ad37a8",
+      "sources": [
+        {
+          "kind": "supporting dependency copied at publication; absent from original snapshot",
+          "path": "src/toymodel/model/modelbase.py"
+        }
+      ]
+    },
+    "toymodel/utils/constant.py": {
+      "sha256": "9ded3df682b5e1769444e63432e0ae547daab1a6ad3c98667964131266290585",
+      "sources": [
+        {
+          "kind": "supporting dependency copied at publication; absent from original snapshot",
+          "path": "src/toymodel/utils/constant.py"
+        }
+      ]
+    }
+  }
+}

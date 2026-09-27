@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A derivation of Gaussian bosonic HEOM, its limits for Tully's simple avoided crossing, and two carefully distinguished DVR validation tests.">
+  <title>HEOM: Theory, Boundaries, and DVR Tests | Lihui Gao</title>
+  <link rel="canonical" href="https://lihuigao21.github.io/posts/heom-theory-sac-dvr.html">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+    <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+  </header>
+  <main id="top">
+    <article class="post">
+      <header class="post-header">
+        <p class="section-label">Quantum Dynamics</p>
+        <h1>HEOM: Theory, Boundaries, and DVR Tests</h1>
+        <p class="post-meta">2026.09.27 · HEOM / Open Quantum Systems / DVR / Tully SAC</p>
+      </header>
+      <div class="post-content">
+        <p class="lead">Can the nuclear coordinate in a nonadiabatic scattering model be treated as a bath and solved with hierarchical equations of motion (HEOM)? The answer depends on the bath statistics and preparation, not on the name assigned to the coordinate. This note derives the standard Gaussian hierarchy, explains why the original simple avoided crossing (SAC) model lies outside that implementation, and separates two numerical tests: genuine HEOM against a harmonic-bath DVR reference, and explicit electron–nuclear propagation of SAC in two bases.</p>
+        <p>The <a href="dvr-wavepacket-methods.html">DVR methods note</a> and <a href="dvr-wavepacket-dynamics.html">wavepacket propagation note</a> introduce the coordinate discretization and spectral propagator. Here the new issue is what information is retained when the nuclear degrees of freedom are eliminated. The tests below are implementation validations with stated initial conditions, rather than reproductions of a particular published figure.</p>
+
+        <h2 id="theory">1. HEOM: equations, derivation, and physical picture</h2>
+        <h3>From a joint Hamiltonian to a reduced state</h3>
+        <p>Set \(\hbar=1\) and consider one Hermitian system operator \(Q\) coupled to a zero-mean bath operator \(B\):</p>
+        <div class="math-block">\[
+          H=H_S+H_B+Q\otimes B,\qquad
+          \rho_S(t)=\operatorname{Tr}_B\rho_{SB}(t).
+        \]</div>
+        <p>For this derivation, the preparation is factorized, \(\rho_{SB}(0)=\rho_S(0)\otimes\rho_B^{\rm eq}\), with \(\rho_B^{\rm eq}=e^{-\beta H_B}/Z_B\). A standard realization is a thermal harmonic bath with linear coupling:</p>
+        <div class="math-block">\[
+          H_B=\sum_\alpha\omega_\alpha b_\alpha^\dagger b_\alpha,
+          \qquad B=\sum_\alpha g_\alpha(b_\alpha+b_\alpha^\dagger).
+        \]</div>
+        <p>The bath is Gaussian in the operators that enter the coupling. All connected contour-ordered cumulants above second order vanish, so the mean and two-time correlation determine the influence of the bath. Higher moments themselves do not vanish: Wick factorization expresses them through pair correlations. This Gaussian closure is the key assumption behind the hierarchy derived here; see <a href="https://doi.org/10.1063/5.0011599">Tanimura's HEOM review</a>.</p>
+        <div class="math-block">\[
+          C(t)=\langle B(t)B(0)\rangle_B,
+          \quad \operatorname{Re}C(t)=\tfrac12\langle\{B(t),B(0)\}\rangle_B,
+          \quad \operatorname{Im}C(t)=\tfrac1{2i}\langle[B(t),B(0)]\rangle_B.
+        \]</div>
+        <p>The symmetric part describes fluctuations; the commutator part encodes quantum response. Retaining both matters: replacing the bath by a prescribed real random force generally discards part of its backreaction.</p>
+
+        <h3>Eliminating the bath produces memory</h3>
+        <p>Let \(Q_+(s)\) and \(Q_-(s)\) denote the coupling along the forward and backward system paths, with \(\Delta Q=Q_+-Q_-\). Gaussian integration gives the influence functional</p>
+        <div class="math-block">\[
+          \mathcal F[Q_+,Q_-]=\exp\!\left[-\int_0^t ds\,\Delta Q(s)
+          \int_0^s du\,\bigl(C(s-u)Q_+(u)-C^*(s-u)Q_-(u)\bigr)\right].
+        \]</div>
+        <p>The nested integral says that the present system feels its earlier coupling to the bath. Directly storing that history is inconvenient. HEOM replaces the time convolution by coupled auxiliary variables when the correlation is expressed as exponentials:</p>
+        <div class="math-block">\[
+          C(t)=\sum_{k=1}^K c_k^{L}e^{-\nu_k t},\qquad
+          C^*(t)=\sum_{k=1}^K c_k^{R}e^{-\nu_k t}.
+        \]</div>
+        <p>Both expressions use the same, conjugation-closed set of rates. For real rates, \(c_k^R=(c_k^L)^*\). For complex rates, conjugation also exchanges the paired rates; blindly conjugating a coefficient at an unchanged rate is incorrect. Purely imaginary rates describe undamped discrete modes.</p>
+        <p>Define a memory factor for each exponential:</p>
+        <div class="math-block">\[
+          z_k(t)=-i\int_0^t du\,e^{-\nu_k(t-u)}
+          \bigl(c_k^LQ_+(u)-c_k^RQ_-(u)\bigr),
+          \qquad
+          \dot z_k=-\nu_k z_k-i(c_k^LQ_+-c_k^RQ_-).
+        \]</div>
+        <p>Now insert \(\prod_k z_k^{n_k}\) into the double path integral for the reduced density matrix and call the resulting object \(\rho_{\mathbf n}\), where \(\mathbf n=(n_1,\ldots,n_K)\). These are auxiliary density operators (ADOs); the root \(\rho_{\mathbf0}\) is the physical reduced state. Differentiation has three contributions: free system evolution, differentiation of the inserted memory factors, and differentiation of the influence functional. The first preserves the tier, the second lowers it, and the third raises it. Collecting them gives the unscaled hierarchy:</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          \dot\rho_{\mathbf n}={}&-i[H_S,\rho_{\mathbf n}]
+          -\sum_k n_k\nu_k\rho_{\mathbf n}
+          -i\sum_k[Q,\rho_{\mathbf n+\mathbf e_k}]\\
+          &-i\sum_k n_k\left(c_k^LQ\rho_{\mathbf n-\mathbf e_k}
+          -c_k^R\rho_{\mathbf n-\mathbf e_k}Q\right).
+          \end{aligned}
+        \]</div>
+        <p>Here \(\mathbf e_k\) increases one occupation index by one. For the stated factorized preparation, \(\rho_{\mathbf0}(0)=\rho_S(0)\) and all nonroot ADOs initially vanish. In the code, ADOs are rescaled for numerical conditioning; that is a change of variables, not a different bath model.</p>
+
+        <h3>What the hierarchy means physically</h3>
+        <p>The root receives feedback from first-tier ADOs; those ADOs carry bath memory and couple to higher tiers. This creates time-local equations in an enlarged space while the reduced state alone remains non-Markovian. An ADO is generally neither a normalized density matrix nor a probability for a particular phonon number. Its index labels memory factors, not explicit oscillator occupations.</p>
+        <p>Two independent limits matter: the number \(K\) of exponentials needed to represent the bath correlation, and the maximum tier \(L=\sum_k n_k\). The implementation uses a hard tier cutoff, with no automatic tail terminator or counterterm. A converged hierarchy can retain strong coupling and long memory within its bath assumptions. Increasing \(L\) cannot repair a physically incorrect correlation model.</p>
+
+        <h2 id="boundaries">2. Boundaries: Gaussian baths, harmonic motion, SAC, and DVR</h2>
+        <h3>Three related assumptions that should not be conflated</h3>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Property</th><th>Meaning in this construction</th></tr></thead>
+          <tbody>
+            <tr><td>Harmonic bath</td><td>The bath Hamiltonian is quadratic in its canonical coordinates and momenta.</td></tr>
+            <tr><td>Gaussian bath statistics</td><td>The coupled bath operators have no connected multi-time cumulants beyond second order.</td></tr>
+            <tr><td>Linear bath coupling</td><td>The operator multiplying the system coupling is linear in bath coordinates or ladder operators.</td></tr>
+          </tbody>
+        </table></div>
+        <p>A thermal harmonic bath with linear coupling supplies the Gaussian statistics needed above. Harmonic motion alone is insufficient if the initial state is non-Gaussian or the coupled observable is nonlinear. Conversely, Gaussian statistics are a statement about an operator process, not a synonym for a harmonic potential. The system operator \(Q\) need not be linear in a system coordinate, and \(H_S\) need not be harmonic. The restriction discussed here concerns the bath side of the partition.</p>
+        <p>The stationary thermal and factorized preparation is the scope of this implementation, not a universal prohibition on all HEOM variants. Correlated preparations and other bath classes require corresponding formulations and initialization procedures.</p>
+
+        <h3>Why the original SAC model is outside this standard HEOM</h3>
+        <p>In the fixed diabatic basis, Tully's simple avoided crossing has</p>
+        <div class="math-block">\[
+          H=I\otimes\frac{p^2}{2m}+\sigma_z\otimes f(q)+\sigma_x\otimes g(q),
+          \qquad
+          f(q)=A\,\operatorname{sgn}(q)(1-e^{-B|q|}),\quad
+          g(q)=Ce^{-Dq^2}.
+        \]</div>
+        <p>Calling the nucleus the bath identifies \(H_B=p^2/(2m)\), \(B_z=f(q)\), and \(B_x=g(q)\). It does not make either coupled bath operator linear or Gaussian. A simple illustration is a centered real Gaussian variable with variance \(s^2\): the nonlinear variable \(X=q^2-s^2\) has \(\langle X^3\rangle=8s^6\ne0\). A Gaussian coordinate therefore does not imply Gaussian statistics for nonlinear functions of that coordinate.</p>
+        <p>There are two further obstacles. An incident localized nuclear packet is not a stationary Gibbs state of the free bath, so correlations generally depend on both times, \(C_{ab}(t,s)\), rather than only \(t-s\); its time-dependent mean must also be retained. Moreover, \(f(q)\) and \(g(q)\) act on the same coordinate and form correlated channels. They cannot simply be passed to an implementation that assumes independent Gaussian baths.</p>
+        <p>Approximating SAC by a harmonic bath and linearizing its couplings would define a different model. Retaining the original Hamiltonian instead requires explicit nuclear dynamics or a suitable generalized treatment of non-Gaussian, nonstationary correlations. <a href="https://doi.org/10.1063/1.5018725">Hsieh and Cao's generalized hierarchy</a> provides a framework based on multi-time bath correlations. That construction has not been implemented in this work. Adding tiers to the standard second-cumulant hierarchy does not restore omitted higher cumulants.</p>
+
+        <h3>How DVR differs</h3>
+        <p>DVR is a representation of coordinate operators. Here it discretizes the full electron–nuclear Hamiltonian and propagates its joint state. It does not assume a Gaussian bath or eliminate nuclei through a two-time correlation. Its main numerical controls are spatial resolution, box size, and propagation accuracy. HEOM instead eliminates a bath under specified statistical assumptions and controls the resulting correlation expansion and hierarchy truncation.</p>
+        <p>They are therefore not mutually exclusive alternatives at the same conceptual level: a system coordinate can itself be represented by DVR and coupled to an external HEOM bath. For this note, coordinate DVR supplies an explicit reference against which the reduced electronic density is compared.</p>
+
+        <h2 id="results">3. Numerical tests and what they establish</h2>
+        <p>Both comparisons use the complete complex electronic density matrix in one fixed diabatic basis. With grid weights absorbed into the discrete amplitudes, \(\rho_{ij}(t)=\sum_a\psi_{ia}(t)\psi_{ja}^*(t)\) for a pure joint state. The reported error is</p>
+        <div class="math-block">\[
+          \epsilon=\max_{t,i,j}|\rho_{ij}^{(1)}(t)-\rho_{ij}^{(2)}(t)|.
+        \]</div>
+        <p>Agreement in populations alone would miss phase and conjugation errors, so the coherence \(\rho_{01}\) is checked as well. No density or wavefunction is renormalized during propagation.</p>
+
+        <h3>Test A: genuine Gaussian HEOM versus harmonic-bath DVR</h3>
+        <p>The first test deliberately satisfies the standard assumptions. In units with \(\hbar=m=1\),</p>
+        <div class="math-block">\[
+          H=\frac{p^2}{2}+\frac{\omega^2q^2}{2}+H_S+g\sqrt{2\omega}\,Qq,
+          \quad H_S=0.31\sigma_z+0.12\sigma_x,
+          \quad Q=0.8\sigma_x+0.2\sigma_z.
+        \]</div>
+        <p>We use \(\omega=0.9\), \(g=0.19\), \(\beta=2.2\), and \(0\le t\le6\), with 301 saved times. Initially the electronic system is in state 0 and the uncoupled oscillator is in its thermal Gibbs state. Its correlation has an exact two-exponential form:</p>
+        <div class="math-block">\[
+          C(t)=g^2\left[(\bar n+1)e^{-i\omega t}+\bar n e^{i\omega t}\right],
+          \qquad \bar n=(e^{\beta\omega}-1)^{-1}.
+        \]</div>
+        <p>The independent reference constructs and diagonalizes the coupled coordinate-DVR Hamiltonian. It is an actual spatial calculation, not an analytic expression relabeled as DVR.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Comparison</th><th>Maximum density-element difference</th></tr></thead>
+          <tbody>
+            <tr><td>HEOM depth 2 versus DVR</td><td>\(3.6860\times10^{-3}\)</td></tr>
+            <tr><td>HEOM depth 4 versus DVR</td><td>\(5.6156\times10^{-5}\)</td></tr>
+            <tr><td>HEOM depth 8 versus DVR</td><td>\(2.9882\times10^{-9}\)</td></tr>
+            <tr><td>HEOM depth 10 versus DVR</td><td>\(9.5502\times10^{-12}\)</td></tr>
+            <tr><td>DVR grid: 64 to 96 points, box \([-8,8]\)</td><td>\(7.1887\times10^{-14}\)</td></tr>
+            <tr><td>DVR box: \([-8,8]\) to \([-10,10]\), fixed spacing</td><td>\(1.4527\times10^{-13}\)</td></tr>
+          </tbody>
+        </table></div>
+        <figure>
+          <a href="../assets/img/heom-validation/harmonic-control.png"><img src="../assets/img/heom-validation/harmonic-control.png" alt="Harmonic bath: electronic population and real coherence from HEOM at increasing hierarchy depth and coordinate DVR" loading="lazy"></a>
+          <figcaption>Harmonic-bath control. Both horizontal axes are time in the stated \(\hbar=m=1\) units. Left: dimensionless state-1 population; right: real electronic coherence. Blue solid curves are the 120-point DVR reference on \([-10,10]\); orange dotted, green dashed, and red dash-dotted curves are HEOM at depths 2, 8, and 10. In the DVR legend, L10 denotes box half-width 10; in HEOM legends, L denotes hierarchy depth. The depth study establishes agreement for this discrete thermal harmonic bath, not for SAC or irreversible continuum-bath relaxation. Click the figure for full resolution.</figcaption>
+        </figure>
+        <p>The declared HEOM tolerance was \(10^{-7}\), with DVR refinement tolerance \(10^{-8}\). Both passed. This validates the implemented Gaussian hierarchy on the specified finite-time oscillator problem; it does not establish accuracy for every spectral density, temperature, or coupling strength.</p>
+
+        <h3>Test B: original SAC, with full nuclear information retained</h3>
+        <p>For SAC we keep \(A=0.01\), \(B=1.6\), \(C=0.005\), \(D=1\), and \(m=2000\), all in atomic units. The initial electronic state is fixed diabatic state 0, with</p>
+        <div class="math-block">\[
+          \chi(q,0)\propto\exp\!\left[-\frac{(q-q_0)^2}{4\sigma_q^2}+ip_0(q-q_0)\right],
+          \qquad q_0=-5,\quad p_0=15,\quad\sigma_q=0.75.
+        \]</div>
+        <p>We propagate to \(t=1200\), saving 301 times. The reference uses a cell-centered sinc DVR with 256 points in \([-12,12]\), no absorbing potential, and full-Hamiltonian spectral propagation.</p>
+        <p>The second route diagonalizes the nuclear kinetic matrix, \(U^\dagger T_nU=\varepsilon\), and transforms the <em>same</em> finite Hamiltonian and initial state:</p>
+        <div class="math-block">\[
+          H'=I\otimes\varepsilon+\sigma_z\otimes(U^\dagger fU)
+          +\sigma_x\otimes(U^\dagger gU),\qquad
+          \Psi'(0)=(I\otimes U^\dagger)\Psi(0).
+        \]</div>
+        <p>Krylov exponential propagation then evolves all retained nuclear amplitudes. With all nuclear states retained, this is a unitary basis change of the same joint problem. No harmonic approximation, coupling linearization, or Gaussian bath replacement has been made.</p>
+        <p>The general finite-bath interface can also store electronic density blocks \(R_{nm}=\langle n|\rho_{SB}|m\rangle\), with \(\rho_S=\sum_nR_{nn}\). For \(H_{nm}=\langle n|H|m\rangle\), their exact equation is</p>
+        <div class="math-block">\[
+          \dot R_{nm}=-i\sum_\ell(H_{n\ell}R_{\ell m}-R_{n\ell}H_{\ell m}).
+        \]</div>
+        <p>The code calls this interface <code>FiniteBathHierarchy</code>. Its blocks retain the explicit bath indices; they are not the memory-factor ADOs in Section 1. This pure-state SAC run uses its factor-propagation route, equivalent to the full joint wavefunction. It is <strong>not standard HEOM, not a generalized cumulant HEOM implementation, and not a demonstration of bath compression</strong>.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Check</th><th>Maximum difference or diagnostic</th></tr></thead>
+          <tbody>
+            <tr><td>Full nuclear basis versus same-grid DVR, \(N=256\)</td><td>\(6.2172\times10^{-15}\)</td></tr>
+            <tr><td>DVR grid: 192 to 256 points, box \([-12,12]\)</td><td>\(4.2355\times10^{-6}\)</td></tr>
+            <tr><td>DVR box: \([-12,12]\) to \([-15,15]\), fixed \(\Delta q=0.09375\)</td><td>\(6.5503\times10^{-15}\)</td></tr>
+            <tr><td>Retained nuclear states: 160 to 192 on the 192-point grid</td><td>\(3.1950\times10^{-6}\)</td></tr>
+            <tr><td>128 retained states versus full 192-point DVR</td><td>\(2.9173\times10^{-2}\): insufficient</td></tr>
+            <tr><td>Trace error, \(N=256\)</td><td>\(4.8850\times10^{-15}\)</td></tr>
+            <tr><td>Energy drift, \(N=256\)</td><td>\(2.2204\times10^{-16}\) a.u.</td></tr>
+            <tr><td>Maximum probability within 2 a.u. of either boundary</td><td>\(6.0052\times10^{-11}\)</td></tr>
+          </tbody>
+        </table></div>
+        <figure>
+          <a href="../assets/img/heom-validation/sac-comparison.png"><img src="../assets/img/heom-validation/sac-comparison.png" alt="Original SAC: fixed diabatic populations and complex coherence agree between full nuclear basis propagation and coordinate DVR" loading="lazy"></a>
+          <figcaption>Original SAC, with time in atomic units. Upper left: blue and green solid DVR curves show fixed-diabatic populations \(P_0\) and \(P_1\); orange and red open markers show explicit nuclear-basis propagation. Upper right: blue and green curves show \(\operatorname{Re}\rho_{01}\) and \(\operatorname{Im}\rho_{01}\), with corresponding markers. Lower left: black points give the maximum density-element discrepancy at each time; the vertical scale carries a \(10^{-15}\) multiplier. The figure's “bath hierarchy” labels refer to explicit nuclear blocks, not Gaussian HEOM. Agreement near roundoff checks the basis transformation and propagators; the separate grid study controls spatial accuracy. Click the figure for full resolution.</figcaption>
+        </figure>
+        <p>At the final saved time, \(P_0=0.322901424\), \(P_1=0.677098576\), and \(\rho_{01}=0.049395406-0.024978485i\). These are finite-time fixed-diabatic observables, not asymptotic adiabatic scattering probabilities. The spatial refinement requirement was \(10^{-5}\). Thus the same-grid \(10^{-15}\) agreement is an implementation consistency check; it is not a claim of continuum accuracy to fifteen digits.</p>
+
+        <h3>Validation scope and reproducible code</h3>
+        <p>The original implementation passed 43 relevant tests, covering HEOM, finite-bath propagation, DVR, public interfaces, and curve diagnostics. The accepted plotted series passed declared finite-value, abscissa, high-frequency residual, endpoint, and spike checks, followed by visual inspection. No smoothing was applied to the physical output. A 301-to-601 saved-time control was also performed for SAC; because the propagators evaluate matrix exponentials, that is an output-schedule check, not an integration-step convergence study.</p>
+        <p>The scientific conclusion has two parts: standard HEOM agrees with coordinate DVR for the Gaussian harmonic control, while original SAC agrees between two explicit representations of its joint electron–nuclear dynamics. <strong>Solving original SAC with a genuinely generalized non-Gaussian, nonstationary HEOM remains unfinished.</strong></p>
+        <ul>
+          <li><a href="../assets/code/heom-validation/README.md">Reproduction instructions and scope</a>.</li>
+          <li><a href="../assets/code/heom-validation/heom-validation.zip">Download the self-contained Python source bundle</a>, including both benchmark runners and their minimal dependencies.</li>
+        </ul>
+        <p>The downloadable bundle uses NumPy, SciPy, and Matplotlib. Its README gives commands that run outside the original research repository and distinguishes the accepted benchmark source from publication packaging.</p>
+
+        <h3>References</h3>
+        <ol>
+          <li>Y. Tanimura, “Perspective: Numerically ‘exact’ approach to open quantum dynamics: The hierarchical equations of motion (HEOM),” <em>J. Chem. Phys.</em> <strong>153</strong>, 020901 (2020). <a href="https://doi.org/10.1063/5.0011599">DOI</a>; <a href="https://arxiv.org/abs/2006.05501">open manuscript</a>.</li>
+          <li>C.-Y. Hsieh and J. Cao, “A unified stochastic formulation of dissipative quantum dynamics. I. Generalized hierarchical equations,” <em>J. Chem. Phys.</em> <strong>148</strong>, 014103 (2018). <a href="https://doi.org/10.1063/1.5018725">DOI</a>; <a href="https://arxiv.org/abs/1701.05709">open manuscript</a>.</li>
+          <li>J. C. Tully, “Molecular dynamics with electronic transitions,” <em>J. Chem. Phys.</em> <strong>93</strong>, 1061–1071 (1990). <a href="https://doi.org/10.1063/1.459170">DOI</a>.</li>
+        </ol>
+      </div>
+      <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&larr; Back to article list</a><a href="dvr-wavepacket-dynamics.html">DVR wavepacket propagation &rarr;</a></nav>
+    </article>
+  </main>
+  <footer class="site-footer"><p>&copy; <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
