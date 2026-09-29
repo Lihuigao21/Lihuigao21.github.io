@@ -434,7 +434,7 @@ window.SITE_ARTICLES = [
   },
   {
     slug: "matsubara-matrix-correlation",
-    title: "Matsubara IV: Scalar and Matrix Correlation Functions",
+    title: "Matsubara IV: 绝热与非绝热 Matsubara 实时动力学推导",
     path: "posts/matsubara-matrix-correlation.html",
     date: "2026-09-29",
     dateText: "2026.09.29",

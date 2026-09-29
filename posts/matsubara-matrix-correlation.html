@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="A parallel derivation of scalar and electronic-matrix Matsubara position correlations, from the exact Kubo expression through cyclic traces and nuclear Gaussian integrals.">
-    <title>Matsubara IV: Scalar and Matrix Correlation Functions | Lihui Gao</title>
+    <title>Matsubara IV: 绝热与非绝热 Matsubara 实时动力学推导 | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
@@ -20,7 +20,7 @@
       <article class="post">
         <header class="post-header">
           <p class="section-label">Matsubara Series - Part IV</p>
-          <h1>Scalar and Matrix Correlation Functions</h1>
+          <h1>绝热与非绝热 Matsubara 实时动力学推导</h1>
           <p class="post-meta">2026.09.29 - Kubo Correlations / Electronic Matrices / Nuclear Normal Modes</p>
         </header>
         <div class="post-content">
@@ -28,7 +28,7 @@
             <a href="matsubara-lscivr-phase-space.html">I. Kubo to LSC-IVR</a>
             <a href="matsubara-modes-and-phase.html">II. Modes and Phase</a>
             <a href="matsubara-quartic-benchmark.html">III. Quartic Benchmark</a>
-            <a href="matsubara-matrix-correlation.html" aria-current="page">IV. Scalar and Matrix Correlations</a>
+            <a href="matsubara-matrix-correlation.html" aria-current="page">IV. 绝热与非绝热 Matsubara 实时动力学推导</a>
           </nav>
           <p class="lead">The scalar Matsubara formula combines a classical-looking nuclear generator with a complex quantum thermal weight. What changes when the potential becomes an electronic matrix? The nuclear Fourier transform and the origin of the phase remain the same, but the electronic trace must retain its order, and the force becomes a matrix anticommutator. This article derives the two position-correlation formulas together, keeping the electronic space discrete throughout.</p>
 
@@ -105,7 +105,27 @@
           [\Omega_N A_N e^{iH_\Sigma t/\hbar}B_Ne^{-iH_\Sigma t/\hbar}].
           \tag{8}
           \]</div>
-          <p>For the following Wigner transform we use the symmetric insertion \(\{\Omega_N,A_N\}_+/2\), where \(\{X,Y\}_+=XY+YX\). This averages the left- and right-endpoint sums, giving the trapezoidal Kubo quadrature. It has the same continuous limit as (5). The replication is an exact identity for the chosen finite quadrature; it does not create \(N\) physical electrons or nuclei.</p>
+          <h3 id="trapezoidal">Why use the trapezoidal rule here?</h3>
+          <p>The next operation is a Wigner transform of the thermal position insertion. A one-sided operator product would leave a derivative of the thermal symbol. To obtain the simple centroid multiplier used in the final formula, we choose a symmetric insertion. This choice corresponds to a particular quadrature of the Kubo integral; the trapezoidal rule is convenient for this reason, rather than being an additional law of quantum dynamics.</p>
+          <p>Define the unnormalized Kubo integrand \(f(\lambda,t)=\operatorname{Tr}[e^{-(\beta-\lambda)\hat H}\hat R e^{-\lambda\hat H}\hat R(t)]\). The left sum is (5). The right sum samples \(k=1,\ldots,N\), so averaging the two gives</p>
+          <div class="math-block">\[
+          \begin{aligned}
+          C_{RR}^{[N],\mathrm{trap}}(t)
+          &=\frac{1}{2NZ}\left[\sum_{k=0}^{N-1}f(k\beta_N,t)
+          +\sum_{k=1}^{N}f(k\beta_N,t)\right]\\
+          &=\frac{1}{NZ}\left[\frac{f(0,t)}2+
+          \sum_{k=1}^{N-1}f(k\beta_N,t)+\frac{f(\beta,t)}2\right].
+          \end{aligned}\tag{8a}
+          \]</div>
+          <p>In the replicated trace, moving the first insertion across \(\Omega_N\) advances its imaginary-time position by one segment. Thus the two sums are represented by \(\Omega_N A_N\) and \(A_N\Omega_N\), respectively. Their average is</p>
+          <div class="math-block">\[
+          C_{RR}^{[N],\mathrm{trap}}(t)
+          =\frac1Z\operatorname{Tr}_{\otimes}
+          \left[\frac12\{\Omega_N,A_N\}_+ B_N(t)\right],
+          \qquad \{X,Y\}_+=XY+YX.
+          \tag{8b}
+          \]</div>
+          <p>For a sufficiently smooth \(f\), this quadrature has an \(O(N^{-2})\) integration error at fixed \(\beta\), and converges to (4). We do not assume \(f(0,t)=f(\beta,t)\): cyclicity alone does not identify these differently ordered real-time insertions. The closed thermal path and the equality of those two integrand values are distinct questions. The replication is an exact identity for the chosen finite quadrature; it does not create \(N\) physical electrons or nuclei.</p>
 
           <h2 id="wigner">4. Transform the nuclei, leaving the electronic matrices intact</h2>
           <p>The replicated representation retains the exact time evolution but still contains nuclear operators. A nuclear Wigner transform makes the mode truncation possible without replacing electronic multiplication by scalar multiplication. For any replicated operator \(O\), use</p>
@@ -137,6 +157,7 @@
           =Q_0\Omega_{N,W}.
           \tag{12}
           \]</div>
+          <p>In particular, before symmetrization the product \(\Omega_{N,W}\star_n Q_0\) contains \(-i\hbar(2N)^{-1}\sum_l\partial_{p_l}\Omega_{N,W}\). Reversing the product changes this sign. The cancellation in (12) explains the practical purpose of the trapezoidal choice: the first insertion becomes precisely \(Q_0\Omega_{N,W}\), without silently discarding a derivative term. It does not approximate the real-time propagator.</p>
           <p>Consequently the finite trapezoidal correlation is exactly</p>
           <div class="math-block">\[
           C_{RR}^{[N],\mathrm{trap}}(t)=
@@ -181,7 +202,17 @@
           <p>Both problems have the same Gaussian \(\exp[-m\sum_la_l^2/(2\beta_N\hbar^2)]\). The scalar potential multiplies it as a number; the electronic potentials remain an ordered tensor product followed by \(\mathsf S_e\). This identifies the common nuclear calculation that will generate the phase.</p>
 
           <h2 id="modes">6. Scale the normal modes and identify the dynamical approximation</h2>
-          <p>The Gaussian alone does not justify deleting nuclear modes from real-time evolution. We first transform the exact generator so that the truncation is identifiable. For odd \(N\), use the real Fourier basis</p>
+          <h3 id="why-fourier">6.1 Why a ring suggests Fourier modes</h3>
+          <p>The Gaussian alone does not justify deleting nuclear modes from real-time evolution. We first need a basis that distinguishes slow and rapid variation around the imaginary-time ring. The trace closes the nuclear path, \(R_{l+N}=R_l\). A cyclic shift \((\mathsf T R)_l=R_{l+1}\) has the Fourier vectors \(v_{ln}=e^{2\pi i nl/N}\) as eigenvectors:</p>
+          <div class="math-block">\[
+          \mathsf T v_n=e^{2\pi i n/N}v_n,\qquad
+          (2\mathsf I-\mathsf T-\mathsf T^{-1})v_n
+          =4\sin^2\!\left(\frac{\pi n}{N}\right)v_n.
+          \tag{17a}
+          \]</div>
+          <p>The second operator is the discrete ring Laplacian: its quadratic form is \(\sum_l(R_l-R_{l+1})^2\), exactly the free-particle thermal spring term. Fourier modes therefore both respect the cyclic boundary and diagonalize the universal nuclear Gaussian. A potential can still couple these modes; Fourier transformation does not diagonalize an arbitrary interacting Hamiltonian.</p>
+          <p>With imaginary time \(\tau_l=\beta\hbar l/N\), the same vector is \(e^{i\widetilde\omega_n\tau_l}\), where \(\widetilde\omega_n=2\pi n/(\beta\hbar)\). Small \(|n|\) means a path varying slowly along imaginary time. These are imaginary-time frequencies, not a selection of low real-time vibrational or electronic excitation frequencies. We transform the periodic nuclear path even in the matrix problem; no electronic antiperiodic boundary condition is being imposed on it.</p>
+          <p>For odd \(N\), take the real sine/cosine combinations of these eigenvectors:</p>
           <div class="math-block">\[
           u_{l0}=1,\qquad
           u_{ln}=\sqrt2\sin(2\pi ln/N),\qquad
@@ -204,6 +235,38 @@
           \tag{20}
           \]</div>
           <p>Here \(\Lambda\) denotes the antisymmetric bidifferential operator in (10). Thus the nuclear star parameter becomes \(\hbar/N\), while the summed Hamiltonian carries \(N\). The physical Planck constant has not been sent to zero.</p>
+          <h3 id="three-variables">6.2 Split all three integration variables before removing any</h3>
+          <p>Equation (13) displays position and momentum integrals, but its thermal symbol (15) contains a third integral over endpoint differences. We must expose this integral to see what is eliminated. Define \(\mathcal I_N=\{-(N-1)/2,\ldots,(N-1)/2\}\), \(\mathcal I_M=\{-(M-1)/2,\ldots,(M-1)/2\}\), and \(\mathcal I_\perp=\mathcal I_N\setminus\mathcal I_M\). Use the same partition for each transformed variable:</p>
+          <div class="math-block">\[
+          Q=(Q_M,Q_\perp),\quad P=(P_M,P_\perp),\quad D=(D_M,D_\perp),
+          \qquad
+          dQ\,dP\,dD=dQ_M\,dP_M\,dD_M\,dQ_\perp\,dP_\perp\,dD_\perp.
+          \tag{20a}
+          \]</div>
+          <p>Here \(Q\) describes the midpoint path, \(D\) the separation of the two endpoints used in the Wigner transform, and \(P\) is Fourier-conjugate to that separation. The normal-mode transformation has a constant Jacobian absorbed below into \(c_N\). Splitting a measure is an identity; it does not yet factor the interacting integrand into independent modes.</p>
+          <p>After the specified Trotter splitting, put \(x_l=R_l+\Delta_l/2\). The potential insertion on the replicated electronic space is</p>
+          <div class="math-block">\[
+          \begin{aligned}
+          \mathcal T_N^{\mathrm a}(Q,D)&=e^{-\beta_N\sum_l V_{\mathrm a}(x_l)},\\
+          \mathcal T_N^{\mathrm{na}}(Q,D)&=
+          e^{-\beta_N\sum_l V_0(x_l)}
+          \left[\bigotimes_l e^{-\beta_N\mathbf V(x_l)}\right]\mathsf S_e.
+          \end{aligned}\tag{20b}
+          \]</div>
+          <p>Writing \(\operatorname{tr}\) for the replicated electronic trace (or simply the identity operation in the scalar problem), define a common integral functional</p>
+          <div class="math-block">\[
+          \begin{aligned}
+          \mathcal J_N[X]&=c_N\int dQ\,dP\,dD\,
+          e^{-iN\sum_nP_nD_n/\hbar}
+          e^{-m\sum_l a_l^2/(2\beta_N\hbar^2)}
+          \operatorname{tr}[\mathcal T_N(Q,D)X(Q,P)],\\
+          C_{RR}^{[N],\mathrm{trap}}(t)&\simeq
+          \frac{\mathcal J_N[Q_0F_N(t)]}{\mathcal J_N[\mathbf I]},\qquad
+          F_N(t)=e^{t\mathcal L_N}(Q_0\mathbf I).
+          \end{aligned}\tag{20c}
+          \]</div>
+          <p>The approximation sign here is the thermal Trotter step; no modes have yet been discarded. Equation (20c) makes the three integrations in the numerator and denominator explicit. The observable has no \(D\) argument because those variables belong to the initial thermal transform. It generally depends on all \(Q\) and \(P\), so the high momenta cannot yet be integrated as a bare Fourier factor.</p>
+          <h3>6.3 The dynamical truncation permits the first integration</h3>
           <p>Retain the index set \(\mathcal I_M=\{-(M-1)/2,\ldots,(M-1)/2\}\). Split the exact generator by definition:</p>
           <div class="math-block">\[
           \mathcal L_N=\mathcal L_{M;N}+\Delta\mathcal L_{N,M},
@@ -213,6 +276,13 @@
           \]</div>
           <p>In \(\mathcal L_{M;N}\), nuclear derivatives and nuclear streaming are restricted to \(\mathcal I_M\); the difference includes high-mode and mixed derivative contributions. Equation (21) is the real-time Matsubara approximation. Its coefficients still depend on all nuclear coordinates. In particular, deleting derivatives is not the same as substituting a low-mode path into the potential.</p>
           <p>Starting from \(Q_0\mathbf I\), this truncated generator does not create dependence on high-mode momenta, although it generally retains dependence on high-mode positions. This specific fact permits the first exact integration in the thermal reduction.</p>
+          <div class="math-block">\[
+          F_{M;N}(t;Q_M,P_M;Q_\perp)
+          :=e^{t\mathcal L_{M;N}}(Q_0\mathbf I),\qquad
+          \partial_{P_n}F_{M;N}=0\quad(n\in\mathcal I_\perp).
+          \tag{21a}
+          \]</div>
+          <p>The semicolon emphasizes that \(Q_\perp\) still enters as a parameter in the force and electronic potential. Setting its derivative in the generator to zero freezes its dynamical role; it does not set its value to zero in the thermal ensemble.</p>
 
           <h2 id="gaussian">7. Integrate the difference coordinates and derive the phase</h2>
           <h3>7.1 High-mode momenta eliminate high-mode endpoint differences</h3>
@@ -223,6 +293,16 @@
           \tag{22}
           \]</div>
           <p>This sets high-mode <em>endpoint differences</em> to zero. It does not set high-mode positions \(Q_n\) to zero. The distinction determines which remaining terms can be integrated next.</p>
+          <p>For all omitted modes together, the two successive integrations are</p>
+          <div class="math-block">\[
+          \begin{aligned}
+          \int dP_\perp\,e^{-iNP_\perp\cdot D_\perp/\hbar}
+          &=\left(\frac{2\pi\hbar}{N}\right)^{N-M}\delta^{(N-M)}(D_\perp),\\
+          \int dD_\perp\,\delta^{(N-M)}(D_\perp)\,\Phi(D_M,D_\perp)
+          &=\Phi(D_M,0).
+          \end{aligned}\tag{22a}
+          \]</div>
+          <p>Here \(\Phi\) denotes the remaining thermal integrand, including its potential matrices. The Fourier integral is a distributional identity, understood under the remaining kernel integration. Thus \(P_\perp\) is integrated over, while \(D_\perp\) is constrained to zero. We have not made the replacement \(P_\perp=0\), nor have we integrated the physical midpoint coordinates \(Q_\perp\) yet.</p>
 
           <h3>7.2 The cyclic Gaussian fixes the phase sign</h3>
           <p>To evaluate the remaining low-mode integrals, put \(\xi_n=\pi n/N\) and transform (17). In a sine/cosine pair, shifting the bead index rotates the pair by \(2\xi_n\). The mean \((\Delta_l+\Delta_{l+1})/2\) supplies a factor \(\cos\xi_n\), while \(R_l-R_{l+1}\) supplies \(2\sin\xi_n\). Pairing the coefficients gives</p>
@@ -256,6 +336,7 @@
           \tag{25}
           \]</div>
           <p>The common phase in (1) and (2) has now been derived. It is the remnant of the cyclic nuclear endpoint geometry, not an electronic approximation or an independently chosen correction to the distribution.</p>
+          <p>All difference coordinates are now gone, but for two different reasons: the high differences were eliminated by delta functions, and the low differences were integrated as shifted Gaussians. Setting \(D_M=0\) at the start would remove their Fourier integral and lose both the momentum Maxwell factor and the phase. Evaluating only the slowly varying potential factors at zero difference must not be confused with deleting the difference integral itself.</p>
 
           <h3>7.3 High-mode positions require a separate smooth-path limit</h3>
           <p>Equation (23) leaves a high-mode position weight</p>
@@ -265,7 +346,33 @@
           \omega_{n,N}^2=\left[\frac{2N}{\beta\hbar}\sin\frac{\pi n}{N}\right]^2.
           \tag{26}
           \]</div>
-          <p>Potential matrices and the evolved observable still depend on these positions. An exact finite-\(M\) integration would average them with that dependence present; it would not evaluate them at \(Q_{\perp}=0\). The smooth-path reduction instead uses an increasing low-mode space and replaces their arguments by</p>
+          <p>Potential matrices and the evolved observable still depend on these positions. An exact finite-\(M\) integration would average them with that dependence present; it would not evaluate them at \(Q_{\perp}=0\). We therefore keep this last integral visible before invoking the smooth-path reduction.</p>
+          <p>To locate the remaining dependence directly in \(C(t)\), write \(\mathcal T_N(Q)=\mathcal T_N(Q,D=0)\) using (20b), and define the finite-bead factors obtained from (24):</p>
+          <div class="math-block">\[
+          \begin{aligned}
+          K_{M;N}^{\mathrm{eff}}&=\sum_{n\in\mathcal I_M}
+          \frac{P_n^2}{2m\cos^2\xi_n},\qquad
+          \theta_{M;N}=\sum_{n\in\mathcal I_M}
+          \frac{2N}{\beta\hbar}\tan\xi_n\,P_nQ_{-n},\\
+          w_{M;N}&=e^{-\beta(K_{M;N}^{\mathrm{eff}}-i\theta_{M;N})},\qquad
+          s_\perp(Q_\perp)=e^{-\frac{\beta m}{2}
+          \sum_{n\in\mathcal I_\perp}\omega_{n,N}^2Q_n^2}.
+          \end{aligned}\tag{26a}
+          \]</div>
+          <p>These finite-bead factors keep track of the Gaussian integration; the preceding evaluation of potential factors at \(D=0\) is still a limiting approximation. At this stage the correlation is</p>
+          <div class="math-block">\[
+          C(t)\simeq
+          \frac{\int dQ_M\,dP_M\, w_{M;N}
+          \int dQ_\perp\,s_\perp\,
+          \operatorname{tr}[\mathcal T_N(Q_M,Q_\perp)Q_0
+          F_{M;N}(t;Q_M,P_M;Q_\perp)]}
+          {\int dQ_M\,dP_M\, w_{M;N}
+          \int dQ_\perp\,s_\perp\,
+          \operatorname{tr}\mathcal T_N(Q_M,Q_\perp)}.
+          \tag{26b}
+          \]</div>
+          <p>This is the missing bridge between the original three groups of integrals and the final two. It applies to both cases through the definition of \(\mathcal T_N\). The same Gaussian occurs in numerator and denominator, but it cannot cancel yet: it averages different functions of \(Q_\perp\). The nuclear potential, the electronic thermal matrices, and the propagated observable all retain that argument. Exact marginalization would keep their joint average, and does not in general replace the average of a propagator by the propagator of an averaged generator.</p>
+          <p>The smooth-path replacement instead removes \(Q_\perp\) from those arguments. It evaluates the thermal potential on the path below and constructs the reduced generator on that same path, rather than asserting that a conditional average has already done so:</p>
           <div class="math-block">\[
           R_l^M=\sum_{n\in\mathcal I_M}u_{ln}Q_n,
           \qquad
@@ -274,7 +381,28 @@
           \tag{27}
           \]</div>
           <p>The free high-mode covariance motivates this step: after taking the continuum bead limit, its omitted mean-square amplitude scales as \(\sum_{|n|>M/2}(\beta m\widetilde\omega_n^2)^{-1}=O(M^{-1})\). Turning that scale estimate into a replacement inside a thermal integral requires bounds on the potential and the observable. Doing so for a time-evolved, growing-dimensional matrix function requires further uniform control. Neither follows from the covariance estimate alone.</p>
-          <p>We adopt the smooth-path reduction used in the Matsubara construction <a href="#ref-hele">[1]</a>, <a href="#ref-chowdhury">[2]</a>, retaining this limitation explicitly. Once the high-mode dependence has been replaced by (27), their Gaussian integrals are constants and cancel between numerator and denominator. This is the precise conditional step that permits the compact formulas; it is not a proof of universal real-time convergence.</p>
+          <p>At fixed \(M\), the first omitted modes have finite continuum frequencies and finite Gaussian variances. Merely increasing \(N\) does not squeeze every omitted \(Q_n\) to zero. The decreasing tail estimate concerns increasing \(M\), with \(M\ll N\), and must be applied to the coupled integrand under suitable bounds.</p>
+          <p>We adopt the smooth-path reduction used in the Matsubara construction <a href="#ref-hele">[1]</a>, <a href="#ref-chowdhury">[2]</a>, retaining this limitation explicitly. Once the non-Gaussian factors no longer depend on \(Q_\perp\), the remaining finite-\(N\) integral is</p>
+          <div class="math-block">\[
+          \mathcal N_\perp=\int dQ_\perp\,s_\perp(Q_\perp)
+          =\prod_{n\in\mathcal I_\perp}
+          \sqrt{\frac{2\pi}{\beta m\omega_{n,N}^2}}.
+          \tag{27a}
+          \]</div>
+          <p>This common factor cancels before taking the continuum limit. The high positions have been integrated out, not set to zero as integration variables; only their occurrence in the other factors was replaced by the smooth path. This is the conditional step that permits the compact formulas, not a proof of universal real-time convergence.</p>
+          <h3 id="integration-summary">7.4 Which variables survive?</h3>
+          <p>The final measure contains \(Q_M,P_M\) because each of the other groups has now been accounted for. The operations and their logical status can be compared directly:</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Variables</th><th>Operation</th><th>Result and condition</th></tr></thead>
+            <tbody>
+              <tr><td>\(P_\perp\)</td><td>Fourier integration</td><td>Produces \(\delta(D_\perp)\), after the dynamical truncation removes high-momentum dependence from the observable.</td></tr>
+              <tr><td>\(D_\perp\)</td><td>Delta-function integration</td><td>Sets high endpoint differences to zero; leaves midpoint positions intact.</td></tr>
+              <tr><td>\(D_M\)</td><td>Shifted Gaussian integration</td><td>Produces kinetic weight and phase, after the stated low-difference thermal limit.</td></tr>
+              <tr><td>\(Q_\perp\)</td><td>Gaussian integration after smooth-path replacement</td><td>Produces \(\mathcal N_\perp\), which cancels. The replacement is not exact finite-\(M\) marginalization.</td></tr>
+              <tr><td>\(Q_M,P_M\)</td><td>No elimination</td><td>Remain in the initial ensemble and the real-time propagated observable.</td></tr>
+            </tbody>
+          </table></div>
+          <p>The order matters: truncating the propagator enables the high-momentum integration; that integration constrains the high differences; the low-difference Gaussian creates the phase; and only a separate smooth-path argument permits the final high-position cancellation.</p>
 
           <h2 id="weights">8. Assemble the scalar and matrix thermal weights</h2>
           <p>The nuclear integrations have produced kinetic energy and phase but have not removed the potential factors. Their remaining form distinguishes the two correlations. For the scalar surface, define the continuous imaginary-time average</p>
@@ -383,6 +511,49 @@
           \]</div>
           <p>Here \(H_{0,M}\) abbreviates the scalar factor in (29), with its bead quadrature understood in the stated limit. Square brackets specify the propagator's operand: it acts on the second position insertion, not on \(G_{e,N}\) or the initial \(Q_0\). Thus (36) and (37) are precisely the target formulas (1) and (2), with the electronic identity and the auxiliary bead dependence made explicit.</p>
           <p>At \(t=0\), their numerators contain \(Q_0^2\). They therefore give the centroid-square estimator for the Kubo-transformed position correlation, not the equal-time ordinary position variance. A finite-mode weight is still a truncation; recovery of the full quantum static quantity requires the corresponding static convergence.</p>
+          <h3 id="adiabatic-comparison">10.1 What changes in the nonadiabatic correlation?</h3>
+          <p>The two final ratios look similar, so we must identify which changes carry electronic physics. Both retain exactly the same nuclear integration variables, linear centroid insertions, and Matsubara phase. Their difference enters in both the thermal operator and the propagated observable:</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Ingredient in \(C(t)\)</th><th>Scalar surface</th><th>Electronic matrix potential</th></tr></thead>
+            <tbody>
+              <tr><td>Nuclear variables and phase</td><td>\(Q_M,P_M,\theta_M\)</td><td>The same nuclear variables and phase</td></tr>
+              <tr><td>Potential in the thermal weight</td><td>One scalar factor \(e^{-\beta U_M^{\mathrm a}}\)</td><td>\(e^{-\beta U_{0,M}}G_{e,N}\), retaining the cyclic electronic contraction</td></tr>
+              <tr><td>Time-evolved position insertion</td><td>The scalar function \(e^{t\mathcal L_M^{\mathrm a}}Q_0\)</td><td>The matrix function \(F_t=e^{t\mathcal L_M^{\mathrm{mat}}}(Q_0\mathbf I)\)</td></tr>
+              <tr><td>Nuclear force term</td><td>Ordinary multiplication by a potential gradient</td><td>Anticommutator with a matrix gradient</td></tr>
+              <tr><td>Electronic evolution</td><td>No electronic commutator</td><td>\(i[\mathsf V_\Sigma,F_t]/\hbar\), with \(\mathsf V_\Sigma=\sum_l\mathbf V^{(l)}\)</td></tr>
+              <tr><td>Final contraction</td><td>Multiply scalar weight and observable</td><td>Take \(\operatorname{Tr}(G_{e,N}F_t)\) after propagation</td></tr>
+            </tbody>
+          </table></div>
+          <p>In particular, starting with a nuclear-only observable does not make the propagated observable electronic-scalar. Apply (34) twice to its initial value:</p>
+          <div class="math-block">\[
+          \begin{aligned}
+          \mathcal L_M^{\mathrm{mat}}(Q_0\mathbf I)&=\frac{P_0}{m}\mathbf I,\\
+          (\mathcal L_M^{\mathrm{mat}})^2(Q_0\mathbf I)&=
+          -\frac1m\partial_{Q_0}\mathsf U_{M;N},\\
+          F_t&=Q_0\mathbf I+\frac{tP_0}{m}\mathbf I
+          -\frac{t^2}{2m}\partial_{Q_0}\mathsf U_{M;N}+O(t^3).
+          \end{aligned}\tag{37a}
+          \]</div>
+          <p>The first derivative is scalar because a position operator initially streams with its momentum. The second derivative contains the electronic-state-dependent force. It is generally a matrix; subsequent evolution can also act on it through electronic commutators. In the scalar problem the corresponding force is just \(-\partial_{Q_0}U_M^{\mathrm a}\), and the observable remains a scalar along a Hamiltonian flow.</p>
+          <p>This distinction already appears in the initial curvature of the correlation. With \(w_0=e^{-\beta(H_{0,M}-i\theta_M)}\), the matrix expression gives, when differentiation under the integral is valid,</p>
+          <div class="math-block">\[
+          \left.\frac{d^2 C_{RR}^{M,\mathrm{na}}}{dt^2}\right|_{t=0}
+          =-\frac1m\,
+          \frac{\int dQ_M\,dP_M\,w_0 Q_0\,
+          \operatorname{Tr}[G_{e,N}\partial_{Q_0}\mathsf U_{M;N}]}
+          {\int dQ_M\,dP_M\,w_0\operatorname{Tr}G_{e,N}}.
+          \tag{37b}
+          \]</div>
+          <p>The force is contracted with the electronic thermal operator, not introduced as an independently chosen scalar surface. Equation (37b) is an analytic consequence of the proposed generator and ensemble; it does not by itself establish agreement with the exact quantum curvature.</p>
+          <h3>10.2 Why tracing the thermal weight first does not finish the dynamics</h3>
+          <p>In the denominator of (37), \(\operatorname{Tr}G_{e,N}\) is sufficient because the inserted observable is the identity. At \(t=0\) the numerator also has a scalar insertion, \(Q_0^2\mathbf I\). At later times (37a) shows why that simplification generally stops working:</p>
+          <div class="math-block">\[
+          \operatorname{Tr}(G_{e,N}F_t)
+          \ne (\operatorname{Tr}G_{e,N})\,f_t
+          \quad\text{for a generic independently propagated scalar }f_t.
+          \tag{37c}
+          \]</div>
+          <p>Where \(\operatorname{Tr}G_{e,N}\ne0\), one could define a scalar ratio \(f_t:=\operatorname{Tr}(G_{e,N}F_t)/\operatorname{Tr}G_{e,N}\). That is a rewriting of the result, not a closed scalar equation of motion: computing it still requires the matrix evolution, and no autonomous Hamiltonian flow for it has been established. A replacement by one electronic state, a mean force, or independent bead electronic trajectories would require further assumptions. The ordered thermal weight and the matrix propagation together constitute the nonadiabatic difference in \(C(t)\).</p>
 
           <h2 id="checks">11. Analytic checks of the result</h2>
           <h3>11.1 One electronic state recovers the scalar formula</h3>
@@ -449,7 +620,7 @@
               <li><a href="matsubara-lscivr-phase-space.html">Part I: From Kubo to LSC-IVR</a> - phase-space representation and the harmonic/quartic benchmark.</li>
               <li><a href="matsubara-modes-and-phase.html">Part II: Low Modes and the Matsubara Phase</a> - smooth imaginary-time paths, Matsubara truncation, and phase conservation.</li>
               <li><a href="matsubara-quartic-benchmark.html">Part III: Quartic Benchmark and Phase Reweighting</a> - practical estimator, phase problem, and noisy higher-mode convergence.</li>
-              <li><a href="matsubara-matrix-correlation.html">Part IV: Scalar and Matrix Correlation Functions</a> - parallel derivations with a cyclic electronic trace and explicit nuclear Gaussian integrals.</li>
+              <li><a href="matsubara-matrix-correlation.html">Part IV: 绝热与非绝热 Matsubara 实时动力学推导</a> - parallel derivations with a cyclic electronic trace and explicit nuclear Gaussian integrals.</li>
             </ol>
           </section>
         </div>
