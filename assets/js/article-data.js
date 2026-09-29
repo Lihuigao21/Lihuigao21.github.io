@@ -433,6 +433,17 @@ window.SITE_ARTICLES = [
     part: 3,
   },
   {
+    slug: "matsubara-matrix-correlation",
+    title: "Matsubara IV: Scalar and Matrix Correlation Functions",
+    path: "posts/matsubara-matrix-correlation.html",
+    date: "2026-09-29",
+    dateText: "2026.09.29",
+    description: "Parallel scalar and electronic-matrix derivations of the Matsubara position correlation, with cyclic traces, nuclear Gaussian integrals, and analytic consistency checks.",
+    tags: ["Matsubara", "Kubo", "Nonadiabatic Dynamics", "Path Integrals", "Theory"],
+    series: "matsubara",
+    part: 4,
+  },
+  {
     slug: "matsubara-lscivr-phase-space",
     title: "Matsubara I: From Kubo to LSC-IVR",
     path: "posts/matsubara-lscivr-phase-space.html",
