@@ -19,6 +19,7 @@ This file defines how future agents should write, revise, and publish articles f
 - The “生活记录” section is a Chinese-language public section for recording daily life. Its modules include “精神世界”, “日常”, “反思”, “感情”, “与人”, “出游”, “美食”, “探索未知”, “Skill”, “正反馈”, “回忆”, “社论”, “梦与创造”, “Coffee Talk”, and “和 GPT 的深度聊天”.
 - Treat `life.html` as the section landing page. Treat `mind.html` as the “精神世界” module, not as a separate top-level site category. Put additional lifestyle module pages under `life/`.
 - When publishing any new life-note page, update the hand-maintained “最新十篇” list in `life.html` so it contains the newest ten life records in reverse chronological order.
+- When adding the first note to an empty module, replace its placeholder with an `archive-list` under “记录索引”. Locate that heading explicitly so new records do not enter a separate pinned list.
 - Do not force this section into the technical-article requirements for benchmark results, code links, or reproducible computational workflows.
 - Keep agent-authored introductions, summaries, and interface copy restrained, sincere, precise, and non-performative. This style guidance does not authorize editing, toning down, or summarizing the user's own life-note text; for user-authored notes, the preservation rules under “Editing Existing Articles” take priority.
 - Future notes in this section should stay in Chinese unless the user explicitly asks for bilingual or English text.
