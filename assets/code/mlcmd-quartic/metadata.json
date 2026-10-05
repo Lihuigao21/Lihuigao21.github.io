@@ -1,0 +1,597 @@
+{
+  "schema": "mlcmd-public-data-v1",
+  "units": "dimensionless model units; hbar = 1",
+  "sampling_scope": "independent fixed-centroid PIMC chains; conditional mean labels on a fixed grid, not ordinary-PIMD-distribution force matching",
+  "dynamics_scope": "each learned or reference PMF uses its own canonical centroid distribution; physical mass",
+  "attachment_scope": "stored-label/model/curve reproduction; no fresh PIMC sampling, CMD propagation or quantum diagonalization",
+  "models": {
+    "harmonic": {
+      "beta": 2.0,
+      "mass": 1.0,
+      "ml": {
+        "hidden_units": 12,
+        "seed": 173,
+        "max_nfev": 2000,
+        "loss_weight": "inverse_quartic"
+      },
+      "dynamics": {
+        "dt": 0.01,
+        "dt_stricter": 0.005,
+        "tmax": 8.0,
+        "q_bounds": [
+          -3.5,
+          3.5
+        ],
+        "q_bounds_stricter": [
+          -4.0,
+          4.0
+        ],
+        "n_q": 64,
+        "n_q_stricter": 96,
+        "n_p": 12,
+        "n_p_stricter": [
+          16,
+          20
+        ]
+      },
+      "quantum": {
+        "n_grid": 96,
+        "n_grid_stricter": 128,
+        "bounds": [
+          -6.0,
+          6.0
+        ],
+        "larger_bounds": [
+          -7.979381443298969,
+          7.979381443298969
+        ],
+        "larger_n_grid": 128
+      },
+      "coefficients": [
+        0,
+        0,
+        0.5
+      ],
+      "sampling": {
+        "beads": {
+          "diagnostic": 16,
+          "production": 32,
+          "stricter": 64
+        },
+        "nsteps_train": 2048,
+        "nsteps_reference": 4096,
+        "nchains": 4,
+        "burnin": 0.25,
+        "sample_stride": 1,
+        "master_seed": 20261005,
+        "reference_frequency": "local_curvature",
+        "gates": {
+          "min_ess_per_chain": 200,
+          "max_rhat": 1.05,
+          "max_force_stderr": 0.005,
+          "centroid_tolerance": 1e-11
+        }
+      },
+      "force_loss": "sum normalized weights*(model force-label)^2, weights=1/(1+q^2)^2; same total-label normalization and initialization for both modes",
+      "correlation_definition": "quantum position Kubo correlation; canonical q(0)q(t) counterpart for centroid dynamics",
+      "validated_force_error_threshold": 0.01,
+      "expected_checks": [
+        {
+          "name": "P_production_stricter_force",
+          "value": 1.4055452968501052e-20,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "P_production_stricter_width",
+          "value": 0.002387819342542369,
+          "threshold": 0.005,
+          "status": "passed"
+        },
+        {
+          "name": "direct_energy_drift",
+          "value": 0.00018913030424450028,
+          "threshold": 0.05,
+          "status": "passed"
+        },
+        {
+          "name": "direct_dt",
+          "value": 1.2369784836707698e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_nq",
+          "value": 9.992007221626409e-16,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_q_bounds",
+          "value": 9.19507686614196e-06,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_np16",
+          "value": 4.440892098500626e-16,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_np20",
+          "value": 3.3306690738754696e-16,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_energy_drift",
+          "value": 0.0001891292254310173,
+          "threshold": 0.05,
+          "status": "passed"
+        },
+        {
+          "name": "delta_dt",
+          "value": 1.2369782774246385e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_nq",
+          "value": 5.551115123125783e-16,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_q_bounds",
+          "value": 9.195039184783926e-06,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_np16",
+          "value": 6.106226635438361e-16,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_np20",
+          "value": 3.3306690738754696e-16,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_energy_drift",
+          "value": 0.00018912922545055721,
+          "threshold": 0.05,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_dt",
+          "value": 1.2369782774204752e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_nq",
+          "value": 3.552713678800501e-15,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_q_bounds",
+          "value": 9.195039182618991e-06,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_np16",
+          "value": 6.106226635438361e-16,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_np20",
+          "value": 4.440892098500626e-16,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "CMD_P_production_stricter",
+          "value": 0.0,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "CMD_q_table_stricter",
+          "value": 1.4988010832439613e-15,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_refined_independent_force",
+          "value": 2.1934761671893455e-05,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "direct_unseen_centroid_force",
+          "value": 2.490196809645795e-06,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "delta_refined_independent_force",
+          "value": 8.881784197001252e-16,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "delta_unseen_centroid_force",
+          "value": 8.881784197001252e-16,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "CMD_independent_chain_range",
+          "value": 0.0,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "exact_grid",
+          "value": 1.1721179639471178e-13,
+          "threshold": 1e-06,
+          "status": "passed"
+        },
+        {
+          "name": "exact_box",
+          "value": 8.340858143052188e-10,
+          "threshold": 1e-06,
+          "status": "passed"
+        },
+        {
+          "name": "direct_CMD_correlation",
+          "value": 8.993245201316391e-08,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "direct_independent_force",
+          "value": 2.1934761671893455e-05,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "delta_CMD_correlation",
+          "value": 2.220446049250313e-16,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "delta_independent_force",
+          "value": 4.440892098500626e-16,
+          "threshold": 0.01,
+          "status": "passed"
+        }
+      ],
+      "expected_curve_differences": {
+        "cmd_exact": 1.799872261817881e-05,
+        "direct_exact": 1.8084494170927945e-05,
+        "delta_exact": 1.7998722618123297e-05
+      },
+      "optimizer": {
+        "direct": {
+          "optimizer_success": false,
+          "optimizer_status": 0,
+          "nfev": 2000,
+          "max_nfev": 2000,
+          "weighted_force_rmse": 4.782743679578855e-07
+        },
+        "delta": {
+          "optimizer_success": true,
+          "optimizer_status": 1,
+          "nfev": 1,
+          "max_nfev": 2000,
+          "weighted_force_rmse": 1.0697320641185152e-16
+        }
+      },
+      "optimizer_interpretation": "independent predictive checks assess the fixed-budget models; reaching the evaluation budget is not optimization convergence"
+    },
+    "quartic": {
+      "beta": 2.0,
+      "mass": 1.0,
+      "ml": {
+        "hidden_units": 12,
+        "seed": 173,
+        "max_nfev": 2000,
+        "loss_weight": "inverse_quartic"
+      },
+      "dynamics": {
+        "dt": 0.01,
+        "dt_stricter": 0.005,
+        "tmax": 8.0,
+        "q_bounds": [
+          -3.5,
+          3.5
+        ],
+        "q_bounds_stricter": [
+          -4.0,
+          4.0
+        ],
+        "n_q": 64,
+        "n_q_stricter": 96,
+        "n_p": 12,
+        "n_p_stricter": [
+          16,
+          20
+        ]
+      },
+      "quantum": {
+        "n_grid": 96,
+        "n_grid_stricter": 128,
+        "bounds": [
+          -6.0,
+          6.0
+        ],
+        "larger_bounds": [
+          -7.979381443298969,
+          7.979381443298969
+        ],
+        "larger_n_grid": 128
+      },
+      "coefficients": [
+        0,
+        0,
+        0.5,
+        0,
+        0.1
+      ],
+      "sampling": {
+        "beads": {
+          "diagnostic": 32,
+          "production": 64,
+          "stricter": 128
+        },
+        "nsteps_train": 2048,
+        "nsteps_reference": 4096,
+        "nchains": 4,
+        "burnin": 0.25,
+        "sample_stride": 1,
+        "master_seed": 20261005,
+        "reference_frequency": "local_curvature",
+        "gates": {
+          "min_ess_per_chain": 200,
+          "max_rhat": 1.05,
+          "max_force_stderr": 0.005,
+          "centroid_tolerance": 1e-11
+        }
+      },
+      "force_loss": "sum normalized weights*(model force-label)^2, weights=1/(1+q^2)^2; same total-label normalization and initialization for both modes",
+      "correlation_definition": "quantum position Kubo correlation; canonical q(0)q(t) counterpart for centroid dynamics",
+      "validated_force_error_threshold": 0.01,
+      "expected_checks": [
+        {
+          "name": "P_production_stricter_force",
+          "value": 0.005146686324820848,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "P_production_stricter_width",
+          "value": 0.0023021814200383517,
+          "threshold": 0.005,
+          "status": "passed"
+        },
+        {
+          "name": "direct_energy_drift",
+          "value": 0.0035898839984831454,
+          "threshold": 0.05,
+          "status": "passed"
+        },
+        {
+          "name": "direct_dt",
+          "value": 1.2576803458903829e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_nq",
+          "value": 6.872280522429719e-14,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_q_bounds",
+          "value": 7.337491725323275e-12,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_np16",
+          "value": 1.1877655002601184e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_np20",
+          "value": 1.3485091054477039e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_energy_drift",
+          "value": 0.0035895455194570047,
+          "threshold": 0.05,
+          "status": "passed"
+        },
+        {
+          "name": "delta_dt",
+          "value": 1.2576975937324264e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_nq",
+          "value": 7.072120666862247e-14,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_q_bounds",
+          "value": 6.787431727772741e-12,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_np16",
+          "value": 1.1819382086608599e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "delta_np20",
+          "value": 1.3431352870685309e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_energy_drift",
+          "value": 0.00359492567685038,
+          "threshold": 0.05,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_dt",
+          "value": 1.2579337129243334e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_nq",
+          "value": 8.391939014529282e-08,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_q_bounds",
+          "value": 5.191176572771905e-07,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_np16",
+          "value": 1.7078107339724147e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "cmd_np20",
+          "value": 1.6899812382842327e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "CMD_P_production_stricter",
+          "value": 0.00022133210494501565,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "CMD_q_table_stricter",
+          "value": 8.02205043481663e-05,
+          "threshold": 0.0015,
+          "status": "passed"
+        },
+        {
+          "name": "direct_refined_independent_force",
+          "value": 0.0067576948538174975,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "direct_unseen_centroid_force",
+          "value": 0.004595458543663611,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "delta_refined_independent_force",
+          "value": 0.005339648201371006,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "delta_unseen_centroid_force",
+          "value": 0.00429572237489495,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "CMD_independent_chain_range",
+          "value": 0.0010889623555054104,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "exact_grid",
+          "value": 8.769721846137813e-14,
+          "threshold": 1e-06,
+          "status": "passed"
+        },
+        {
+          "name": "exact_box",
+          "value": 5.181966028348978e-14,
+          "threshold": 1e-06,
+          "status": "passed"
+        },
+        {
+          "name": "direct_CMD_correlation",
+          "value": 0.00017368012871660232,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "direct_independent_force",
+          "value": 0.004914851029951706,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "delta_CMD_correlation",
+          "value": 0.00015223439580547282,
+          "threshold": 0.01,
+          "status": "passed"
+        },
+        {
+          "name": "delta_independent_force",
+          "value": 0.004075619440477851,
+          "threshold": 0.01,
+          "status": "passed"
+        }
+      ],
+      "expected_curve_differences": {
+        "cmd_exact": 0.02874915001695555,
+        "direct_exact": 0.028906390337310073,
+        "delta_exact": 0.028880450713713257
+      },
+      "optimizer": {
+        "direct": {
+          "optimizer_success": false,
+          "optimizer_status": 0,
+          "nfev": 2000,
+          "max_nfev": 2000,
+          "weighted_force_rmse": 0.0009846860057516687
+        },
+        "delta": {
+          "optimizer_success": false,
+          "optimizer_status": 0,
+          "nfev": 2000,
+          "max_nfev": 2000,
+          "weighted_force_rmse": 0.000988646266457102
+        }
+      },
+      "optimizer_interpretation": "independent predictive checks assess the fixed-budget models; reaching the evaluation budget is not optimization convergence"
+    }
+  }
+}

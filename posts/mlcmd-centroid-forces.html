@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Derive the centroid mean-force identity, compare direct and delta ML-CMD in a quartic well, and explain PIMD datasets and fixed-centroid sampling for molecular systems.">
+    <title>CMD III: Learning Centroid Forces | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="canonical" href="https://lihuigao21.github.io/posts/mlcmd-centroid-forces.html">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Model Calculation</p>
+          <h1>CMD III: Learning Centroid Forces</h1>
+          <p class="post-meta">2026.10.05 - CMD / Machine Learning / PIMC / PIMD</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="CMD series navigation">
+            <a href="cmd-effective-surfaces-tully-sac.html">Part I: Effective Surfaces for Tully SAC</a>
+            <a href="cmd-curvature-redshift-champagne-bottle.html">Part II: Curvature Red Shift</a>
+            <a href="mlcmd-centroid-forces.html" aria-current="page">Part III: Learning Centroid Forces</a>
+          </nav>
+          <p class="lead">Centroid molecular dynamics (CMD) propagates a path centroid on a free-energy surface. Evaluating the force on that surface requires averaging over the internal imaginary-time modes, which can be more expensive than the subsequent centroid propagation. Machine-learned CMD (ML-CMD) moves this work into data generation and replaces the mean-force calculation with a learned conservative potential. This note derives the force that should be learned, compares direct and delta learning in a one-dimensional quartic well, and explains how the training data can be obtained for molecular systems.</p>
+          <p><a href="cmd-effective-surfaces-tully-sac.html#mean-force-pmf">Part I</a> introduced the constrained mean force and its integration into a potential of mean force (PMF). <a href="cmd-curvature-redshift-champagne-bottle.html">Part II</a> showed that a well-defined centroid PMF can still produce an inaccurate spectrum. Here the question is narrower: can a network reproduce reference CMD, and what would that agreement say about quantum dynamics? The numerical results below are for a controlled single well. The molecular workflows are literature-based construction schemes, not molecular calculations performed in this benchmark.</p>
+          <p>There is a useful apparent contradiction to resolve first. A centroid free energy is not the average of the bead potential energies. Why, then, can its force be obtained by averaging bead forces?</p>
+
+          <h2 id="mean-force">Why the bead-force estimator gives a mean force</h2>
+          <p>Consider a scalar physical potential energy surface (PES) \(V(q)\), constant mass \(m\), inverse temperature \(\beta=1/(k_BT)\), and \(P\) imaginary-time beads. We use Cartesian centroids and Boltzmann nuclear statistics. The ring-polymer construction is reviewed in <a href="pimd-ring-polymer-basics.html#quantum-boltzmann-trace">PIMD I</a>; only the centroid constraint needs a new derivation here. Write each bead position as</p>
+          <div class="math-block">\[
+            q_b=Q+u_b,\qquad Q=\frac1P\sum_{b=1}^{P}q_b,\qquad \sum_{b=1}^{P}u_b=0.
+          \]</div>
+          <p>The centroid \(Q\) translates the whole path, while \(u_b\) describes its internal shape. With \(u_{P+1}=u_1\), the dimensionless action is</p>
+          <div class="math-block">\[
+            S_P(Q,u)=\sum_{b=1}^{P}\left[
+              \frac{mP}{2\beta\hbar^2}(u_{b+1}-u_b)^2
+              +\frac{\beta}{P}V(Q+u_b)
+            \right].
+          \]</div>
+          <p>Define the constrained measure \(\mathcal D u=\prod_bdu_b\,\delta(P^{-1}\sum_bu_b)\). Its normalization can be absorbed into a \(Q\)-independent constant \(C_P\). The constrained configurational partition function and PMF are</p>
+          <div class="math-block">\[
+            Z_c^{(P)}(Q)=C_P\int\mathcal D u\,e^{-S_P(Q,u)},
+            \qquad A_c^{(P)}(Q)=-\frac1\beta\ln Z_c^{(P)}(Q).
+          \]</div>
+          <p>Changing \(Q\) does not change the integration domain or the spring action. Differentiating the logarithm therefore gives the essential intermediate step:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            -\frac{dA_c^{(P)}}{dQ}
+              &amp;=\frac1\beta\frac{(Z_c^{(P)})'}{Z_c^{(P)}}\\
+              &amp;=-\frac1\beta
+                \left\langle\frac{\partial S_P}{\partial Q}\right\rangle_Q
+               =-\left\langle\frac1P\sum_bV'(Q+u_b)\right\rangle_Q .
+            \end{aligned}
+          \]</div>
+          <p>The brackets denote the normalized distribution of internal paths at the specified centroid. Thus</p>
+          <div class="math-block">\[
+            \boxed{
+              F_c^{(P)}(Q)=
+              \left\langle\widetilde F(Q,u)\right\rangle_Q,\qquad
+              \widetilde F(Q,u)=-\frac1P\sum_bV'(Q+u_b).
+            }
+          \]</div>
+          <p>There are two averages: the bead average within one path, and the conditional ensemble average over internal paths. A single path gives \(\widetilde F\), not generally \(F_c^{(P)}\). The identity is exact for this finite-\(P\) distribution; the continuous quantum path integral still requires bead-number convergence. It does not assert that classical propagation on \(A_c\) is exact quantum dynamics.</p>
+          <p>To see why this does not identify the PMF with an average potential, define \(\overline V=P^{-1}\sum_bV(Q+u_b)\). Differentiating its conditional average also differentiates the statistical weights:</p>
+          <div class="math-block">\[
+            \frac{d}{dQ}\langle\overline V\rangle_Q
+            =\langle\partial_Q\overline V\rangle_Q
+             -\beta\,\operatorname{Cov}_Q
+               (\overline V,\partial_Q\overline V).
+          \]</div>
+          <p>The covariance term is why differentiating an averaged potential is a different operation from differentiating the logarithm of a partition function. Entropy and internal-mode fluctuations are already present in the conditional weights used for the mean force. No entropy contribution has been discarded in the boxed identity. Nonlinear collective variables require a separate treatment of their geometric measure; the simple result above concerns linear Cartesian centroids.</p>
+
+          <h2 id="datasets">Two ways to construct molecular datasets</h2>
+          <p>For many atoms, the input is the complete centroid configuration \(\mathbf R=(\mathbf R_1,\ldots,\mathbf R_N)\), rather than one scalar \(Q\). A dense grid in this \(3N\)-dimensional space is impractical. Two established ML-CMD approaches address the conditional average differently.</p>
+          <h3 id="projected-pimd">Ordinary PIMD trajectories and noisy force matching</h3>
+          <p>In the approach of <a href="#ref-loose">Loose, Sahrmann, and Voth</a>, an equilibrium path-integral molecular dynamics (PIMD) trajectory supplies configurations and forces. For atom \(i\) in frame \(s\), construct</p>
+          <div class="math-block">\[
+            \mathbf R_i^{(s)}=\frac1P\sum_b\mathbf r_{ib}^{(s)},
+            \qquad
+            \widetilde{\mathbf F}_i^{(s)}
+              =\frac1P\sum_b\mathbf f_{ib}^{(s)}.
+          \]</div>
+          <p>Here \(\mathbf f_{ib}\) is the physical PES force evaluated on the full configuration of bead \(b\). Spring forces are sampling forces and are not the physical labels. Periodic coordinates must be unwrapped consistently before constructing a centroid. Each frame contributes one centroid configuration and the corresponding forces on all atoms.</p>
+          <p>A frame does not provide a converged conditional mean. It provides a noisy force whose conditional expectation is the required mean force. In the scalar notation, squared-error regression obeys</p>
+          <div class="math-block">\[
+            \mathbb E[(f_\theta(Q)-\widetilde F)^2]
+            =\mathbb E[(f_\theta(Q)-F_c^{(P)}(Q))^2]
+             +\mathbb E[\operatorname{Var}(\widetilde F\mid Q)].
+          \]</div>
+          <p>The last term is independent of the model. With adequate sampling and representation, minimizing this loss estimates the conditional mean without requiring repeated visits to exactly the same high-dimensional centroid configuration. Finite data and restricted local descriptors still introduce learning error. Nearby trajectory frames are correlated, so validation should use separated trajectory blocks or independent runs.</p>
+          <p>Loose and coauthors demonstrated the method on liquid para-hydrogen and water using Silvera–Goldman and qSPC/fw potentials, respectively. Their datasets used 32 beads, 250 ps of normal-mode PIMD, and 8000 frames from the final 200 ps, followed by projection to centroid coordinates and forces and force-based DeepMD training. These are molecular condensed-phase benchmarks with specified force fields, rather than demonstrations that an arbitrary ab initio system is already solved. <a href="https://doi.org/10.1021/acs.jctc.2c00706">[1]</a></p>
+
+          <h3 id="constrained-datasets">Explicitly averaged labels from fixed centroids</h3>
+          <p>The approach of <a href="#ref-wu">Wu, Li, and Yu</a> first averages the internal modes at selected centroid configurations. Their water study extracted 2000 eight-molecule clusters from bulk PIMD, fixed the centroid positions, and used 1 ns of constrained PIMD per cluster to obtain average forces. The force correction relative to the original force field was then learned. Small-cluster training could be applied to bulk and surface water because the locality of that correction was tested for the systems studied; it is not a universal property of every material. <a href="https://doi.org/10.3389/fmolb.2022.851311">[2]</a></p>
+          <p>The following is a concrete way to implement the required conditional sampling. It explains the constraint mathematically; it is not a reconstruction of the authors' unpublished integration updates. Their paper reports a modified OpenMM implementation of fixed-centroid PIMD.</p>
+          <ol>
+            <li><strong>Select and hold a full centroid configuration.</strong> Set \(\mathbf r_{ib}=\mathbf R_i^*+\mathbf u_{ib}\), with \(\sum_b\mathbf u_{ib}=0\) for each atom. Every atom's centroid is held, not only each molecule's center of mass. The beads remain mobile.</li>
+            <li><strong>Lock the zero normal mode.</strong> In an orthonormal ring-polymer transform, \(\mathbf q_{i,0}=\sqrt P\,\mathbf R_i^*\). Keep this coordinate fixed and its fictitious momentum zero. Propagate and thermostat the other \(P-1\) modes jointly. Interactions couple the internal modes of different atoms; they cannot generally be sampled as independent atomic rings.</li>
+            <li><strong>Sample the correct conditional weight.</strong> The thermostat, force scaling, and fictitious-mass convention must correspond to the same ring-polymer Boltzmann distribution. Removing the zero mode does not remove the physical interactions among the beads.</li>
+            <li><strong>Measure the unprojected physical forces.</strong> At each retained sample, evaluate the original PES forces, average them over beads, and accumulate their time series. Constraint-projected forces have their zero-mode component removed and cannot be used as the mean-force labels.</li>
+            <li><strong>Check the average before accepting a label.</strong> Discard equilibration, account for autocorrelation, compare independent chains, and check bead number and integration step. A fixed simulation duration does not itself guarantee force precision. Finally subtract the original PES force at \(\mathbf R^*\) if a delta label is wanted.</li>
+          </ol>
+          <p>A convention that makes the sampling temperature explicit is to use the configurational energy</p>
+          <div class="math-block">\[
+            W_P=\frac1P\sum_b\left[
+              \sum_i\frac{m_i\omega_P^2}{2}
+              |\mathbf r_{i,b+1}-\mathbf r_{ib}|^2
+              +V(\mathbf r_{1b},\ldots,\mathbf r_{Nb})
+            \right],
+            \qquad \omega_P=\frac{P}{\beta\hbar}.
+          \]</div>
+          <p>Thermostatting the internal modes of \(W_P\) at temperature \(T\) samples \(e^{-\beta W_P}\). The equivalent convention uses \(U_P=PW_P\) at inverse temperature \(\beta/P\). Mixing the force and temperature conventions changes the distribution. In either convention, evaluate the unscaled physical force on each bead and then form \(P^{-1}\sum_b\mathbf f_{ib}\). The \(1/P\) in this bead average remains; do not apply an additional \(1/P\) scaling from differentiating \(W_P\).</p>
+          <p>Path-integral Monte Carlo (PIMC) can sample the same constrained weight without fictitious dynamics. The one-dimensional calculation below uses normal-mode proposals that leave the centroid fixed and a Metropolis–Hastings correction for the complete action and proposal density. Rejected proposals retain the current state in the average.</p>
+          <p>For a future ab initio application, a validated machine-learned PES could serve as the force provider for PIMD, followed by a second model for the centroid PMF. This is a proposed route: errors in the underlying PES, centroid-force learning, and CMD propagation would need separate validation. Neither the original PES energies nor their bead average should be relabelled as centroid free-energy targets.</p>
+
+          <h2 id="direct-delta">Direct and delta learning</h2>
+          <p>Once the labels are available, two conservative models can represent the same mean force. Direct learning represents the entire centroid PMF. Delta learning retains the known physical PES and represents only its free-energy correction:</p>
+          <div class="math-block">\[
+            A_{\mathrm{direct}}(Q)=a_\theta(Q),\qquad
+            A_{\mathrm{delta}}(Q)=V(Q)+d_\phi(Q).
+          \]</div>
+          <p>The production forces are negative derivatives of these scalar energies. Direct learning fits \(F_c\); delta learning fits \(\Delta F_c=F_c-F_V\), where \(F_V=-V'\). Both are force-matching problems, so the energies are determined only up to an irrelevant constant. A delta model does not need to relearn the known PES, which can be advantageous when the remaining correction is simpler.</p>
+          <p>Subtraction alone does not improve the sampling precision of the force labels. At a fixed centroid the original force \(F_V(Q)\) is deterministic, so</p>
+          <div class="math-block">\[
+            \operatorname{Var}(\widehat F_c-F_V)
+            =\operatorname{Var}(\widehat F_c).
+          \]</div>
+          <p>Thus a smaller correction is not automatically a less noisy target in relative terms, and delta learning does not remove bead-number error. Faster optimization, fewer labels, and cheaper PIMC sampling are different claims that require different comparisons.</p>
+
+          <h2 id="quartic-learning">Learning the quartic centroid surface</h2>
+          <p>A harmonic control separates implementation error from a nontrivial learned correction. For \(V(q)=q^2/2\), the bead average force is \(-Q\) for every constrained path, and the delta force is zero. The anharmonic test is</p>
+          <div class="math-block">\[
+            V(q)=\frac{q^2}{2}+\lambda q^4,\qquad
+            \lambda=0.1,\quad m=\hbar=1,\quad\beta=2.
+          \]</div>
+          <p>Coordinates, energies, and times use harmonic-oscillator reduced units with reference frequency one. This is a single well with a stiffening quartic term. It differs from the pure \(q^4/4\) model in the earlier <a href="matsubara-quartic-benchmark.html">Matsubara benchmark</a>.</p>
+          <p>The mean-force identity also identifies what the correction measures. Define \(\sigma_u^2(Q)=\langle P^{-1}\sum_bu_b^2\rangle_Q\) and \(\mu_{3,u}(Q)=\langle P^{-1}\sum_bu_b^3\rangle_Q\). Expanding the cubic term in the force and using \(\sum_bu_b=0\) gives</p>
+          <div class="math-block">\[
+            \Delta F_c(Q)
+            =-12\lambda Q\,\sigma_u^2(Q)-4\lambda\mu_{3,u}(Q).
+          \]</div>
+          <p>The correction depends on the internal path width and its third moment. The third moment need not vanish away from the center; no Gaussian approximation is used here. The learned PMF and the original PES can consequently have different curvatures even though they describe the same underlying potential.</p>
+          <figure>
+            <a href="../assets/img/mlcmd-quartic/quartic_potentials.png"><img src="../assets/img/mlcmd-quartic/quartic_potentials.png" alt="Quartic physical potential compared with independent centroid PMF and two learned potentials" loading="lazy"></a>
+            <figcaption>Quartic potential comparison at \(\beta=2\). The horizontal axis is centroid position in reduced length units; the vertical axis is energy relative to its value at zero in reduced energy units. Gray is the original PES, black is the PMF integrated from an independently sampled reference force table, orange dashed is direct ML-CMD, and blue dotted is delta ML-CMD. The learned curves follow the centroid surface rather than the bare potential. Continuous lines are model or spline evaluations, not independent sampling at every plotted coordinate.</figcaption>
+          </figure>
+          <p>The training set contains 51 centroid positions: a spacing of 0.15 within \([-3,3]\), together with specified tail points out to \(\pm8\). At each position, four independent constrained PIMC chains produce the mean-force label. Training chains use 2048 proposals, discard the first quarter, and retain repeated states after rejection. Reference and validation tables use independent random streams and longer chains. Production uses \(P=64\), checked against \(P=128\).</p>
+          <p>Both networks have one hidden layer with 12 tanh units and 36 trainable parameters. They use the same labels, initialization, coordinate scaling, loss weights proportional to \((1+Q^2)^{-2}\), total-force normalization, and a budget of 2000 objective evaluations. These chosen loss weights emphasize the center and reduce the influence of large tail forces; they are neither thermal probabilities nor inverse-variance weights. Independent validation uses 91 positions, including 40 new midpoints in \([-2.925,2.925]\). Overlap with training coordinates does not imply reuse of their sampled labels.</p>
+          <figure>
+            <a href="../assets/img/mlcmd-quartic/quartic_force_validation.png"><img src="../assets/img/mlcmd-quartic/quartic_force_validation.png" alt="Quartic centroid force correction and independently sampled unseen-position validation residuals" loading="lazy"></a>
+            <figcaption>Force learning at \(\beta=2\). The upper panel shows the centroid-force correction relative to the original PES: black reference, orange dashed direct model, and blue dotted delta model. The lower panel shows model minus independently sampled mean force at the 40 unseen midpoint positions: orange circles for direct learning and blue squares for delta learning. Axes use reduced length and force units. Error bars are one standard error of the reference label, not confidence intervals for the network or simultaneous error bands. Both models follow the independently sampled correction.</figcaption>
+          </figure>
+          <p>The maximum unseen-position force discrepancies are \(0.00460\) for direct learning and \(0.00430\) for delta learning. Both pass the specified force tolerance. The support interval \([-8,8]\) does not imply a continuous error guarantee throughout it: independent unseen-position tests cover the central midpoint interval, and tail checks are at specified discrete positions.</p>
+          <p>This experiment does not establish faster delta convergence. Both quartic fits use all 2000 objective evaluations without reaching the optimizer's stopping criterion, and their final weighted training force errors are both about \(9.9\times10^{-4}\). The harmonic delta model terminates immediately because its zero-output initialization already represents the exact zero correction. Comparing the time or label count needed to reach the same independent predictive error would be a separate learning-curve experiment.</p>
+
+          <h2 id="four-methods">Four methods and two different errors</h2>
+          <p>Accurate force matching should first reproduce reference CMD. Only then can a quantum comparison reveal the remaining dynamical approximation. The measured observable is the equilibrium Kubo-transformed position autocorrelation, with partition-function normalization and its physical amplitude retained rather than dividing by \(C(0)\). Here \(\hat H=\hat p^2/(2m)+V(\hat q)\), \(Z=\operatorname{Tr}e^{-\beta\hat H}\), and \(\hat q(t)=e^{i\hat Ht/\hbar}\hat q e^{-i\hat Ht/\hbar}\):</p>
+          <div class="math-block">\[
+            C_{qq}^{K}(t)=\frac1{\beta Z}\int_0^\beta ds\,
+            \operatorname{Tr}\!\left[
+              e^{-(\beta-s)\hat H}\hat q\,e^{-s\hat H}\hat q(t)
+            \right].
+          \]</div>
+          <p>The four curves are a numerical quantum reference from particle-in-a-box discrete variable representation (DVR) diagonalization, reference CMD on the independent force-table PMF, direct ML-CMD, and delta ML-CMD. Each CMD branch uses its own canonical phase-space weight</p>
+          <div class="math-block">\[
+            \rho_j(Q,p)\propto
+            \exp\!\left[-\beta\left(\frac{p^2}{2m}+A_j(Q)\right)\right],
+            \qquad
+            C_j(t)=\langle Q(0)Q_j(t)\rangle_{\rho_j}.
+          \]</div>
+          <p>They share temperature, physical mass, and the Maxwell momentum specification, but their position weights are not artificially forced to agree. Initial integration uses Gauss–Legendre position and Gauss–Hermite momentum quadrature. Propagation uses velocity Verlet with \(\Delta t=0.01\) through \(t=8\); all 801 time points are retained.</p>
+          <figure>
+            <a href="../assets/img/mlcmd-quartic/quartic_correlations.png"><img src="../assets/img/mlcmd-quartic/quartic_correlations.png" alt="Four quartic position correlations with learned-force and CMD-to-quantum residuals" loading="lazy"></a>
+            <figcaption>Quartic four-method comparison in reduced time and length-squared units. The upper panel compares the black quantum Kubo reference with three centroid-dynamics approximations: green reference CMD, orange dashed direct ML-CMD, and blue dotted delta ML-CMD. The pale band spans the four reference-CMD curves constructed from independent sampling chains; it is a diagnostic range, not a confidence interval. The middle panel isolates each learned model minus reference CMD in the corresponding orange and blue styles; the lower panel shows reference CMD minus quantum in green. These residuals use different vertical scales. The network-replacement error is much smaller than the observed CMD-to-quantum discrepancy. Every production time point is plotted without temporal interpolation or smoothing.</figcaption>
+          </figure>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Maximum absolute correlation difference, \(0\le t\le8\)</th><th>Harmonic control</th><th>Quartic well</th></tr></thead>
+              <tbody>
+                <tr><td>Direct ML-CMD minus reference CMD</td><td>\(8.99\times10^{-8}\)</td><td>\(1.74\times10^{-4}\)</td></tr>
+                <tr><td>Delta ML-CMD minus reference CMD</td><td>\(2.22\times10^{-16}\)</td><td>\(1.52\times10^{-4}\)</td></tr>
+                <tr><td>Reference CMD minus quantum Kubo</td><td>\(1.80\times10^{-5}\)</td><td>\(2.87\times10^{-2}\)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The correlation differences have reduced length-squared units. The harmonic quantum calculation agrees with \(\cos(t)/\beta\) to about \(8.3\times10^{-10}\); its small CMD discrepancy is numerical. In the quartic well, both networks faithfully replace the reference CMD surface, while the larger quantum discrepancy remains. Learning the correct mean force therefore does not make CMD exact quantum dynamics.</p>
+          <p>The direct and delta differences are smaller than the roughly \(0.0011\) maximum spread among CMD curves constructed from individual independent reference chains. That spread is a diagnostic, not a simultaneous confidence interval. The modest difference between the two learned errors is not evidence of a statistically resolved or universal delta advantage.</p>
+          <p>Numerical controls address different sources of error. The \(P=64\) versus \(128\) reference-force difference is at most \(0.00515\), below the specified \(0.01\) force tolerance. Halving the propagation step changes the quartic CMD correlation by about \(1.26\times10^{-5}\). Bead count, centroid-table density, initial-position interval, and position/momentum quadrature were also refined. The quantum reference uses 96 interior grid points on \([-6,6]\), with a 128-point fixed-box control and a larger-box control at fixed actual spacing \(L/(N+1)\). These are finite empirical refinements, not rigorous infinite-resolution error bounds. Independent PIMC comparisons include sampling noise.</p>
+
+          <h2 id="reproduce">Code, data, and reproducibility</h2>
+          <p>The public attachment contains the training, reference, and independent validation force tables; saved conservative networks; and complete harmonic and quartic correlation time series. Its replay command verifies the files, loads the saved models, checks energy–force consistency, recomputes the reported differences, and generates the article plots. It requires Python, NumPy, SciPy, and Matplotlib, and does not import a private ToyModel checkout.</p>
+          <pre><code>python assets/code/mlcmd-quartic/reproduce.py --output mlcmd-replay</code></pre>
+          <ul class="code-list">
+            <li><a href="../assets/code/mlcmd-quartic/README.md">Attachment README</a> describes the data, dependencies, commands, and reproduction limits.</li>
+            <li><a href="../assets/code/mlcmd-quartic/reproduce.py">reproduce.py</a> replays the saved benchmark and plots. Its optional refitting mode is separate from the default replay.</li>
+            <li><a href="../assets/code/mlcmd-quartic/mlcmd_learning.py">mlcmd_learning.py</a> implements the direct and delta scalar energy networks and force matching.</li>
+            <li><a href="../assets/code/mlcmd-quartic/quartic_training.csv">Quartic training labels</a>, <a href="../assets/code/mlcmd-quartic/quartic_reference.csv">independent reference labels</a>, and <a href="../assets/code/mlcmd-quartic/quartic_validation.csv">independent validation labels</a> retain force standard errors and validation membership.</li>
+            <li><a href="../assets/code/mlcmd-quartic/quartic_curves.csv">Quartic correlation data</a> and <a href="../assets/code/mlcmd-quartic/harmonic_curves.csv">harmonic control data</a> retain all production time points.</li>
+            <li><a href="../assets/code/mlcmd-quartic/metadata.json">Physical configuration and fit metadata</a> and <a href="../assets/code/mlcmd-quartic/checksums.json">attachment checksums</a> describe the frozen public dataset.</li>
+          </ul>
+          <p>This attachment reproduces the saved models, force validation, and figure-level comparisons. It does not independently regenerate the original constrained PIMC chains, DVR reference, or centroid trajectories. The one-dimensional dataset is a conditional-mean adaptation of ML-CMD, not a reproduction of the molecular papers' full training and simulation protocols.</p>
+          <p>The supported result is limited to these two wells at one temperature, mass, quartic coefficient, and network initialization. Temperature or isotope transfer, double wells, tunneling regimes, data-efficiency rankings, and total-cost acceleration have not been established. A molecular dataset must additionally validate its underlying PES, state-point coverage, local-environment range, and any cluster-to-bulk transfer.</p>
+
+          <h2 id="references">References and related notes</h2>
+          <ol>
+            <li id="ref-loose">T. D. Loose, P. G. Sahrmann, and G. A. Voth, “Centroid Molecular Dynamics Can Be Greatly Accelerated through Neural Network Learned Centroid Forces Derived from Path Integral Molecular Dynamics,” <em>Journal of Chemical Theory and Computation</em> <strong>18</strong>, 5856–5863 (2022). <a href="https://doi.org/10.1021/acs.jctc.2c00706">Journal article</a>; <a href="https://arxiv.org/abs/2208.07973">author manuscript</a>.</li>
+            <li id="ref-wu">C. Wu, R. Li, and K. Yu, “Learning the Quantum Centroid Force Correction in Molecular Systems: A Localized Approach,” <em>Frontiers in Molecular Biosciences</em> <strong>9</strong>, 851311 (2022). <a href="https://doi.org/10.3389/fmolb.2022.851311">Open-access article</a>.</li>
+          </ol>
+          <p>The mean-force and regression derivations in this note are provided explicitly to distinguish exact equilibrium identities from numerical and dynamical approximations. For the underlying ring-polymer construction and propagation, see <a href="pimd-ring-polymer-basics.html">PIMD I</a> and <a href="normal-mode-free-ring-polymer.html">normal-mode propagation</a>. For the distinction between a free-energy landscape and dynamics, see <a href="reaction-dynamics-free-energy-sampling.html">Reaction Computation IV</a>.</p>
+
+          <section class="series-footer" aria-labelledby="cmd-series-map">
+            <h2 id="cmd-series-map">CMD series map</h2>
+            <ol class="series-list">
+              <li><a href="cmd-effective-surfaces-tully-sac.html">Part I: CMD Effective Surfaces for Tully SAC</a> — constrained mean forces and effective surfaces.</li>
+              <li><a href="cmd-curvature-redshift-champagne-bottle.html">Part II: Curvature Red Shift in a 2D Morse Bottle</a> — a geometrically induced CMD approximation error.</li>
+              <li><a href="mlcmd-centroid-forces.html">Part III: Learning Centroid Forces</a> — mean-force derivation, direct/delta learning, and molecular dataset construction.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Back to article list</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "mlcmd-centroid-forces",
+    title: "CMD III: Learning Centroid Forces",
+    path: "posts/mlcmd-centroid-forces.html",
+    date: "2026-10-05",
+    dateText: "2026.10.05",
+    description: "Derive the centroid mean-force identity, compare direct and delta learning in a quartic well, and construct PIMD training data for molecular systems.",
+    tags: ["CMD", "Machine Learning", "PIMC", "PIMD", "Kubo", "Model Calculation"],
+    series: "cmd",
+  },
+  {
     slug: "heom-theory-sac-dvr",
     title: "HEOM: Theory, Boundaries, and DVR Tests",
     path: "posts/heom-theory-sac-dvr.html",

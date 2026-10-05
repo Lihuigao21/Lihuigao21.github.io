@@ -1,0 +1,23 @@
+{
+  "algorithm": "SHA-256",
+  "sha256": {
+    "harmonic_cmd_chains.csv": "c5eecdaf7d6e84fe0d213245b10cab24819411a26722c401fcde86bf3cab5f40",
+    "harmonic_curves.csv": "81ed684864e95b2d3457bdbd9f8e95b8a0f4dd8cc53037104b96bc96a4e62ac3",
+    "harmonic_delta.json": "160a11aa65095e9f527d6ba5efb357c38dd5ca5ccb8be89c6503a3a5c8f5cb13",
+    "harmonic_direct.json": "fd3d0fb7ec1f5893971f1acecbf49dd077b0852a51579e2042076dea6634848d",
+    "harmonic_reference.csv": "13908aa06303abf7ea932a20c33b72e10b45b3583d990504a640e255889d69c6",
+    "harmonic_training.csv": "a67fed9c650236e33edbb1bc74057c656523b2416125c4b2adcf9825b1a15f91",
+    "harmonic_validation.csv": "50f50184f1c3e26ea14daf3a181f1755d9fd230804f75f5434a59e89ec544559",
+    "metadata.json": "80af1537d24c15837ca848aa60cb64fa0263a842496bc5696c34216553fb705d",
+    "mlcmd_learning.py": "7c02729150c5bd09c528cedde239db1d8a073a8e741b8560c070fab6c8da9f80",
+    "quartic_cmd_chains.csv": "a4cc2bc2c3430536a27b495d884a5eea87fab7d5faf37d51c02d1d4acb38adcc",
+    "quartic_curves.csv": "0d94016ad5afe97390fd735d1a6a97a141d6d683f9438dbf87937ecbc813a0c2",
+    "quartic_delta.json": "8ddb293777d395913a85f3ffe1fa1c80fc15705d3a7a57b712fb7390a57c35fb",
+    "quartic_direct.json": "4a2f3e38820a7839101546055d234f80858cc6953751120bcdfc0ebb56dad1f3",
+    "quartic_reference.csv": "e28072ff8a416e238a773e53040895e8962a9c37fa3ceaa4d0f90cd56bd15e28",
+    "quartic_training.csv": "b4f4bdfdc376087f58e3bcbc96f218839a5a90a77ae221f4285f589729affcaa",
+    "quartic_validation.csv": "5c7cf7e48e9c83f0f140ed221365adcc580b8f8ba15fc948bb6ef697eae1a70d",
+    "README.md": "e32a486f2a09a347919665f37caa0f21d3bfc9b955984a7bc284cf256b75c8e7",
+    "reproduce.py": "0b23b8fbb7dac973523c8e818c486e3da04e5e080011aed1a6a7e3d033b41540"
+  }
+}
