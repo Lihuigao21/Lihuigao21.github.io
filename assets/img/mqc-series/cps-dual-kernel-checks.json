@@ -1,0 +1,191 @@
+{
+  "source": "assets/code/mqc/cps_dual_kernel_checks.py",
+  "source_sha256": "db6657751f465fe342aacfe9d9775651ce714742644b7b94edce2958de205ccd",
+  "method": "deterministic Gauss-Legendre x uniform azimuth quadrature",
+  "measure": "normalized Haar measure on CP^1; trace identity includes F=2",
+  "hamiltonian": [
+    [
+      0.35,
+      [
+        0.23,
+        0.17
+      ]
+    ],
+    [
+      [
+        0.23,
+        -0.17
+      ],
+      0.9
+    ]
+  ],
+  "initial_state": {
+    "population_0": 0.7,
+    "population_1": 0.3,
+    "relative_phase": 0.4
+  },
+  "units": "dimensionless; hbar=1",
+  "quadrature": {
+    "primary": [
+      6,
+      12
+    ],
+    "refined": [
+      10,
+      20
+    ]
+  },
+  "times": [
+    0.0,
+    0.7,
+    1.4,
+    2.1
+  ],
+  "tolerance": 1e-12,
+  "max_refinement_difference": 5.551115123125783e-16,
+  "checks": [
+    {
+      "gamma": -0.2,
+      "radius_squared": 0.6,
+      "dual_gamma": 2.0,
+      "trace_pair_error": 3.33116670526901e-16,
+      "trace_one_error": 6.789005030971602e-16,
+      "initial_weight_error": 0.0,
+      "max_density_error": 6.162054248366335e-16,
+      "same_kernel_max_population_error": 0.2922610028120576
+    },
+    {
+      "gamma": 0.0,
+      "radius_squared": 1.0,
+      "dual_gamma": 1.0,
+      "trace_pair_error": 2.7756195149949734e-16,
+      "trace_one_error": 5.602612925287463e-16,
+      "initial_weight_error": 0.0,
+      "max_density_error": 7.771561172376096e-16,
+      "same_kernel_max_population_error": 0.22140985061519525
+    },
+    {
+      "gamma": 0.3660254037844386,
+      "radius_squared": 1.7320508075688772,
+      "dual_gamma": 0.3660254037844387,
+      "trace_pair_error": 2.775781717145897e-16,
+      "trace_one_error": 4.448041604709029e-16,
+      "initial_weight_error": 0.0,
+      "max_density_error": 5.551115123125783e-16,
+      "same_kernel_max_population_error": 3.3306690738754696e-16
+    },
+    {
+      "gamma": 0.5,
+      "radius_squared": 2.0,
+      "dual_gamma": 0.25,
+      "trace_pair_error": 2.7760686444626615e-16,
+      "trace_one_error": 2.2814746985955055e-16,
+      "initial_weight_error": 1.1102230246251565e-16,
+      "max_density_error": 4.518280359883027e-16,
+      "same_kernel_max_population_error": 0.11070492530759724
+    },
+    {
+      "gamma": 1.0,
+      "radius_squared": 3.0,
+      "dual_gamma": 0.0,
+      "trace_pair_error": 2.2235641766340083e-16,
+      "trace_one_error": 5.602612925287463e-16,
+      "initial_weight_error": 2.220446049250313e-16,
+      "max_density_error": 5.273559366969494e-16,
+      "same_kernel_max_population_error": 0.6642295518455847
+    }
+  ],
+  "refined_checks": [
+    {
+      "gamma": -0.2,
+      "radius_squared": 0.6,
+      "dual_gamma": 2.0,
+      "trace_pair_error": 3.3306714305897464e-16,
+      "trace_one_error": 1.779479663555763e-15,
+      "initial_weight_error": 1.1102230246251565e-16,
+      "max_density_error": 6.661405196593057e-16,
+      "same_kernel_max_population_error": 0.2922610028120576
+    },
+    {
+      "gamma": 0.0,
+      "radius_squared": 1.0,
+      "dual_gamma": 1.0,
+      "trace_pair_error": 2.775643914882803e-16,
+      "trace_one_error": 1.33360995188173e-15,
+      "initial_weight_error": 0.0,
+      "max_density_error": 6.66136903022257e-16,
+      "same_kernel_max_population_error": 0.22140985061519514
+    },
+    {
+      "gamma": 0.3660254037844386,
+      "radius_squared": 1.7320508075688772,
+      "dual_gamma": 0.3660254037844387,
+      "trace_pair_error": 1.111926379984818e-16,
+      "trace_one_error": 6.671332471416466e-16,
+      "initial_weight_error": 0.0,
+      "max_density_error": 3.331041670144241e-16,
+      "same_kernel_max_population_error": 1.1102230246251565e-16
+    },
+    {
+      "gamma": 0.5,
+      "radius_squared": 2.0,
+      "dual_gamma": 0.25,
+      "trace_pair_error": 2.2217218733643666e-16,
+      "trace_one_error": 8.890733012544867e-16,
+      "initial_weight_error": 0.0,
+      "max_density_error": 4.449942332613273e-16,
+      "same_kernel_max_population_error": 0.11070492530759757
+    },
+    {
+      "gamma": 1.0,
+      "radius_squared": 3.0,
+      "dual_gamma": 0.0,
+      "trace_pair_error": 2.2239873181468917e-16,
+      "trace_one_error": 1.33360995188173e-15,
+      "initial_weight_error": 2.220446049250313e-16,
+      "max_density_error": 4.441215441468874e-16,
+      "same_kernel_max_population_error": 0.6642295518455852
+    }
+  ],
+  "potential_bounds": [
+    {
+      "gamma": -0.2,
+      "minimum": 0.2,
+      "maximum": 0.8
+    },
+    {
+      "gamma": 0.0,
+      "minimum": -0.0,
+      "maximum": 1.0
+    },
+    {
+      "gamma": 0.3660254037844386,
+      "minimum": -0.3660254037844386,
+      "maximum": 1.3660254037844386
+    },
+    {
+      "gamma": 0.5,
+      "minimum": -0.5,
+      "maximum": 1.5
+    },
+    {
+      "gamma": 1.0,
+      "minimum": -1.0,
+      "maximum": 2.0
+    }
+  ],
+  "figure_contract": {
+    "type": "analytic intervals, not sampled curves",
+    "physical_energy_interval": [
+      0,
+      1
+    ],
+    "visual_review_required": true
+  },
+  "versions": {
+    "numpy": "2.2.6",
+    "matplotlib": "3.10.9"
+  },
+  "scope": "static duality and prescribed electronic evolution only",
+  "passed": true
+}

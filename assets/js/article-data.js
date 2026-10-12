@@ -15,7 +15,7 @@ window.SITE_SERIES = [
     id: "mqc",
     title: "MQC Series",
     label: "Mixed Quantum-Classical Dynamics",
-    description: "Background notes, Tully-model benchmarks, mapping dynamics, density-matrix diagnostics, and ZPE-leakage checks for MQC methods.",
+    description: "Background notes, Tully-model benchmarks, density-matrix diagnostics, MMST and spin mapping, and constrained electronic phase-space representations.",
   },
   {
     id: "pimd",
@@ -50,6 +50,17 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    slug: "cps-foundations-dual-kernels",
+    title: "MQC VI: CPS, Dual Kernels, and Classical Dynamics",
+    path: "posts/cps-foundations-dual-kernels.html",
+    date: "2026-10-12",
+    dateText: "2026.10.12",
+    description: "Constraint coordinate-momentum phase space, dual kernels, the relation to MMST and spin mapping, and the distinction between exact electronic evolution and classical nuclear dynamics.",
+    tags: ["MQC", "CPS", "MMST", "Spin Mapping", "Stratonovich-Weyl", "Model Calculation"],
+    series: "mqc",
+    part: 6,
+  },
   {
     slug: "mlcmd-centroid-forces",
     title: "CMD III: Learning Centroid Forces",
@@ -285,12 +296,14 @@ window.SITE_ARTICLES = [
   },
   {
     slug: "spin-mint-three-state-morse-reproduction",
-    title: "Spin Mapping and Spin-MInt Method",
+    title: "MQC V: Spin Mapping and Spin-MInt",
     path: "posts/spin-mint-three-state-morse-reproduction.html",
     date: "2026-05-30",
     dateText: "2026.05.30",
     description: "From MMST oscillator mapping to finite-state SU(N) spin mapping, direct Spin-MInt propagation, and Tully SAC plus three-state Morse benchmarks against FSSH, Ehrenfest, and exact DVR.",
-    tags: ["Spin Mapping", "Spin-MInt", "MMST", "SU(N)", "Nonadiabatic Dynamics", "Mapping Dynamics", "Model Calculation"],
+    tags: ["MQC", "Spin Mapping", "Spin-MInt", "MMST", "SU(N)", "Nonadiabatic Dynamics", "Mapping Dynamics", "Model Calculation"],
+    series: "mqc",
+    part: 5,
   },
   {
     slug: "hamgnn-openmx-tio2-hamiltonian-workflow",

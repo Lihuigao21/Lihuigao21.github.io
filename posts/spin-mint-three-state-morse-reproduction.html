@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A method-focused note on spin mapping and Spin-MInt: physical motivation, differences from MMST oscillator mapping, SU(N) derivation, and Tully SAC plus three-state Morse benchmarks against FSSH, Ehrenfest, and exact DVR dynamics.">
-    <title>Spin Mapping and Spin-MInt Method | Lihui Gao</title>
+    <meta name="description" content="MQC series part V: spin mapping and Spin-MInt, their relation to MMST oscillator mapping, SU(N) derivation, and Tully SAC plus three-state Morse benchmarks against FSSH, Ehrenfest, and exact DVR dynamics.">
+    <title>MQC V: Spin Mapping and Spin-MInt | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
@@ -36,16 +36,27 @@
     <main id="top">
       <article class="post">
         <header class="post-header">
-          <p class="section-label">Mapping Dynamics</p>
-          <h1>Spin Mapping and Spin-MInt Method</h1>
-          <p class="post-meta">2026.05.30 - Spin Mapping / MMST / SU(N) / Spin-MInt</p>
+          <p class="section-label">MQC Series - Part V</p>
+          <h1>MQC V: Spin Mapping and Spin-MInt</h1>
+          <p class="post-meta">2026.05.30 - MQC / Spin Mapping / MMST / SU(N) / Spin-MInt</p>
         </header>
 
         <div class="post-content">
+          <nav class="series-nav" aria-label="MQC series navigation">
+            <a href="mqc-background.html">0. Background</a>
+            <a href="fssh-tully-benchmark.html">I. FSSH</a>
+            <a href="ehrenfest-tully-benchmark.html">II. Ehrenfest</a>
+            <a href="pmatrix-decoherence-balance.html">III. P-Matrix</a>
+            <a href="mmst-zpe-leakage.html">IV. MMST</a>
+            <a href="spin-mint-three-state-morse-reproduction.html">V. Spin Mapping</a>
+            <a href="cps-foundations-dual-kernels.html">VI. CPS</a>
+          </nav>
+
           <p class="lead">
             Spin mapping is best understood as a finite-state replacement for the oscillator embedding used in MMST mapping. It keeps the electronic subsystem on the geometry of an \(N\)-level Hilbert space, fixes the zero-point parameter through the Stratonovich-Weyl transform, and gives a natural route to symplectic Spin-MInt propagation. This note derives the working equations and then tests the implementation against FSSH, Ehrenfest, and exact DVR wavepacket references on both Tully's simple avoided crossing and a three-state Morse model.
           </p>
           <p>This article is the method-and-benchmark continuation of <a href="spin-mapping-math-foundations.html">Spin Mapping Mathematical Foundations</a>, which develops the \(SU(N)\) algebra, Casimir invariant, and Stratonovich-Weyl kernels used below.</p>
+          <p><a href="mmst-zpe-leakage.html">Part IV</a> introduced oscillator mapping and its raw-action diagnostics. This part develops the finite-state spin representation and its propagator; <a href="cps-foundations-dual-kernels.html">Part VI</a> then places MMST and spin mapping within the constrained coordinate-momentum phase-space framework and explains the role of dual kernels.</p>
 
           <h2>Physical Starting Point</h2>
           <p>In mixed quantum-classical nonadiabatic dynamics, the nuclear variables are usually treated as continuous phase-space coordinates \((R,P)\), while the electronic subsystem is a finite set of diabatic or adiabatic states. For an \(N\)-state diabatic model, the electronic Hamiltonian is an \(N\times N\) Hermitian matrix,</p>
@@ -110,7 +121,7 @@
           <p>with \(J_k=1\), \(J_{n\ne k}=0\), and random phases \(\theta_n\). The phase average returns the focused electronic population while each trajectory remains on the fixed spin-mapping radius.</p>
 
           <h2>Spin-MInt Propagation</h2>
-          <p>Spin-MInt is the direct minimum-integrator form of spin mapping. After decomposing the diabatic potential into trace and \(SU(N)\) components,</p>
+          <p>Spin-MInt is a momentum-integral propagation scheme for spin mapping. After decomposing the diabatic potential into trace and \(SU(N)\) components,</p>
           <div class="math-block">\[
             \hat V(R)=V_0(R)\hat I+\sum_i V_i(R)\hat S_i,
           \]</div>
@@ -150,6 +161,7 @@
           <p>Finally, drift again, \(R_{n+1}=R_{n+1/2}+\Delta t\,P_{n+1}/(2M)\). In the implementation, \(I_\Omega\) and \(e^{A\Delta t}\Omega_n\) are obtained from one augmented matrix exponential, so the spin update and the integrated electronic force are consistent. This is why the propagator is useful for generalized \(SU(N)\) mapping: it avoids adiabatic-basis derivative-coupling propagation during the Spin-MInt step, but still captures the multi-state electronic torque through the diabatic matrix commutator.</p>
 
           <h2>Method Family</h2>
+          <div class="table-scroll">
           <table>
             <thead>
               <tr>
@@ -181,6 +193,7 @@
               </tr>
             </tbody>
           </table>
+          </div>
 
           <h2>Tully SAC Benchmark</h2>
           <p>The benchmark below uses Tully's simple avoided crossing with \(q_0=-10\), \(p_0=10\), \(M=2000\), and the initial upper adiabatic state. Spin-MInt is propagated in the diabatic basis and its density matrix is projected to the instantaneous adiabatic basis for comparison. FSSH uses 512 trajectories. MMST uses 64 focused phase samples with \(\gamma=1\). Spin-MInt uses 128 W-representation phase samples. DVR is a finite-grid wavepacket reference.</p>
@@ -237,11 +250,24 @@
             <li>J. E. Runeson and J. O. Richardson, "Generalized spin mapping for quantum-classical dynamics," <em>Journal of Chemical Physics</em> <strong>152</strong>, 084110 (2020).</li>
             <li>L. E. Cook, J. R. Rampton, and T. J. H. Hele, "The Spin-MInt algorithm: An accurate and symplectic propagator for the spin-mapping representation of nonadiabatic dynamics," <em>Journal of Chemical Physics</em> <strong>164</strong>, 144112 (2026).</li>
           </ol>
+
+          <section class="series-footer" aria-labelledby="mqc-series-map">
+            <h2 id="mqc-series-map">MQC series map</h2>
+            <ol class="series-list">
+              <li><a href="mqc-background.html">Part 0: Background and Working Assumptions</a> - BO approximation, Born-Huang couplings, NAC/HST formulas, MQC closures, and limitations.</li>
+              <li><a href="fssh-tully-benchmark.html">Part I: Fewest-Switches Surface Hopping</a> - active surfaces, stochastic hops, velocity rescaling, and a Tully SAC branch benchmark.</li>
+              <li><a href="ehrenfest-tully-benchmark.html">Part II: Ehrenfest Mean-Field Dynamics</a> - mean-field forces, continuous electronic populations, and the same Tully SAC scan.</li>
+              <li><a href="pmatrix-decoherence-balance.html">Part III: P-Matrix Decoherence and Detailed Balance</a> - directed density-matrix variables, pairwise decoherence, Boltzmann detailed balance, and controlled toy diagnostics.</li>
+              <li><a href="mmst-zpe-leakage.html">Part IV: MMST Mapping and ZPE Leakage</a> - oscillator mapping variables, electronic phase sampling, ZPE leakage, gamma choices, SQC-style corrections, and spin-mapping context.</li>
+              <li><a href="spin-mint-three-state-morse-reproduction.html">Part V: Spin Mapping and Spin-MInt</a> - finite-state spin variables, Stratonovich-Weyl mapping, symplectic propagation, and two- and three-state benchmarks.</li>
+              <li><a href="cps-foundations-dual-kernels.html">Part VI: CPS, Dual Kernels, and Classical Dynamics</a> - constrained electronic phase space, dual operator kernels, and the boundary between exact electronic representation and classical nuclear dynamics.</li>
+            </ol>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="Article navigation">
-          <a href="spin-mapping-math-foundations.html">&lt;- Spin mapping foundations</a>
-          <a href="../index.html">Back to article list</a>
+          <a href="mmst-zpe-leakage.html">&lt;- Part IV: MMST</a>
+          <a href="cps-foundations-dual-kernels.html">Part VI: CPS -&gt;</a>
         </nav>
       </article>
     </main>

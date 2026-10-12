@@ -59,6 +59,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 ## Equations And Figures
 
 - Do not publish equations or explanatory text as screenshots.
+- Long inline MathJax formulas can overflow the whole mobile page even when every display block is contained and there are no MathJax errors. Inspect paragraph widths as well; move lengthy identities into scrollable display blocks and recheck with derivation disclosures expanded.
 - Wrap wide technical tables in the existing `table-scroll` class, not an unstyled new wrapper. During mobile QA, expand derivation disclosures and verify document width as well as MathJax errors; internal formula/table scrolling is acceptable, whole-page horizontal overflow is not.
 - Convert equations to MathJax/LaTeX text inside the HTML article.
 - Figures should show actual numerical, conceptual, or workflow results, not decorative filler.
@@ -109,6 +110,11 @@ Avoid purely theoretical articles with no result. If the source material is theo
 - If formulas are OCRed from screenshots or PDFs, verify them against source LaTeX or code when possible.
 
 ## Publishing Workflow
+
+Generated CSV, JSON, and SVG intended for Git publication must use explicit LF
+line endings on Windows. Check actual saved bytes before staging. Capture
+validation output and print only a bounded summary on failure; do not flood the
+terminal with a generated SVG or a full list of identical CRLF warnings.
 
 Before committing or pushing article changes:
 
