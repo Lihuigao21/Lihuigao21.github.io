@@ -52,6 +52,8 @@ Every article should normally contain:
 
 The background, principle, and workflow sections should be explicit enough that a reader can understand the motivation, the governing idea, and the successful computational path without needing private notes or trial logs.
 
+For each benchmark, describe the workflow actually used by its runner: preparation and sampling weights, parameter conventions, propagation and output cadence, nuclear feedback, observable basis, and estimator normalization. A final window filter alone must not be presented as a complete window-sampled method; prescribed nuclear paths and coupled trajectories test different claims.
+
 Articles are not lab notebooks or experiment reports. Do not include tuning history, failed attempts, debugging records, environment mishaps, or chronological error logs unless they are essential to a scientific conclusion. Present a cleaned, complete, successful path with the final choices and enough rationale to reproduce it.
 
 Avoid purely theoretical articles with no result. If the source material is theoretical, add a minimal benchmark, numerical check, derivation check, or reproducible toy example.

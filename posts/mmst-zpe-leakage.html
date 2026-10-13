@@ -174,7 +174,7 @@
             n_i>1.
           \]</div>
           <p>These raw-action excursions are often used as a ZPE-leakage diagnostic. They are not by themselves a proof of dynamical error: exact phase-space reconstruction can include signed symbols. If the same raw mapping kernel also enters an approximate nuclear force, however, those weights can affect the trajectory before any post-processing correction is applied. An inaccurate observable or energy exchange must be assessed against the appropriate reference.</p>
-          <p>A minimal two-state example makes the issue transparent. Consider a constant energy gap and a constant derivative coupling. The nuclei are force-free and move at a fixed velocity, so the exact electronic problem is a clean two-level precession. For two states, the raw action obeys</p>
+          <p>A minimal two-state example makes the issue transparent. Consider a constant energy gap and a constant derivative coupling on a prescribed constant-velocity nuclear path. Nuclear backreaction is switched off in this diagnostic, leaving a clean two-level electronic precession. Constant adiabatic energies alone would not make the full coupled nuclear force vanish when derivative couplings are present. For two states, the raw action obeys</p>
           <div class="math-block">\[
             n_i=|z_i|^2-\frac{\gamma}{2},
             \qquad
@@ -221,11 +221,11 @@
           <h3>Spin Mapping and Ring-Polymer Variants</h3>
           <p>Spin mapping uses a fixed-radius finite-state geometry and preserves the normalization structure naturally. Its W kernel can still have negative eigenvalues, so this does not universally eliminate inaccurate energy exchange from classical nuclear feedback. <a href="spin-mint-three-state-morse-reproduction.html">Part V</a> develops spin mapping and its propagator; <a href="cps-trajectories-classical-feedback.html">Part VII</a> explains its relation to scalar CPS and MMST. Ring-polymer mapping extensions address the separate issue of nuclear quantum statistics.</p>
 
-          <h2>Correction Comparison</h2>
+          <h2 id="correction-comparison">Correction Comparison</h2>
           <p>The following figure separates the main correction ideas on the same constant-gap model. The top-left panel compares population estimators. The top-right panel summarizes estimator RMS error, raw leakage fraction, and window assignment failure. The bottom-left panel shows how negative \(\gamma\) changes the formal raw-action interval. The bottom-right panel isolates the trajectory-adjusted \(\gamma\) idea by sampling SQC-like initial oscillator energies and measuring the error in the initial nuclear force.</p>
           <figure>
             <img src="../assets/img/mqc-series/mmst-correction-comparison.png" alt="MMST ZPE and gamma correction comparison">
-            <figcaption>MMST ZPE/gamma correction comparison. The upper-left panel shows mean upper-state population on the constant-gap electronic precession model. The upper-right panel reports RMS error of each population estimator, the fraction of raw samples outside \([0,1]\), and the fraction of unassigned window samples. The lower-left panel gives the raw-action interval as a function of \(\gamma\), including negative values allowed by the two-state constraint. The lower-right panel shows the initial nuclear-force error for a fixed-\(\gamma\) SQC-like window and for trajectory-adjusted \(\gamma\); the adjusted protocol collapses the force-error distribution to zero by construction.</figcaption>
+            <figcaption>MMST ZPE/gamma correction comparison. The upper-left panel shows mean upper-state population on a prescribed constant-velocity path. The upper-right panel reports RMS error of each population estimator, the fraction of raw samples outside \([0,1]\), and the fraction of unassigned window samples. All population curves use focused initialization; the curve labelled “SQC square” applies only a simplified final window filter. The lower-left panel gives analytic raw-action bounds, including negative values allowed by the two-state constraint. The lower-right panel is a separate initial diagonal-force diagnostic with SQC-like oscillator sampling; state- and trajectory-dependent offsets make its force error zero by construction. The workflow below specifies these two experiments.</figcaption>
           </figure>
           <p>The table below summarizes the population diagnostic. The <code>outside</code> column is the fraction of raw mapping samples with at least one population outside \([0,1]\). The <code>assigned</code> column is the fraction of samples that survive the estimator's assignment rule. The window/binning rows keep the observable physical but do not remove the raw leakage that exists in the underlying mapping variables.</p>
           <div class="table-scroll">
@@ -247,10 +247,87 @@
               <tr><td>Raw action</td><td>0</td><td>0.0000</td><td>0.000</td><td>1.000</td><td>0.000</td><td>1.000</td></tr>
               <tr><td>Clip and renormalize</td><td>1</td><td>0.0958</td><td>-0.500</td><td>1.500</td><td>0.487</td><td>1.000</td></tr>
               <tr><td>Window/bin</td><td>1/3</td><td>0.0655</td><td>-0.167</td><td>1.167</td><td>0.304</td><td>1.000</td></tr>
-              <tr><td>SQC square window</td><td>1/3</td><td>0.1148</td><td>-0.167</td><td>1.167</td><td>0.304</td><td>0.806</td></tr>
+              <tr><td>SQC-like final window</td><td>1/3</td><td>0.1148</td><td>-0.167</td><td>1.167</td><td>0.304</td><td>0.806</td></tr>
             </tbody>
           </table>
           </div>
+
+          <h3 id="benchmark-workflow">MMST Workflow Used in This Benchmark</h3>
+          <p>The population panels are generated directly by <a href="../assets/code/mqc/mmst_correction_comparison.py">mmst_correction_comparison.py</a>. They use MMST mapping variables on one prescribed nuclear path, with exact electronic propagation. They do not call the coupled <code>MMST</code> class used in the earlier SAC calculation. Here \(\gamma\) retains this article's oscillator convention: the subtracted action is \(\gamma/2\), so \(\gamma=2\gamma_{\mathrm{CPS}}\) in <a href="cps-foundations-dual-kernels.html">Part VI</a>.</p>
+          <ol>
+            <li>
+              <p><strong>Prepare a focused electronic ensemble.</strong> Start in the lower adiabatic state, \(\rho_0=|0\rangle\langle0|\). For each of 512 samples, draw two independent uniform phases with NumPy seed 2468 and set</p>
+              <div class="math-block">\[
+                \begin{gathered}
+                z_i^{(a)}(0)=\sqrt{\delta_{i0}+\gamma/2}\,e^{i\theta_i^{(a)}},\\
+                \theta_i^{(a)}\sim\mathcal U[0,2\pi).
+                \end{gathered}
+              \]</div>
+              <p>Thus every sample initially has \(n_0=1\), \(n_1=0\), and total oscillator action \(\sum_i|z_i|^2=1+\gamma\). The same phases are reused for \(\gamma=1,1/3,0\). This samples phases at fixed radii on the constraint sphere; it is neither full-space Wigner sampling nor uniform sampling of the entire CPS sphere.</p>
+            </li>
+            <li>
+              <p><strong>Prescribe the nuclear path and propagate the mapping variables.</strong> Use atomic units, \(M=2000\), \(P_0=200\), constant velocity \(v=0.1\), energy gap \(\Delta=0.002\), and derivative coupling \(d_{01}=0.05\). No nuclear force or momentum update is evaluated. The constant moving-basis electronic generator and its solution are</p>
+              <div class="math-block">\[
+                \begin{gathered}
+                H_{\mathrm{eff}}=
+                \begin{pmatrix}0&-i v d_{01}\\i v d_{01}&\Delta\end{pmatrix},\\
+                \dot z=-iH_{\mathrm{eff}}z,\\
+                z(t)=U(t)z(0),\qquad U(t)=e^{-iH_{\mathrm{eff}}t}.
+                \end{gathered}
+              \]</div>
+              <p>The script diagonalizes this Hermitian matrix once and evaluates its exponential at 1001 times from 0 to 2500. Its <code>--dt 2.5</code> is the output interval, not an RK4 or nuclear integration step. Unitarity conserves each sample's total action without clipping or norm correction.</p>
+            </li>
+            <li>
+              <p><strong>Read out the raw action and average with equal weights.</strong> In the same adiabatic basis used for propagation, the raw upper-state estimator is</p>
+              <div class="math-block">\[
+                \begin{gathered}
+                n_1^{(a)}(t)=|z_1^{(a)}(t)|^2-\gamma/2,\\
+                \overline n_1(t)=\frac{1}{512}\sum_{a=1}^{512}n_1^{(a)}(t).
+                \end{gathered}
+              \]</div>
+              <p>The black reference propagates the physical initial vector \(c(0)=(1,0)^{\mathsf T}\) with the same \(U(t)\) and reads \(|c_1(t)|^2\). No CPS dual kernel or initial signed weight is used in this focused protocol. Instead, its continuous phase average satisfies</p>
+              <div class="math-block">\[
+                \begin{gathered}
+                \mathbb E_\theta\!\left[z(0)z(0)^\dagger-\frac{\gamma}{2}I\right]=\rho_0,\\
+                \mathbb E_\theta\!\left[z(t)z(t)^\dagger-\frac{\gamma}{2}I\right]
+                =U(t)\rho_0U(t)^\dagger.
+                \end{gathered}
+              \]</div>
+              <p>Consequently, raw-action averaging is electronically exact in the infinite-phase limit for every nonnegative \(\gamma\) here. The raw RMS errors 0.0156 and 0.0079 are finite-phase sampling errors in this model. At \(\gamma=0\), the only sampled phase is an irrelevant overall phase, so each sample gives the exact population. This fixed-path result does not establish accuracy after nuclear feedback is restored, as discussed in <a href="cps-trajectories-classical-feedback.html">Part VII</a>.</p>
+            </li>
+            <li>
+              <p><strong>Apply the alternative estimators to those same trajectories.</strong> Clipping replaces \(n_i\) by \(\max(n_i,0)\) and normalizes each sample before averaging. Window/bin assigns the state with the larger raw action. The curve labelled “SQC square” in the figure uses the implemented final filter</p>
+              <div class="math-block">\[
+                \begin{gathered}
+                W_i(n)=\mathbf 1\{n_i\ge1-w,\ n_{1-i}\le w\},\\
+                w=1/3,\\
+                P_1^{\mathrm{win}}(t)=
+                \frac{\sum_a W_1(n^{(a)}(t))}
+                     {\sum_a[W_0(n^{(a)}(t))+W_1(n^{(a)}(t))]}.
+                \end{gathered}
+              \]</div>
+              <p>Since \(n_0+n_1=1\), samples with both actions between \(1/3\) and \(2/3\) remain unassigned. The denominator is the assigned count at each time, rather than 512; the code returns zero if that count vanishes. This simplified filter has no finite outer window bounds and is paired with focused initial radii, not initial square-window sampling. It is an estimator diagnostic, not a benchmark of a complete SQC method. None of these readout changes affects the propagated variables.</p>
+            </li>
+          </ol>
+          <p>For each estimator, RMS error is computed over all 1001 output times. Raw minima and maxima cover every state, phase sample, and output time. The <code>outside</code> fraction counts time/sample pairs with at least one raw action outside \([0,1]\), using a \(10^{-12}\) tolerance; <code>assigned</code> averages window assignment over the same pairs. The negative-\(\gamma\) panel only evaluates the analytic bounds \([-\gamma/2,1+\gamma/2]\), subject to \(\gamma>-1\). No negative-\(\gamma\) trajectories are propagated.</p>
+
+          <h3 id="initial-force-workflow">Separate Workflow for the Initial-Force Panel</h3>
+          <p>The lower-right panel does not continue the electronic trajectories above. It draws 20,000 independent pairs of oscillator actions with seed 62468, a fixed \(\gamma=1/3\), and uniform fluctuations \(\xi_i\in[-0.25,0.25]\):</p>
+          <div class="math-block">\[
+            J_i^{(a)}=\max\!\left(\delta_{i0}+\frac{\gamma}{2}+\xi_i^{(a)},\,10^{-12}\right).
+          \]</div>
+          <p>Here \(J_i=|z_i|^2\) is oscillator action, not a physical electronic energy. These SQC-like samples need not have a fixed total action. With diagonal state forces \(F_0=-1\) and \(F_1=2\), the target initial force is \(F_0\). The two protocols compare</p>
+          <div class="math-block">\[
+            \begin{gathered}
+            F_{\mathrm{fixed}}^{(a)}=\sum_i\left(J_i^{(a)}-\frac{\gamma}{2}\right)F_i,\\
+            \gamma_i^{(a)}=2\left(J_i^{(a)}-\delta_{i0}\right),\\
+            F_{\mathrm{adjusted}}^{(a)}=\sum_i\left(J_i^{(a)}-\frac{\gamma_i^{(a)}}{2}\right)F_i=F_0.
+            \end{gathered}
+          \]</div>
+          <p>The adjusted offset is different for each state and each sample. It makes the initial diagonal force exact by construction; the fixed-offset force-error standard deviation is 0.3064. No electronic phases, off-diagonal force, nuclear propagation, or long-time relaxation are tested in this panel. Together, the panels illustrate action excursions, estimator bias, and an initial-force correction; they do not measure energy transferred to nuclei.</p>
+          <p>The linked script requires only NumPy and Matplotlib. Run it from the website repository without installing the <code>toymodel</code> package:</p>
+          <pre><code>python assets/code/mqc/mmst_correction_comparison.py --output-dir output/mmst-correction</code></pre>
+          <p>Its default parameters reproduce the published <a href="../assets/img/mqc-series/mmst-correction-comparison-summary.csv">summary table</a>. The SAC figure earlier in the article instead uses the coupled MMST implementation, where the mapping density determines the nuclear force.</p>
 
           <h2>What Should Be Implemented Next?</h2>
           <p>The current <code>toymodel</code> implementation should be read as a baseline fixed-\(\gamma\) MMST method. It is useful for testing the mapping Hamiltonian, phase averaging, raw-action leakage, and comparisons against FSSH, Ehrenfest, and DVR. It is not yet a complete SQC/MMST implementation.</p>

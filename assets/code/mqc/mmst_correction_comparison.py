@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import sys
 from pathlib import Path
 
 import matplotlib
@@ -21,21 +20,6 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-
-def _ensure_repo_imports():
-    here = Path(__file__).resolve()
-    for candidate in (here.parent, *here.parents):
-        src = candidate / "src"
-        if (src / "toymodel").exists():
-            src_str = str(src)
-            if src_str not in sys.path:
-                sys.path.insert(0, src_str)
-            return candidate
-    raise RuntimeError("Could not locate repository root containing src/toymodel.")
-
-
-REPO_ROOT = _ensure_repo_imports()
 
 
 def exact_upper_population(times, *, gap, nac, velocity, start_state):
@@ -212,7 +196,9 @@ def negative_gamma_bounds(gammas):
                 "lower_bound": -0.5 * gamma,
                 "upper_bound": 1.0 + 0.5 * gamma,
                 "focused_pure_state_possible": bool(gamma >= 0.0),
-                "constraint_allowed": bool(gamma > -0.5),
+                # Legacy gamma is twice the CPS diagonal offset: for F=2,
+                # the constraint norm is 1 + gamma and must be positive.
+                "constraint_allowed": bool(gamma > -1.0),
             }
         )
     return rows
@@ -456,7 +442,7 @@ def parse_args():
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=REPO_ROOT / "output" / "mmst_correction_comparison",
+        default=Path("output") / "mmst_correction_comparison",
     )
     args = parser.parse_args()
     args.nstep = int(round(args.total_time / args.dt))
