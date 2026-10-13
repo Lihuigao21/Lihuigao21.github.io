@@ -51,6 +51,16 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "ordered-kubo-sho-correlations",
+    title: "Ordered and Kubo Correlations",
+    path: "posts/ordered-kubo-sho-correlations.html",
+    date: "2026-10-13",
+    dateText: "2026.10.13",
+    description: "Thermal splitting, imaginary time, exact spectral conversion, harmonic-oscillator comparisons, and the correlation required by electronic transitions.",
+    tags: ["Quantum Dynamics", "Kubo", "Correlation Functions", "RPMD", "Model Calculation"],
+    series: "",
+  },
+  {
     slug: "cps-trajectories-classical-feedback",
     title: "MQC VII: CPS Trajectories and Classical Feedback",
     path: "posts/cps-trajectories-classical-feedback.html",

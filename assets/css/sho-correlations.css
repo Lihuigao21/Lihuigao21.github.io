@@ -1,0 +1,27 @@
+.sho-explorer {--sho-blue:#315f7d;--sho-brown:#886142;--sho-green:#44715c;--sho-gray:#777777;--sho-purple:#735f88;--sho-teal:#4d7d80;max-width:100%;min-width:0;}
+.sho-controls {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px;margin-bottom:18px;}
+.sho-controls label {display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px;font-size:.9rem;color:var(--ink);min-width:0;}
+.sho-controls select,.sho-controls input {width:100%;min-width:0;}
+.sho-controls select {padding:7px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink);font:inherit;}
+.sho-controls input {accent-color:var(--accent);min-height:28px;margin:0;}
+.sho-controls output,.sho-readout {font-variant-numeric:tabular-nums;}
+.sho-legend {display:flex;flex-wrap:wrap;gap:4px 15px;margin-bottom:14px;}
+.sho-legend button {display:flex;align-items:center;gap:6px;padding:5px 0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:.85rem;cursor:pointer;}
+.sho-legend button[aria-pressed="false"] {opacity:.45;}
+.sho-swatch {width:22px;height:0;border-top:2px solid var(--series);}
+.sho-swatch[data-style="dashed"] {border-top-style:dashed;}
+.sho-swatch[data-style="dotted"] {border-top-style:dotted;}
+.sho-chart-wrap {max-width:100%;min-width:0;margin-top:16px;}
+.sho-chart {display:block;width:100%;max-width:100%;overflow:hidden;}
+.sho-chart text {font-family:inherit;font-size:12px;fill:var(--ink);}
+.sho-chart .sho-axis-title {font-weight:500;}
+.sho-chart .sho-axis,.sho-chart .sho-grid {stroke:var(--line);fill:none;stroke-width:1;}
+.sho-chart .sho-grid {opacity:.6;}
+.sho-chart .sho-line {stroke:var(--series);fill:none;stroke-width:2;}
+.sho-chart .sho-selected {fill:var(--sho-blue);stroke:var(--surface);stroke-width:1;}
+.sho-chart .sho-stick {stroke:var(--series);fill:none;stroke-width:2;}
+.sho-chart .sho-stick-marker {fill:var(--series);}
+.sho-chart .sho-stick-label {font-size:11px;}
+.post-content .sho-readout {font-size:.88rem;color:var(--ink);margin:8px 0 0;overflow-wrap:anywhere;}
+@media(max-width:560px) {.sho-controls {grid-template-columns:1fr;}.sho-legend {gap:4px 12px;}.sho-controls select {font-size:16px;}}
+@media(pointer:coarse) {.sho-legend button {min-height:44px;}.sho-controls input {min-height:44px;}}

@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ordered and Kubo quantum correlations: thermal splitting, imaginary time, exact spectral conversion, harmonic-oscillator examples, and the limits of real trajectory noise.">
+    <title>Ordered and Kubo Correlations | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/sho-correlations.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script defer src="../assets/js/sho-correlations.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Quantum Dynamics</p>
+          <h1>Ordered and Kubo Correlations</h1>
+          <p class="post-meta">2026.10.13 - Thermal Weights / Imaginary Time / Harmonic Oscillator</p>
+        </header>
+        <div class="post-content">
+          <p class="lead">A quantum correlation can change when its operators are reordered, or when the thermal density operator is split around an insertion. Yet the exact ordered and Kubo spectra can be converted into each other. This seems contradictory only if we confuse three questions: which correlation is defined, what information an exact correlation contains, and which observable an approximate calculation reproduces. A harmonic oscillator makes these distinctions explicit, including the surprisingly different behavior of the midpoint and symmetrized correlations at low temperature.</p>
+          <p>This note develops the physical meaning of those choices, then connects them to weak-coupling electronic transitions and RPMD. It complements the existing <a href="dvr-kubo-correlation.html">DVR Kubo calculation</a>, <a href="rpmd-sho-correlation.html#rpmd-estimator">RPMD harmonic benchmark</a>, and <a href="matsubara-matrix-correlation.html#cyclic">Matsubara imaginary-time construction</a>. The new question here is how the different exact correlations relate, and what that relationship permits us to infer.</p>
+          <nav class="series-nav" aria-label="Contents">
+            <a href="#ordering">Operator order</a><a href="#splitting">Thermal splitting</a><a href="#spectra">Spectral conversion</a><a href="#imaginary-time">Imaginary time</a><a href="#sho">Harmonic oscillator</a><a href="#nonlinear">Position squared</a><a href="#transitions">Electronic transitions</a><a href="#rpmd">RPMD boundary</a><a href="#reproduce">Code and checks</a>
+          </nav>
+
+          <h2 id="ordering">1. What does a classical correlation become upon quantization?</h2>
+          <p>A classical thermal correlation averages a product over initial phase-space points. For observables \(A\) and \(B\), classical Hamiltonian evolution supplies the later value \(B(t)\), and ordinary numbers satisfy \(AB(t)=B(t)A\). Quantizing the observables and evolution introduces operators, but does not by itself specify how to order their product. Quantizing a whole phase-space product under a particular prescription is also generally different from multiplying two separately quantized operators.</p>
+          <p>We therefore fix the convention before doing any calculation. Let \(H\) be the Hamiltonian, \(\beta=1/(k_BT)\), \(Z=\operatorname{Tr}e^{-\beta H}\), and</p>
+          <div class="math-block">\[
+            \rho=\frac{e^{-\beta H}}{Z},\qquad
+            B(t)=e^{iHt/\hbar}B e^{-iHt/\hbar},\qquad
+            C_{AB}^{\mathrm{ord}}(t)=\operatorname{Tr}[\rho A B(t)].
+          \]</div>
+          <p>Here <em>ordered</em> means this fixed product order. It does not mean the time-ordering operation \(T\). The reverse-order correlation is \(\operatorname{Tr}[\rho B(t)A]\). Their difference is the thermal commutator. For Hermitian observables, the two are complex conjugates, and</p>
+          <div class="math-block">\[
+            \operatorname{Re}C_{AB}^{\mathrm{ord}}(t)
+            =\frac12\langle\{A,B(t)\}\rangle,
+            \qquad
+            \operatorname{Im}C_{AB}^{\mathrm{ord}}(t)
+            =\frac{1}{2i}\langle[A,B(t)]\rangle.
+          \]</div>
+          <p>The imaginary part need not signal an unphysical quantity: the product of two Hermitian operators need not be Hermitian. It carries the distinction between the two orders. These are valid, different quantum correlation definitions. A measurement or response calculation determines which combination is needed; validity does not make them interchangeable without a transformation.</p>
+
+          <h2 id="splitting">2. Splitting the thermal state changes transition weights</h2>
+          <p>Once order matters, we can ask precisely what happens if part of \(\rho\) is placed on the other side of \(A\). Consider the family</p>
+          <div class="math-block">\[
+            C_{s,AB}(t)=\operatorname{Tr}[\rho^{1-s}A\rho^s B(t)],
+            \qquad 0\leq s\leq1.
+          \]</div>
+          <p>This is an exact definition, not an approximation to the thermal state. Both fractional powers refer to the same normalized Gibbs state. The endpoints give the two orders, since cyclicity of the trace gives \(C_{1,AB}(t)=\operatorname{Tr}[\rho B(t)A]\). Cyclicity allows a rotation of the complete product; it does not allow arbitrary exchanges of neighboring factors.</p>
+          <p>To see what the interior values mean, insert energy eigenstates \(H|n\rangle=E_n|n\rangle\). Write \(p_n=e^{-\beta E_n}/Z\), \(A_{nm}=\langle n|A|m\rangle\), and \(\omega_{mn}=(E_m-E_n)/\hbar\). Then</p>
+          <div class="math-block">\[
+            C_{s,AB}(t)=\sum_{n,m}p_n^{1-s}p_m^s
+            A_{nm}B_{mn}e^{i\omega_{mn}t}.
+          \]</div>
+          <p>The same energy differences and matrix elements occur for every \(s\). What changes is their thermal weight. For an autocorrelation of a Hermitian \(A\), the matrix-element product is \(|A_{nm}|^2\), making the comparison especially transparent:</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Correlation</th><th>Weight for the same pair of levels</th></tr></thead>
+            <tbody>
+              <tr><td>Ordered, \(s=0\)</td><td>\(p_n\)</td></tr>
+              <tr><td>Reverse ordered, \(s=1\)</td><td>\(p_m\)</td></tr>
+              <tr><td>Midpoint, \(s=1/2\)</td><td>\(\sqrt{p_np_m}\)</td></tr>
+              <tr><td>Anticommutator symmetrized</td><td>\((p_n+p_m)/2\)</td></tr>
+              <tr><td>Kubo</td><td>\(\int_0^1p_n^{1-s}p_m^s\,ds\)</td></tr>
+            </tbody>
+          </table></div>
+          <p>The midpoint uses a geometric mean; the anticommutator uses an arithmetic mean. They are different even though both correlations are real for Hermitian observables. The Kubo correlation averages the entire splitting family:</p>
+          <div class="math-block">\[
+            C_{AB}^{K}(t)=\int_0^1ds\,C_{s,AB}(t)
+            =\frac{1}{\beta Z}\int_0^\beta d\lambda\,
+            \operatorname{Tr}[e^{-(\beta-\lambda)H}A e^{-\lambda H}B(t)].
+          \]</div>
+          <p>Its transition weight is the logarithmic mean \((p_n-p_m)/(\ln p_n-\ln p_m)\), with the continuous value \(p_n\) for equal probabilities. Thus varying \(s\) does not change the temperature, Hamiltonian, or real-time evolution. It changes the bilinear correlation being evaluated. If \(A\) commutes with \(\rho\), all members of this family coincide; in general they do not.</p>
+
+          <h2 id="spectra">3. Exact spectral conversion does not make the functions identical</h2>
+          <p>Different transition weights raise a sharper question: is information destroyed by the Kubo average? For a Gibbs state, the ratio of two thermal probabilities depends only on their energy difference:</p>
+          <div class="math-block">\[
+            \frac{p_m}{p_n}=e^{-\beta\hbar\omega_{mn}}.
+          \]</div>
+          <p>Every contribution at a given frequency therefore acquires the same multiplier. Define the spectrum using the convention</p>
+          <div class="math-block">\[
+            S_{s,AB}(\omega)=\int_{-\infty}^{\infty}dt\,
+            e^{-i\omega t}C_{s,AB}(t).
+          \]</div>
+          <p>Fourier transforming the energy-basis expression, then integrating over \(s\), gives</p>
+          <div class="math-block">\[
+            S_{s,AB}(\omega)=e^{-s\beta\hbar\omega}S_{0,AB}(\omega),
+            \qquad
+            S_{AB}^{K}(\omega)=f(\beta\hbar\omega)S_{0,AB}(\omega),
+            \quad f(y)=\frac{1-e^{-y}}{y},\quad f(0)=1.
+          \]</div>
+          <p>At known finite temperature, \(f(y)\) is nonzero at every finite real frequency. The complete exact ordered spectrum can therefore be recovered:</p>
+          <div class="math-block">\[
+            \boxed{S_{0,AB}(\omega)=
+              \frac{\beta\hbar\omega}{1-e^{-\beta\hbar\omega}}
+              S_{AB}^{K}(\omega).}
+          \]</div>
+          <p>This answers the information question at a specific level: the exact correlations carry equivalent two-point spectral information for the same pair of observables in thermal equilibrium. It does not say that their numerical values are equal, that either one determines every observable or higher-order correlation, or that one selected two-point function determines the complete quantum state and Hamiltonian. It also does not remove errors in approximate input spectra. These conventions and the Kubo conversion are consistent with Hele's review <a href="#ref-hele-review">[1]</a>.</p>
+          <p>For a Hermitian autocorrelation, thermal detailed balance reads \(S_0(-\omega)=e^{-\beta\hbar\omega}S_0(\omega)\), while \(S_K(-\omega)=S_K(\omega)\). The missing-looking positive/negative-frequency asymmetry is restored by the known thermal factor. Its time-domain consequence is</p>
+          <div class="math-block">\[
+            \operatorname{Im}C_0(t)
+            =-\frac{\beta\hbar}{2}\frac{dC_K(t)}{dt}.
+          \]</div>
+          <p>The Kubo function can be real and still determine this imaginary part. Its realness should not be confused with classical dynamics. For a perturbation \(H'=-h(t)A\), the linear response of \(A\) is</p>
+          <div class="math-block">\[
+            R_{AA}(t)=\frac{i}{\hbar}\Theta(t)\langle[A(t),A]\rangle
+            =-\beta\Theta(t)\frac{dC_K(t)}{dt}.
+          \]</div>
+          <p>Here \(h(t)\) is the applied field and \(\Theta\) is the step function. Kubo correlations are connected to physical response through a specific operation. In practice, limited observation time, spectral truncation, and noise can make the inverse poorly resolved; differentiation and thermal reweighting can amplify errors. The strict zero-temperature limit is also singular: taking a vanishing raw Kubo function first need not preserve the information that was present at every finite temperature.</p>
+
+          <h2 id="imaginary-time">4. What does “halfway around the imaginary-time path” mean?</h2>
+          <p>The fractional thermal factors can be written as imaginary-time propagation over intervals \(s\beta\hbar\) and \((1-s)\beta\hbar\). The trace closes the total interval \(\beta\hbar\), and the two operator insertions divide it into those two segments. At \(s=1/2\), both segments have equal length. This is what “halfway around” describes: a location in the thermal operator product, not a particle waiting for half a real-time period.</p>
+          <p>A more concrete representation is available at \(t=0\) for position observables. Insert two position resolutions into the midpoint position correlation:</p>
+          <div class="math-block">\[
+            C_{1/2}^{qq}(0)=\operatorname{Tr}[\sqrt\rho\,q\sqrt\rho\,q]
+            =\int du\,dv\;uv\,P(u,v),
+            \qquad P(u,v)=|\langle u|\sqrt\rho|v\rangle|^2.
+          \]</div>
+          <p>The kernel \(P\) is nonnegative and normalized because its integral is \(\operatorname{Tr}\rho=1\). Both marginals are the ordinary thermal position distribution. Nevertheless, \(u\) and \(v\) are two coordinates in this auxiliary thermal representation. They are not two sequential, undisturbed measurements of a particle following a real trajectory. The positive representation here is restricted to equal-time position multiplication operators; it does not provide a general real-time probability model for arbitrary quantum observables.</p>
+          <p>The centered pure-ground-state limit exposes the difference. With \(\rho=|0\rangle\langle0|\),</p>
+          <div class="math-block">\[
+            P(u,v)=|\psi_0(u)|^2|\psi_0(v)|^2,
+            \qquad C_{1/2}^{qq}(0)=\langle0|q|0\rangle^2=0,
+          \]</div>
+          <p>although \(\langle0|q^2|0\rangle\) is nonzero. The two marginals each contain zero-point fluctuations, but the auxiliary coordinates factorize in this limit. A vanishing midpoint correlation therefore does not imply a vanishing position variance. Imaginary-time geometry is useful precisely when we keep this distinction visible.</p>
+
+          <h2 id="sho">5. The harmonic oscillator: the same frequencies, different weights</h2>
+          <p>We can now compare all the correlations without any dynamical approximation. Take the one-dimensional oscillator and define its natural position and temperature scales:</p>
+          <div class="math-block">\[
+            H=\frac{p^2}{2m}+\frac12m\Omega^2q^2
+             =\hbar\Omega\left(a^\dagger a+\frac12\right),
+            \quad \ell^2=\frac{\hbar}{2m\Omega},
+            \quad x=\beta\hbar\Omega,
+            \quad \theta=\Omega t,
+            \quad \bar n=\frac{1}{e^x-1}.
+          \]</div>
+          <p>The ground-state variance is \(\ell^2\). Larger \(x\) means lower temperature. Since \(q=\ell(a+a^\dagger)\), the position operator connects adjacent energy levels only. The Heisenberg operator is \(q(t)=\ell(ae^{-i\theta}+a^\dagger e^{i\theta})\). Using \(\langle aa^\dagger\rangle=\bar n+1\), \(\langle a^\dagger a\rangle=\bar n\), and the thermal ratio between adjacent levels gives</p>
+          <div class="math-block">\[
+            \boxed{\frac{C_s^{qq}(t)}{\ell^2}
+            =(\bar n+1)e^{-sx}e^{i\theta}
+             +\bar n e^{sx}e^{-i\theta}.}
+          \]</div>
+          <p>The two frequencies remain \(\pm\Omega\). Splitting the thermal state changes their weights, rather than replacing the quantum time evolution. Separating the real and imaginary parts yields</p>
+          <div class="math-block">\[
+            \frac{C_s^{qq}(t)}{\ell^2}
+            =\frac{\cosh[(1/2-s)x]}{\sinh(x/2)}\cos\theta
+             +i\frac{\sinh[(1/2-s)x]}{\sinh(x/2)}\sin\theta.
+          \]</div>
+          <p>From this single formula, the main conventions follow:</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Correlation</th><th>Exact position result</th></tr></thead>
+            <tbody>
+              <tr><td>Ordered \(C_0\)</td><td>\(\ell^2[\coth(x/2)\cos\theta+i\sin\theta]\)</td></tr>
+              <tr><td>Reverse ordered \(C_1\)</td><td>\(\ell^2[\coth(x/2)\cos\theta-i\sin\theta]\)</td></tr>
+              <tr><td>Anticommutator symmetrized</td><td>\(\ell^2\coth(x/2)\cos\theta\)</td></tr>
+              <tr><td>Midpoint \(C_{1/2}\)</td><td>\(\ell^2\cos\theta/\sinh(x/2)\)</td></tr>
+              <tr><td>Kubo \(C_K\)</td><td>\((2\ell^2/x)\cos\theta\)</td></tr>
+              <tr><td>Classical thermal</td><td>\((\beta m\Omega^2)^{-1}\cos\theta\)</td></tr>
+            </tbody>
+          </table></div>
+          <p>The Kubo integral is particularly instructive. The coefficient of \(e^{i\theta}\) is \((\bar n+1)(1-e^{-x})/x=1/x\), and the coefficient of \(e^{-i\theta}\) is also \(1/x\). Their sum gives \(2\cos\theta/x\). This equals the classical thermal position correlation exactly because \(2\ell^2/x=1/(\beta m\Omega^2)\). It is a property of this Hamiltonian and this linear observable, not a statement that the thermal oscillator is classical.</p>
+          <p>The imaginary part has a separate origin. From \(q(t)=q\cos\theta+p\sin\theta/(m\Omega)\) and \([q,p]=i\hbar\), the commutator gives \(\operatorname{Im}C_0=\ell^2\sin\theta\). It does not disappear at low temperature. Meanwhile, the midpoint amplitude tends to zero exponentially. The interactive comparison keeps the absolute amplitudes, so these differences are not hidden by normalizing each curve to its own initial value.</p>
+
+          <figure id="sho-explorer">
+            <div class="sho-explorer" data-sho-explorer>
+              <div class="sho-controls">
+                <label>Observable<select data-sho="observable"><option value="q">Position q</option><option value="q2">Position-squared fluctuation δq²</option></select></label>
+                <label>Temperature x = βℏΩ <output data-sho-value="x">2.00</output><input data-sho="x" type="range" min="0.2" max="12" step="0.05" value="2" aria-label="Temperature parameter; larger means colder"></label>
+                <label>Thermal split s <output data-sho-value="s">0.00</output><input data-sho="s" type="range" min="0" max="1" step="0.01" value="0" aria-label="Thermal splitting between zero and one"></label>
+              </div>
+              <div class="sho-legend" aria-label="Correlation series"></div>
+              <div class="sho-chart-wrap" data-sho-plot="time"></div>
+              <div class="sho-chart-wrap" data-sho-plot="split"></div>
+              <div class="sho-chart-wrap" data-sho-plot="spectrum"></div>
+              <p class="sho-readout" data-sho-readout aria-live="polite"></p>
+            </div>
+            <figcaption>Exact analytic curves for the isolated harmonic oscillator. The first panel plots real-time correlations against Ωt, in units of ℓ² for q and ℓ⁴ for δq². The second shows the real equal-time value as s varies; its dot marks the selected s. The third shows coefficients of the spectral delta lines at ω/Ω, with the common 2π factor omitted; neighboring sticks within a group share the labeled frequency. Solid blue is Re Cₛ; dashed brown is Im Cₛ; solid green is Kubo; dotted gray is anticommutator symmetrization; purple dash-dot is the midpoint; long-dashed teal is the classical result. In the spectral panel, blue denotes the full Cₛ spectrum, not the spectrum of its real part. All plotted correlations are connected. For q, Kubo and classical curves overlap. Larger x means lower temperature. The δq² formulas are derived below; their classical and Kubo curves generally separate.</figcaption>
+          </figure>
+          <p>At low temperature, \(C_0^{qq}\to\ell^2e^{i\theta}\) and the symmetrized correlation tends to \(\ell^2\cos\theta\). The midpoint tends to zero because a ground-to-excited-state contribution is weighted by \(\sqrt{p_0p_1}\), and \(p_1\to0\). The ordered correlation instead retains the weight \(p_0\to1\). The Kubo correlation tends to zero as \(1/\beta\), but \(\beta C_K\) stays finite and retains the oscillator's linear response.</p>
+          <p>At high temperature, \(x\ll1\), all the position correlations have the same leading classical term. The ordered imaginary part remains finite at fixed \(\hbar\), but is small relative to the real amplitude of order \(1/x\). Leading classical agreement is therefore not exact equality at finite temperature.</p>
+          <p>The spectral difference is equally explicit:</p>
+          <div class="math-block">\[
+            S_0^{qq}(\omega)=2\pi\ell^2[(\bar n+1)\delta(\omega-\Omega)
+                         +\bar n\delta(\omega+\Omega)],
+            \qquad
+            S_K^{qq}(\omega)=\frac{2\pi\ell^2}{x}
+              [\delta(\omega-\Omega)+\delta(\omega+\Omega)].
+          \]</div>
+          <p>These are ideal delta lines, not peaks with a finite linewidth. Exact thermal reweighting recovers the asymmetric ordered weights from the symmetric Kubo weights at every finite \(x\). It cannot justify reading an untransformed Kubo line weight as the ordered one.</p>
+
+          <h2 id="nonlinear">6. Position squared exposes the limit of the classical-looking result</h2>
+          <p>The equality between the position Kubo and classical correlations invites an overgeneralization. We test it without changing the system: replace \(q\) by the fluctuation \(A=q^2-\langle q^2\rangle\). Each classical or quantum ensemble subtracts its own mean. This removes the disconnected mean product and leaves a comparison of genuine fluctuations.</p>
+          <p>The operator \(q^2=\ell^2[a^2+(a^\dagger)^2+2N+1]\), with \(N=a^\dagger a\), connects levels two steps apart and also has a diagonal component. Its connected correlation is</p>
+          <div class="math-block">\[
+            \frac{C_s^{AA}(t)}{\ell^4}
+            =4\bar n(\bar n+1)
+             +2(\bar n+1)^2e^{-2sx}e^{2i\theta}
+             +2\bar n^2e^{2sx}e^{-2i\theta}.
+          \]</div>
+          <p>The constant term is the thermal variance of the conserved occupation number. Subtracting the mean does not remove it: an isolated oscillator retains this part of its initial fluctuation forever. The spectrum therefore contains a zero-frequency line as well as the two lines at \(\pm2\Omega\).</p>
+          <p>Integrating the two oscillatory terms over \(s\) gives</p>
+          <div class="math-block">\[
+            \boxed{\frac{C_K^{AA}(t)}{\ell^4}
+             =4\bar n(\bar n+1)+\frac{2}{x}\coth(x/2)\cos(2\theta).}
+          \]</div>
+          <p>For comparison, a classical thermal oscillator has Gaussian position variance \(v=1/(\beta m\Omega^2)=2\ell^2/x\). Gaussian factorization gives \(\langle\delta q^2(0)\delta q^2(t)\rangle=2v^2\cos^2\theta\), hence</p>
+          <div class="math-block">\[
+            \boxed{\frac{C_{\mathrm{cl}}^{AA}(t)}{\ell^4}
+              =\frac{4}{x^2}[1+\cos(2\theta)].}
+          \]</div>
+          <p>The two formulas generally differ. At \(x=6\), their equal-time values are approximately \(0.345\ell^4\) and \(0.222\ell^4\). The discrepancy remains even though the q–q Kubo result is exactly classical. Restoring \(\langle q^2\rangle^2\) in the quantum expression agrees with Hele's unconnected harmonic-oscillator formula, Eq. (27) <a href="#ref-hele-trpmd">[2]</a>.</p>
+          <p>There is a compact explanation of why the linear equality cannot be carried through the square. The oscillator is Gaussian, and the connected formulas satisfy</p>
+          <div class="math-block">\[
+            C_s^{AA}(t)=2[C_s^{qq}(t)]^2,
+            \qquad
+            C_K^{AA}(t)=2\int_0^1ds\,[C_s^{qq}(t)]^2
+            \ne 2\left[\int_0^1ds\,C_s^{qq}(t)\right]^2.
+          \]</div>
+          <p>Kubo averaging and taking the square do not commute. The midpoint and symmetrized nonlinear correlations also remain distinct: the former is \(4\ell^4\bar n(\bar n+1)[1+\cos(2\theta)]\), whereas the latter retains a low-temperature oscillation of amplitude \(2\ell^4\). This controlled counterexample is enough to reject a universal classical interpretation of Kubo correlations.</p>
+
+          <h2 id="transitions">7. Which correlation does an electronic transition sample?</h2>
+          <p>The information equivalence of exact correlations does not tell us which value to insert into a transition formula. To determine that, specify a weak-coupling model. Let an electronic transition from \(|i\rangle\) to \(|f\rangle\) have energy change \(\Delta=E_f-E_i\), and couple it to a Hermitian bath operator \(F\) through</p>
+          <div class="math-block">\[
+            V=g|f\rangle\langle i|\otimes F
+             +g^*|i\rangle\langle f|\otimes F.
+          \]</div>
+          <p>The uncoupled initial state is the electron in \(|i\rangle\) and the bath in its Gibbs state. The bath Hamiltonian is the same for the two electronic states in this simplified model. The electronic matrix element is included in \(g\). Define the bath ordered correlation \(C_F(t)=\langle F(0)F(t)\rangle\) and use the same Fourier sign as above.</p>
+          <p>If the initial and final bath levels have energies \(\epsilon_n\) and \(\epsilon_m\), conservation of total energy requires</p>
+          <div class="math-block">\[
+            \Delta+\epsilon_m-\epsilon_n=0.
+          \]</div>
+          <p>Second-order perturbation theory gives the finite-time probability, before any constant-rate limit:</p>
+          <div class="math-block">\[
+            P_{i\to f}^{(2)}(t)=\frac{|g|^2}{\hbar^2}
+            \sum_{n,m}p_n|F_{mn}|^2
+            \left|\int_0^t d\tau\,
+            e^{i[\Delta/\hbar+(\epsilon_m-\epsilon_n)/\hbar]\tau}\right|^2.
+          \]</div>
+          <p>The electronic phase selects bath energy changes that balance the electronic gap. In the golden-rule limit, the squared time integral per unit time becomes a delta function, giving</p>
+          <div class="math-block">\[
+            k_{i\to f}=\frac{2\pi|g|^2}{\hbar}
+              \sum_{n,m}p_n|F_{mn}|^2\delta(\Delta+\epsilon_m-\epsilon_n)
+              =\boxed{\frac{|g|^2}{\hbar^2}S_F(-\Delta/\hbar).}
+          \]</div>
+          <p>The minus sign follows from our definitions: positive bath frequency means that the bath absorbs energy, so an upward electronic transition samples negative bath frequency. If the gap is defined as \(E_i-E_f\), the argument is positive instead. A statement that a rate needs “the spectrum at the gap frequency” must therefore specify both the gap and Fourier conventions. This formulation matches the unsymmetrized-noise treatment of Clerk and collaborators after aligning their opposite time-order and Fourier conventions <a href="#ref-clerk">[3]</a>.</p>
+          <p>For a thermal bath, the ratio of upward and downward rates for a gap \(\Delta&gt;0\) is \(e^{-\beta\Delta}\). A bath in its ground state can absorb energy through allowed transitions but cannot supply positive energy. For an oscillator coupled through its position, the allowed absorption is one quantum. Its ordered spectrum contains this distinction. The Kubo spectrum has equal positive and negative line weights, so it cannot be inserted unchanged into the golden-rule formula. It can be used after the exact conversion factor has been applied.</p>
+          <p>The isolated single oscillator illustrates frequency selection and thermal weights, but does not supply a decaying bath correlation or a generic irreversible exponential rate. Its delta spectrum must be interpreted distributionally; finite-time resonances are described by the probability formula above. State-dependent nuclear Hamiltonians require a different correlation involving both nuclear propagators. For a non-Hermitian coupling operator, the appropriate dagger/order pair must also be retained.</p>
+
+          <h2 id="rpmd">8. Why a real bead trajectory is not automatically ordered quantum noise</h2>
+          <p>The previous result makes the approximation issue precise. Standard position RPMD uses an equilibrium ring-polymer ensemble and approximate real-time propagation to estimate Kubo correlations, as in the existing <a href="rpmd-sho-correlation.html#rpmd-estimator">RPMD estimator derivation</a>. A single bead coordinate is a different observable from the bead-averaged estimator, and fictitious internal modes can appear in its real-time signal.</p>
+          <p>For a harmonic well with P beads and standard physical bead masses, the ring-polymer mode frequencies are</p>
+          <div class="math-block">\[
+            \Omega_k^{\mathrm{RP}}=
+              \sqrt{\Omega^2+4\omega_P^2\sin^2(\pi k/P)},
+            \qquad \omega_P=\frac{P}{\beta\hbar},
+            \quad k=0,\ldots,P-1.
+          \]</div>
+          <p>The centroid selects \(k=0\), which oscillates at the physical frequency \(\Omega\). A single bead contains internal modes as well. Recovering the quantum equal-time position distribution does not make these internal frequencies physical bath transitions. Increasing P improves imaginary-time discretization; it does not by itself turn the bead's real-time trajectory into an exact quantum trajectory.</p>
+          <p>There is a second independent issue. A stationary real scalar signal \(f(t)\) has an even autocorrelation because stationarity and commutativity give</p>
+          <div class="math-block">\[
+            \langle f(0)f(-t)\rangle=\langle f(t)f(0)\rangle
+             =\langle f(0)f(t)\rangle.
+          \]</div>
+          <p>Its autocorrelation spectrum is symmetric. If an electron is driven by such externally prescribed noise, keeping a complex electronic amplitude supplies the oscillating phase in the perturbative formula, but does not manufacture the bath's missing positive/negative-frequency asymmetry.</p>
+          <p>This supports a specific criticism: the standard RPMD Kubo interpretation does not justify treating an individual real bead path as ordered quantum bath noise. It does not establish that every electronic method using a ring polymer is wrong. Nuclear feedback, state-dependent sampling, transition rules, or an explicitly derived spectral correction can change the problem and must be examined on their own terms. Even a correct conversion of an approximate Kubo spectrum leaves its dynamical approximation error.</p>
+          <p>The useful test is therefore to identify the bath operator, thermal preparation, real-time generator, estimator, and rate or response formula in the actual method. A matching equilibrium distribution and a quantum electronic phase solve different parts of that test. Neither substitutes for the required dynamical correlation.</p>
+
+          <h2 id="reproduce">9. Reproduce the analytic comparison</h2>
+          <p>The linked Python script constructs q and q² in the oscillator energy basis, forms the fractional thermal weights directly, and compares the trace with the closed expressions. It also independently integrates the s family with Gauss–Legendre quadrature. In units \(m=\Omega=\hbar=1\), the check uses 180 energy states, five temperatures from \(x=0.2\) to 12, five splitting values, and five real times, for both q and δq².</p>
+          <p>Across 250 trace comparisons, the largest absolute error divided by \(\max(1,|C|)\) was below \(4\times10^{-12}\); the Kubo integration check was below \(3\times10^{-15}\). These numerical checks verify the displayed formulas in the tested domain. Their exactness follows from the oscillator algebra, not from numerical agreement, and the checks do not validate an RPMD or nonadiabatic approximation.</p>
+          <ul class="code-list">
+            <li><a href="../assets/code/correlations/sho_correlations.py">sho_correlations.py</a>: independent energy-basis trace and Kubo quadrature checks; requires NumPy.</li>
+            <li><a href="../assets/code/correlations/sho-correlations-check.json">Numerical check results</a>: parameters, basis size, and error definition.</li>
+            <li><a href="../assets/js/sho-correlations.js">sho-correlations.js</a> and <a href="../assets/css/sho-correlations.css">figure styles</a>: formula-driven real-time, thermal-split, and spectral-line explorer.</li>
+          </ul>
+          <pre><code>python assets/code/correlations/sho_correlations.py --output sho-correlation-results</code></pre>
+          <p>For known finite-temperature equilibrium, a complete exact Kubo correlation does determine the corresponding ordered two-point correlation. The two functions nevertheless have different values and enter observable formulas through different operations. The harmonic oscillator shows both facts at once; its nonlinear q² fluctuation also shows why a classical-looking Kubo result for one observable cannot be promoted to a general statement about quantum dynamics.</p>
+
+          <h2 id="references">References and related notes</h2>
+          <ol class="references">
+            <li id="ref-hele-review">T. J. H. Hele, <em>Thermal quantum time-correlation functions from classical-like dynamics</em> (2017). <a href="https://arxiv.org/html/1701.03016">Open manuscript</a>. Sections 2 and 5 discuss correlation conventions, exact ordered/Kubo spectral conversion, and classical-like approximations. Terminology for “symmetric split” varies; this article defines midpoint and anticommutator symmetrization separately.</li>
+            <li id="ref-hele-trpmd">T. J. H. Hele, <em>On the relation between thermostatted ring polymer molecular dynamics and exact quantum dynamics</em> (2015 manuscript). <a href="https://www.tjhh.uk/pubs/hel15on.pdf">Author manuscript</a>. Equation (27) supplies an independent published-formula cross-check for the unconnected q² Kubo correlation.</li>
+            <li id="ref-clerk">A. A. Clerk, M. H. Devoret, S. M. Girvin, F. Marquardt, and R. J. Schoelkopf, <em>Introduction to quantum noise, measurement, and amplification</em>, Reviews of Modern Physics <strong>82</strong>, 1155 (2010). <a href="https://doi.org/10.1103/RevModPhys.82.1155">Journal</a> · <a href="https://arxiv.org/pdf/0810.4729">Open manuscript</a>. Section II and Appendix B connect unsymmetrized spectra, oscillator noise, and golden-rule transition rates.</li>
+          </ol>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&lt;- Article list</a><a href="dvr-kubo-correlation.html">DVR Kubo calculation</a><a href="rpmd-sho-correlation.html">RPMD harmonic benchmark</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

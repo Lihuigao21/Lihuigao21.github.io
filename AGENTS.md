@@ -62,6 +62,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 
 - Do not publish equations or explanatory text as screenshots.
 - Long inline MathJax formulas can overflow the whole mobile page even when every display block is contained and there are no MathJax errors. Inspect paragraph widths as well; move lengthy identities into scrollable display blocks and recheck with derivation disclosures expanded.
+- Include 320px in mobile checks and inspect MathJax assistive MathML when tracing overflow; hidden accessibility content can also increase document width. Hide sticky site chrome only for isolated figure screenshots, then restore it for ordinary page checks.
 - For interactive scientific figures, verify real control changes as well as the initial drawing, including complex observable conventions and an independent numerical control. Compact result tables must explicitly override inherited technical-table minimum widths; audit the complete widget and document width on mobile.
 - Wrap wide technical tables in the existing `table-scroll` class, not an unstyled new wrapper. During mobile QA, expand derivation disclosures and verify document width as well as MathJax errors; internal formula/table scrolling is acceptable, whole-page horizontal overflow is not.
 - Convert equations to MathJax/LaTeX text inside the HTML article.

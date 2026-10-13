@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "energy_basis_dimension": 180,
+  "temperatures_x": [
+    0.2,
+    0.7,
+    2.0,
+    6.0,
+    12.0
+  ],
+  "split_parameters": [
+    0.0,
+    0.17,
+    0.5,
+    0.83,
+    1.0
+  ],
+  "times_theta": [
+    0.0,
+    0.13,
+    1.4,
+    1.5707963267948966,
+    4.1
+  ],
+  "observable_labels": [
+    "q",
+    "delta_q2"
+  ],
+  "trace_comparisons": 250,
+  "maximum_relative_or_absolute_trace_error": 3.922637178456218e-12,
+  "maximum_relative_or_absolute_kubo_integral_error": 2.6645352591003757e-15,
+  "scope": "Closed formulas checked against an independent truncated thermal trace and s integration; not a test of RPMD."
+}
