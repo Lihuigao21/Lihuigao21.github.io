@@ -56,7 +56,7 @@ window.SITE_ARTICLES = [
     path: "posts/cps-foundations-dual-kernels.html",
     date: "2026-10-12",
     dateText: "2026.10.12",
-    description: "Constraint coordinate-momentum phase space, dual kernels, the relation to MMST and spin mapping, and the distinction between exact electronic evolution and classical nuclear dynamics.",
+    description: "Two chapters deriving scalar CPS from its assumptions, the sphere measure and dual kernel, then the coupled Poisson-bracket boundary and CPS/MMST/spin/Ehrenfest workflows.",
     tags: ["MQC", "CPS", "MMST", "Spin Mapping", "Stratonovich-Weyl", "Model Calculation"],
     series: "mqc",
     part: 6,
