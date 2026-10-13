@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="478.08pt" height="600.317813pt" viewBox="0 0 478.08 600.317813" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.9, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 600.317813
+L 478.08 600.317813
+L 478.08 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 65.16 176.657812
+L 412.92 176.657812
+Q 424.512 176.657812 424.512 162.775812
+L 424.512 68.378212
+Q 424.512 54.496212 412.92 54.496212
+L 65.16 54.496212
+Q 53.568 54.496212 53.568 68.378212
+L 53.568 162.775812
+Q 53.568 176.657812 65.16 176.657812
+z
+" clip-path="url(#pb63571731d)" style="fill: #fafafa; stroke: #316583; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 99.936 184.213606
+Q 99.936 209.974802 99.936 233.947144
+" clip-path="url(#pb63571731d)" style="fill: none; stroke: #316583; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 103.336 227.147144
+L 99.936 233.947144
+L 96.536 227.147144
+z
+" clip-path="url(#pb63571731d)" style="fill: #316583; stroke: #316583; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 65.16 371.005812
+L 412.92 371.005812
+Q 424.512 371.005812 424.512 357.123812
+L 424.512 257.173412
+Q 424.512 243.291412 412.92 243.291412
+L 65.16 243.291412
+Q 53.568 243.291412 53.568 257.173412
+L 53.568 357.123812
+Q 53.568 371.005812 65.16 371.005812
+z
+" clip-path="url(#pb63571731d)" style="fill: #fafafa; stroke: #316583; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 99.936 378.559064
+Q 99.936 418.205067 99.936 456.062216
+" clip-path="url(#pb63571731d)" style="fill: none; stroke: #316583; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 103.336 449.262216
+L 99.936 456.062216
+L 96.536 449.262216
+z
+" clip-path="url(#pb63571731d)" style="fill: #316583; stroke: #316583; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 65.16 590.341413
+L 412.92 590.341413
+Q 424.512 590.341413 424.512 576.459412
+L 424.512 479.285413
+Q 424.512 465.403413 412.92 465.403413
+L 65.16 465.403413
+Q 53.568 465.403413 53.568 479.285413
+L 53.568 576.459412
+Q 53.568 590.341413 65.16 590.341413
+z
+" clip-path="url(#pb63571731d)" style="fill: #fafafa; stroke: #316583; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'" transform="translate(172.488125 111.885622)">Quantum operator ρ</text>
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'" transform="translate(102.465859 126.442778)">Populations and coherences in one matrix</text>
+   </g>
+   <g id="text_2">
+    <!-- $f_\rho(\mathbf{n})=\mathrm{Tr}(\rho K_\gamma)$ -->
+    <g transform="translate(132.3936 212.899613)">
+     <text>
+      <tspan x="0" y="-0.125" style="font-style: oblique; font-size: 13px; font-family: 'DejaVu Sans'">f</tspan>
+      <tspan x="64.422363" y="-0.125" style="font-style: oblique; font-size: 13px; font-family: 'DejaVu Sans'">ρ</tspan>
+      <tspan x="72.674316" y="-0.125" style="font-style: oblique; font-size: 13px; font-family: 'DejaVu Sans'">K</tspan>
+      <tspan x="4.57666" y="2.007812" style="font-style: oblique; font-size: 9.1px; font-family: 'DejaVu Sans'">ρ</tspan>
+      <tspan x="81.199219" y="2.007812" style="font-style: oblique; font-size: 9.1px; font-family: 'DejaVu Sans'">γ</tspan>
+      <tspan x="10.708496" y="-0.125" style="font-size: 13px; font-family: 'DejaVu Sans'">(</tspan>
+      <tspan x="25.035156" y="-0.125" style="font-size: 13px; font-family: 'DejaVu Sans'">)</tspan>
+      <tspan x="32.639648" y="-0.125" style="font-size: 13px; font-family: 'DejaVu Sans'">=</tspan>
+      <tspan x="46.064941" y="-0.125" style="font-size: 13px; font-family: 'DejaVu Sans'">T</tspan>
+      <tspan x="54.005859" y="-0.125" style="font-size: 13px; font-family: 'DejaVu Sans'">r</tspan>
+      <tspan x="59.350586" y="-0.125" style="font-size: 13px; font-family: 'DejaVu Sans'">(</tspan>
+      <tspan x="86.940039" y="-0.125" style="font-size: 13px; font-family: 'DejaVu Sans'">)</tspan>
+      <tspan x="15.780273" y="-0.125" style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'">n</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'" transform="translate(119.127187 297.022488)">Scalar function on every Bloch direction</text>
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'" transform="translate(164.444063 310.459862)">Its values can be signed;</text>
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'" transform="translate(107.810625 323.897238)">they are not individual physical populations</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'" transform="translate(132.3936 409.366994)">Sphere quadrature with the matched dual</text>
+    <!-- $\int d\mu=1,\quad d\mu=d\phi\,dn_z/(4\pi)$ -->
+    <g transform="translate(132.3936 426.662634)">
+     <text>
+      <tspan x="0" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans Display'">∫</tspan>
+      <tspan x="8.467773" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">d</tspan>
+      <tspan x="15.767578" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">μ</tspan>
+      <tspan x="61.615967" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">d</tspan>
+      <tspan x="68.915771" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">μ</tspan>
+      <tspan x="90.349121" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">d</tspan>
+      <tspan x="97.648926" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">ϕ</tspan>
+      <tspan x="107.10221" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">d</tspan>
+      <tspan x="114.402015" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">n</tspan>
+      <tspan x="141.921912" y="-0.15625" style="font-style: oblique; font-size: 11.5px; font-family: 'DejaVu Sans'">π</tspan>
+      <tspan x="25.324707" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans'">=</tspan>
+      <tspan x="37.200928" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans'">1</tspan>
+      <tspan x="44.517578" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans'">,</tspan>
+      <tspan x="78.4729" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans'">=</tspan>
+      <tspan x="126.244178" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans'">/</tspan>
+      <tspan x="130.11869" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans'">(</tspan>
+      <tspan x="134.605262" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans'">4</tspan>
+      <tspan x="148.845496" y="-0.15625" style="font-size: 11.5px; font-family: 'DejaVu Sans'">)</tspan>
+      <tspan x="121.690589" y="1.8125" style="font-style: oblique; font-size: 8.05px; font-family: 'DejaVu Sans'">z</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_5">
+    <!-- $\rho_{\rm rebuilt}=2\int f_\rho(\mathbf{n})\bar K_\gamma(\mathbf{n})\,d\mu$ -->
+    <g transform="translate(167.46 525.773725)">
+     <text>
+      <tspan x="0" y="-0.15625" style="font-style: oblique; font-size: 12px; font-family: 'DejaVu Sans'">ρ</tspan>
+      <tspan x="66.384961" y="-0.15625" style="font-style: oblique; font-size: 12px; font-family: 'DejaVu Sans'">f</tspan>
+      <tspan x="94.175977" y="-0.15625" style="font-style: oblique; font-size: 12px; font-family: 'DejaVu Sans'">K</tspan>
+      <tspan x="127.78832" y="-0.15625" style="font-style: oblique; font-size: 12px; font-family: 'DejaVu Sans'">d</tspan>
+      <tspan x="135.405508" y="-0.15625" style="font-style: oblique; font-size: 12px; font-family: 'DejaVu Sans'">μ</tspan>
+      <tspan x="7.617188" y="1.8125" style="font-size: 8.4px; font-family: 'DejaVu Sans'">r</tspan>
+      <tspan x="11.070703" y="1.8125" style="font-size: 8.4px; font-family: 'DejaVu Sans'">e</tspan>
+      <tspan x="16.238672" y="1.8125" style="font-size: 8.4px; font-family: 'DejaVu Sans'">b</tspan>
+      <tspan x="21.570703" y="1.8125" style="font-size: 8.4px; font-family: 'DejaVu Sans'">u</tspan>
+      <tspan x="26.894531" y="1.8125" style="font-size: 8.4px; font-family: 'DejaVu Sans'">i</tspan>
+      <tspan x="29.22832" y="1.8125" style="font-size: 8.4px; font-family: 'DejaVu Sans'">l</tspan>
+      <tspan x="31.562109" y="1.8125" style="font-size: 8.4px; font-family: 'DejaVu Sans'">t</tspan>
+      <tspan x="37.52168" y="-0.15625" style="font-size: 12px; font-family: 'DejaVu Sans'">=</tspan>
+      <tspan x="49.914258" y="-0.15625" style="font-size: 12px; font-family: 'DejaVu Sans'">2</tspan>
+      <tspan x="76.269727" y="-0.15625" style="font-size: 12px; font-family: 'DejaVu Sans'">(</tspan>
+      <tspan x="89.494336" y="-0.15625" style="font-size: 12px; font-family: 'DejaVu Sans'">)</tspan>
+      <tspan x="102.011914" y="-2.328125" style="font-size: 12px; font-family: 'DejaVu Sans'">̄</tspan>
+      <tspan x="107.933789" y="-0.15625" style="font-size: 12px; font-family: 'DejaVu Sans'">(</tspan>
+      <tspan x="121.158398" y="-0.15625" style="font-size: 12px; font-family: 'DejaVu Sans'">)</tspan>
+      <tspan x="57.549023" y="-0.15625" style="font-size: 12px; font-family: 'DejaVu Sans Display'">∫</tspan>
+      <tspan x="70.60957" y="1.8125" style="font-style: oblique; font-size: 8.4px; font-family: 'DejaVu Sans'">ρ</tspan>
+      <tspan x="102.63457" y="1.8125" style="font-style: oblique; font-size: 8.4px; font-family: 'DejaVu Sans'">γ</tspan>
+      <tspan x="80.951367" y="-0.15625" style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'">n</tspan>
+      <tspan x="112.61543" y="-0.15625" style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'">n</tspan>
+     </text>
+    </g>
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'" transform="translate(92.603437 540.435475)">The whole weighted integral recovers the matrix</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: middle" x="239.04" y="17.837812" transform="rotate(-0 239.04 17.837812)">Forward and inverse mapping are different operations</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pb63571731d">
+   <rect x="7.2" y="37.837812" width="463.68" height="555.28"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -33,14 +33,15 @@
             <a href="pmatrix-decoherence-balance.html">III. P-Matrix</a>
             <a href="mmst-zpe-leakage.html">IV. MMST</a>
             <a href="spin-mint-three-state-morse-reproduction.html">V. Spin Mapping</a>
-            <a href="cps-foundations-dual-kernels.html">VI. CPS</a>
+            <a href="cps-foundations-dual-kernels.html">VI. CPS Kernels</a>
+            <a href="cps-trajectories-classical-feedback.html">VII. CPS Dynamics</a>
           </nav>
 
           <p class="lead">
             The previous MQC notes compared active-surface dynamics, mean-field dynamics, and a directed density-matrix correction. This part turns to the Meyer-Miller-Stock-Thoss mapping Hamiltonian. MMST is attractive because it gives discrete electronic states continuous classical variables, but that same enlargement of phase space creates one of its central failure modes: electronic zero-point-energy leakage.
           </p>
 
-          <p><strong>Clarification in Part VI.</strong> The parameter in this article is the legacy offset inside the factor \(1/2\); it equals twice the CPS offset used in <a href="cps-foundations-dual-kernels.html">Part VI</a>. Negative single-trajectory raw actions are symbol excursions, and do not alone establish inaccurate dynamics or nuclear energy transfer. Part VI separates exact operator reconstruction, signed kernel values, and errors introduced by classical nuclear feedback. The historical figures and numerical values below are retained with that distinction.</p>
+          <p><strong>Clarification in Part VI.</strong> The parameter in this article is the legacy offset inside the factor \(1/2\); it equals twice the CPS offset used in <a href="cps-foundations-dual-kernels.html">Part VI</a>. Negative single-trajectory raw actions are symbol excursions, and do not alone establish inaccurate dynamics or nuclear energy transfer. Part VI derives exact operator reconstruction and signed kernels; <a href="cps-trajectories-classical-feedback.html">Part VII</a> examines errors introduced by classical nuclear feedback. The historical figures and numerical values below are retained with that distinction.</p>
 
           <h2>Why Mapping Is Needed</h2>
           <p>Mixed quantum-classical dynamics needs a closure. The nuclei require forces, while the electronic subsystem is intrinsically discrete. Ehrenfest dynamics closes the problem with a density-matrix mean force. FSSH closes it with one active adiabatic surface and stochastic hops. MMST takes a different route: it first rewrites the discrete electronic Hilbert space in terms of continuous oscillator coordinates, then propagates those variables together with the nuclei.</p>
@@ -218,7 +219,7 @@
           <p>SQC sampling gives each trajectory a slightly different electronic oscillator energy. On steep repulsive surfaces, this can make some trajectories feel an initial nuclear force that does not match the intended electronic state. Cotton and Miller proposed keeping the SQC-sampled \((x,p)\) distribution but adjusting the \(\gamma\)-parameter per trajectory so that the initial nuclear force corresponds exactly to the prepared electronic state. This is not meant to solve every long-time equilibrium issue, but it directly fixes a short-time force inconsistency that can otherwise create spurious trajectories.</p>
 
           <h3>Spin Mapping and Ring-Polymer Variants</h3>
-          <p>Spin mapping uses a fixed-radius finite-state geometry and preserves the normalization structure naturally. Its W kernel can still have negative eigenvalues, so this does not universally eliminate inaccurate energy exchange from classical nuclear feedback. <a href="spin-mint-three-state-morse-reproduction.html">Part V</a> develops spin mapping and its propagator; <a href="cps-foundations-dual-kernels.html">Part VI</a> explains its relation to scalar CPS and MMST. Ring-polymer mapping extensions address the separate issue of nuclear quantum statistics.</p>
+          <p>Spin mapping uses a fixed-radius finite-state geometry and preserves the normalization structure naturally. Its W kernel can still have negative eigenvalues, so this does not universally eliminate inaccurate energy exchange from classical nuclear feedback. <a href="spin-mint-three-state-morse-reproduction.html">Part V</a> develops spin mapping and its propagator; <a href="cps-trajectories-classical-feedback.html">Part VII</a> explains its relation to scalar CPS and MMST. Ring-polymer mapping extensions address the separate issue of nuclear quantum statistics.</p>
 
           <h2>Correction Comparison</h2>
           <p>The following figure separates the main correction ideas on the same constant-gap model. The top-left panel compares population estimators. The top-right panel summarizes estimator RMS error, raw leakage fraction, and window assignment failure. The bottom-left panel shows how negative \(\gamma\) changes the formal raw-action interval. The bottom-right panel isolates the trajectory-adjusted \(\gamma\) idea by sampling SQC-like initial oscillator energies and measuring the error in the initial nuclear force.</p>
@@ -253,7 +254,7 @@
 
           <h2>What Should Be Implemented Next?</h2>
           <p>The current <code>toymodel</code> implementation should be read as a baseline fixed-\(\gamma\) MMST method. It is useful for testing the mapping Hamiltonian, phase averaging, raw-action leakage, and comparisons against FSSH, Ehrenfest, and DVR. It is not yet a complete SQC/MMST implementation.</p>
-          <p>The following list records the development directions proposed when this baseline note was written; spin mapping is now treated in Part V, and CPS theory in Part VI:</p>
+          <p>The following list records the development directions proposed when this baseline note was written; spin mapping is now treated in Part V, and CPS theory and dynamics in <a href="cps-foundations-dual-kernels.html">Part VI</a> and <a href="cps-trajectories-classical-feedback.html">Part VII</a>:</p>
           <ul>
             <li><code>SQC_MMST</code> with square and triangle windows, including initial window sampling and final binning;</li>
             <li>a constrained sampler for negative \(\gamma\), especially for spin-boson relaxation benchmarks;</li>
@@ -294,7 +295,8 @@
               <li><a href="pmatrix-decoherence-balance.html">Part III: P-Matrix Decoherence and Detailed Balance</a> - directed density-matrix variables, pairwise decoherence, Boltzmann detailed balance, and controlled toy diagnostics.</li>
               <li><a href="mmst-zpe-leakage.html">Part IV: MMST Mapping and ZPE Leakage</a> - oscillator mapping variables, electronic phase sampling, ZPE leakage, gamma choices, SQC-style corrections, and spin-mapping context.</li>
               <li><a href="spin-mint-three-state-morse-reproduction.html">Part V: Spin Mapping and Spin-MInt</a> - finite-state spin variables, Stratonovich-Weyl mapping, symplectic propagation, and two- and three-state benchmarks.</li>
-              <li><a href="cps-foundations-dual-kernels.html">Part VI: CPS, Dual Kernels, and Classical Dynamics</a> - constrained electronic phase space, dual operator kernels, and the boundary between exact electronic representation and classical nuclear dynamics.</li>
+              <li><a href="cps-foundations-dual-kernels.html">Part VI: CPS Foundations and Dual Kernels</a> - motivation, scalar kernel, sphere measure, and dual reconstruction.</li>
+              <li><a href="cps-trajectories-classical-feedback.html">Part VII: CPS Trajectories and Classical Feedback</a> - electronic Poisson brackets, nuclear feedback, and trajectory workflows.</li>
             </ol>
           </section>
         </div>

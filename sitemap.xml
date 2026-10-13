@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://lihuigao21.github.io/posts/cps-trajectories-classical-feedback.html</loc>
+    <lastmod>2026-10-13</lastmod>
+  </url>
+  <url>
     <loc>https://lihuigao21.github.io/posts/cps-foundations-dual-kernels.html</loc>
     <lastmod>2026-10-13</lastmod>
   </url>
@@ -614,7 +618,7 @@
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/spin-mint-three-state-morse-reproduction.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/spin-mapping-math-foundations.html</loc>
@@ -622,23 +626,23 @@
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/mmst-zpe-leakage.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/pmatrix-decoherence-balance.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/ehrenfest-tully-benchmark.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/fssh-tully-benchmark.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/mqc-background.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/trpmd-qtip4pf-water-ir-spectrum.html</loc>

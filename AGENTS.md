@@ -60,6 +60,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 
 - Do not publish equations or explanatory text as screenshots.
 - Long inline MathJax formulas can overflow the whole mobile page even when every display block is contained and there are no MathJax errors. Inspect paragraph widths as well; move lengthy identities into scrollable display blocks and recheck with derivation disclosures expanded.
+- For interactive scientific figures, verify real control changes as well as the initial drawing, including complex observable conventions and an independent numerical control. Compact result tables must explicitly override inherited technical-table minimum widths; audit the complete widget and document width on mobile.
 - Wrap wide technical tables in the existing `table-scroll` class, not an unstyled new wrapper. During mobile QA, expand derivation disclosures and verify document width as well as MathJax errors; internal formula/table scrolling is acceptable, whole-page horizontal overflow is not.
 - Convert equations to MathJax/LaTeX text inside the HTML article.
 - Figures should show actual numerical, conceptual, or workflow results, not decorative filler.
@@ -108,6 +109,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 - Remove duplicated derivations, unclear commentary, and irrelevant implementation details.
 - Keep technical claims grounded in the supplied source files, papers, code, or generated results.
 - When the user specifies an ordered scientific argument and chapter structure, map each requested question to its section before rewriting and verify that order after editing. Keep the required assumptions and intermediate derivations visible; a generic theory catalogue or FAQ is not a substitute for the requested chain.
+- Distinguish separate articles from chapters within one article. When the user asks for multiple articles, give each its own page, title, metadata and contents, repair cross-article references, and update every series navigation and index entry.
 - If formulas are OCRed from screenshots or PDFs, verify them against source LaTeX or code when possible.
 
 ## Publishing Workflow
@@ -116,6 +118,8 @@ Generated CSV, JSON, and SVG intended for Git publication must use explicit LF
 line endings on Windows. Check actual saved bytes before staging. Capture
 validation output and print only a bounded summary on failure; do not flood the
 terminal with a generated SVG or a full list of identical CRLF warnings.
+Normalize trailing line whitespace in Matplotlib SVG output before staging,
+and capture both staged and working-tree diff checks before printing results.
 
 Before committing or pushing article changes:
 

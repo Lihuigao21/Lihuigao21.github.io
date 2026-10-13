@@ -1,0 +1,222 @@
+{
+  "passed": true,
+  "scope": "Analytic geometry and deterministic electronic quadrature only",
+  "source_sha256": "fe5639845a7f4e0ee6f8d933f217e509818c8a8f6fc243b1a4242a3c5afac600",
+  "gates": {
+    "algebra_max_abs": 2e-13,
+    "quadrature_refinement_max_abs": 2e-13,
+    "curve_high_frequency_rms": 0.0001,
+    "curve_high_frequency_max": 0.0002,
+    "curve_refinement_max_abs": 0.0001,
+    "endpoint_slope_jump_normalized": 0.002
+  },
+  "rho_real": [
+    [
+      0.9,
+      0.3
+    ],
+    [
+      0.3,
+      0.1
+    ]
+  ],
+  "rho_imag": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "sphere_quadrature": {
+    "rule": "Gauss-Legendre nz times periodic uniform azimuth",
+    "base": [
+      12,
+      24
+    ],
+    "refined": [
+      24,
+      48
+    ],
+    "normalized_measure": true
+  },
+  "orbit_identity_max_abs": 2.220446049250313e-16,
+  "first_moment_max_abs": 4.440892098500626e-16,
+  "matched_reconstruction_max_abs": 1.5543122344752192e-15,
+  "same_kernel_analytic_control_max_abs": 1.7763568394002505e-15,
+  "quadrature_refinement_max_abs": 2.4424906541753444e-15,
+  "curve_quality": {
+    "spinor_c0": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 3.3644038431046827e-06,
+      "high_frequency_residual_max_normalized": 4.759639632756496e-06,
+      "endpoint_slope_jump_normalized": 9.519188648832166e-06,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 9.519188648887678e-06,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "spinor_c1": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 3.3667426712234136e-06,
+      "high_frequency_residual_max_normalized": 4.759639632756496e-06,
+      "endpoint_slope_jump_normalized": 4.153555960371286e-08,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 9.519188648887678e-06,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "bloch_nx": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 1.346690658696481e-05,
+      "high_frequency_residual_max_normalized": 1.903846791434516e-05,
+      "endpoint_slope_jump_normalized": 3.322797321788501e-07,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 3.8075485975674894e-05,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "bloch_nz": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 1.3457551319016005e-05,
+      "high_frequency_residual_max_normalized": 1.903846791434516e-05,
+      "endpoint_slope_jump_normalized": 3.8075485975674894e-05,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 3.8075485975674894e-05,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "rho00_matched": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 4.861640966734831e-16,
+      "high_frequency_residual_max_normalized": 1.3322676295501878e-15,
+      "endpoint_slope_jump_normalized": 1.1102230246251565e-15,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 1.2212453270876722e-15,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "rho00_same_kernel": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 3.008333333332226e-06,
+      "high_frequency_residual_max_normalized": 3.0083333347752372e-06,
+      "endpoint_slope_jump_normalized": 6.016666667107984e-06,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 3.008333334664215e-06,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "rho01_real_matched": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 2.5417144558067167e-16,
+      "high_frequency_residual_max_normalized": 7.771561172376096e-16,
+      "endpoint_slope_jump_normalized": 1.0547118733938987e-15,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 7.771561172376096e-16,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "rho01_real_same_kernel": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 2.2562499999997342e-06,
+      "high_frequency_residual_max_normalized": 2.2562500010536723e-06,
+      "endpoint_slope_jump_normalized": 4.51250000000486e-06,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 2.256250000609583e-06,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "matrix_generator": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 0.0,
+      "high_frequency_residual_max_normalized": 0.0,
+      "endpoint_slope_jump_normalized": 0.0,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 0.0,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "Scalar Q": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 6.250000000000285e-06,
+      "high_frequency_residual_max_normalized": 6.250000000318501e-06,
+      "endpoint_slope_jump_normalized": 1.250000000008189e-05,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 6.250000000096456e-06,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "Scalar W": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 6.250000000000248e-06,
+      "high_frequency_residual_max_normalized": 6.250000000355509e-06,
+      "endpoint_slope_jump_normalized": 1.249999999997087e-05,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 1.8750000000622435e-05,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    },
+    "Scalar \u03b3 = 1/2": {
+      "finite": true,
+      "strictly_increasing_x": true,
+      "duplicate_x": 0,
+      "high_frequency_residual_rms_normalized": 6.250000000000285e-06,
+      "high_frequency_residual_max_normalized": 6.250000000318501e-06,
+      "endpoint_slope_jump_normalized": 1.250000000008189e-05,
+      "unexpected_isolated_spikes": 0,
+      "coarse_fine_interpolation_max_abs": 2.5000000000385825e-05,
+      "audit_definition": "Residual to the adjacent-point linear interpolant; no data smoothing applied.",
+      "passed": true
+    }
+  },
+  "figures": {
+    "cps-su2-projective-orbit": {
+      "png": "c5ad5b0f032d0f6620d4a80d2270e063c344c45e159eef499b292e249a479a0a",
+      "svg": "c6eaeebb1670448cf68625cc745b7f572976e5545734cbbb12962acdff989560"
+    },
+    "cps-density-to-symbol": {
+      "png": "4c96c0e93860964a13550f8b637220b4e3e4a744fd75abb8a8f0760652127e93",
+      "svg": "8d418ea31f6486079185aa58d487940efc2da06ccb96865b00d8d834f8f5b3bb"
+    },
+    "cps-forward-inverse-map": {
+      "png": "68781cbd33f8bb6c6ea73de384b6362bbdbea46d74cf794fe17c712c55d3b18e",
+      "svg": "255b1b14b6a0cbc563b941f03f331c7e0d5156667262c4d92e1d1c25e374a420"
+    },
+    "cps-dual-reconstruction-sweep": {
+      "png": "27de3bf3fe8fb7165ff709a1ccf8f2c35677554c4e6ccfe0e3a0235b856fd276",
+      "svg": "1c6bea31e5ae4a9a3ab6e7d01a647c879aecc6e0b9931cdbd3abf073ec1f0654"
+    },
+    "cps-coupled-generator-example": {
+      "png": "ac41fbe6d46bf21017264ab4c2dfde17514d2fa18a2ee61971358ce033c0768a",
+      "svg": "ae003baef9740e1ba43b1500d4d5c5a08815bbf06322d6261af65b5518ae784e"
+    },
+    "cps-prescribed-path-feedback": {
+      "png": "b78cba1d71d80872c93a751d380983597d8852670ca3462dd2ed29800404dfca",
+      "svg": "3f8ef143eaf6c7532b1a00a5eb49ca984a9349e262f336114d3bdd6eba28ffbe"
+    }
+  }
+}

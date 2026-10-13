@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="MQC VI in two chapters: from MMST and the motivation for CPS to a detailed kernel and dual derivation, then the Poisson-bracket boundary and practical trajectory workflows.">
-    <title>MQC VI: CPS, Dual Kernels, and Classical Dynamics | Lihui Gao</title>
+    <meta name="description" content="From MMST to CPS kernels and dual reconstruction, with interactive SU(2) rotations, density-to-sphere mapping, and inverse integration.">
+    <title>MQC VI: CPS Foundations and Dual Kernels | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/cps-explorer.css">
+    <script defer src="../assets/js/cps-explorer.js"></script>
     <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
     <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   </head>
@@ -20,8 +22,8 @@
       <article class="post">
         <header class="post-header">
           <p class="section-label">MQC Series - Part VI</p>
-          <h1>CPS, Dual Kernels, and Classical Dynamics</h1>
-          <p class="post-meta">2026.10.12 · Updated 2026.10.13 - CPS / MMST / Spin Mapping / Stratonovich-Weyl</p>
+          <h1>CPS Foundations and Dual Kernels</h1>
+          <p class="post-meta">2026.10.12 · Updated 2026.10.13 - CPS / MMST / Dual Kernels / Stratonovich-Weyl</p>
         </header>
         <div class="post-content">
           <nav class="series-nav" aria-label="MQC series navigation">
@@ -31,43 +33,29 @@
             <a href="pmatrix-decoherence-balance.html">III. P-Matrix</a>
             <a href="mmst-zpe-leakage.html">IV. MMST</a>
             <a href="spin-mint-three-state-morse-reproduction.html">V. Spin Mapping</a>
-            <a href="cps-foundations-dual-kernels.html">VI. CPS</a>
+            <a href="cps-foundations-dual-kernels.html">VI. CPS Kernels</a>
+            <a href="cps-trajectories-classical-feedback.html">VII. CPS Dynamics</a>
           </nav>
-          <p class="lead">MMST replaces a finite electronic system by fictitious oscillators. CPS asks a more precise question: can the finite system itself be represented on a constrained phase space, with an explicit rule for recovering every operator? Answering that question requires a kernel, a measure, and a dual. It also exposes exactly where a classical trajectory approximation stops being quantum mechanics.</p>
-          <p>CPS means <em>constraint coordinate–momentum phase space</em>. This article has two chapters. The first starts from MMST and derives the scalar CPS representation. The second derives its propagation boundary and compares actual CPS, MMST, spin-mapping, and Ehrenfest calculations. The discussion follows the questions raised by their comparison, rather than surveying every CPS extension.</p>
+          <p class="lead">MMST replaces a finite electronic system by fictitious oscillators. CPS asks a more precise question: can the finite system itself be represented on a constrained phase space, with an explicit rule for recovering every operator? Answering that question requires a kernel, a measure, and a dual.</p>
+          <p>CPS means <em>constraint coordinate–momentum phase space</em>. Parts IV and V introduced MMST and spin mapping. This part follows their motivation into the assumptions, parameter count, kernel, sphere integral, and operator reconstruction. <a href="cps-trajectories-classical-feedback.html">Part VII</a> then examines propagation and practical trajectory workflows.</p>
+          <p class="cps-note">Interactive examples: <a href="#cps-orbit-explorer">rotate a spinor and its Bloch ray</a>; <a href="#cps-mapping-explorer">map a density and reconstruct it with a dual</a>. Each example also has downloadable Python figures.</p>
           <p><strong>Conventions.</strong> Use an orthonormal, fixed diabatic basis with \(F\ge2\) states and set \(\hbar=1\). Nuclear variables are \((R,P)\); mapping variables are \((x_n,p_n)\). Define \(z_n=(x_n+ip_n)/\sqrt2\) and the dimensionless action \(J_n=|z_n|^2\). Here the diagonal offset is \(J_n-\gamma\). Parts IV and V write their parameter inside a factor one-half, so their \(\Gamma=2\gamma\). Ordinary oscillator MMST has \(\gamma=1/2\) in the convention used below.</p>
           <nav aria-label="Article contents">
             <ol>
-              <li><a href="#chapter-one">Chapter 1 — From MMST to an exact CPS representation</a>
-                <ul>
-                  <li><a href="#mmst">1.1 What MMST maps, and what remains unresolved</a></li>
-                  <li><a href="#motivation">1.2 Why Liu and collaborators developed CPS</a></li>
-                  <li><a href="#operator-map">1.3 Why map operators onto phase space?</a></li>
-                  <li><a href="#kernel">1.4 Assumptions, parameter counting, and the kernel</a></li>
-                  <li><a href="#geometry">1.5 What the constrained sphere represents</a></li>
-                  <li><a href="#measure">1.6 Deriving the sphere measure and its moments</a></li>
-                  <li><a href="#dual">1.7 Deriving the dual and reading physical information</a></li>
-                  <li><a href="#spin">1.8 Why self-duality singles out W</a></li>
-                  <li><a href="#check">1.9 An electronic reconstruction check</a></li>
-                </ul>
-              </li>
-              <li><a href="#chapter-two">Chapter 2 — From exact symbols to approximate trajectories</a>
-                <ul>
-                  <li><a href="#poisson">2.1 What the electronic Poisson bracket gets exactly right</a></li>
-                  <li><a href="#coupled-generator">2.2 Where the coupled generator differs</a></li>
-                  <li><a href="#dynamics">2.3 Prescribed nuclear paths versus nuclear feedback</a></li>
-                  <li><a href="#comparison">2.4 MMST and spin mapping viewed through CPS</a></li>
-                  <li><a href="#leakage">2.5 What a fixed radius changes about ZPE leakage</a></li>
-                  <li><a href="#workflow">2.6 The actual trajectory workflow</a></li>
-                  <li><a href="#workflow-comparison">2.7 CPS, MMST, spin mapping, and Ehrenfest side by side</a></li>
-                </ul>
-              </li>
+              <li><a href="#mmst">What MMST Maps, and What Remains Unresolved</a></li>
+              <li><a href="#motivation">Why Liu and Collaborators Developed CPS</a></li>
+              <li><a href="#operator-map">Why Map Operators onto Phase Space?</a></li>
+              <li><a href="#kernel">Assumptions, Parameter Counting, and the Kernel</a></li>
+              <li><a href="#geometry">What the Constrained Sphere Represents</a></li>
+              <li><a href="#measure">Deriving the Sphere Measure and Its Moments</a></li>
+              <li><a href="#dual">Deriving the Dual and Reading Physical Information</a></li>
+              <li><a href="#spin">Why Self-Duality Singles Out W</a></li>
+              <li><a href="#check">An Electronic Reconstruction Check</a></li>
             </ol>
           </nav>
 
-          <h2 id="chapter-one">Chapter 1 — From MMST to an Exact CPS Representation</h2>
-
-          <h3 id="mmst">1.1 What MMST Maps, and What Remains Unresolved</h3>
+          <span id="chapter-one"></span>
+          <h2 id="mmst">1. What MMST Maps, and What Remains Unresolved</h2>
           <p>Start with the electronic potential operator \(V(R)=\sum_{nm}V_{nm}(R)|n\rangle\langle m|\). Stock–Thoss oscillator mapping identifies each electronic basis state with one excitation in its corresponding fictitious oscillator:</p>
           <div class="math-block">\[
             |n\rangle\longleftrightarrow
@@ -87,13 +75,13 @@
           <p>This formula alone does not specify a simulation. One must still specify how the physical electronic state is represented initially, how the enlarged space is projected, what dynamics propagates the variables, and how populations are read out. Full Cartesian Wigner sampling, focused initialization, and windowed methods are different protocols.</p>
           <p>The source of concern is already visible: an exact operator embedding does not make independent classical oscillator trajectories exact for a coupled electron–nuclear system. Nor does an individual number symbol have to remain a physical probability. These are questions about representation and propagation that should be separated before proposing a repair. The MMST transformation itself is not an intrinsically inaccurate representation. <a href="#ref-mmst">[1]</a></p>
 
-          <h3 id="motivation">1.2 Why Liu and Collaborators Developed CPS</h3>
+          <h2 id="motivation">2. Why Liu and Collaborators Developed CPS</h2>
           <p>The published motivation has several stages. Liu's unified mapping framework sought to derive finite-state mapping Hamiltonians directly from operator relations, with the Meyer–Miller Hamiltonian as one member, rather than requiring the conventional single-excitation oscillator construction. He and Liu's 2019 work then explored nonadiabatic dynamics using a constrained electronic phase space and a physically constrained population construction. That paper explicitly recognized the quantum exactness of MMST. <a href="#ref-he2019">[2]</a></p>
           <p>The 2021 formulation made the broader problem explicit: construct an invertible correspondence between finite electronic operators and phase-space symbols, combine a constrained electronic space with the continuous nuclear space, and derive practical trajectory approximations from that representation. It also showed why the scalar offset need not be positive and why it can be generalized to a commutator matrix. <a href="#ref-negative">[3]</a> <a href="#ref-account">[4]</a></p>
           <p>The later CPS review emphasizes another practical motivation: retain a useful coordinate–momentum description whose electronic equations are linear, while treating a composite system with discrete electronic and continuous nuclear variables. This is a computationally convenient representation of the finite system, with an explicit inverse transformation. <a href="#ref-review">[5]</a></p>
           <p>These are the authors' stated theoretical and algorithmic aims. Our teaching interpretation is to separate three questions: <em>what represents the quantum operator, what recovers its expectation, and what approximation propagates it?</em> CPS clarifies those questions. It does not establish that the original MMST mapping was wrong, or that every CPS trajectory method eliminates ZPE leakage.</p>
 
-          <h3 id="operator-map">1.3 Why Map Operators onto Phase Space?</h3>
+          <h2 id="operator-map">3. Why Map Operators onto Phase Space?</h2>
           <p>A wavefunction alone is insufficient for this task. We need one representation for the initial density, the Hamiltonian, the force operator, and any final observable. Let \(K(u)\) be an operator-valued kernel labeled by a continuous phase-space point \(u\). Associate an electronic operator \(A\) with the scalar function</p>
           <div class="math-block">\[
             a(u)=\operatorname{Tr}[A K(u)].
@@ -110,7 +98,7 @@
           <p>The second kernel \(\bar K\) is the dual needed to make this identity hold. The factor \(F\) belongs to our normalized-measure convention; a measure of total volume \(F\) absorbs it. We will derive both the measure and the dual below.</p>
           <p>Mapping supplies a different representation of the same information. It does not by itself improve accuracy, and it does not make operator multiplication ordinary multiplication of symbols. Also, the one-to-one correspondence is with the finite-dimensional space of allowed operator symbols, not with every possible function on the sphere.</p>
 
-          <h3 id="kernel">1.4 Assumptions, Parameter Counting, and the Kernel</h3>
+          <h2 id="kernel">4. Assumptions, Parameter Counting, and the Kernel</h2>
           <p>Why should a kernel have the familiar form \(zz^\dagger-\gamma I\), and why should there be exactly one parameter? Neither statement follows from the word “mapping.” We must first specify the construction. Consider the scalar, fixed-radius family with these requirements:</p>
           <ol>
             <li>A point labels one normalized complex direction \(u\), with \(u^\dagger u=1\); the common phase of \(u\) is redundant.</li>
@@ -149,7 +137,7 @@
           <p>Equivalently, \(K_\gamma=s\Pi-\gamma I\). The radius is \(\sqrt{2s}\) in \((x,p)\) coordinates. Its coefficient of \(zz^\dagger\) is fixed by the chosen canonical convention; changing that coefficient while retaining the same coordinates and bracket would change the electronic equations. An abstract negative-\(a\) covariant kernel is possible, but it is not this positive-radius Cartesian construction.</p>
           <p>Why not zero parameters? Normalization does not fix the relative scale of the traceless part. The duality condition will pair that scale with an inverse scale, leaving \(\gamma\) free. An extra requirement, such as self-duality, can remove the freedom. Why not two? Radius and offset are tied by unit trace. Two independently adjustable values violate that requirement in this ansatz. Matrix kernels, weighted radii, or different phase-space domains can introduce more choices; the whole CPS family is not universally a one-parameter theory.</p>
 
-          <h3 id="geometry">1.5 What the Constrained Sphere Represents</h3>
+          <h2 id="geometry">5. What the Constrained Sphere Represents</h2>
           <p>The derived norm constraint puts \((x,p)\) on \(S^{2F-1}\). The kernel depends only on \(zz^\dagger\), so the common phase gives the same point for all physical symbols. The space of distinct directions is</p>
           <div class="math-block">\[
             S^{2F-1}/U(1)
@@ -157,6 +145,33 @@
             =SU(F)/S\!\left(U(1)\times U(F-1)\right).
           \]</div>
           <p>This quotient is the group-theory version of the stabilizer used in the derivation: \(SU(F)\) moves a reference ray to another ray, while transformations preserving it are redundant. There are \(2F-2\) real directional degrees of freedom. For \(F=2\), this is the ordinary Bloch sphere. For larger \(F\), it is a projective manifold, not the entire sphere of arbitrary generalized Bloch vectors.</p>
+          <h3>A two-state rotation you can move</h3>
+          <p>The group is a set of transformations; the orbit is the set of states reached by those transformations. They are different spaces. In two states, \(SU(2)\) has three real group parameters, while its pure-state orbit has two. Put \(T_j=\sigma_j/2\), so \([T_i,T_j]=i\epsilon_{ijk}T_k\), and rotate the reference spinor \(u_0=(1,0)^\mathsf T\) about the y axis:</p>
+          <div class="math-block">\[
+            U_y(\alpha)=e^{-i\alpha\sigma_y/2}
+              =\begin{pmatrix}\cos(\alpha/2)&-\sin(\alpha/2)\\
+                               \sin(\alpha/2)&\cos(\alpha/2)\end{pmatrix},\qquad
+            u(\alpha)=\begin{pmatrix}\cos(\alpha/2)\\\sin(\alpha/2)\end{pmatrix}.
+          \]</div>
+          <p>Taking the outer product removes a common phase. Define \(\Pi=(I+\boldsymbol n\cdot\boldsymbol\sigma)/2\). Its Bloch direction is</p>
+          <div class="math-block">\[
+            \boldsymbol n=(2\operatorname{Re}c_0^*c_1,
+                            2\operatorname{Im}c_0^*c_1,|c_0|^2-|c_1|^2)
+                           =(\sin\alpha,0,\cos\alpha).
+          \]</div>
+          <p>Here \(c_0,c_1\) are the two components of \(u(\alpha)\). After \(\alpha=2\pi\), the spinor changes sign but \(\Pi\), \(K_\gamma\), and the Bloch direction return to their starting values. After \(4\pi\), the spinor itself returns. This illustrates both the double cover of spatial rotations by \(SU(2)\) and one part of the broader redundancy \(u\sim e^{i\chi}u\). The circle on the left below is only a real slice of spinor space; the circle on the right is a meridian of the Bloch sphere.</p>
+          <section class="cps-explorer" id="cps-orbit-explorer" aria-labelledby="orbit-title">
+            <h3 id="orbit-title">Explore the spinor and its ray</h3>
+            <label for="orbit-angle">Rotation angle α: <output for="orbit-angle">0°</output></label>
+            <input id="orbit-angle" type="range" min="0" max="720" step="1" value="0" style="width:100%">
+            <div class="cps-buttons"><button type="button" data-angle="0">0°</button><button type="button" data-angle="360">360°: spinor changes sign</button><button type="button" data-angle="720">720°: spinor returns</button></div>
+            <div class="cps-plots"><canvas data-spinor role="img" aria-label="Real spinor amplitudes c0 and c1 under a y-axis rotation"></canvas><canvas data-bloch role="img" aria-label="The nx nz meridian of the Bloch sphere under the same rotation"></canvas></div>
+            <p class="cps-result" aria-live="polite"></p>
+            <noscript><p>JavaScript is disabled. The Python figure below shows the same rotation.</p></noscript>
+          </section>
+          <details><summary>Python figure: the SU(2) orbit and phase quotient</summary>
+            <figure><img src="../assets/img/mqc-series/cps-su2-projective-orbit.png" alt="Real spinor rotation and Bloch-sphere ray, with two-pi sign change and four-pi return"><figcaption>The blue path is generated by \(U_y(\alpha)\). The upper axes are real spinor amplitudes; the lower axes are the three dimensionless Bloch components. Blue and orange mark the reference and opposite directions. The sign change after \(2\pi\) does not change the ray. This is a state orbit, not a drawing of the whole group. <a href="../assets/img/mqc-series/cps-su2-projective-orbit.svg">Vector figure</a>.</figcaption></figure>
+          </details>
           <p>The physical pure-state object is \(\Pi\), not necessarily \(K_\gamma\). Their distinction follows directly from the spectrum:</p>
           <div class="math-block">\[
             \operatorname{spec}K_\gamma
@@ -176,7 +191,7 @@
           \]</div>
           <p>For \(F&gt;2\), this length condition is necessary but not sufficient. The full orbit retains \(\Pi^2=\Pi\), or equivalently \((K_\gamma+\gamma I)^2=s(K_\gamma+\gamma I)\). This is the precise geometry shared with generalized spin mapping.</p>
 
-          <h3 id="measure">1.6 Deriving the Sphere Measure and Its Moments</h3>
+          <h2 id="measure">6. Deriving the Sphere Measure and Its Moments</h2>
           <p>Now the integral needs an actual measure. Equal treatment of all electronic bases calls for the invariant uniform measure on the sphere, with the common phase integrated out or left as a normalized redundant coordinate. In Cartesian coordinates it is</p>
           <div class="math-block">\[
             d\mu_\gamma(x,p)=
@@ -210,7 +225,7 @@
           \]</div>
           <p>The integral is not an assumption that the electronic state is uniformly mixed. The measure describes the representation domain; the initial density contributes a separate symbol and weight.</p>
 
-          <h3 id="dual">1.7 Deriving the Dual and Reading Physical Information</h3>
+          <h2 id="dual">7. Deriving the Dual and Reading Physical Information</h2>
           <p>The dual is fixed by the trace identity, not by a fit to dynamics and not by taking a matrix inverse of \(K_\gamma\). The same covariance argument permits \(\bar K=c\Pi+dI\). Write \(A_u=u^\dagger Au\), \(B_u=u^\dagger Bu\), and \(T_A=\operatorname{Tr}A\), \(T_B=\operatorname{Tr}B\). The original and dual symbols are \(a_\gamma=sA_u-\gamma T_A\) and \(\bar b=cB_u+dT_B\). Using the moments just derived gives</p>
           <div class="math-block">\[
             \begin{aligned}
@@ -266,8 +281,43 @@
                               -\frac{1-\gamma}{s}.
           \]</div>
           <p>Uniform Monte Carlo sampling therefore averages \(Ff_{\rho_0,\gamma}\bar c_n\), not ordinary populations with unit weights. The initial weight integrates to one because \(F\int f_{\rho_0,\gamma}d\mu=\operatorname{Tr}\rho_0=1\). Signed weights are possible. A pure electronic state does not collapse this full-sphere representation to one point, but Monte Carlo does not require visiting every point of a continuum; importance sampling and suitable quadrature are alternatives.</p>
+          <h3>A worked forward map and inverse map</h3>
+          <p>For two states, write an arbitrary physical density as \(\rho=(I+\boldsymbol r\cdot\boldsymbol\sigma)/2\), where \(|\boldsymbol r|\le1\). A pure state has unit length. The phase-space direction \(\boldsymbol n\) remains a unit vector even for a mixed input density. With \(s=1+2\gamma\), direct tracing gives</p>
+          <div class="math-block">\[
+            K_\gamma(\boldsymbol n)=\frac{I+s\boldsymbol n\cdot\boldsymbol\sigma}{2},\qquad
+            f_{\rho,\gamma}(\boldsymbol n)=\frac{1+s\boldsymbol r\cdot\boldsymbol n}{2},\qquad
+            \bar K_\gamma(\boldsymbol n)=\frac{I+(3/s)\boldsymbol n\cdot\boldsymbol\sigma}{2}.
+          \]</div>
+          <p>The matrix entries are \(\rho_{00}=(1+r_z)/2\), \(\rho_{11}=(1-r_z)/2\), and \(\rho_{01}=(r_x-ir_y)/2\). This forward map turns one matrix into a whole scalar function, rather than selecting one classical point. In spherical coordinates \(n_z=\cos\theta\), the normalized measure is \(d\mu=d\phi\,dn_z/(4\pi)\). Uniform directions give \(\int\boldsymbol n\,d\mu=0\) and \(\int n_i n_j\,d\mu=\delta_{ij}/3\). Therefore</p>
+          <div class="math-block">\[
+            2\int f_{\rho,\gamma}\bar K_\gamma\,d\mu
+             =\frac I2+\frac12\frac{s(3/s)}3\boldsymbol r\cdot\boldsymbol\sigma
+             =\rho.
+          \]</div>
+          <p>The factors \(s\) and \(3/s\) cancel in the integral. Try changing \(\gamma\) below: the colored function changes, while the reconstructed matrix stays fixed. Then switch the readout to the same kernel. The traceless part is multiplied by \(s^2/3\), so both populations and coherences change unless W is selected. Rotating the input state also moves its coherence between real and imaginary parts.</p>
+          <section class="cps-explorer" id="cps-mapping-explorer" aria-labelledby="mapping-title">
+            <h3 id="mapping-title">Explore a density, its symbol, and reconstruction</h3>
+            <div class="cps-controls">
+              <label>γ: <output data-value="gamma">0.366025</output><input name="gamma" type="range" min="-0.4" max="1" step="0.001" value="0.366" data-exact="0.3660254037844386"></label>
+              <label>Bloch length |r|: <output data-value="length">1.00</output><input name="length" type="range" min="0" max="1" step="0.01" value="1"></label>
+              <label>State polar angle θ: <output data-value="theta">36.9°</output><input name="theta" type="range" min="0" max="180" step="0.000001" value="36.869898"></label>
+              <label>State azimuth φ: <output data-value="phi">0.0°</output><input name="phi" type="range" min="-180" max="180" step="1" value="0"></label>
+              <label>Readout<select aria-label="Reconstruction readout"><option value="dual">Matched dual</option><option value="same">Same kernel on both sides</option></select></label>
+            </div>
+            <div class="cps-buttons"><button type="button" data-gamma="0">Q: γ = 0</button><button type="button" data-gamma="W">W: self-dual</button><button type="button" data-gamma="0.5">γ = 1/2</button></div>
+            <canvas role="img" aria-label="Scalar density symbol on the Bloch sphere shown in azimuth and nz coordinates; blue is low and red is high"></canvas>
+            <table class="cps-result-table"><thead><tr><th>Matrix entry</th><th>Target</th><th>Rebuilt</th></tr></thead><tbody><tr><th>ρ₀₀</th><td></td><td></td></tr><tr><th>ρ₁₁</th><td></td><td></td></tr><tr><th>Re ρ₀₁</th><td></td><td></td></tr><tr><th>Im ρ₀₁</th><td></td><td></td></tr></tbody></table>
+            <p class="cps-result" aria-live="polite"></p>
+            <p class="cps-note">The heatmap uses azimuth and n_z, so equal coordinate areas have equal invariant measure. Reconstruction uses a 4 × 8 product quadrature that integrates these quadratic functions exactly. It is an electronic representation check.</p>
+            <noscript><p>JavaScript is disabled. The Python figures below show the forward map and reconstruction.</p></noscript>
+          </section>
+          <details><summary>Python figures: scalar functions, inverse mapping, and the γ sweep</summary>
+            <figure><img src="../assets/img/mqc-series/cps-density-to-symbol.png" alt="Three angular heatmaps for the same pure density at Q, W, and gamma one-half"><figcaption>All panels use \(\rho=\begin{pmatrix}0.9&amp;0.3\\0.3&amp;0.1\end{pmatrix}\), with \(\boldsymbol r=(0.6,0,0.8)\). The horizontal axis is azimuth divided by π; the vertical axis is \(n_z\). Color gives the dimensionless symbol on the same scale; black curves mark zero. Q is nonnegative here, while W and \(\gamma=1/2\) have signed regions. All three recover the same matrix with their matched duals. <a href="../assets/img/mqc-series/cps-density-to-symbol.svg">SVG with vector axes</a>.</figcaption></figure>
+            <figure><img src="../assets/img/mqc-series/cps-forward-inverse-map.png" alt="A quantum density matrix maps to a scalar sphere function and is rebuilt by normalized integration against its dual"><figcaption>Forward tracing and inverse integration perform different operations. The arrows denote these transformations. The entire weighted integral reconstructs the density; an individual scalar value is not an electronic probability. <a href="../assets/img/mqc-series/cps-forward-inverse-map.svg">Vector figure</a>.</figcaption></figure>
+            <figure><img src="../assets/img/mqc-series/cps-dual-reconstruction-sweep.png" alt="Matched-dual and incorrect same-kernel reconstruction of population and coherence as gamma varies"><figcaption>For the same input matrix, blue shows matched-dual quadrature and the target values 0.9 and 0.3. Orange uses the original kernel for both factors; the gray vertical line is W. The two curves agree at W. The dimensionless sweep covers \(-0.25\le\gamma\le0.7\), and tests only reconstruction. <a href="../assets/img/mqc-series/cps-dual-reconstruction-sweep.svg">Vector figure</a>.</figcaption></figure>
+          </details>
 
-          <h3 id="spin">1.8 Why Self-Duality Singles Out W</h3>
+          <h2 id="spin">8. Why Self-Duality Singles Out W</h2>
           <p>If every allowed \(\gamma\) has a correct dual, what distinguishes one value? Exact trace reconstruction alone does not distinguish them. Self-duality is an additional symmetry requirement: the same kernel should represent both factors of the operator pairing.</p>
           <p>Requiring \(K_\gamma=\bar K_\gamma\) matches their rank-one coefficients, giving \(s=(F+1)/s\). On the positive Cartesian branch,</p>
           <div class="math-block">\[
@@ -289,7 +339,7 @@
           <p>The fundamental-representation quadratic Casimir satisfies \(\sum_aT_a^2=(F^2-1)I/(2F)\). Matching the classical component length to this value gives \(s^2=F+1\). Thus the Casimir and self-duality identify the same W construction in these conventions. <a href="#ref-spin">[6]</a></p>
           <p>Self-duality removes a representation asymmetry. It does not prove optimal approximate nuclear dynamics. Other radii still reconstruct operators exactly when paired with their own duals; their estimator variance and classical feedback can differ.</p>
 
-          <h3 id="check">1.9 An Electronic Reconstruction Check</h3>
+          <h2 id="check">9. An Electronic Reconstruction Check</h2>
           <p>A compact calculation isolates the benefit of a correct dual before introducing nuclear feedback. Use the two-state Hamiltonian and coherent initial state</p>
           <div class="math-block">\[
             V=\begin{pmatrix}
@@ -307,206 +357,10 @@
           <p>under that mismatched readout, already before propagation.</p>
           <p>The dual therefore helps by removing a calculable representation error. The check is deterministic electronic reconstruction, not evidence of accurate coupled nuclear trajectories. Its <a href="../assets/img/mqc-series/cps-dual-kernel-checks.json">numerical receipt</a>, <a href="../assets/img/mqc-series/cps-dual-kernel-checks.csv">population table</a>, and <a href="../assets/code/mqc/cps_dual_kernel_checks.py">reproducible script</a> retain the matched and deliberately mismatched calculations.</p>
 
-          <h2 id="chapter-two">Chapter 2 — From Exact Symbols to Approximate Trajectories</h2>
+          <p id="chapter-two">The matched dual recovers electronic operator information exactly. That result does not yet determine a coupled dynamical approximation. <a href="cps-trajectories-classical-feedback.html">Continue to Part VII: CPS Trajectories and Classical Feedback</a> for the Poisson-bracket derivation, prescribed-path proof, and method workflows.</p>
 
-          <h3 id="poisson">2.1 What the Electronic Poisson Bracket Gets Exactly Right</h3>
-          <p>Chapter 1 established an exact representation, but a simulation also needs a generator. The usual trajectory choice is the scalar Hamiltonian</p>
-          <div class="math-block">\[
-            h_\gamma(R,P,z)
-              =\frac{P^2}{2M}+z^\dagger V(R)z
-                                      -\gamma\operatorname{Tr}V(R).
-          \]</div>
-          <p>With canonical brackets \(\{x_n,p_m\}=\delta_{nm}\), the complex amplitudes satisfy \(\{z_n,z_m^*\}=-i\delta_{nm}\). For scalar functions, the electronic bracket is</p>
-          <div class="math-block">\[
-            \{a,b\}_{e}
-              =-i\sum_n
-                \left(\frac{\partial a}{\partial z_n}
-                      \frac{\partial b}{\partial z_n^*}
-                     -\frac{\partial a}{\partial z_n^*}
-                      \frac{\partial b}{\partial z_n}\right).
-          \]</div>
-          <p>Take electronic operators \(A,B\), independent of nuclear variables, with symbols \(a_\gamma=z^\dagger Az-\gamma\operatorname{Tr}A\) and \(b_\gamma=z^\dagger Bz-\gamma\operatorname{Tr}B\). Differentiation gives \(\partial_{z_n}a_\gamma=(z^\dagger A)_n\) and \(\partial_{z_n^*}a_\gamma=(Az)_n\). Substituting them yields</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            \{a_\gamma,b_\gamma\}_{e}
-              &=-i\left(z^\dagger ABz-z^\dagger BAz\right)\\
-              &=-iz^\dagger[A,B]z
-               =\operatorname{Tr}\!\left[-i[A,B]K_\gamma\right].
-            \end{aligned}
-          \]</div>
-          <p>The last equality uses \(\operatorname{Tr}[A,B]=0\). This is an exact correspondence of the electronic commutator algebra with the quadratic-symbol Poisson bracket. For the potential Hamiltonian it gives</p>
-          <div class="math-block">\[
-            i\dot z=V(R)z,\qquad
-            \dot K_\gamma=-i[V(R),K_\gamma].
-          \]</div>
-          <p>Hermiticity conserves \(z^\dagger z=s\). The trajectory therefore remains on its sphere without an extra projection. In a real symmetric diabatic basis, the same equation reads \(\dot x=Vp\), \(\dot p=-Vx\).</p>
-          <p>This exact commutator correspondence is why it is misleading to say simply that “using a Poisson bracket makes electronic evolution wrong.” The missing issue is <em>operator multiplication coupled to nuclear derivatives</em>.</p>
-
-          <h3 id="coupled-generator">2.2 Where the Coupled Generator Differs</h3>
-          <p>The commutator calculation does not establish \((AB)_\gamma=a_\gamma b_\gamma\). Define the induced electronic product by \((a_\gamma\star_e b_\gamma)(u)=\operatorname{Tr}[ABK_\gamma(u)]\). Its antisymmetric part is represented correctly by the electronic bracket, but its symmetric part is generally not ordinary scalar multiplication.</p>
-          <p>A projector gives the simplest check. Since \(C_n^2=C_n\), its product symbol equals \(c_n\). Its ordinary scalar square equals \(c_n^2\), which differs whenever \(c_n\) is not zero or one. Thus a trajectory coordinate can preserve the electronic Lie algebra without preserving the whole quantum operator algebra.</p>
-          <p>To see why that matters for nuclear motion, take one nuclear coordinate and the matrix Hamiltonian \(H(R,P)=P^2I/(2M)+V(R)\). A nuclear Wigner transform followed by the first-order nuclear gradient expansion gives the adjoint quantum–classical Liouville equation for an observable matrix \(B(R,P,t)\):</p>
-          <div class="math-block">\[
-            \partial_t B
-              =i[V,B]+\frac PM\partial_R B
-                 -\frac12\left[
-                      (\partial_RV)(\partial_PB)
-                       +(\partial_PB)(\partial_RV)\right].
-          \]</div>
-          <p>The nuclear force term contains the operator anticommutator. Full quantum nuclear propagation can have further Wigner–Moyal terms; even before those terms are considered, the displayed matrix equation differs from scalar Hamiltonian flow. Mapping the matrix equation gives</p>
-          <div class="math-block">\[
-            (\partial_t B)_\gamma
-              =\{b_\gamma,h_\gamma\}_{e}
-                 +\frac PM\partial_R b_\gamma
-                 -\frac12
-                    \left[(\partial_RV)(\partial_PB)
-                         +(\partial_PB)(\partial_RV)\right]_\gamma.
-          \]</div>
-          <p>The independent scalar trajectories instead generate</p>
-          <div class="math-block">\[
-            \dot b_\gamma
-              =\{b_\gamma,h_\gamma\}_{e}
-                 +\frac PM\partial_R b_\gamma
-                 -(\partial_Rv_\gamma)(\partial_Pb_\gamma),
-            \quad v_\gamma=\operatorname{Tr}(VK_\gamma).
-          \]</div>
-          <p>The first two terms agree. The last replaces a symmetrized operator product by a product of scalar symbols. The CPS review makes this distinction explicitly when comparing its mixed quantum–classical limit with the ordinary full Poisson bracket. <a href="#ref-review">[5, supplementary Appendix 5]</a></p>
-          <p><strong>A concrete counterexample.</strong> Let \(F=2\), \(V(R)=R\sigma_z\), and \(B(R,P)=P\sigma_z\), where \(\sigma_z=\operatorname{diag}(1,-1)\). In the matrix equation, the commutator and position derivative vanish, while \(\partial_RV=\partial_PB=\sigma_z\). Therefore</p>
-          <div class="math-block">\[
-            \partial_tB=-\frac12(\sigma_z^2+\sigma_z^2)
-                        =-I,\qquad
-            (\partial_tB)_\gamma=-1.
-          \]</div>
-          <p>Write \(\Pi=(I+\boldsymbol n\cdot\boldsymbol\sigma)/2\), with \(|\boldsymbol n|=1\), so \(K_\gamma=(I+s\boldsymbol n\cdot\boldsymbol\sigma)/2\). Put \(q=\operatorname{Tr}(\sigma_zK_\gamma)=sn_z\). The scalar symbols are \(h_\gamma=P^2/(2M)+Rq\) and \(b_\gamma=Pq\); their electronic bracket vanishes. The nuclear bracket gives</p>
-          <div class="math-block">\[
-            \{Pq,h_\gamma\}_{R,P}=-q^2=-s^2n_z^2.
-          \]</div>
-          <p>At an equatorial direction, this is zero, while the correct matrix generator gives minus one. They are different generators. Special ensemble moments can cancel this difference for a particular initial state or instant; the example does not claim every first averaged derivative is wrong. It does rule out a general pointwise equivalence. Because the potential is linear and the scalar kinetic term quadratic, this example does not require omitted higher nuclear Moyal derivatives to produce the discrepancy.</p>
-          <p>Consequently, a matched dual can reconstruct the operator information present in the propagated representation, but cannot turn this substituted generator into the exact one. Adding more samples controls integration error, not the missing operator-product terms.</p>
-
-          <h3 id="dynamics">2.3 Prescribed Nuclear Paths Versus Nuclear Feedback</h3>
-          <p>First prescribe one nuclear path \(R(t)\). Every electronic sample then sees the same matrix \(V(R(t))\), with a common unitary \(U(t)\) solving \(i\dot U=V(R(t))U\), \(U(0)=I\). The trajectory and both kernels obey</p>
-          <div class="math-block">\[
-            z(t)=U(t)z(0),\quad
-            K_\gamma(t)=U(t)K_\gamma(0)U^\dagger(t),\quad
-            \bar K_\gamma(t)=U(t)\bar K_\gamma(0)U^\dagger(t).
-          \]</div>
-          <p>Insert the propagated dual into the initial reconstruction. The same \(U(t)\) can be taken outside the integral:</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            F\int f_{\rho_0,\gamma}(u)
-                       \bar K_\gamma(u_t)\,d\mu
-               &=U(t)\left[
-                    F\int f_{\rho_0,\gamma}(u)
-                              \bar K_\gamma(u)\,d\mu
-                         \right]U^\dagger(t)\\
-               &=U(t)\rho_0U^\dagger(t).
-            \end{aligned}
-          \]</div>
-          <p>This proves exact electronic evolution along the prescribed path, for every allowed radius with its matched representation and readout. The path can be time dependent; “frozen nuclei” is only a special case. The statement concerns the quantum electronic subsystem driven by that path, not the quantum validity of the supplied nuclear path itself.</p>
-          <p>Now let each mapping sample drive its own classical nuclei. The canonical equations add</p>
-          <div class="math-block">\[
-            \dot R_\alpha=\frac{P_\alpha}{M},\qquad
-            \dot P_\alpha
-              =-\operatorname{Tr}
-                   [K_\gamma(u_\alpha)\nabla_RV(R_\alpha)].
-          \]</div>
-          <p>The resulting \(R_\alpha(t)\), and hence \(U_\alpha(t)\), depend on the electronic sample. Reconstruction becomes an integral of different unitaries:</p>
-          <div class="math-block">\[
-            \rho_{\mathrm{traj}}(t)
-               =F\int f_{\rho_0,\gamma}(u)\,
-                    U_u(t)\bar K_\gamma(u)U_u^\dagger(t)\,d\mu.
-          \]</div>
-          <p>There is no common unitary to factor out. The proof above no longer applies; the operator-product discrepancy in Section 2.2 explains the missing generator structure. In the full quantum problem, electron–nuclear correlations, branching, and nuclear coherence also belong to the evolving joint state. Independent classical paths do not generally retain them.</p>
-          <p>A focused pure-state representation makes the boundary intuitive. For \(\gamma\ge0\), choose \(J_k=1+\gamma\), \(J_{n\ne k}=\gamma\), and independent uniform phases. Then \(\langle K_\gamma(0)\rangle=C_k\). Along a common nuclear path, linearity gives \(\langle K_\gamma(t)\rangle=UC_kU^\dagger\), using the original kernel as this focused construction's readout. With sample-dependent nuclear feedback, the initial first-moment identity no longer proves equivalence to full-sphere sampling with its dual.</p>
-          <p>The practical boundary is therefore exact driven-electronic propagation versus <em>generally approximate</em> self-consistent electron–nuclear propagation. It is not a no-go theorem: decoupled systems and particular closed limits can be exact, and CPS can support more complete dynamics than independent Hamiltonian trajectories.</p>
-
-          <h3 id="comparison">2.4 MMST and Spin Mapping Viewed Through CPS</h3>
-          <p>At \(\gamma=1/2\), the CPS scalar Hamiltonian is the ordinary MMST quadratic Hamiltonian. Fix the same initial point, potential, and integrator: the electronic equations, nuclear force, conserved total action, and trajectory are identical. The name CPS does not alter that evolution.</p>
-          <p>What changes in a complete protocol can be the domain and measure, the initial symbol, the treatment of the identity, and the readout. CPS builds unit trace into every force kernel. An unprojected full-Cartesian MMST sampling can have different radii; focused MMST can already fix the radius. Exact MMST with its projection and correct operator symbols can also recover exact observables. There is no general improvement in exact reconstruction merely from renaming the representation.</p>
-          <p>A useful pointwise difference concerns a common electronic potential. Write \(V(R)=v_0(R)I+\widetilde V(R)\), with \(v_0=\operatorname{Tr}V/F\). In scalar CPS,</p>
-          <div class="math-block">\[
-            (v_0I)_\gamma=v_0,\qquad
-            \dot P_0=-\nabla_Rv_0.
-          \]</div>
-          <p>In a direct unprojected Cartesian MMST classicalization, the same contribution can instead be \(v_0(\sum_nJ_n-F/2)\). A geometry-dependent common potential then gives a fluctuating force coefficient when the radial sampling fluctuates. The trace-one sphere prevents that artifact at each point. Separating the electronic identity or fixing the norm can repair MMST too; Part IV's focused protocol already has a fixed total action. A constant energy offset creates no force, so it would not test this difference.</p>
-          <p>Generalized spin mapping starts from coherent-state and Stratonovich–Weyl structure. In canonical Cartesian form, its usual W construction has the same rank-one orbit, the same scalar Hamiltonian form, and \(\gamma=\gamma_{\mathrm W}\). In this specific sense, W spin mapping is contained in the scalar CPS family. Its \(F\)-dependent radius follows from self-duality/Casimir matching rather than assigning \(1/2\) to every oscillator. <a href="#ref-spin">[6]</a></p>
-          <p>Changing only \(\gamma\) reproduces that Hamiltonian parameter choice. Reproducing a complete spin-mapping calculation additionally requires its initial ensemble, identity convention, operator estimator, and numerical propagation. Full-sphere W and focused W are distinct coupled trajectory protocols even when they use the same radius.</p>
-          <p>Thus CPS clarifies and unifies choices that were previously attached to particular derivations. Spin mapping supplies a distinguished symmetric choice within that comparison. Neither changes the general coupling error derived above simply by fixing a radius.</p>
-
-          <h3 id="leakage">2.5 What a Fixed Radius Changes About ZPE Leakage</h3>
-          <p>The remaining MMST concern is often described as “an oscillator falls below its zero-point energy.” In these formulas, however, \(J_n\) is a dimensionless action, not the energy of an independent physical oscillator. Off-diagonal electronic couplings and the matrix \(V(R)\) determine the energy. The mapping oscillator is auxiliary.</p>
-          <p>Hermitian electronic evolution conserves the total action \(\sum_nJ_n=s\), while allowing redistribution between modes. The raw diagonal symbol \(J_n-\gamma\) can become negative without loss of total action. It is not by itself evidence that a trajectory has acquired a literal forbidden Fock occupation. Exact sphere integration can still give a valid population.</p>
-          <p>The force issue is more concrete. At one fixed geometry diagonalize \(V\), with energies \(E_k\). Since the transformed actions remain nonnegative and sum to \(s\), the scalar potential is</p>
-          <div class="math-block">\[
-            v_\gamma=\sum_k(J_k-\gamma)E_k,\qquad
-            J_k\ge0,\quad \sum_kJ_k=s.
-          \]</div>
-          <p>A linear function on this simplex is minimized by putting all action into the lowest level and maximized by putting it into the highest. Substituting \(s=1+F\gamma\) gives</p>
-          <div class="math-block">\[
-            \begin{aligned}
-            v_\gamma^{\min}
-              &=sE_{\min}-\gamma\sum_kE_k
-               =E_{\min}-\gamma\sum_k(E_k-E_{\min}),\\
-            v_\gamma^{\max}
-              &=sE_{\max}-\gamma\sum_kE_k
-               =E_{\max}+\gamma\sum_k(E_{\max}-E_k).
-            \end{aligned}
-          \]</div>
-          <p>Positive \(\gamma\) permits a scalar potential below the lowest adiabatic energy and signed contributions to the nuclear force. Fixing the norm does not remove this. Smaller positive values reduce the possible extension, which is one reason a changed radius can affect approximate dynamics.</p>
-          <figure>
-            <img src="../assets/img/mqc-series/cps-potential-intervals.png" alt="Analytic two-state scalar CPS potential intervals for five gamma values">
-            <figcaption>At a single geometry with \(E_1=0\), \(E_2=\Delta&gt;0\), the allowed interval of \(v_\gamma/\Delta\) is \([-\gamma,1+\gamma]\). The shaded interval \([0,1]\) is the physical adiabatic energy range. W is blue and the other intervals are gray. W still extends below the lower surface. These are analytic geometric bounds, not simulated energy-transfer amounts or a ranking of population accuracy. <a href="../assets/img/mqc-series/cps-potential-intervals.svg">Vector figure</a>.</figcaption>
-          </figure>
-          <p>The bound is local in geometry. It does not establish that an initialized ensemble reaches an endpoint, or provide a universal nuclear-heating budget. Likewise, the negative eigenvalue of W does not prove that every spin-mapping result suffers a particular leakage artifact.</p>
-          <p>At \(\gamma=0\), the force kernel is a pure-state projector and its potential is inside the physical adiabatic interval. A focused calculation then becomes ordinary Ehrenfest. At negative allowed \(\gamma\), the raw force kernel is positive and its interval lies inside the adiabatic range, but the matched dual is signed. The exact readout can still return zero or one; it is not restricted to the diagonal range of the force kernel.</p>
-          <p>Removing a below-ground scalar potential does not restore the missing coupled generator or quantum detailed balance. Conversely, a signed single-trajectory symbol does not automatically invalidate an exact representation. ZPE-related dynamical error must be assessed through the actual force, ensemble observables, and a controlled reference, rather than negativity alone.</p>
-
-          <h3 id="workflow">2.6 The Actual Trajectory Workflow</h3>
-          <p>The mathematical pieces now specify an implementable calculation. For clarity, take a factorized initial state \(\rho_N\otimes\rho_e\), a chosen nuclear phase-space distribution \(f_N(R_0,P_0)\), and a fixed-basis electronic observable \(O\). The following is the full-sphere scalar CPS approximation, often described as extended classical mapping in the corresponding formulation:</p>
-          <ol>
-            <li><strong>Choose the representation and readout.</strong> Select \(F\), \(\gamma&gt;-1/F\), \(s=1+F\gamma\), and the matched \(\bar K_\gamma\). Choosing W makes them identical. This specifies symbols; it is not yet a propagation accuracy claim.</li>
-            <li><strong>Prepare the nuclear ensemble.</strong> Sample \((R_0,P_0)\) from the declared \(f_N\). A thermal Wigner distribution and a classical Boltzmann distribution are different preparations. If a signed nuclear distribution is used, retain its weight as well.</li>
-            <li><strong>Sample electronic directions.</strong> For uniform sampling, draw independent real and imaginary Gaussian components, normalize to \(u^\dagger u=1\), and set \(z_0=\sqrt{s}\,u_0\). This gives the invariant measure, rather than a radial Gaussian distribution.</li>
-            <li><strong>Attach the initial electronic weight.</strong> Compute \(w_e=F\operatorname{Tr}(\rho_eK_\gamma(u_0))\). For a proposal density \(q(u)\) relative to \(d\mu\), use \(w_e=F\operatorname{Tr}(\rho_eK_\gamma)/q(u)\), with support wherever needed. A basis pure state uses the explicit formula in Section 1.7.</li>
-            <li><strong>Propagate each sample.</strong> Integrate \(i\dot z=V(R)z\), \(\dot R=P/M\), and \(\dot P=-\operatorname{Tr}(K_\gamma\nabla_RV)\). A unitary electronic step preserves the sphere; a coupled integrator still needs time-step convergence. The force uses the Hamiltonian kernel \(K_\gamma\), not an arbitrarily substituted dual.</li>
-            <li><strong>Read the observable with the declared estimator.</strong> For full-sphere sampling, evaluate \(\bar o_\alpha(t)=\operatorname{Tr}[O\bar K_\gamma(u_\alpha(t))]\) and average \(w_{e,\alpha}\bar o_\alpha(t)\), together with any nuclear weights.</li>
-            <li><strong>Separate convergence from physical accuracy.</strong> Check weight normalization, norm and energy diagnostics, time-step refinement, and independent sampling batches. Compare the final observable with a quantum or controlled reference to assess the dynamical approximation.</li>
-          </ol>
-          <p>The population formula for uniform electronic sampling and equally sampled positive nuclear initial conditions is explicitly</p>
-          <div class="math-block">\[
-            \langle C_n\rangle_{\mathrm{traj}}(t)
-              \approx\frac1N\sum_{\alpha=1}^{N}
-                F\left(s|u_{\alpha,k}(0)|^2-\gamma\right)
-                \left[
-                  \frac{F+1}{s}|u_{\alpha,n}(t)|^2
-                    -\frac{1-\gamma}{s}
-                \right]
-          \]</div>
-          <p>for the initial state \(C_k\). “Equal averaging” here means equal averaging of weighted contributions. It does not mean that each trajectory has weight one and supplies a physical population. For geometry-dependent observables, use the consistently transformed operator \(O(R_\alpha(t))\); an ensemble population requires a shared basis or a clearly specified local projector.</p>
-          <p>In a focused protocol, replace the full-sphere initialization and dual formula by its own moment-matching initialization and estimator. Do not combine a focused ensemble with the full-sphere dual merely because both carry the same \(\gamma\). In ordinary focused initialization, negative \(\gamma\) would require negative inactive actions and is unavailable; that does not invalidate the full-sphere representation at negative \(\gamma\).</p>
-          <p>For a parameter comparison, pair the nuclear initial conditions and hold the observable, timestep accuracy, and uncertainty target fixed. A change of radius changes forces as well as readout variance. Selecting \(\gamma\) against one observable can improve that approximate calculation, but its transferability to other observables, temperatures, and long-time behavior needs an independent test.</p>
-
-          <h3 id="workflow-comparison">2.7 CPS, MMST, Spin Mapping, and Ehrenfest Side by Side</h3>
-          <p>The useful comparison is between complete protocols. All four can propagate electronic amplitudes exactly along a prescribed nuclear path. Their main differences appear in initialization, force kernels, estimators, and the coupled closure.</p>
-          <div class="table-scroll">
-            <table>
-              <thead><tr><th>Protocol</th><th>Electronic initial ensemble</th><th>Nuclear force</th><th>Population readout</th></tr></thead>
-              <tbody>
-                <tr><td>Full-sphere scalar CPS</td><td>Fixed-radius Haar directions, initial symbol weight; any allowed \(\gamma\)</td><td>\(-\operatorname{Tr}(K_\gamma\nabla V)\)</td><td>Initial weight times \(\operatorname{Tr}(C_n\bar K_\gamma)\)</td></tr>
-                <tr><td>MMST-based methods</td><td>Protocol dependent: projected Wigner, focused, or windowed sampling; ordinary oscillator offset \(1/2\)</td><td>The chosen quadratic mapping Hamiltonian, with its identity convention</td><td>Projected symbols or the method's specified estimator/windows</td></tr>
-                <tr><td>Full-sphere W spin mapping</td><td>Coherent-state invariant ensemble and W initial symbol</td><td>Same scalar form at \(\gamma_{\mathrm W}\), with the identity treated separately or equivalently exactly</td><td>W symbol, since W is self-dual</td></tr>
-                <tr><td>Focused W / Spin-MInt protocol</td><td>Focused actions and phases at the W radius</td><td>W scalar force with the chosen momentum-integral propagation</td><td>The focused protocol's kernel estimator</td></tr>
-                <tr><td>Ordinary Ehrenfest</td><td>Physical density or amplitudes for each nuclear initial condition</td><td>\(-\operatorname{Tr}(\rho_\alpha\nabla V)\)</td><td>\(\operatorname{Tr}(C_n\rho_\alpha)\), with nuclear ensemble averaging</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p>For a pure initial electronic state, focused \(\gamma=0\) gives \(K=\rho=zz^\dagger\), \(z^\dagger z=1\), and exactly the Ehrenfest equations and readout. A generic full-sphere Q calculation instead uses a Q initial symbol and P dual, with different sample-dependent forces; it is not automatically ordinary focused Ehrenfest. A mixed-state Ehrenfest calculation can propagate its density directly, and need not equal an ensemble of pure-state decompositions after nonlinear nuclear feedback.</p>
-          <p>At a matched radius, Hamiltonian, initial ensemble, and estimator, CPS and a corresponding MMST implementation can coincide. W spin mapping adds a particular geometry and symmetric pairing; Spin-MInt adds a propagation scheme. Improvements seen between unmatched protocols cannot be assigned to “the mapping theory” alone.</p>
-          <p>The answer to what CPS improves is therefore concrete. It provides a finite-state constrained representation, pointwise normalization of the identity, an explicit dual for operator recovery, and a systematic account of parameter choices. It also identifies the boundary between exact electronic algebra and approximate coupled trajectories. Accurate nuclear feedback and quantum equilibrium remain properties to demonstrate for a specified dynamical method.</p>
-
-          <h3 id="references">Sources and Reproducible Material</h3>
-          <p>The kernel and dual derivations above spell out the assumptions and intermediate algebra. The coupled-generator counterexample is an explanatory calculation, not a published benchmark reproduction. The linked numerical check tests electronic reconstruction only.</p>
+          <h2 id="references">Sources and Reproducible Material</h2>
+          <p>The derivations above spell out the assumptions and intermediate algebra. The linked numerical check tests electronic reconstruction only; coupled trajectory accuracy is addressed in the following article.</p>
           <ol>
             <li id="ref-mmst">M. Thoss and G. Stock, “Mapping approach to the semiclassical description of nonadiabatic quantum dynamics,” <em>Physical Review A</em> <strong>59</strong>, 64 (1999). <a href="https://doi.org/10.1103/PhysRevA.59.64">Journal</a>. Exact oscillator mapping and subsequent semiclassical evaluation.</li>
             <li id="ref-he2019">X. He and J. Liu, “A new perspective for nonadiabatic dynamics with phase space mapping models,” <em>Journal of Chemical Physics</em> <strong>151</strong>, 024105 (2019). <a href="https://doi.org/10.1063/1.5108736">Journal</a>. Introduction and conclusions distinguish the unified operator construction, constrained population approach, and approximate nonadiabatic dynamics.</li>
@@ -516,6 +370,8 @@
             <li id="ref-spin">J. E. Runeson and J. O. Richardson, “Generalized spin mapping for quantum-classical dynamics,” <em>Journal of Chemical Physics</em> <strong>152</strong>, 084110 (2020). <a href="https://doi.org/10.1063/1.5143412">Journal</a> · <a href="https://arxiv.org/html/1912.10906v1">Open manuscript</a>. \(SU(F)\), Stratonovich–Weyl kernels, Casimir scale, identity treatment, and full-sphere versus focused sampling.</li>
           </ol>
           <ul class="code-list">
+            <li><a href="../assets/code/mqc/cps_visual_examples.py">cps_visual_examples.py</a> generates all six new figures and checks the sphere quadrature and analytic controls. <a href="../assets/img/mqc-series/cps-visual-examples.json">Numerical receipt</a>.</li>
+            <li><a href="../assets/js/cps-explorer.js">cps-explorer.js</a> supplies the interactive rotation, forward map, and matched-dual reconstruction with no external computation service.</li>
             <li><a href="../assets/code/mqc/cps_dual_kernel_checks.py">cps_dual_kernel_checks.py</a> reproduces the matched-dual check, the mismatched-readout control, and the analytic potential-interval figure using NumPy and Matplotlib.</li>
             <li><a href="spin-mapping-math-foundations.html">Spin-mapping mathematical foundations</a> develops the generator algebra in more detail.</li>
           </ul>
@@ -530,11 +386,12 @@
               <li><a href="pmatrix-decoherence-balance.html">Part III: P-Matrix Decoherence and Detailed Balance</a> - density-matrix corrections and toy diagnostics.</li>
               <li><a href="mmst-zpe-leakage.html">Part IV: MMST Mapping and ZPE Leakage</a> - oscillator mapping, actions, and force/readout diagnostics.</li>
               <li><a href="spin-mint-three-state-morse-reproduction.html">Part V: Spin Mapping and Spin-MInt</a> - finite-state spin geometry, propagation, and model benchmarks.</li>
-              <li><a href="cps-foundations-dual-kernels.html">Part VI: CPS, Dual Kernels, and Classical Dynamics</a> - two chapters deriving the representation and its classical trajectory boundary.</li>
+              <li><a href="cps-foundations-dual-kernels.html">Part VI: CPS Foundations and Dual Kernels</a> - motivation, scalar kernel, sphere measure, and dual reconstruction.</li>
+              <li><a href="cps-trajectories-classical-feedback.html">Part VII: CPS Trajectories and Classical Feedback</a> - electronic Poisson brackets, nuclear feedback, and trajectory workflows.</li>
             </ol>
           </section>
         </div>
-        <nav class="post-nav" aria-label="Article navigation"><a href="spin-mint-three-state-morse-reproduction.html">&lt;- Part V: Spin Mapping</a><a href="../series.html#mqc">MQC series</a></nav>
+        <nav class="post-nav" aria-label="Article navigation"><a href="spin-mint-three-state-morse-reproduction.html">&lt;- Part V: Spin Mapping</a><a href="cps-trajectories-classical-feedback.html">Part VII: CPS Dynamics -&gt;</a></nav>
       </article>
     </main>
     <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>

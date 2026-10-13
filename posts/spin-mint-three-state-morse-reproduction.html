@@ -49,14 +49,15 @@
             <a href="pmatrix-decoherence-balance.html">III. P-Matrix</a>
             <a href="mmst-zpe-leakage.html">IV. MMST</a>
             <a href="spin-mint-three-state-morse-reproduction.html">V. Spin Mapping</a>
-            <a href="cps-foundations-dual-kernels.html">VI. CPS</a>
+            <a href="cps-foundations-dual-kernels.html">VI. CPS Kernels</a>
+            <a href="cps-trajectories-classical-feedback.html">VII. CPS Dynamics</a>
           </nav>
 
           <p class="lead">
             Spin mapping is best understood as a finite-state replacement for the oscillator embedding used in MMST mapping. It keeps the electronic subsystem on the geometry of an \(N\)-level Hilbert space, fixes the zero-point parameter through the Stratonovich-Weyl transform, and gives a natural route to symplectic Spin-MInt propagation. This note derives the working equations and then tests the implementation against FSSH, Ehrenfest, and exact DVR wavepacket references on both Tully's simple avoided crossing and a three-state Morse model.
           </p>
           <p>This article is the method-and-benchmark continuation of <a href="spin-mapping-math-foundations.html">Spin Mapping Mathematical Foundations</a>, which develops the \(SU(N)\) algebra, Casimir invariant, and Stratonovich-Weyl kernels used below.</p>
-          <p><a href="mmst-zpe-leakage.html">Part IV</a> introduced oscillator mapping and its raw-action diagnostics. This part develops the finite-state spin representation and its propagator; <a href="cps-foundations-dual-kernels.html">Part VI</a> then places MMST and spin mapping within the constrained coordinate-momentum phase-space framework and explains the role of dual kernels.</p>
+          <p><a href="mmst-zpe-leakage.html">Part IV</a> introduced oscillator mapping and its raw-action diagnostics. This part develops the finite-state spin representation and its propagator; <a href="cps-foundations-dual-kernels.html">Part VI</a> then derives the constrained coordinate-momentum phase-space kernels and duals, while <a href="cps-trajectories-classical-feedback.html">Part VII</a> compares MMST and spin mapping and explains their coupled trajectory boundary.</p>
 
           <h2>Physical Starting Point</h2>
           <p>In mixed quantum-classical nonadiabatic dynamics, the nuclear variables are usually treated as continuous phase-space coordinates \((R,P)\), while the electronic subsystem is a finite set of diabatic or adiabatic states. For an \(N\)-state diabatic model, the electronic Hamiltonian is an \(N\times N\) Hermitian matrix,</p>
@@ -260,7 +261,8 @@
               <li><a href="pmatrix-decoherence-balance.html">Part III: P-Matrix Decoherence and Detailed Balance</a> - directed density-matrix variables, pairwise decoherence, Boltzmann detailed balance, and controlled toy diagnostics.</li>
               <li><a href="mmst-zpe-leakage.html">Part IV: MMST Mapping and ZPE Leakage</a> - oscillator mapping variables, electronic phase sampling, ZPE leakage, gamma choices, SQC-style corrections, and spin-mapping context.</li>
               <li><a href="spin-mint-three-state-morse-reproduction.html">Part V: Spin Mapping and Spin-MInt</a> - finite-state spin variables, Stratonovich-Weyl mapping, symplectic propagation, and two- and three-state benchmarks.</li>
-              <li><a href="cps-foundations-dual-kernels.html">Part VI: CPS, Dual Kernels, and Classical Dynamics</a> - constrained electronic phase space, dual operator kernels, and the boundary between exact electronic representation and classical nuclear dynamics.</li>
+              <li><a href="cps-foundations-dual-kernels.html">Part VI: CPS Foundations and Dual Kernels</a> - motivation, scalar kernel, sphere measure, and dual reconstruction.</li>
+              <li><a href="cps-trajectories-classical-feedback.html">Part VII: CPS Trajectories and Classical Feedback</a> - electronic Poisson brackets, nuclear feedback, and trajectory workflows.</li>
             </ol>
           </section>
         </div>

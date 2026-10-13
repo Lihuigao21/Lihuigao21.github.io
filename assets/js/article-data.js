@@ -51,12 +51,23 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "cps-trajectories-classical-feedback",
+    title: "MQC VII: CPS Trajectories and Classical Feedback",
+    path: "posts/cps-trajectories-classical-feedback.html",
+    date: "2026-10-13",
+    dateText: "2026.10.13",
+    description: "Electronic Poisson brackets, an interactive coupled-generator counterexample, nuclear feedback, and CPS, MMST, spin-mapping, and Ehrenfest trajectory workflows.",
+    tags: ["MQC", "CPS", "MMST", "Spin Mapping", "Ehrenfest", "Model Calculation"],
+    series: "mqc",
+    part: 7,
+  },
+  {
     slug: "cps-foundations-dual-kernels",
-    title: "MQC VI: CPS, Dual Kernels, and Classical Dynamics",
+    title: "MQC VI: CPS Foundations and Dual Kernels",
     path: "posts/cps-foundations-dual-kernels.html",
     date: "2026-10-12",
     dateText: "2026.10.12",
-    description: "Two chapters deriving scalar CPS from its assumptions, the sphere measure and dual kernel, then the coupled Poisson-bracket boundary and CPS/MMST/spin/Ehrenfest workflows.",
+    description: "From MMST to CPS kernels and dual reconstruction, with interactive SU(2) rotations, density-to-sphere mapping, and inverse integration.",
     tags: ["MQC", "CPS", "MMST", "Spin Mapping", "Stratonovich-Weyl", "Model Calculation"],
     series: "mqc",
     part: 6,
