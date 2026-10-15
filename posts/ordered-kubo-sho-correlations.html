@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Ordered and Kubo quantum correlations: thermal splitting, imaginary time, exact spectral conversion, harmonic-oscillator examples, and the limits of real trajectory noise.">
+    <meta name="description" content="Ordered and Kubo quantum correlations: thermal splitting, imaginary time, exact spectral conversion, harmonic-oscillator examples, transition-amplitude derivations, and the limits of real trajectory noise.">
     <title>Ordered and Kubo Correlations | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
@@ -23,7 +23,7 @@
         <header class="post-header">
           <p class="section-label">Quantum Dynamics</p>
           <h1>Ordered and Kubo Correlations</h1>
-          <p class="post-meta">2026.10.13 - Thermal Weights / Imaginary Time / Harmonic Oscillator</p>
+          <p class="post-meta">2026.10.13 (updated 2026.10.15) - Thermal Weights / Imaginary Time / Harmonic Oscillator</p>
         </header>
         <div class="post-content">
           <p class="lead">A quantum correlation can change when its operators are reordered, or when the thermal density operator is split around an insertion. Yet the exact ordered and Kubo spectra can be converted into each other. This seems contradictory only if we confuse three questions: which correlation is defined, what information an exact correlation contains, and which observable an approximate calculation reproduces. A harmonic oscillator makes these distinctions explicit, including the surprisingly different behavior of the midpoint and symmetrized correlations at low temperature.</p>
@@ -167,7 +167,12 @@
               <tr><td>Classical thermal</td><td>\((\beta m\Omega^2)^{-1}\cos\theta\)</td></tr>
             </tbody>
           </table></div>
-          <p>The Kubo integral is particularly instructive. The coefficient of \(e^{i\theta}\) is \((\bar n+1)(1-e^{-x})/x=1/x\), and the coefficient of \(e^{-i\theta}\) is also \(1/x\). Their sum gives \(2\cos\theta/x\). This equals the classical thermal position correlation exactly because \(2\ell^2/x=1/(\beta m\Omega^2)\). It is a property of this Hamiltonian and this linear observable, not a statement that the thermal oscillator is classical.</p>
+          <p>The Kubo integral is particularly instructive. Its two exponential coefficients satisfy</p>
+          <div class="math-block">\[
+            (\bar n+1)\frac{1-e^{-x}}{x}=\frac1x,
+            \qquad \bar n\frac{e^x-1}{x}=\frac1x.
+          \]</div>
+          <p>Their sum gives \(2\cos\theta/x\). This equals the classical thermal position correlation exactly because \(2\ell^2/x=1/(\beta m\Omega^2)\). It is a property of this Hamiltonian and this linear observable, not a statement that the thermal oscillator is classical.</p>
           <p>The imaginary part has a separate origin. From \(q(t)=q\cos\theta+p\sin\theta/(m\Omega)\) and \([q,p]=i\hbar\), the commutator gives \(\operatorname{Im}C_0=\ell^2\sin\theta\). It does not disappear at low temperature. Meanwhile, the midpoint amplitude tends to zero exponentially. The interactive comparison keeps the absolute amplitudes, so these differences are not hidden by normalizing each curve to its own initial value.</p>
 
           <figure id="sho-explorer">
@@ -217,7 +222,7 @@
             \boxed{\frac{C_{\mathrm{cl}}^{AA}(t)}{\ell^4}
               =\frac{4}{x^2}[1+\cos(2\theta)].}
           \]</div>
-          <p>The two formulas generally differ. At \(x=6\), their equal-time values are approximately \(0.345\ell^4\) and \(0.222\ell^4\). The discrepancy remains even though the q–q Kubo result is exactly classical. Restoring \(\langle q^2\rangle^2\) in the quantum expression agrees with Hele's unconnected harmonic-oscillator formula, Eq. (27) <a href="#ref-hele-trpmd">[2]</a>.</p>
+          <p>The two formulas generally differ. At \(x=6\), dividing their equal-time values by \(\ell^4\) gives approximately 0.345 and 0.222. The discrepancy remains even though the q–q Kubo result is exactly classical. Restoring \(\langle q^2\rangle^2\) in the quantum expression agrees with Hele's unconnected harmonic-oscillator formula, Eq. (27) <a href="#ref-hele-trpmd">[2]</a>.</p>
           <p>There is a compact explanation of why the linear equality cannot be carried through the square. The oscillator is Gaussian, and the connected formulas satisfy</p>
           <div class="math-block">\[
             C_s^{AA}(t)=2[C_s^{qq}(t)]^2,
@@ -227,33 +232,129 @@
           \]</div>
           <p>Kubo averaging and taking the square do not commute. The midpoint and symmetrized nonlinear correlations also remain distinct: the former is \(4\ell^4\bar n(\bar n+1)[1+\cos(2\theta)]\), whereas the latter retains a low-temperature oscillation of amplitude \(2\ell^4\). This controlled counterexample is enough to reject a universal classical interpretation of Kubo correlations.</p>
 
-          <h2 id="transitions">7. Which correlation does an electronic transition sample?</h2>
-          <p>The information equivalence of exact correlations does not tell us which value to insert into a transition formula. To determine that, specify a weak-coupling model. Let an electronic transition from \(|i\rangle\) to \(|f\rangle\) have energy change \(\Delta=E_f-E_i\), and couple it to a Hermitian bath operator \(F\) through</p>
+          <h2 id="transitions">7. Why does an electronic transition require ordered weights?</h2>
+          <p>The exact spectral conversion leaves a physical question unanswered: why does the transition formula contain the ordered correlation in the first place? It follows from a transition amplitude multiplied by its complex conjugate, with the bath's <em>initial</em> probabilities retained. The Kubo function is a valid quantum correlation, but its imaginary-time average uses different weights. We derive both statements for the same model.</p>
+          <p>Let the electronic states be \(|i\rangle\) and \(|f\rangle\), with energy change \(\Delta=E_f-E_i\). The bath has a Hamiltonian \(H_B\), shared by these electronic states in this simplified model, and a Hermitian coupling operator \(B\). The interaction is</p>
           <div class="math-block">\[
-            V=g|f\rangle\langle i|\otimes F
-             +g^*|i\rangle\langle f|\otimes F.
+            V=g|f\rangle\langle i|\otimes B
+             +g^*|i\rangle\langle f|\otimes B.
           \]</div>
-          <p>The uncoupled initial state is the electron in \(|i\rangle\) and the bath in its Gibbs state. The bath Hamiltonian is the same for the two electronic states in this simplified model. The electronic matrix element is included in \(g\). Define the bath ordered correlation \(C_F(t)=\langle F(0)F(t)\rangle\) and use the same Fourier sign as above.</p>
-          <p>If the initial and final bath levels have energies \(\epsilon_n\) and \(\epsilon_m\), conservation of total energy requires</p>
+          <p>The electronic matrix element is included in \(g\). Initially the electron is in \(|i\rangle\) and the bath is in its Gibbs state. All indices \(m,n\) below label <em>bath</em> states, not electronic states:</p>
           <div class="math-block">\[
-            \Delta+\epsilon_m-\epsilon_n=0.
+            H_B|m\rangle=\epsilon_m|m\rangle,\qquad
+            \rho_B=\sum_m p_m|m\rangle\langle m|,\qquad
+            p_m=\frac{e^{-\beta\epsilon_m}}{Z_B},\qquad
+            B_{nm}=\langle n|B|m\rangle.
           \]</div>
-          <p>Second-order perturbation theory gives the finite-time probability, before any constant-rate limit:</p>
+
+          <h3 id="ordered-lehmann">From a thermal trace to bath transitions</h3>
+          <p>Open-system derivations often use the product with the later operator on the left. To keep the earlier sections and interactive figure unchanged, call this function \(D_B\), and retain \(C_B\) for the article's original order:</p>
+          <div class="math-block">\[
+            D_B(t)=\langle B(t)B(0)\rangle,\qquad
+            C_B(t)=\langle B(0)B(t)\rangle
+                  =D_B(-t)=D_B(t)^*.
+          \]</div>
+          <p>Both are fixed-order, unsymmetrized correlations; neither symbol denotes time ordering. What is often called \(C(t)\) in an open-system calculation is our \(D_B(t)\). Insert a complete bath basis between its operators:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            D_B(t)&=\operatorname{Tr}[\rho_B B(t)B]\\
+                  &=\sum_m p_m\langle m|B(t)B|m\rangle\\
+                  &=\sum_{mn}p_m\langle m|B(t)|n\rangle B_{nm}.
+            \end{aligned}
+          \]</div>
+          <p>The Heisenberg evolution and Hermiticity supply the remaining two steps:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \langle m|B(t)|n\rangle
+              &=e^{i(\epsilon_m-\epsilon_n)t/\hbar}B_{mn},\\
+            B_{mn}B_{nm}&=|B_{nm}|^2.
+            \end{aligned}
+          \]</div>
+          <p>Thus the exact thermal trace is a sum over energy-resolved bath transitions:</p>
+          <div class="math-block">\[
+            \boxed{D_B(t)=\sum_{mn}p_m|B_{nm}|^2
+              e^{-i(\epsilon_n-\epsilon_m)t/\hbar}.}
+          \]</div>
+          <p>Each term has an initial occupation \(p_m\), a squared transition matrix element, and the phase of the bath energy change. Reading the rightmost operator first explains the matrix-element indices; the trace itself is not a sequence of two projective measurements. Reversing operator order changes the phase sign in the corresponding sum. The spectral conventions must change together:</p>
+          <div class="math-block">\[
+            S_B(\omega)=\int_{-\infty}^{\infty}dt\,
+                 e^{-i\omega t}C_B(t)
+              =\int_{-\infty}^{\infty}dt\,
+                 e^{i\omega t}D_B(t).
+          \]</div>
+          <p>Consequently the article's convention and the common later-operator-first convention give the same \(S_B\). Positive frequency means an increase in bath energy in both conventions.</p>
+
+          <h3 id="amplitude-origin">The initial occupation comes from the probability calculation</h3>
+          <p>For a specified initial bath state \(m\) and final bath state \(n\), first-order interaction-picture perturbation theory gives</p>
+          <div class="math-block">\[
+            A_{fn\leftarrow im}^{(1)}(t)
+             =-\frac{igB_{nm}}{\hbar}\int_0^t d\tau\,
+               e^{i[\Delta+\epsilon_n-\epsilon_m]\tau/\hbar}.
+          \]</div>
+          <p>The bath is an incoherent thermal mixture, and its final state is unobserved. We must square each amplitude, average over initial \(m\) with probability \(p_m\), and sum over final \(n\). The leading nonzero transition probability is therefore</p>
           <div class="math-block">\[
             P_{i\to f}^{(2)}(t)=\frac{|g|^2}{\hbar^2}
-            \sum_{n,m}p_n|F_{mn}|^2
+            \sum_{mn}p_m|B_{nm}|^2
             \left|\int_0^t d\tau\,
-            e^{i[\Delta/\hbar+(\epsilon_m-\epsilon_n)/\hbar]\tau}\right|^2.
+            e^{i[\Delta+\epsilon_n-\epsilon_m]\tau/\hbar}\right|^2.
           \]</div>
-          <p>The electronic phase selects bath energy changes that balance the electronic gap. In the golden-rule limit, the squared time integral per unit time becomes a delta function, giving</p>
+          <p>This calculation produces exactly the weights in \(D_B\). Equivalently, expanding the squared integral and using the spectral sum above gives the probability directly from the correlation:</p>
+          <div class="math-block">\[
+            P_{i\to f}^{(2)}(t)=\frac{|g|^2}{\hbar^2}
+              \int_0^t d\tau\int_0^t d\tau'\,
+              e^{i\Delta(\tau-\tau')/\hbar}D_B(\tau'-\tau).
+          \]</div>
+          <p>The two time arguments arise from the amplitude and its conjugate. In a reduced electronic equation, the same bath correlations weight past electronic operators or density matrices: this is how the bath enters through a memory kernel rather than through one prescribed real coordinate path. Here the formula is a second-order probability, not an exact all-orders electronic propagator.</p>
+          <p>The electronic phase selects bath energy changes that balance the gap. In a weak-coupling continuum with an appropriate constant-rate limit, the squared time integral per unit time becomes an energy delta function:</p>
           <div class="math-block">\[
             k_{i\to f}=\frac{2\pi|g|^2}{\hbar}
-              \sum_{n,m}p_n|F_{mn}|^2\delta(\Delta+\epsilon_m-\epsilon_n)
-              =\boxed{\frac{|g|^2}{\hbar^2}S_F(-\Delta/\hbar).}
+              \sum_{mn}p_m|B_{nm}|^2\delta(\Delta+\epsilon_n-\epsilon_m)
+              =\boxed{\frac{|g|^2}{\hbar^2}S_B(-\Delta/\hbar).}
           \]</div>
-          <p>The minus sign follows from our definitions: positive bath frequency means that the bath absorbs energy, so an upward electronic transition samples negative bath frequency. If the gap is defined as \(E_i-E_f\), the argument is positive instead. A statement that a rate needs “the spectrum at the gap frequency” must therefore specify both the gap and Fourier conventions. This formulation matches the unsymmetrized-noise treatment of Clerk and collaborators after aligning their opposite time-order and Fourier conventions <a href="#ref-clerk">[3]</a>.</p>
-          <p>For a thermal bath, the ratio of upward and downward rates for a gap \(\Delta&gt;0\) is \(e^{-\beta\Delta}\). A bath in its ground state can absorb energy through allowed transitions but cannot supply positive energy. For an oscillator coupled through its position, the allowed absorption is one quantum. Its ordered spectrum contains this distinction. The Kubo spectrum has equal positive and negative line weights, so it cannot be inserted unchanged into the golden-rule formula. It can be used after the exact conversion factor has been applied.</p>
-          <p>The isolated single oscillator illustrates frequency selection and thermal weights, but does not supply a decaying bath correlation or a generic irreversible exponential rate. Its delta spectrum must be interpreted distributionally; finite-time resonances are described by the probability formula above. State-dependent nuclear Hamiltonians require a different correlation involving both nuclear propagators. For a non-Hermitian coupling operator, the appropriate dagger/order pair must also be retained.</p>
+          <p>An upward electronic transition samples negative bath frequency because the bath must supply energy; a downward electronic transition samples positive frequency because the bath receives energy. This follows from the amplitude calculation, rather than from choosing a name for a correlation. It agrees with the unsymmetrized-noise derivation of Clerk and collaborators <a href="#ref-clerk">[3]</a>.</p>
+
+          <h3 id="kubo-transition-weights">Where the Kubo weight differs</h3>
+          <p>Now do the same bath-basis expansion for the Kubo autocorrelation, written with the later operator first inside the thermal split. For a Hermitian autocorrelation its splitting integral equals the earlier \(C_K\):</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            K_B(t)&=\frac{1}{\beta Z_B}\int_0^\beta d\lambda\,
+              \operatorname{Tr}[e^{-(\beta-\lambda)H_B}
+                    B(t)e^{-\lambda H_B}B]\\
+              &=\sum_{mn}p_m|B_{nm}|^2e^{-i(\epsilon_n-\epsilon_m)t/\hbar}
+                \frac1\beta\int_0^\beta d\lambda\,
+                     e^{-\lambda(\epsilon_n-\epsilon_m)}.
+            \end{aligned}
+          \]</div>
+          <p>The extra factor is an imaginary-time average, with \(\lambda\) measured in inverse-energy units. Evaluating it and using the Gibbs relation yields</p>
+          <div class="math-block">\[
+            \frac1\beta\int_0^\beta d\lambda\,e^{-\lambda\delta\epsilon}
+               =\frac{1-e^{-\beta\delta\epsilon}}{\beta\delta\epsilon},
+            \qquad p_n=p_m e^{-\beta(\epsilon_n-\epsilon_m)},
+          \]</div>
+          <div class="math-block">\[
+            \boxed{K_B(t)=\sum_{mn}w_{mn}^{K}|B_{nm}|^2
+                  e^{-i(\epsilon_n-\epsilon_m)t/\hbar},\qquad
+            w_{mn}^{K}=\frac{p_m-p_n}{\beta(\epsilon_n-\epsilon_m)}.}
+          \]</div>
+          <p>For zero energy difference the weight is defined by its continuous limit \(p_m\). Unlike the ordered initial probability, the Kubo weight is unchanged when the two bath states are exchanged:</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Bath transition</th><th>Ordered weight</th><th>Kubo weight</th></tr></thead>
+            <tbody>
+              <tr><td>\(m\to n\)</td><td>\(p_m|B_{nm}|^2\)</td><td>\(w_{mn}^{K}|B_{nm}|^2\)</td></tr>
+              <tr><td>\(n\to m\)</td><td>\(p_n|B_{nm}|^2\)</td><td>\(w_{mn}^{K}|B_{nm}|^2\)</td></tr>
+            </tbody>
+          </table></div>
+          <p>At low temperature, an excited bath state has a small initial probability. The ordered correlation preserves that suppression of energy release by the bath. Kubo averaging assigns the two directions the same pair weight, a logarithmic mean rather than an arithmetic mean. Thus an unmodified replacement of \(D_B\) by \(K_B\) in the probability or rate formula changes the physics.</p>
+          <p>A two-level example makes the size of this change explicit. Take \(\beta\delta\epsilon=2\), where \(\delta\epsilon\) is the bath energy gap, and let the off-diagonal coupling matrix element be one. The initial probabilities are 0.880797 and 0.119203, while both Kubo line weights are 0.380797. The ordered ratio is \(e^{-2}\); the raw Kubo ratio is 1. The linked <a href="../assets/code/correlations/transition_weights.py">finite-matrix check</a> verifies these weights, the operator trace, imaginary-time quadrature, and the finite-time probability identity without taking a rate limit.</p>
+          <p>The two-point information is nevertheless recoverable. Applying the spectral relation from <a href="#spectra">Section 3</a> with the convention bridge above gives</p>
+          <div class="math-block">\[
+            \widetilde D_B(\omega)
+              =\frac{\beta\hbar\omega}{1-e^{-\beta\hbar\omega}}
+                 \widetilde K_B(\omega),\qquad
+            \widetilde D_B(\omega)=\int dt\,e^{i\omega t}D_B(t).
+          \]</div>
+          <p>At known finite temperature this recovers the two separate initial-state weights. Kubo is therefore not an invalid correlation or a quantum correlation that has lost detailed-balance information. It needs the appropriate conversion before insertion into a formula derived for ordered noise; a formula consistently rewritten in terms of Kubo data is equally legitimate. Linear response already provides such an example in <a href="#spectra">Section 3</a>.</p>
+          <p>The conversion requires thermal equilibrium, but does <em>not</em> require a harmonic bath. Separately, the two-point correlation suffices for the second-order expression derived here. For general finite coupling to a non-Gaussian bath, higher connected correlations can matter. An isolated oscillator or two-level bath also has recurrences rather than a generic irreversible exponential rate. State-dependent nuclear Hamiltonians require a correlation involving both nuclear propagators, and a non-Hermitian coupling requires its correct dagger/order pair.</p>
 
           <h2 id="rpmd">8. Why a real bead trajectory is not automatically ordered quantum noise</h2>
           <p>The previous result makes the approximation issue precise. Standard position RPMD uses an equilibrium ring-polymer ensemble and approximate real-time propagation to estimate Kubo correlations, as in the existing <a href="rpmd-sho-correlation.html#rpmd-estimator">RPMD estimator derivation</a>. A single bead coordinate is a different observable from the bead-averaged estimator, and fictitious internal modes can appear in its real-time signal.</p>
@@ -274,15 +375,23 @@
           <p>This supports a specific criticism: the standard RPMD Kubo interpretation does not justify treating an individual real bead path as ordered quantum bath noise. It does not establish that every electronic method using a ring polymer is wrong. Nuclear feedback, state-dependent sampling, transition rules, or an explicitly derived spectral correction can change the problem and must be examined on their own terms. Even a correct conversion of an approximate Kubo spectrum leaves its dynamical approximation error.</p>
           <p>The useful test is therefore to identify the bath operator, thermal preparation, real-time generator, estimator, and rate or response formula in the actual method. A matching equilibrium distribution and a quantum electronic phase solve different parts of that test. Neither substitutes for the required dynamical correlation.</p>
 
+          <h3 id="correlation-workflow">From a sampled Kubo function to electronic propagation</h3>
+          <p>The distinction leads to a concrete workflow. First fix the reference bath Hamiltonian, equilibrium preparation, and physical coupling operator. For a nonzero mean coupling, include that mean in the electronic Hamiltonian and use the centered bath operator for the fluctuation correlation. Then estimate \(K_B(t)\) from equilibrium RPMD trajectories with the appropriate bead-averaged estimator, Fourier transform it, apply the exact thermal factor, and transform back to obtain an approximate ordered input \(D_B(t)\). Keep its real and imaginary parts: they encode the anticommutator fluctuations and commutator response with the chosen order.</p>
+          <p>A pole expansion of this complex input can turn the history integrals of a specified memory equation into coupled ordinary differential equations for the electronic density matrix and auxiliary matrices, often denoted \(\chi\). Those matrices store bath memory; they do not represent additional physical bath coordinates. This localization does not remove the approximation in the memory equation. In particular, a second-order closure remains a second-order closure, and extra auxiliary variables cannot reconstruct omitted higher connected bath correlations.</p>
+          <p>There are three separate accuracy questions: how well RPMD estimates the true Kubo dynamics, how well the spectral or pole representation reproduces that input over the relevant frequencies and times, and how well the chosen reduced electronic equation applies. The thermal conversion is exact for exact equilibrium data, including an anharmonic bath. It cannot repair an inaccurate RPMD frequency, amplitude, or decay. Harmonic dynamics with a linear position coupling is a special exact Kubo benchmark; it is not a general accuracy guarantee for anharmonic couplings or baths.</p>
+
           <h2 id="reproduce">9. Reproduce the analytic comparison</h2>
           <p>The linked Python script constructs q and q² in the oscillator energy basis, forms the fractional thermal weights directly, and compares the trace with the closed expressions. It also independently integrates the s family with Gauss–Legendre quadrature. In units \(m=\Omega=\hbar=1\), the check uses 180 energy states, five temperatures from \(x=0.2\) to 12, five splitting values, and five real times, for both q and δq².</p>
           <p>Across 250 trace comparisons, the largest absolute error divided by \(\max(1,|C|)\) was below \(4\times10^{-12}\); the Kubo integration check was below \(3\times10^{-15}\). These numerical checks verify the displayed formulas in the tested domain. Their exactness follows from the oscillator algebra, not from numerical agreement, and the checks do not validate an RPMD or nonadiabatic approximation.</p>
+          <p>The two-level transition check uses \(\hbar=1\), bath energies 0 and 1, \(\beta=2\), and \(B=\sigma_x\). It compares the matrix trace with the spectral sum and 64-point Gauss–Legendre imaginary-time quadrature. It also compares the amplitude-squared probability with direct double-time quadrature for upward, downward, and detuned electronic gaps, using both 32 and 64 quadrature points. These are algebra and quadrature checks of the stated second-order expression, not a comparison with exact coupled electron–bath dynamics.</p>
           <ul class="code-list">
             <li><a href="../assets/code/correlations/sho_correlations.py">sho_correlations.py</a>: independent energy-basis trace and Kubo quadrature checks; requires NumPy.</li>
             <li><a href="../assets/code/correlations/sho-correlations-check.json">Numerical check results</a>: parameters, basis size, and error definition.</li>
+            <li><a href="../assets/code/correlations/transition_weights.py">transition_weights.py</a> and <a href="../assets/code/correlations/transition-weights-check.json">its check results</a>: two-level ordered/Kubo weights, spectral recovery, and finite-time electronic probability; requires NumPy.</li>
             <li><a href="../assets/js/sho-correlations.js">sho-correlations.js</a> and <a href="../assets/css/sho-correlations.css">figure styles</a>: formula-driven real-time, thermal-split, and spectral-line explorer.</li>
           </ul>
-          <pre><code>python assets/code/correlations/sho_correlations.py --output sho-correlation-results</code></pre>
+          <pre><code>python assets/code/correlations/sho_correlations.py --output sho-correlation-results
+python assets/code/correlations/transition_weights.py --output transition-weight-results</code></pre>
           <p>For known finite-temperature equilibrium, a complete exact Kubo correlation does determine the corresponding ordered two-point correlation. The two functions nevertheless have different values and enter observable formulas through different operations. The harmonic oscillator shows both facts at once; its nonlinear q² fluctuation also shows why a classical-looking Kubo result for one observable cannot be promoted to a general statement about quantum dynamics.</p>
 
           <h2 id="references">References and related notes</h2>

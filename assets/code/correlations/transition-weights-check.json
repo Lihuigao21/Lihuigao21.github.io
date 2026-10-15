@@ -1,0 +1,131 @@
+{
+  "status": "passed",
+  "units": "hbar=1",
+  "beta": 2.0,
+  "bath_energies": [
+    0.0,
+    1.0
+  ],
+  "coupling_operator": [
+    [
+      0.0,
+      1.0
+    ],
+    [
+      1.0,
+      0.0
+    ]
+  ],
+  "initial_probabilities": [
+    0.8807970779778823,
+    0.11920292202211755
+  ],
+  "ordered_line_weights_bath_up_down": [
+    0.8807970779778823,
+    0.11920292202211755
+  ],
+  "kubo_line_weights_bath_up_down": [
+    0.38079707797788237,
+    0.38079707797788237
+  ],
+  "imaginary_time_quadrature_order": 64,
+  "time_quadrature_orders": [
+    32,
+    64
+  ],
+  "correlation_times": [
+    0.0,
+    0.13,
+    0.9,
+    2.4,
+    4.1
+  ],
+  "absolute_error_tolerance": 1e-12,
+  "maximum_absolute_errors": {
+    "ordered_trace": 0.0,
+    "kubo_imaginary_time_quadrature": 2.784615298590975e-16,
+    "reversed_order_conjugacy": 0.0,
+    "spectral_recovery": 1.3877787807814457e-17,
+    "finite_time_probability": 1.3048738965952983e-18,
+    "time_quadrature_32_to_64": 1.084489904113574e-18
+  },
+  "coupling_g": 0.03,
+  "probability_checks": [
+    {
+      "electronic_gap": -1.0,
+      "time": 0.0,
+      "second_order_probability": 0.0
+    },
+    {
+      "electronic_gap": -1.0,
+      "time": 0.13,
+      "second_order_probability": 1.519980932306057e-05
+    },
+    {
+      "electronic_gap": -1.0,
+      "time": 0.9,
+      "second_order_probability": 0.000707929803865462
+    },
+    {
+      "electronic_gap": -1.0,
+      "time": 2.4,
+      "second_order_probability": 0.004614999806622318
+    },
+    {
+      "electronic_gap": -1.0,
+      "time": 4.1,
+      "second_order_probability": 0.013397413020338608
+    },
+    {
+      "electronic_gap": 1.0,
+      "time": 0.0,
+      "second_order_probability": 0.0
+    },
+    {
+      "electronic_gap": 1.0,
+      "time": 0.13,
+      "second_order_probability": 1.5134700516408474e-05
+    },
+    {
+      "electronic_gap": 1.0,
+      "time": 0.9,
+      "second_order_probability": 0.0005733111387464271
+    },
+    {
+      "electronic_gap": 1.0,
+      "time": 2.4,
+      "second_order_probability": 0.0009796256508299295
+    },
+    {
+      "electronic_gap": 1.0,
+      "time": 4.1,
+      "second_order_probability": 0.002334206667104113
+    },
+    {
+      "electronic_gap": 0.37,
+      "time": 0.0,
+      "second_order_probability": 0.0
+    },
+    {
+      "electronic_gap": 0.37,
+      "time": 0.13,
+      "second_order_probability": 1.5173612097292389e-05
+    },
+    {
+      "electronic_gap": 0.37,
+      "time": 0.9,
+      "second_order_probability": 0.0006493608343989338
+    },
+    {
+      "electronic_gap": 0.37,
+      "time": 2.4,
+      "second_order_probability": 0.00218921705895913
+    },
+    {
+      "electronic_gap": 0.37,
+      "time": 4.1,
+      "second_order_probability": 0.0011796466528531495
+    }
+  ],
+  "scope": "Algebra and quadrature check of the second-order probability; no irreversible-rate or exact coupled-dynamics claim."
+}
