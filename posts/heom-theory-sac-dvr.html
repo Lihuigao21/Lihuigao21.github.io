@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A derivation of Gaussian bosonic HEOM, its limits for Tully's simple avoided crossing, and two carefully distinguished DVR validation tests.">
-  <title>HEOM: Theory, Boundaries, and DVR Tests | Lihui Gao</title>
+  <title>Open Quantum Systems I: HEOM | Lihui Gao</title>
   <link rel="canonical" href="https://lihuigao21.github.io/posts/heom-theory-sac-dvr.html">
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/css/styles.css">
@@ -20,11 +20,16 @@
   <main id="top">
     <article class="post">
       <header class="post-header">
-        <p class="section-label">Quantum Dynamics</p>
-        <h1>HEOM: Theory, Boundaries, and DVR Tests</h1>
-        <p class="post-meta">2026.09.27 · HEOM / Open Quantum Systems / DVR / Tully SAC</p>
+        <p class="section-label">Open Quantum Systems — Part I</p>
+        <h1>HEOM</h1>
+        <p class="post-meta">2026.09.27 (series updated 2026.10.17) · HEOM / Open Quantum Systems / DVR / Tully SAC</p>
       </header>
       <div class="post-content">
+        <nav class="series-nav" aria-label="Open quantum systems series">
+          <a href="heom-theory-sac-dvr.html" aria-current="page">I. HEOM</a>
+          <a href="open-quantum-systems-tcl2-nz2.html">II. TCL2 and NZ2</a>
+        </nav>
+        <p>This series asks what must be retained when an environment is eliminated: its thermal fluctuations, response, memory, and the correlations generated with the system. We begin with Gaussian HEOM, where a converged hierarchy can keep contributions beyond weak coupling. <a href="open-quantum-systems-tcl2-nz2.html">Part II</a> then derives TCL2 and NZ2 and tests what changes when a generator or memory kernel is truncated at second order.</p>
         <p class="lead">Can the nuclear coordinate in a nonadiabatic scattering model be treated as a bath and solved with hierarchical equations of motion (HEOM)? The answer depends on the bath statistics and preparation, not on the name assigned to the coordinate. This note derives the standard Gaussian hierarchy, explains why the original simple avoided crossing (SAC) model lies outside that implementation, and separates two numerical tests: genuine HEOM against a harmonic-bath DVR reference, and explicit electron–nuclear propagation of SAC in two bases.</p>
         <p>The <a href="dvr-wavepacket-methods.html">DVR methods note</a> and <a href="dvr-wavepacket-dynamics.html">wavepacket propagation note</a> introduce the coordinate discretization and spectral propagator. Here the new issue is what information is retained when the nuclear degrees of freedom are eliminated. The tests below are implementation validations with stated initial conditions, rather than reproductions of a particular published figure.</p>
 
@@ -185,7 +190,15 @@
           <a href="../assets/img/heom-validation/sac-comparison.png"><img src="../assets/img/heom-validation/sac-comparison.png" alt="Original SAC: fixed diabatic populations and complex coherence agree between full nuclear basis propagation and coordinate DVR" loading="lazy"></a>
           <figcaption>Original SAC, with time in atomic units. Upper left: blue and green solid DVR curves show fixed-diabatic populations \(P_0\) and \(P_1\); orange and red open markers show explicit nuclear-basis propagation. Upper right: blue and green curves show \(\operatorname{Re}\rho_{01}\) and \(\operatorname{Im}\rho_{01}\), with corresponding markers. Lower left: black points give the maximum density-element discrepancy at each time; the vertical scale carries a \(10^{-15}\) multiplier. The figure's “bath hierarchy” labels refer to explicit nuclear blocks, not Gaussian HEOM. Agreement near roundoff checks the basis transformation and propagators; the separate grid study controls spatial accuracy. Click the figure for full resolution.</figcaption>
         </figure>
-        <p>At the final saved time, \(P_0=0.322901424\), \(P_1=0.677098576\), and \(\rho_{01}=0.049395406-0.024978485i\). These are finite-time fixed-diabatic observables, not asymptotic adiabatic scattering probabilities. The spatial refinement requirement was \(10^{-5}\). Thus the same-grid \(10^{-15}\) agreement is an implementation consistency check; it is not a claim of continuum accuracy to fifteen digits.</p>
+        <p>At the final saved time, the fixed-diabatic observables are</p>
+        <div class="math-block">\[
+          \begin{aligned}
+            P_0&=0.322901424,\\
+            P_1&=0.677098576,\\
+            \rho_{01}&=0.049395406-0.024978485i.
+          \end{aligned}
+        \]</div>
+        <p>These are finite-time fixed-diabatic observables, not asymptotic adiabatic scattering probabilities. The spatial refinement requirement was \(10^{-5}\). Thus the same-grid \(10^{-15}\) agreement is an implementation consistency check; it is not a claim of continuum accuracy to fifteen digits.</p>
 
         <h3>Validation scope and reproducible code</h3>
         <p>The original implementation passed 43 relevant tests, covering HEOM, finite-bath propagation, DVR, public interfaces, and curve diagnostics. The accepted plotted series passed declared finite-value, abscissa, high-frequency residual, endpoint, and spike checks, followed by visual inspection. No smoothing was applied to the physical output. A 301-to-601 saved-time control was also performed for SAC; because the propagators evaluate matrix exponentials, that is an output-schedule check, not an integration-step convergence study.</p>
@@ -202,8 +215,13 @@
           <li>C.-Y. Hsieh and J. Cao, “A unified stochastic formulation of dissipative quantum dynamics. I. Generalized hierarchical equations,” <em>J. Chem. Phys.</em> <strong>148</strong>, 014103 (2018). <a href="https://doi.org/10.1063/1.5018725">DOI</a>; <a href="https://arxiv.org/abs/1701.05709">open manuscript</a>.</li>
           <li>J. C. Tully, “Molecular dynamics with electronic transitions,” <em>J. Chem. Phys.</em> <strong>93</strong>, 1061–1071 (1990). <a href="https://doi.org/10.1063/1.459170">DOI</a>.</li>
         </ol>
+        <h2 id="series-map">Open Quantum Systems series</h2>
+        <ol>
+          <li><a href="heom-theory-sac-dvr.html" aria-current="page">I. HEOM: Gaussian bath influence, hierarchy, and quantum-reference tests</a>.</li>
+          <li><a href="open-quantum-systems-tcl2-nz2.html">II. TCL2 and NZ2: second-order closures and twelve population examples</a>.</li>
+        </ol>
       </div>
-      <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&larr; Back to article list</a><a href="dvr-wavepacket-dynamics.html">DVR wavepacket propagation &rarr;</a></nav>
+      <nav class="post-nav" aria-label="Article navigation"><a href="../index.html">&larr; Back to article list</a><a href="open-quantum-systems-tcl2-nz2.html">II. TCL2 and NZ2 &rarr;</a></nav>
     </article>
   </main>
   <footer class="site-footer"><p>&copy; <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>

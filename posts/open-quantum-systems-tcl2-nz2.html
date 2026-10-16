@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Derive finite-time TCL2 and NZ2 from the same second-order bath kernel, predict their resonant behavior, and interpret twelve exact-reference population comparisons for harmonic and anharmonic baths.">
+  <title>Open Quantum Systems II: TCL2 and NZ2 | Lihui Gao</title>
+  <link rel="canonical" href="https://lihuigao21.github.io/posts/open-quantum-systems-tcl2-nz2.html">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+    <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+  </header>
+  <main id="top">
+    <article class="post">
+      <header class="post-header">
+        <p class="section-label">Open Quantum Systems — Part II</p>
+        <h1>TCL2 and NZ2</h1>
+        <p class="post-meta">2026.10.17 · Master Equations / Bath Memory / Harmonic and Anharmonic Benchmarks</p>
+      </header>
+      <div class="post-content">
+        <nav class="series-nav" aria-label="Open quantum systems series">
+          <a href="heom-theory-sac-dvr.html">I. HEOM</a>
+          <a href="open-quantum-systems-tcl2-nz2.html" aria-current="page">II. TCL2 and NZ2</a>
+        </nav>
+        <p class="lead">If a bath correlation is known, how should it drive an electronic density matrix? Two common answers are the second-order time-convolutionless equation (TCL2) and the second-order Nakajima–Zwanzig equation (NZ2). One evolves the current density; the other integrates its history. Twelve examples below show why that difference does not establish an accuracy ranking.</p>
+        <p><a href="heom-theory-sac-dvr.html">Part I</a> explained how Gaussian HEOM stores bath memory in auxiliary density operators. This part makes a controlled reduction in ambition: truncate a generator or a memory kernel at second order in the system–bath coupling. We derive both equations, use a resonance approximation to anticipate their behavior, and then read the numerical examples. The analytic interpretation is a consistency check against existing results, not an independent blind prediction.</p>
+        <nav aria-label="Article contents">
+          <ol>
+            <li><a href="#setup">What information enters the reduced equation?</a></li>
+            <li><a href="#derivation">One second-order kernel, two equations</a></li>
+            <li><a href="#prediction">Predicting the population curves</a></li>
+            <li><a href="#workflow">The model and numerical workflow</a></li>
+            <li><a href="#harmonic">Examples A–C: harmonic resonance</a></li>
+            <li><a href="#detuned">Examples D–F: harmonic detuning</a></li>
+            <li><a href="#weak">Examples G–I: weak anharmonicity</a></li>
+            <li><a href="#strong">Examples J–L: strong anharmonicity</a></li>
+            <li><a href="#interpretation">What the comparison establishes</a></li>
+            <li><a href="#reproduce">Reproducible code and data</a></li>
+          </ol>
+        </nav>
+
+        <h2 id="setup">1. What information enters the reduced equation?</h2>
+        <p>Set \(\hbar=1\), write the coupling strength explicitly as \(g\), and prepare a thermal bath independently of the electronic state:</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          H&=H_S+H_B+gV,\qquad V=A\otimes B,\\
+          \rho_{SB}(0)&=\rho_S(0)\otimes\rho_B,\qquad
+          \rho_B=Z_B^{-1}e^{-\beta H_B},\qquad
+          \langle B\rangle_B=0.
+          \end{aligned}
+        \]</div>
+        <p>The system observable is obtained from the reduced density, \(\rho_S(t)=\operatorname{Tr}_B\rho_{SB}(t)\). The two-point input is the unsymmetrized correlation with the later operator on the left:</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          C(\tau)&=\operatorname{Tr}_B[B(\tau)B(0)\rho_B],\\
+          B(\tau)&=e^{iH_B\tau}Be^{-iH_B\tau},\qquad
+          C(-\tau)=C(\tau)^*.
+          \end{aligned}
+        \]</div>
+        <p>Its real and imaginary parts retain fluctuations and response. Both are used below. The <a href="ordered-kubo-sho-correlations.html#ordering">correlation-function note</a> explains the physical meaning and thermal weights. When comparing conventions, note that the reverse product \(\langle B(0)B(\tau)\rangle_B\) is the complex conjugate of the convention used here.</p>
+        <p>A two-point correlation completely specifies a Gaussian bath influence under the assumptions in Part I. It does not make every second-order electronic equation exact. For a non-Gaussian bath, higher bath correlations contain additional information even if this \(C(\tau)\) is known exactly.</p>
+
+        <h2 id="derivation">2. One second-order kernel, two equations</h2>
+        <p>In the interaction picture of \(H_S+H_B\), let \(\mathcal L(t)X=-i[V_I(t),X]\). The full equation is \(\dot\rho_{SB,I}=g\mathcal L(t)\rho_{SB,I}\). Expanding its propagator and tracing the bath defines a reduced map:</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          \rho_I(t)&=\Lambda(t)\rho_I(0),\\
+          \Lambda(t)&=I+g^2M_2(t)+O(g^3),\\
+          M_2(t)X&=\int_0^t du\int_0^u ds\,
+          \operatorname{Tr}_B\{\mathcal L(u)\mathcal L(s)
+          [X\otimes\rho_B]\}.
+          \end{aligned}
+        \]</div>
+        <p>The first-order term vanishes because the bath coupling is centered. Wherever the exact reduced map is invertible, its exact time-local generator is \(\dot\Lambda\Lambda^{-1}\). Expanding that generator gives \(g^2\dot M_2+O(g^3)\). Keeping only the second-order term gives TCL2.</p>
+        <p>Define the common kernel</p>
+        <div class="math-block">\[
+          \mathcal K_2(t,s)X
+          =-\operatorname{Tr}_B
+          [V_I(t),[V_I(s),X\otimes\rho_B]].
+        \]</div>
+        <p>The two approximations can now be compared without a change of picture:</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          \mathrm{TCL2}:\quad
+          \dot\rho_I(t)&=g^2\int_0^t ds\,
+          \mathcal K_2(t,s)\rho_I(t),\\
+          \mathrm{NZ2}:\quad
+          \dot\rho_I(t)&=g^2\int_0^t ds\,
+          \mathcal K_2(t,s)\rho_I(s).
+          \end{aligned}
+        \]</div>
+        <p><strong>The difference is the density on which the same kernel acts.</strong> TCL2 is time-local in the unknown density, but its coefficients retain the bath correlation over the entire interval. Neither equation here takes a Markov limit or a secular approximation. The current-versus-history distinction agrees with <a href="https://arxiv.org/html/2104.04248v3">Babu and co-workers, Sections II.1–II.2</a>.</p>
+        <details>
+          <summary>How eliminating the projected bath gives NZ2</summary>
+          <p>Use \(\mathcal PX=\operatorname{Tr}_B X\otimes\rho_B\), \(\mathcal Q=I-\mathcal P\), and \(R=\rho_{SB,I}\). Centering gives \(\mathcal P\mathcal L(t)\mathcal P=0\), while the preparation gives \(\mathcal QR(0)=0\). Thus</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \mathcal P\dot R&=g\mathcal P\mathcal L(t)\mathcal QR,\\
+            \mathcal Q\dot R&=g\mathcal Q\mathcal L(t)\mathcal QR
+                    +g\mathcal Q\mathcal L(t)\mathcal PR.
+            \end{aligned}
+          \]</div>
+          <p>Let \(\mathcal G_Q(t,s)\) propagate the homogeneous equation in the \(\mathcal Q\) subspace. Integrate the second line and substitute into the first:</p>
+          <div class="math-block">\[
+            \mathcal P\dot R(t)=g^2\int_0^t ds\,
+            \mathcal P\mathcal L(t)\mathcal G_Q(t,s)
+            \mathcal Q\mathcal L(s)\mathcal PR(s).
+          \]</div>
+          <p>This is an exact memory representation. Replacing \(\mathcal G_Q=I_Q+O(g)\) inside its kernel gives NZ2. It truncates propagation in the eliminated sector; it does not retain the full system–bath dynamics merely because the history remains.</p>
+        </details>
+        <p>At fixed finite time, \(\rho_I(s)-\rho_I(t)=O(g^2)\). Multiplying this difference by the outer \(g^2\) explains why TCL2 and NZ2 first differ at \(O(g^4)\). This is not a uniform long-time error bound. In general the exact solution can also contain a third-order contribution that both methods omit. The even oscillator potentials used below have a stronger symmetry, \(B\mapsto-B\), so their odd coupling orders vanish and the first general omitted order is fourth.</p>
+
+        <h3>The equation actually integrated</h3>
+        <p>For the single Hermitian channel, tracing the double commutator gives</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          \mathcal K_2(t,s)X={}&
+          -C(t-s)[A_I(t),A_I(s)X]\\
+          &-C(s-t)[XA_I(s),A_I(t)].
+          \end{aligned}
+        \]</div>
+        <p>For reproducibility in the Schrödinger picture, define \(\mathcal L_0X=-i[H_S,X]\), \(\mathcal G_\tau=e^{\mathcal L_0\tau}\), and</p>
+        <div class="math-block">\[
+          F(t)=\int_0^t C(\tau)\mathcal G_\tau A\,d\tau.
+        \]</div>
+        <p>The implemented TCL2 equation is</p>
+        <div class="math-block">\[
+          \dot\rho=\mathcal L_0\rho
+          -g^2[A,F(t)\rho-\rho F(t)^\dagger].
+        \]</div>
+        <p>The implemented NZ2 equation is</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          \dot\rho(t)=\mathcal L_0\rho(t)-g^2\int_0^t d\tau\,
+          \Big[A,\,&C(\tau)\mathcal G_\tau(A\rho(t-\tau))\\
+                  &-C(\tau)^*\mathcal G_\tau(\rho(t-\tau)A)\Big].
+          \end{aligned}
+        \]</div>
+        <p>The free propagation \(\mathcal G_\tau\) is essential: replacing the current Schrödinger-picture density by a bare historical density in the TCL2 formula would give a different equation.</p>
+        <details>
+          <summary>Replacing the NZ2 history by auxiliary matrices</summary>
+          <p>If \(C(\tau)=\sum_jc_je^{-\nu_j\tau}\), introduce</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            Q_j(t)&=\int_0^t c_je^{-\nu_j\tau}
+                    \mathcal G_\tau(A\rho(t-\tau))\,d\tau,\\
+            R_j(t)&=\int_0^t c_j^*e^{-\nu_j^*\tau}
+                    \mathcal G_\tau(\rho(t-\tau)A)\,d\tau.
+            \end{aligned}
+          \]</div>
+          <p>Differentiating these convolutions gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot Q_j&=(\mathcal L_0-\nu_j)Q_j+c_jA\rho,\\
+            \dot R_j&=(\mathcal L_0-\nu_j^*)R_j+c_j^*\rho A,\\
+            \dot\rho&=\mathcal L_0\rho
+               -g^2\sum_j([A,Q_j]+[R_j,A]),
+            \qquad Q_j(0)=R_j(0)=0.
+            \end{aligned}
+          \]</div>
+          <p>These equations exactly localize the specified NZ2 convolution. They do not recover the higher-order feedback omitted by NZ2. For Hermitian physical densities \(R_j=Q_j^\dagger\), but independent variables are needed when applying the map to arbitrary non-Hermitian matrix units. The frozen runner uses an equivalent paired-frequency combination of these auxiliaries.</p>
+        </details>
+
+        <h2 id="prediction">3. Predicting the population curves</h2>
+        <p>To connect the formal equations to the examples, take \(H_S=\Delta\sigma_z/2\) and \(A=\sigma_x\). For the initially occupied upper state, the population sector closes. Define the kernels and their finite-time integrals:</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          k_{\downarrow,\uparrow}(\tau)
+            &=2g^2\operatorname{Re}[C(\tau)e^{\pm i\Delta\tau}],\\
+          r_{\downarrow,\uparrow}(t)
+            &=\int_0^t k_{\downarrow,\uparrow}(\tau)\,d\tau .
+          \end{aligned}
+        \]</div>
+        <p>TCL2 uses \(r_\downarrow(t)\) and \(r_\uparrow(t)\) in an instantaneous population equation. NZ2 convolves the corresponding kernels with past populations:</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          \dot P_e^{\mathrm{TCL2}}(t)
+            &=-r_\downarrow(t)P_e(t)+r_\uparrow(t)[1-P_e(t)],\\
+          \dot P_e^{\mathrm{NZ2}}(t)
+            &=\int_0^t d\tau\,\{
+              -k_\downarrow(\tau)P_e(t-\tau)
+              +k_\uparrow(\tau)[1-P_e(t-\tau)]\}.
+          \end{aligned}
+        \]</div>
+        <p>Now keep a dominant resonant pair of bath lines, an additional approximation used only for interpretation:</p>
+        <div class="math-block">\[
+          C_{\mathrm{res}}(\tau)=a e^{-i\Delta\tau}+b e^{i\Delta\tau},
+          \qquad W=a+b,\qquad p_*=\frac{b}{W}.
+        \]</div>
+        <p>Dropping the fast counter-rotating terms gives \(k_\downarrow\simeq2g^2a\) and \(k_\uparrow\simeq2g^2b\). With \(P_e(0)=1\), integration for TCL2 and one further differentiation for NZ2 give</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          P_e^{\mathrm{TCL2}}(t)
+            &\simeq p_*+(1-p_*)e^{-g^2Wt^2},\\
+          P_e^{\mathrm{NZ2}}(t)
+            &\simeq p_*+(1-p_*)\cos(g\sqrt{2W}\,t).
+          \end{aligned}
+        \]</div>
+        <p>This predicts a decay envelope for TCL2 and an undamped oscillation for NZ2. The latter can reach \(2p_*-1&lt;0\), so keeping a memory convolution does not by itself preserve physical probabilities. The apparent TCL2 plateau is also not proof of thermalization: the reference system contains one undamped mode and can return population coherently.</p>
+        <p>For the normalized harmonic bath at \(\beta=2\), \(W=1\) and \(p_*=(e^2+1)^{-1}\). The approximation predicts the first NZ2 zero at</p>
+        <div class="math-block">\[
+          t_0=\frac{\arccos(-e^{-2})}{\sqrt2\,g}
+          \simeq\frac{1.20671}{g}.
+        \]</div>
+        <p>Thus \(g=0.05\) predicts a zero near \(t=24.13\), inside the displayed interval, even though the coupling is small. At \(g=0.01\), the predicted zero is outside that interval. The important secular variable is \(gt\), not coupling strength alone.</p>
+        <p>The quantum reference has a different structure. Under the same harmonic rotating-wave approximation it is a thermal average of coherent Rabi exchanges:</p>
+        <div class="math-block">\[
+          \begin{aligned}
+          P_e^{\mathrm{JC}}(t)
+          &=\sum_{n=0}^{\infty}(1-r)r^n
+          \cos^2\!\left(gt\sqrt{\frac{n+1}{2\bar n+1}}\right),\\
+          r&=e^{-2},\qquad \bar n=(e^2-1)^{-1}.
+          \end{aligned}
+        \]</div>
+        <p>The thermal sum contains nonnegative exchanges at occupation-dependent frequencies. Neither simple second-order expression reproduces this thermal frequency structure. The full numerical calculations below retain counter-rotating terms and all retained bath transitions; they do not use these rotating-wave formulas.</p>
+
+        <h2 id="workflow">4. The model and numerical workflow</h2>
+        <p>All twelve plots use the same preparation and readout, with four bath/gap choices and three couplings. The bath and coupling operator are</p>
+        <div class="math-block">\[
+          H_B=\frac{p^2+q^2}{2}+\kappa q^4,\qquad
+          B=\frac{q}{\sqrt{\langle q^2\rangle_\beta}},\qquad
+          \langle B^2\rangle_\beta=1,\qquad \beta=2.
+        \]</div>
+        <p>The odd coordinate has zero thermal mean by parity. Unit variance makes \(g\) the root-mean-square coupling energy. Time is in \(\omega_{\mathrm{ref}}^{-1}\), and energies are in \(\hbar\omega_{\mathrm{ref}}\), with \(\omega_{\mathrm{ref}}=1\). These dimensionless couplings are not material derivatives in eV per unit displacement.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Examples</th><th>Bath</th><th>Electronic gap</th><th>Couplings</th></tr></thead>
+          <tbody>
+            <tr><td>A–C</td><td>\(\kappa=0\)</td><td>\(\Delta=1\), resonant</td><td>\(0.05,\ 0.2,\ 0.6\)</td></tr>
+            <tr><td>D–F</td><td>\(\kappa=0\)</td><td>\(\Delta=1.6\), detuned</td><td>same</td></tr>
+            <tr><td>G–I</td><td>\(\kappa=0.01\)</td><td>\(E_1-E_0\simeq1.02839\)</td><td>same</td></tr>
+            <tr><td>J–L</td><td>\(\kappa=0.5\)</td><td>\(E_1-E_0\simeq1.62823\)</td><td>same</td></tr>
+          </tbody>
+        </table></div>
+        <ol>
+          <li><strong>Prepare the bath.</strong> Diagonalize \(H_B\) in a harmonic-oscillator basis and assign its Gibbs weights. There is no trajectory sampling or stochastic hopping.</li>
+          <li><strong>Construct the correlation.</strong> In the bath eigenbasis, evaluate
+            <div class="math-block">\[
+              C(t)=\sum_{mn}p_m|B_{mn}|^2e^{-i(E_n-E_m)t}.
+            \]</div>
+            Both approximate methods use this same spectral input. Discarded spectral pairs have total positive weight below \(2\times10^{-13}\).</li>
+          <li><strong>Propagate three electronic preparations.</strong> Use the bare upper state, bare lower state, and \((|e\rangle+|g\rangle)/\sqrt2\), each with the same factorized thermal bath.</li>
+          <li><strong>Obtain the reference independently.</strong> Diagonalize the full electron–bath Hamiltonian, propagate the joint density spectrally, and trace out the bath. This retains bath response and electron–bath entanglement without a second-order closure.</li>
+          <li><strong>Integrate TCL2 and NZ2.</strong> Use adaptive DOP853, finite-time TCL2 coefficients and an equivalent auxiliary form of NZ2. No Markov, secular, empirical thermal, positivity-repair or population-clipping step is added.</li>
+          <li><strong>Check numerical errors separately.</strong> Compare oscillator bases 40 and 64, and tighten integration tolerances while halving the maximum internal step from 0.1 to 0.05. The plotted output interval is 0.0125; it is not the adaptive integration timestep.</li>
+        </ol>
+        <p>The largest integration-control difference in the full study is \(1.22\times10^{-10}\); the largest basis-control difference is \(2.25\times10^{-8}\), measured by half the trace norm of the density difference. Both are below the declared numerical tolerance \(2\times10^{-6}\). The reference is therefore a numerically converged finite-time result for these models, not an unrestricted claim of exactness for arbitrary baths.</p>
+        <p><strong>Reading the gallery.</strong> Every plot shows only the initially excited preparation and \(P_e(t)=\operatorname{Re}\rho_{ee}(t)\) in the same fixed bare electronic basis. Black solid is the full quantum reference, orange dashed is TCL2, and blue dotted is NZ2. Vertical ranges vary between panels; negative values and values above one remain visible. These are twelve examples from a wider seven-coupling scan. <a href="../assets/img/open-quantum-systems-ii/transfer-overview.png">Open the original four-by-three overview</a>.</p>
+
+        <h2 id="harmonic">5. Examples A–C: harmonic resonance</h2>
+        <p>The bath is Gaussian, but the coupling is transverse: \([H_S,A]\ne0\). Gaussian statistics alone do not eliminate higher-order reduced-system contributions. A pure-dephasing problem can make TCL2 exact; this population-transfer problem does not have that commuting structure.</p>
+        <h3>A. Weak coupling can still accumulate a large long-time error</h3>
+        <figure id="example-a">
+          <a href="../assets/img/open-quantum-systems-ii/harmonic-resonant-g0p05.png"><img src="../assets/img/open-quantum-systems-ii/harmonic-resonant-g0p05.png" width="1184" height="768" loading="lazy" alt="Example A: resonant harmonic bath at g equals 0.05; TCL2 remains above exact and NZ2 becomes negative after about time 24"></a>
+          <figcaption>A: \(\kappa=0,\Delta=1,g=0.05\). Horizontal: \(t\omega_{\mathrm{ref}}\); vertical: dimensionless upper-state population. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. Initial agreement separates over time, and NZ2 crosses zero near the analytically predicted \(t=24.13\).</figcaption>
+        </figure>
+        <p>The actual zero lies between 24.1375 and 24.1500. At \(t=30\), the resonance estimate gives TCL2 \(0.2120\) and NZ2 \(-0.3416\); the full equations give \(0.2128\) and \(-0.3406\). The reference is \(0.0768\). The agreement with the estimates identifies a closure error, not a failure to compute the bath spectrum.</p>
+        <h3>B. A low plateau misses coherent return</h3>
+        <figure id="example-b">
+          <a href="../assets/img/open-quantum-systems-ii/harmonic-resonant-g0p2.png"><img src="../assets/img/open-quantum-systems-ii/harmonic-resonant-g0p2.png" width="1184" height="768" loading="lazy" alt="Example B: resonant harmonic bath at g equals 0.2; exact revives, TCL2 approaches a low plateau, and NZ2 has a large negative oscillation"></a>
+          <figcaption>B: \(\kappa=0,\Delta=1,g=0.2\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. The reference revival is absent from TCL2; NZ2 retains an oscillation with an incorrect phase and a negative valley.</figcaption>
+        </figure>
+        <p>The orange curve is smoother and stays positive here, but it loses the main physical event: population returns from the mode to the electronic system. NZ2 preserves oscillatory structure without the correct quantum exchange. Neither visual smoothness nor the mere presence of oscillations establishes accuracy.</p>
+        <h3>C. Strong coupling lies outside the simple resonance estimate</h3>
+        <figure id="example-c">
+          <a href="../assets/img/open-quantum-systems-ii/harmonic-resonant-g0p6.png"><img src="../assets/img/open-quantum-systems-ii/harmonic-resonant-g0p6.png" width="1184" height="768" loading="lazy" alt="Example C: resonant harmonic bath at g equals 0.6; both approximate dynamics miss the exact amplitude and phase"></a>
+          <figcaption>C: \(\kappa=0,\Delta=1,g=0.6\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. Neither approximation follows the reference amplitude or phase; NZ2 repeatedly gives negative populations.</figcaption>
+        </figure>
+        <p>Here \(g/\Delta\) is not a small parameter. The rotating-wave estimate can help recognize a qualitative mechanism, but its detailed frequency and zero times are no longer controlled predictions of the full equations.</p>
+
+        <h2 id="detuned">6. Examples D–F: harmonic detuning</h2>
+        <p>Keep the same bath and change only the electronic gap to 1.6. A detuned oscillatory kernel can cancel rather than accumulate. This control tests resonance directly, without changing Gaussianity or introducing anharmonicity.</p>
+        <h3>D. Weak coupling and detuning protect this finite window</h3>
+        <figure id="example-d">
+          <a href="../assets/img/open-quantum-systems-ii/harmonic-detuned-g0p05.png"><img src="../assets/img/open-quantum-systems-ii/harmonic-detuned-g0p05.png" width="1184" height="768" loading="lazy" alt="Example D: detuned harmonic bath at g equals 0.05; all methods predict only a small loss of upper-state population"></a>
+          <figcaption>D: \(\kappa=0,\Delta=1.6,g=0.05\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. Transfer stays small, and both approximations follow the reference over the tested window.</figcaption>
+        </figure>
+        <p>The maximum full-density errors over all three preparations are \(0.00376\) for TCL2 and \(0.00265\) for NZ2. Both satisfy the study's 0.01 absolute-error criterion. NZ2 is slightly better here, so even this small set already rules out a universal TCL2-over-NZ2 ranking.</p>
+        <h3>E. An acceptable-looking population does not certify the density matrix</h3>
+        <figure id="example-e">
+          <a href="../assets/img/open-quantum-systems-ii/harmonic-detuned-g0p2.png"><img src="../assets/img/open-quantum-systems-ii/harmonic-detuned-g0p2.png" width="1184" height="768" loading="lazy" alt="Example E: detuned harmonic bath at g equals 0.2; oscillations show increasing phase and amplitude errors"></a>
+          <figcaption>E: \(\kappa=0,\Delta=1.6,g=0.2\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. Amplitude and phase errors accumulate even though the plotted populations remain in their physical range.</figcaption>
+        </figure>
+        <p>For the coherent initial preparation, NZ2 has a minimum density eigenvalue of about \(-0.00512\). That violation is invisible in this initially excited population panel. A single population between zero and one cannot replace a full-density positivity check.</p>
+        <h3>F. Detuning is not protection against arbitrary coupling</h3>
+        <figure id="example-f">
+          <a href="../assets/img/open-quantum-systems-ii/harmonic-detuned-g0p6.png"><img src="../assets/img/open-quantum-systems-ii/harmonic-detuned-g0p6.png" width="1184" height="768" loading="lazy" alt="Example F: detuned harmonic bath at g equals 0.6; TCL2 exceeds population one and NZ2 becomes negative"></a>
+          <figcaption>F: \(\kappa=0,\Delta=1.6,g=0.6\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. TCL2 exceeds one and NZ2 falls below zero. Both closures fail visibly.</figcaption>
+        </figure>
+        <p>The dominant detuning is 0.6, now comparable to \(g\). The small ratio that protected D is gone. The orange curve demonstrates that TCL2 has no general positivity guarantee.</p>
+
+        <h2 id="weak">7. Examples G–I: weak anharmonicity</h2>
+        <p>For \(\kappa=0.01\), the first-order level spacing is \(E_{n+1}-E_n=1+3\kappa(n+1)+O(\kappa^2)\). Tuning to the lowest transition leaves nearby thermally occupied transitions only weakly detuned. Their phase difference is of order 0.9 over \(t=30\) in this estimate. Weak anharmonicity therefore does not establish a rapidly decaying bath correlation.</p>
+        <h3>G. The harmonic failure pattern survives</h3>
+        <figure id="example-g">
+          <a href="../assets/img/open-quantum-systems-ii/quartic-weak-g0p05.png"><img src="../assets/img/open-quantum-systems-ii/quartic-weak-g0p05.png" width="1184" height="768" loading="lazy" alt="Example G: weak quartic bath at g equals 0.05; the long-time separation closely resembles harmonic resonance"></a>
+          <figcaption>G: \(\kappa=0.01,\Delta\simeq1.02839,g=0.05\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. The long-time pattern remains close to harmonic resonance, including negative NZ2 population.</figcaption>
+        </figure>
+        <p>At \(t=30\), TCL2 gives 0.2092, NZ2 gives −0.3243, and the reference gives 0.0752. Those values are close to A. Retaining only the ground-to-first-excited bath line would miss important nearby thermal lines and is not a reliable quantitative reduction here.</p>
+        <h3>H. A weak quartic term does not remove the reference revival</h3>
+        <figure id="example-h">
+          <a href="../assets/img/open-quantum-systems-ii/quartic-weak-g0p2.png"><img src="../assets/img/open-quantum-systems-ii/quartic-weak-g0p2.png" width="1184" height="768" loading="lazy" alt="Example H: weak quartic bath at g equals 0.2; exact revives, TCL2 misses the return, and NZ2 becomes negative"></a>
+          <figcaption>H: \(\kappa=0.01,\Delta\simeq1.02839,g=0.2\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. Coherent return persists in the reference; neither second-order approximation reproduces it.</figcaption>
+        </figure>
+        <p>Changing the spectrum and introducing non-Gaussian statistics modifies the curves, but does not repair the underlying long-time closure error. A bath with slightly unequal level spacings is still a confined discrete quantum system.</p>
+        <h3>I. Strong electronic coupling remains the dominant challenge</h3>
+        <figure id="example-i">
+          <a href="../assets/img/open-quantum-systems-ii/quartic-weak-g0p6.png"><img src="../assets/img/open-quantum-systems-ii/quartic-weak-g0p6.png" width="1184" height="768" loading="lazy" alt="Example I: weak quartic bath at g equals 0.6; neither approximation follows the quantum reference"></a>
+          <figcaption>I: \(\kappa=0.01,\Delta\simeq1.02839,g=0.6\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. Large phase and amplitude errors remain, with repeated negative NZ2 populations.</figcaption>
+        </figure>
+        <p>The word “weak” describes the quartic coefficient, not the electronic coupling. These are independent approximation parameters. Small \(\kappa\) cannot justify truncating at small \(g\) when \(g\) is actually large.</p>
+
+        <h2 id="strong">8. Examples J–L: strong anharmonicity</h2>
+        <p>For \(\kappa=0.5\), the low-energy gap increases and higher bath levels become less thermally occupied. The \(0\leftrightarrow1\) line carries about 0.93952 of the normalized correlation weight. Its thermal ratio gives \(p_*\simeq0.03710\). Unlike the weak-quartic case, this dominant-line reduction is a useful small-coupling estimate, although the bath is not literally a two-level system.</p>
+        <h3>J. A dominant line predicts the negative crossing</h3>
+        <figure id="example-j">
+          <a href="../assets/img/open-quantum-systems-ii/quartic-strong-g0p05.png"><img src="../assets/img/open-quantum-systems-ii/quartic-strong-g0p05.png" width="1184" height="768" loading="lazy" alt="Example J: strong quartic bath at g equals 0.05; TCL2 remains above exact and NZ2 becomes negative near time 23.48"></a>
+          <figcaption>J: \(\kappa=0.5,\Delta\simeq1.62823,g=0.05\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. NZ2 crosses zero near \(t=23.48\), consistent with the dominant-line estimate.</figcaption>
+        </figure>
+        <p>The estimate gives \(P_e(30)\simeq0.1534\) for TCL2 and \(-0.4121\) for NZ2. The full second-order equations give \(0.1536\) and \(-0.4083\); the reference is \(0.0506\). Strong anharmonicity does not prevent an accurate explanation of how the approximate equations fail.</p>
+        <h3>K. Strong anharmonicity does not imply short memory</h3>
+        <figure id="example-k">
+          <a href="../assets/img/open-quantum-systems-ii/quartic-strong-g0p2.png"><img src="../assets/img/open-quantum-systems-ii/quartic-strong-g0p2.png" width="1184" height="768" loading="lazy" alt="Example K: strong quartic bath at g equals 0.2; exact population returns almost completely, TCL2 misses it and NZ2 has a large negative valley"></a>
+          <figcaption>K: \(\kappa=0.5,\Delta\simeq1.62823,g=0.2\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. The reference shows substantial coherent return; a low TCL2 plateau and negative NZ2 excursion both miss the physical exchange.</figcaption>
+        </figure>
+        <p>A low-temperature dominant transition can make the reference exchange especially clear. Non-Gaussian statistics and long memory are separate properties. Confinement and discrete lines remain even when the potential is strongly quartic.</p>
+        <h3>L. Neither closure is reliable at strong coupling</h3>
+        <figure id="example-l">
+          <a href="../assets/img/open-quantum-systems-ii/quartic-strong-g0p6.png"><img src="../assets/img/open-quantum-systems-ii/quartic-strong-g0p6.png" width="1184" height="768" loading="lazy" alt="Example L: strong quartic bath at g equals 0.6; both methods fail, NZ2 has deep negative oscillations and TCL2 also briefly becomes negative"></a>
+          <figcaption>L: \(\kappa=0.5,\Delta\simeq1.62823,g=0.6\). Time and population use the units of A. Black solid: exact; orange dashed: TCL2; blue dotted: NZ2. Both methods fail. TCL2 also briefly becomes negative, although its violation is much less conspicuous than NZ2's deep oscillations.</figcaption>
+        </figure>
+        <p>The upper-state TCL2 population reaches about \(-0.00356\); the minimum eigenvalue across all three initial preparations is about \(-0.01378\). Neither value should be clipped or dismissed because the orange curve looks comparatively stable.</p>
+
+        <h2 id="interpretation">9. What the comparison establishes</h2>
+        <p><strong>Numerical convergence and physical accuracy are different questions.</strong> The reference, TCL2 and NZ2 can all be numerically converged while the latter two solve inaccurate reduced equations. The raw negative values are retained because they diagnose the approximation.</p>
+        <p>The wider comparison uses the maximum full-density error over three preparations and the whole observation window:</p>
+        <div class="math-block">\[
+          \epsilon(T)=\max_{i,\ 0\le t\le T}
+          \frac12\|\rho_i^{\mathrm{method}}(t)-\rho_i^{\mathrm{exact}}(t)\|_1.
+        \]</div>
+        <p>The numerical maximum is evaluated on the saved time grid, with the separate refinement controls described above. The declared accuracy criterion is \(\epsilon\le0.01\), together with density eigenvalues no smaller than \(-10^{-7}\), on those preparations. This is an absolute density error, not a relative error in a small transfer probability. Once an approximate density is nonpositive, half the trace norm of its difference remains a useful matrix diagnostic, but need not have the operational interpretation or upper bound of trace distance between physical states.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Bath/gap</th><th>\(g\)</th><th>TCL2 \(\epsilon(30)\)</th><th>NZ2 \(\epsilon(30)\)</th><th>Interpretation</th></tr></thead>
+          <tbody>
+            <tr><td>Harmonic, resonant</td><td>0.05</td><td>0.1360</td><td>0.4175</td><td>Both inaccurate; NZ2 nonpositive</td></tr>
+            <tr><td>Harmonic, detuned</td><td>0.05</td><td>0.00376</td><td>0.00265</td><td>Both pass; NZ2 slightly closer</td></tr>
+            <tr><td>Weak quartic, resonant</td><td>0.05</td><td>0.1351</td><td>0.3996</td><td>Weak anharmonicity does not repair the closure</td></tr>
+            <tr><td>Strong quartic, resonant</td><td>0.05</td><td>0.1283</td><td>0.4589</td><td>TCL2 worst error occurs for the coherent initial state</td></tr>
+            <tr><td>Strong quartic, resonant</td><td>0.6</td><td>0.9810</td><td>1.8433</td><td>Both severely inaccurate and nonpositive</td></tr>
+          </tbody>
+        </table></div>
+        <p>Three lessons follow. First, retaining the density history is not a higher-order approximation: NZ2 is not systematically above TCL2. Second, exact two-point input cannot remove the neglected reduced-system orders, or the additional higher bath correlations of a non-Gaussian environment. Third, increasing anharmonicity does not universally increase the error: at \(g=0.05\), the TCL2 error decreases from 0.1360 through 0.1351 to 0.1283, while the NZ2 error first decreases and then increases.</p>
+        <p>Changing \(\kappa\) also changes the spectrum, matrix elements and thermal occupations, and the gap is retuned to each bath's lowest transition. It is not an experiment that varies only “non-Gaussianity.” Nor can a large \(\kappa\) turn one undamped mode into a macroscopic short-memory reservoir.</p>
+        <p>The special exactness of TCL2 for Gaussian pure dephasing is useful as a control, not a population-transfer theorem; see <a href="https://arxiv.org/pdf/1709.04075">Fetherolf and Berkelbach, Section II</a>. Conversely, an auxiliary representation of NZ2 remains NZ2. For Gaussian baths, converging the higher HEOM tiers from Part I can recover contributions absent from either second-order equation. Feeding only \(C(t)\) from a genuinely non-Gaussian bath into a Gaussian hierarchy does not recover that bath's missing higher correlations.</p>
+        <p>For applications, method choice must therefore be checked against coupling, resonance, bath memory, the preparation, the observable and the required time window. These examples isolate closure error using spectral correlations. They do not validate RPMD correlations for anharmonic materials, or establish a correction to a particular mixed quantum–classical production workflow.</p>
+
+        <h2 id="reproduce">10. Reproducible code and data</h2>
+        <p>The public bundle contains the frozen benchmark runner and configuration, twelve lossless CSV exports, the plotting script, the full comparison table and provenance checksums. It depends on NumPy, SciPy and Matplotlib. The plotter uses every saved sample without smoothing, interpolation or probability repair.</p>
+        <ul>
+          <li><a href="../assets/code/open-quantum-systems-ii/README.md">Reproduction instructions and numerical conventions</a>.</li>
+          <li><a href="../assets/code/open-quantum-systems-ii/reproduction.zip">Download the self-contained source and data bundle</a>.</li>
+          <li><a href="../assets/code/open-quantum-systems-ii/runner.py">Frozen quantum-reference, TCL2 and NZ2 runner</a>; <a href="../assets/code/open-quantum-systems-ii/config.json">configuration</a>.</li>
+          <li><a href="../assets/code/open-quantum-systems-ii/plot_gallery.py">Gallery plotter and curve checks</a>; <a href="../assets/code/open-quantum-systems-ii/gallery.json">twelve CSV links and checksums</a>.</li>
+          <li><a href="../assets/code/open-quantum-systems-ii/comparison.csv">Full three-preparation comparison table</a>; <a href="../assets/code/open-quantum-systems-ii/curve-quality.json">per-curve numerical diagnostics</a>.</li>
+        </ul>
+        <p>The displayed 36 curves pass the original numerical smoothness thresholds. Integration and basis checks are separate from that display check. The broader study contains 42 parameter points and six model families, including pure-dephasing controls; this article selects the twelve transfer examples above.</p>
+        <h3>References</h3>
+        <ol>
+          <li>A. P. Babu, S. Alipour, A. T. Rezakhani and T. Ala-Nissila, “Unfolding system-environment correlation in open quantum systems: Revisiting master equations and the Born approximation.” <a href="https://arxiv.org/html/2104.04248v3">Open manuscript, Sections II.1–II.2</a>.</li>
+          <li>J. H. Fetherolf and T. C. Berkelbach, “Linear and nonlinear spectroscopy from quantum master equations.” <a href="https://arxiv.org/abs/1709.04075">Open manuscript</a>.</li>
+        </ol>
+        <h2 id="series-map">Open Quantum Systems series</h2>
+        <ol>
+          <li><a href="heom-theory-sac-dvr.html">I. HEOM: Gaussian bath influence, hierarchy, and quantum-reference tests</a>.</li>
+          <li><a href="open-quantum-systems-tcl2-nz2.html" aria-current="page">II. TCL2 and NZ2: second-order closures and twelve population examples</a>.</li>
+        </ol>
+      </div>
+      <nav class="post-nav" aria-label="Article navigation"><a href="heom-theory-sac-dvr.html">&larr; I. HEOM</a><a href="../series.html?series=open-quantum-systems">Open Quantum Systems series &rarr;</a></nav>
+    </article>
+  </main>
+  <footer class="site-footer"><p>&copy; <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+{
+  "title": "Open Quantum Systems II: TCL2 and NZ2",
+  "benchmark": "finite-time TCL2/NZ2 boundaries, 2026-10-16",
+  "publication_date": "2026-10-17",
+  "hbar": 1,
+  "beta": 2,
+  "omega_ref": 1,
+  "initial_state": "bare upper electronic state",
+  "observable": "Pe = Re rho[0,0] in the same fixed bare electronic basis",
+  "source_runner_sha256": "d87fca5ae79307e5fc9234c0d6ec9be79eea3a48effaf6ddffa95fc7e3d55f5b",
+  "source_config_sha256": "0d9cc63a33d1f35c2a150d7bcd23ea29757665510306c26723fac6302391354e",
+  "output_interval": 0.0125,
+  "maximum_internal_step": 0.05,
+  "plotted_basis": 40,
+  "independent_basis_control": 64,
+  "transformation": "17-digit CSV; exact float round-trip; no smoothing or clipping",
+  "panels": [
+    {
+      "id": "harmonic-resonant-g0p05",
+      "letter": "A",
+      "model": "harmonic_resonant",
+      "label": "Harmonic, resonant",
+      "g": 0.05,
+      "delta": 1.0,
+      "csv": "data/harmonic-resonant-g0p05.csv",
+      "csv_sha256": "002adcae27921dc7da2348b50c23750a325d631acb81077ad3fa300eddb37b3b",
+      "samples": 2401,
+      "source_npz_sha256": "582b44b89c5ea41f0179607f761bc10dd1e33b8cda476b47b2e3a1963090015b",
+      "upper_population_at_t30": {
+        "exact": 0.07682295691604742,
+        "TCL2": 0.21279017930504193,
+        "NZ2": -0.34063882903399945
+      }
+    },
+    {
+      "id": "harmonic-resonant-g0p2",
+      "letter": "B",
+      "model": "harmonic_resonant",
+      "label": "Harmonic, resonant",
+      "g": 0.2,
+      "delta": 1.0,
+      "csv": "data/harmonic-resonant-g0p2.csv",
+      "csv_sha256": "26c6b35dfa7ce36eb43afb7e8c9ad5ebb261d7115612710f8a1a4e5275e67a20",
+      "samples": 2401,
+      "source_npz_sha256": "d7b22c3a06943d8b8537801c6e190e1290e24786c89eda3011af733a3cc1182f",
+      "upper_population_at_t30": {
+        "exact": 0.2607741328261474,
+        "TCL2": 0.12289862815720752,
+        "NZ2": -0.3384502411893416
+      }
+    },
+    {
+      "id": "harmonic-resonant-g0p6",
+      "letter": "C",
+      "model": "harmonic_resonant",
+      "label": "Harmonic, resonant",
+      "g": 0.6,
+      "delta": 1.0,
+      "csv": "data/harmonic-resonant-g0p6.csv",
+      "csv_sha256": "7d2bb38fea4dba3bb7af3f90b0543eabaa2d5416d24b50553c2a025675473b11",
+      "samples": 2401,
+      "source_npz_sha256": "b3e3d14940d0d26bda9391cfe30d2d8fc20a96b006c63595a266bc5b8e86d4d3",
+      "upper_population_at_t30": {
+        "exact": 0.5116274536275955,
+        "TCL2": 0.1164686082769313,
+        "NZ2": -0.2776887275230283
+      }
+    },
+    {
+      "id": "harmonic-detuned-g0p05",
+      "letter": "D",
+      "model": "harmonic_detuned",
+      "label": "Harmonic, detuned",
+      "g": 0.05,
+      "delta": 1.6,
+      "csv": "data/harmonic-detuned-g0p05.csv",
+      "csv_sha256": "843d5e9dae19e39bb43e886a2c7f4b8fe3fba28eac297d7e1a69b8dee166a16d",
+      "samples": 2401,
+      "source_npz_sha256": "b195a79074844175c323b35bbd942d0c24e1f9a667e8f9599d764052c7e33805",
+      "upper_population_at_t30": {
+        "exact": 0.9980056760600264,
+        "TCL2": 0.9956922762533909,
+        "NZ2": 0.9968014212949826
+      }
+    },
+    {
+      "id": "harmonic-detuned-g0p2",
+      "letter": "E",
+      "model": "harmonic_detuned",
+      "label": "Harmonic, detuned",
+      "g": 0.2,
+      "delta": 1.6,
+      "csv": "data/harmonic-detuned-g0p2.csv",
+      "csv_sha256": "75ef7238229147c928457ce62128fa79dcbac4e4ac8ad8b32987c37e0e5e8146",
+      "samples": 2401,
+      "source_npz_sha256": "08fe2c8e9dd85b3b0b16c26a795353a25381c86fbe9592af3d6f5eabc5923af6",
+      "upper_population_at_t30": {
+        "exact": 0.8018513907876572,
+        "TCL2": 0.933758737597023,
+        "NZ2": 0.9204896317884042
+      }
+    },
+    {
+      "id": "harmonic-detuned-g0p6",
+      "letter": "F",
+      "model": "harmonic_detuned",
+      "label": "Harmonic, detuned",
+      "g": 0.6,
+      "delta": 1.6,
+      "csv": "data/harmonic-detuned-g0p6.csv",
+      "csv_sha256": "969f02cd595d274f8395af2189d20c02ae48ea4135a44a30899586fa830c54d2",
+      "samples": 2401,
+      "source_npz_sha256": "684634b7cd473c9e2bc5f58071a4f7f13b123e01125a13f300939ea62cece74b",
+      "upper_population_at_t30": {
+        "exact": 0.9813200559621988,
+        "TCL2": 0.5634607308959878,
+        "NZ2": 0.5291761760446981
+      }
+    },
+    {
+      "id": "quartic-weak-g0p05",
+      "letter": "G",
+      "model": "quartic_weak",
+      "label": "Weak quartic bath",
+      "g": 0.05,
+      "delta": 1.0283920737722012,
+      "csv": "data/quartic-weak-g0p05.csv",
+      "csv_sha256": "23726cab33d8b18e4656cc0c8b297f9b76da9d7d804e9435ad2a660984670e7e",
+      "samples": 2401,
+      "source_npz_sha256": "9afec998c084bda6a176fb7ac63d569798fbd3735f949f2571b8ddf2d159b23a",
+      "upper_population_at_t30": {
+        "exact": 0.07521423573575127,
+        "TCL2": 0.2091989888205816,
+        "NZ2": -0.3243388629835369
+      }
+    },
+    {
+      "id": "quartic-weak-g0p2",
+      "letter": "H",
+      "model": "quartic_weak",
+      "label": "Weak quartic bath",
+      "g": 0.2,
+      "delta": 1.0283920737722012,
+      "csv": "data/quartic-weak-g0p2.csv",
+      "csv_sha256": "1348b18724b5eff576cc140fd1f4602af63b5e96a5a9d8816d9d5cf0d903d4fc",
+      "samples": 2401,
+      "source_npz_sha256": "309afb5d35e3efa27ce520533e7be098d62fe3d9e7fc927a0f08c9d083d66a34",
+      "upper_population_at_t30": {
+        "exact": 0.31052261361466055,
+        "TCL2": 0.10323443654313026,
+        "NZ2": -0.3573170212459432
+      }
+    },
+    {
+      "id": "quartic-weak-g0p6",
+      "letter": "I",
+      "model": "quartic_weak",
+      "label": "Weak quartic bath",
+      "g": 0.6,
+      "delta": 1.0283920737722012,
+      "csv": "data/quartic-weak-g0p6.csv",
+      "csv_sha256": "282e787814113deaf30c447a0bc5e530d339c97fdc913d2c40d4ef161fa40220",
+      "samples": 2401,
+      "source_npz_sha256": "254fbaaaf7a6d56df7e34adcdbd5f893fd8dfd086006d49131ec85c39b58410b",
+      "upper_population_at_t30": {
+        "exact": 0.6833280351882239,
+        "TCL2": 0.10182426680319637,
+        "NZ2": -0.11834106447798327
+      }
+    },
+    {
+      "id": "quartic-strong-g0p05",
+      "letter": "J",
+      "model": "quartic_strong",
+      "label": "Strong quartic bath",
+      "g": 0.05,
+      "delta": 1.6282305313993848,
+      "csv": "data/quartic-strong-g0p05.csv",
+      "csv_sha256": "de20d60212bf75e285d5763bfff9dcd86b687b7eeef2311cd7eac140d0ffada1",
+      "samples": 2401,
+      "source_npz_sha256": "19302bb2db0a89653506111d62cec0703801f0cdceac929247a50a46f123bddb",
+      "upper_population_at_t30": {
+        "exact": 0.05055993176871203,
+        "TCL2": 0.15356006190787208,
+        "NZ2": -0.4082934596108479
+      }
+    },
+    {
+      "id": "quartic-strong-g0p2",
+      "letter": "K",
+      "model": "quartic_strong",
+      "label": "Strong quartic bath",
+      "g": 0.2,
+      "delta": 1.6282305313993848,
+      "csv": "data/quartic-strong-g0p2.csv",
+      "csv_sha256": "4a492e7dd80f5951b6344815155f412d6ba9c3a430f4b9653dd269d04b42ec2d",
+      "samples": 2401,
+      "source_npz_sha256": "cfac0ae86f8b7e44d7c2bc1a0639b2fbd41f4addbfb84aac4aefde35b1c8a67c",
+      "upper_population_at_t30": {
+        "exact": 0.7974116637966147,
+        "TCL2": 0.04077731537419011,
+        "NZ2": 0.028254678205854138
+      }
+    },
+    {
+      "id": "quartic-strong-g0p6",
+      "letter": "L",
+      "model": "quartic_strong",
+      "label": "Strong quartic bath",
+      "g": 0.6,
+      "delta": 1.6282305313993848,
+      "csv": "data/quartic-strong-g0p6.csv",
+      "csv_sha256": "69e46f81cd9c9891d418f132792a46b0e8799c745084b65ed7f903b23f595f06",
+      "samples": 2401,
+      "source_npz_sha256": "af9a6356288edfd71b3f122056c3a51f31bef2420d83c8f3ba4f4f4b3f75d01a",
+      "upper_population_at_t30": {
+        "exact": 0.0883815997627532,
+        "TCL2": 0.036328524742991065,
+        "NZ2": 0.9199335199862445
+      }
+    }
+  ]
+}

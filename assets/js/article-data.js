@@ -1,5 +1,11 @@
 window.SITE_SERIES = [
   {
+    id: "open-quantum-systems",
+    title: "开放量子系统",
+    label: "Open Quantum Systems",
+    description: "从 HEOM 到 TCL2 与 NZ2：浴关联、记忆、约化动力学及可复现的量子基准。",
+  },
+  {
     id: "hydrogen-transfer",
     title: "Chemical Reaction Computation",
     label: "Observables, Dynamics, and Statistical Mechanics",
@@ -51,6 +57,17 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "open-quantum-systems-tcl2-nz2",
+    title: "Open Quantum Systems II: TCL2 and NZ2",
+    path: "posts/open-quantum-systems-tcl2-nz2.html",
+    date: "2026-10-17",
+    dateText: "2026.10.17",
+    description: "Derive two second-order master equations, predict their resonant behavior, and interpret twelve harmonic and anharmonic population benchmarks.",
+    tags: ["Open Quantum Systems", "TCL2", "NZ2", "Master Equations", "Model Calculation"],
+    series: "open-quantum-systems",
+    part: 2,
+  },
+  {
     slug: "ordered-kubo-sho-correlations",
     title: "Ordered and Kubo Correlations",
     path: "posts/ordered-kubo-sho-correlations.html",
@@ -94,13 +111,14 @@ window.SITE_ARTICLES = [
   },
   {
     slug: "heom-theory-sac-dvr",
-    title: "HEOM: Theory, Boundaries, and DVR Tests",
+    title: "Open Quantum Systems I: HEOM",
     path: "posts/heom-theory-sac-dvr.html",
     date: "2026-09-27",
     dateText: "2026.09.27",
     description: "Derive Gaussian HEOM, identify its boundaries for original Tully SAC, and distinguish harmonic-bath validation from explicit nuclear-basis checks.",
     tags: ["HEOM", "Open Quantum Systems", "DVR", "Nonadiabatic Dynamics"],
-    series: "",
+    series: "open-quantum-systems",
+    part: 1,
   },
   {
     slug: "reaction-dynamics-rpmd",
