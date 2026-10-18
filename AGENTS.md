@@ -68,6 +68,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 - Wrap wide technical tables in the existing `table-scroll` class, not an unstyled new wrapper. During mobile QA, expand derivation disclosures and verify document width as well as MathJax errors; internal formula/table scrolling is acceptable, whole-page horizontal overflow is not.
 - Convert equations to MathJax/LaTeX text inside the HTML article.
 - Figures should show actual numerical, conceptual, or workflow results, not decorative filler.
+- For HefeiNAMD articles, prefer the authors' official tutorial/example results. Do not invent toy-model figures merely to meet the result requirement. When using official results, cite the exact source, preserve the original figure, distinguish displayed results from a new reproduction, and check packaged inputs against the tutorial's illustrative parameters.
 - In browser QA, trigger lazy-loaded figures by scrolling them into view or setting their loading attribute to eager before awaiting image decoding. Awaiting decode on offscreen lazy images can leave the audit pending without checking any figures.
 - Every figure must have a precise caption explaining:
   - what the axes mean,
