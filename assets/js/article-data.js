@@ -1,5 +1,11 @@
 window.SITE_SERIES = [
   {
+    id: "hefeinamd",
+    title: "HefeiNAMD 系列",
+    label: "HefeiNAMD",
+    description: "从讲座准备出发，逐步理解非绝热耦合、晶体动量、声子与电子—声子耦合动力学。",
+  },
+  {
     id: "open-quantum-systems",
     title: "开放量子系统",
     label: "Open Quantum Systems",
@@ -56,6 +62,17 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    slug: "hefeinamd-nac-crystal-momentum",
+    title: "HefeiNAMD I: When Does Inter-k NAC Vanish?",
+    path: "posts/hefeinamd-nac-crystal-momentum.html",
+    date: "2026-10-18",
+    dateText: "2026.10.18",
+    description: "Derive the strict cross-k NAC zero under translation-preserving nuclear motion, then connect finite-q phonons, supercell folding, and the EPC Hamiltonian.",
+    tags: ["HefeiNAMD", "Nonadiabatic Dynamics", "Electron-Phonon Coupling", "Crystal Momentum", "Model Calculation"],
+    series: "hefeinamd",
+    part: 1,
+  },
   {
     slug: "open-quantum-systems-tcl2-nz2",
     title: "Open Quantum Systems II: TCL2 and NZ2",
@@ -275,12 +292,14 @@ window.SITE_ARTICLES = [
   },
   {
     slug: "hefeinamd-training-hands-on-workflow",
-    title: "How to Prepare a HefeiNAMD Training",
+    title: "HefeiNAMD 0: How to Prepare a HefeiNAMD Training",
     path: "posts/hefeinamd-training-hands-on-workflow.html",
     date: "2026-07-08",
     dateText: "2026.07.08",
     description: "A practical note on preparing a complete HefeiNAMD workshop with slides, server environment, precomputed outputs, Slurm scripts, pseudo jobs, and an end-to-end rehearsal path.",
     tags: ["HefeiNAMD", "Nonadiabatic Dynamics", "Training", "Slurm", "Workflow", "Real-System Calculation"],
+    series: "hefeinamd",
+    part: 0,
   },
   {
     slug: "jahn-teller-li3-na3",

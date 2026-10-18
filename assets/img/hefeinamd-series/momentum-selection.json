@@ -1,0 +1,15 @@
+{
+  "sites": 16,
+  "finite_q_index": 3,
+  "amplitude": 1,
+  "maximum_absolute_error": {
+    "uniform": 1.8801002626359537e-15,
+    "cosine_q3": 1.5607773570401493e-15
+  },
+  "maximum_forbidden_element": {
+    "uniform": 1.8801002626359537e-15,
+    "cosine_q3": 1.1287420639428314e-15
+  },
+  "maximum_hermiticity_error": 1.1132392586983936e-16,
+  "scope": "Discrete Fourier selection rule only; no electronic propagation."
+}

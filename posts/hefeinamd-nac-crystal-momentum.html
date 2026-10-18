@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="When is nonadiabatic coupling between different k points exactly zero? A derivation from translation symmetry to finite-q phonons, supercell folding, and the electron-phonon Hamiltonian.">
+    <title>HefeiNAMD I: When Does Inter-k NAC Vanish? | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">HefeiNAMD Series - Part I</p>
+          <h1>When Does Inter-k NAC Vanish?</h1>
+          <p class="post-meta">2026.10.18 - Translation Symmetry / Phonons / Electron-Phonon Coupling</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="HefeiNAMD series navigation">
+            <a href="hefeinamd-training-hands-on-workflow.html">0. Training Preparation</a>
+            <a href="hefeinamd-nac-crystal-momentum.html" aria-current="page">I. Inter-k NAC</a>
+          </nav>
+          <p class="lead">A statement in a momentum-space nonadiabatic-dynamics tutorial initially sounds paradoxical: Bloch states at different crystal momenta are orthogonal, so their nonadiabatic couplings cannot be calculated. Does this mean that real electrons cannot scatter between different momenta? The missing condition is the spatial periodicity of the nuclear motion. A trajectory that preserves the primitive translations has exactly zero time-derivative coupling between different primitive crystal momenta. A finite-wavevector lattice distortion supplies the momentum that this restricted trajectory excludes.</p>
+          <p><a href="hefeinamd-training-hands-on-workflow.html">Part 0</a> records the practical preparation of a HefeiNAMD workshop. The scientific purpose of this series is to connect that calculation chain to the electronic representation, the nuclear motion, and the transitions that the calculation can represent. This first technical note follows one question from the definition of nonadiabatic coupling (NAC), through a translation selection rule, to the electron-phonon coupling (EPC) Hamiltonian. It also separates exact symmetry statements from the first-order and harmonic approximations used to build a practical model.</p>
+          <p>The general <a href="mqc-background.html#nac-formulas">NAC and overlap formulas</a> and <a href="fssh-tully-benchmark.html#fewest-switches">fewest-switches population-flow construction</a> already have their own articles. Here the new ingredient is crystal momentum. The momentum-space method of <a href="https://arxiv.org/html/2210.00529v3">Zheng et al.</a> provides the immediate context: its moving adiabatic basis is replaced by a fixed equilibrium Bloch basis, with nuclear motion entering through an EPC Hamiltonian.</p>
+
+          <h2 id="definition">1. Begin with the time-derivative coupling</h2>
+          <p>Let the nuclei follow a differentiable prescribed path \(\mathbf R(t)\), and let the instantaneous electronic eigenstates satisfy</p>
+          <div class="math-block">\[
+            \hat H_e(\mathbf R(t))|n(t)\rangle=E_n(t)|n(t)\rangle.
+          \]</div>
+          <p>We use \(d_{mn}\) for the scalar coupling along that path, rather than for the full nuclear-coordinate derivative vector:</p>
+          <div class="math-block">\[
+            d_{mn}(t)=\langle m(t)|\partial_t n(t)\rangle
+            =\sum_I\dot R_I(t)\langle m(t)|\partial_{R_I}n(t)\rangle.
+          \]</div>
+          <p>This quantity has units of inverse time. Differentiating the eigenvalue equation and projecting onto a distinct state gives</p>
+          <div class="math-block">\[
+            \langle m|\dot H_e|n\rangle+E_m\langle m|\dot n\rangle
+              =E_n\langle m|\dot n\rangle,
+            \qquad
+            d_{mn}=\frac{\langle m|\dot H_e|n\rangle}{E_n-E_m}.
+          \]</div>
+          <p>The quotient requires nondegenerate states and a differentiable choice of eigenvectors. At a degeneracy, one must treat the coupled subspace; dividing by a vanishing gap is not a prescription for the coupling. The numerator identifies the relevant question: <em>what spatial symmetry does the time-dependent perturbation \(\dot H_e\) have?</em></p>
+
+          <h2 id="orthogonality">2. Orthogonality alone does not prove zero NAC</h2>
+          <p>Two orthogonal states can rotate while remaining orthogonal. For example, in a fixed orthonormal two-state basis, define</p>
+          <div class="math-block">\[
+            |1(t)\rangle=\cos\theta(t)|a\rangle+\sin\theta(t)|b\rangle,
+            \qquad
+            |2(t)\rangle=-\sin\theta(t)|a\rangle+\cos\theta(t)|b\rangle.
+          \]</div>
+          <p>Their overlap is always zero, but their derivative overlap is</p>
+          <div class="math-block">\[
+            \langle2(t)|1(t)\rangle=0,\qquad
+            \langle2(t)|\dot1(t)\rangle=\dot\theta(t).
+          \]</div>
+          <p>More generally, differentiating orthonormality proves \(d_{mn}=-d_{nm}^{*}\), not \(d_{mn}=0\). Thus Bloch-state orthogonality needs an additional argument before it can say anything about NAC.</p>
+
+          <h2 id="strict-zero">3. The strict zero follows from a symmetry preserved in time</h2>
+          <p>Take a fixed lattice and require the electronic Hamiltonian to retain every primitive translation \(\mathbf L\) at every time. Choose symmetry-adapted instantaneous states, with crystal momenta fixed modulo primitive reciprocal lattice vectors:</p>
+          <div class="math-block">\[
+            \hat H_e(\mathbf r+\mathbf L,t)=\hat H_e(\mathbf r,t),\qquad
+            \psi_{n\mathbf k}(\mathbf r+\mathbf L,t)
+               =e^{i\mathbf k\cdot\mathbf L}\psi_{n\mathbf k}(\mathbf r,t).
+          \]</div>
+          <p>For a nonlocal Hamiltonian, the first condition means commutation with the lattice-translation operator. Because the translation and its Bloch phase are time independent, differentiating the second relation leaves \(\partial_t\psi_{n\mathbf k}\) in the same momentum sector. Translating the full-crystal inner product therefore yields</p>
+          <div class="math-block">\[
+            d_{m\mathbf k',n\mathbf k}
+              =e^{i(\mathbf k-\mathbf k')\cdot\mathbf L}
+                 d_{m\mathbf k',n\mathbf k}.
+          \]</div>
+          <p>If the two momenta differ modulo a reciprocal lattice vector, some translation has a phase different from one. Consequently,</p>
+          <div class="math-block">\[
+            \boxed{d_{m\mathbf k',n\mathbf k}(t)=0
+            \quad\text{if }\mathbf k'\not\equiv\mathbf k\pmod{\mathbf G}.}
+          \]</div>
+          <p>This statement is exact within the stated trajectory model. It does not require a harmonic approximation or a nonzero energy gap: symmetry keeps the sectors separate even if energies in different sectors cross. At degeneracies we retain a basis adapted to translation symmetry. Arbitrary rotations mixing degenerate momentum sectors can obscure their labels without creating physical transfer between the sectors.</p>
+          <p>The inner product is over a Born-von Kármán periodic crystal, not an arbitrary integral of two cell-periodic factors over one primitive cell. An overlap code returns zero for these cross-sector overlaps, including adjacent-time overlaps along the same symmetry-preserving path. “Cannot be calculated” is therefore better read as “this trajectory contains no such coupling to extract.” A different overlap formula cannot recover a displacement pattern that was never present.</p>
+
+          <h2 id="cell">4. Which nuclear motions did the primitive cell exclude?</h2>
+          <p>Write the displacement of atom \(\kappa\) in primitive cell \(l\) as \(\mathbf u_{l\kappa}(t)\). Primitive-cell periodic molecular dynamics (MD) enforces the same displacement in every repeated cell:</p>
+          <div class="math-block">\[
+            \mathbf u_{l\kappa}(t)=\mathbf u_{0\kappa}(t).
+          \]</div>
+          <p>Only primitive \(\mathbf q=0\) displacement patterns are available. Internal optical motion can still change bands and mix states at the <em>same</em> \(\mathbf k\). Anharmonic forces can change that motion in time, but cannot introduce a missing spatial wavelength. Adding more electronic \(\mathbf k\) points to a primitive-cell MD calculation improves Brillouin-zone sampling; it does not add finite-\(\mathbf q\) nuclear degrees of freedom.</p>
+          <p>A larger periodic supercell changes this restriction. Its allowed primitive wavevectors obey</p>
+          <div class="math-block">\[
+            e^{i\mathbf q\cdot\mathbf L_s}=1
+            \quad\text{for every supercell translation }\mathbf L_s.
+          \]</div>
+          <p>Several nonzero primitive \(\mathbf q\) values can satisfy this condition. They fold to supercell \(\Gamma\), just as several primitive electronic momenta fold into one supercell momentum sector. A distorted supercell can mix those components because it need not retain the smaller primitive translations. A supercell-\(\Gamma\) calculation therefore does <em>not</em> imply primitive-\(\Gamma\)-only phonons.</p>
+          <p>There is also a distinction between the full NAC vector and its contraction with a permitted velocity. A derivative with respect to one independently displaced atom can break primitive periodicity. Its matrix elements need not vanish between reference Bloch momenta. The strict zero above concerns the time derivative along a trajectory constrained to preserve the translations.</p>
+
+          <h2 id="phonons">5. A finite-q displacement creates a finite-q perturbation</h2>
+          <p>To expose the missing spatial patterns, expand displacements in an orthonormal reference normal-mode basis. With \(N\) primitive cells, atomic masses \(M_\kappa\), Cartesian component \(\alpha\), mode branch \(\nu\), and normalized polarization vectors \(e_{\kappa\alpha,\nu}(\mathbf q)\), choose</p>
+          <div class="math-block">\[
+            u_{l\kappa\alpha}(t)=\frac{1}{\sqrt{N M_\kappa}}
+            \sum_{\mathbf q\nu}e_{\kappa\alpha,\nu}(\mathbf q)
+                    Q_{\mathbf q\nu}(t)e^{i\mathbf q\cdot\mathbf R_l}.
+          \]</div>
+          <p>Here \(Q\) is a mass-weighted coordinate, with units of square root of mass times length. A compatible eigenvector gauge gives \(Q_{-\mathbf q,\nu}=Q_{\mathbf q\nu}^{*}\), so the atomic displacement is real. Decomposition into a complete reference basis does not itself force harmonic time evolution.</p>
+          <p>Now make a separate approximation: expand the electronic Hamiltonian to first order in those displacements, evaluated at the equilibrium structure \(\mathbf R_0\):</p>
+          <div class="math-block">\[
+            \hat H_e(t)=\hat H_0+\Delta\hat H(t)+O(u^2),\qquad
+            \Delta\hat H(t)=\sum_{l\kappa\alpha}
+                 u_{l\kappa\alpha}(t)
+                 \left.\frac{\partial\hat H_e}{\partial u_{l\kappa\alpha}}\right|_0.
+          \]</div>
+          <p>Substitution groups the atomic derivatives by wavevector:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \hat A_{\mathbf q\nu}
+              &=\sum_{l\kappa\alpha}
+                  \frac{e_{\kappa\alpha,\nu}(\mathbf q)}{\sqrt{M_\kappa}}
+                  e^{i\mathbf q\cdot\mathbf R_l}
+                  \left.\frac{\partial\hat H_e}{\partial u_{l\kappa\alpha}}\right|_0,\\
+            \Delta\hat H(t)&=\frac{1}{\sqrt N}
+                         \sum_{\mathbf q\nu}Q_{\mathbf q\nu}(t)\hat A_{\mathbf q\nu}.
+            \end{aligned}
+          \]</div>
+          <p>For a local potential, its derivative at cell \(l\) is a translated copy of the derivative at cell zero. Reindexing that sum shows</p>
+          <div class="math-block">\[
+            A_{\mathbf q\nu}(\mathbf r+\mathbf L)
+                =e^{i\mathbf q\cdot\mathbf L}A_{\mathbf q\nu}(\mathbf r).
+          \]</div>
+          <p>Thus a finite-\(\mathbf q\) perturbation is a Bloch-like operator, rather than a primitive-periodic scalar. The corresponding operator covariance gives the same result for nonlocal potentials. In a compatible gauge \(A_{-\mathbf q,\nu}=A_{\mathbf q\nu}^{\dagger}\); paired coordinates ensure a Hermitian \(\Delta H\).</p>
+
+          <h2 id="selection">6. Derive the momentum selection rule</h2>
+          <p>Use equilibrium Bloch states \(|\psi^0_{n\mathbf k}\rangle\), normalized over the \(N\)-cell crystal, with reference energies defined by</p>
+          <div class="math-block">\[
+            \hat H_0|\psi^0_{n\mathbf k}\rangle
+                =\epsilon_{n\mathbf k}|\psi^0_{n\mathbf k}\rangle.
+          \]</div>
+          <p>The matrix element of one perturbation has a cell sum proportional to</p>
+          <div class="math-block">\[
+            \langle\psi^0_{m\mathbf k'}|\hat A_{\mathbf q\nu}|
+                        \psi^0_{n\mathbf k}\rangle
+            \ \propto\
+            \frac1N\sum_l
+                 e^{i(\mathbf k+\mathbf q-\mathbf k')\cdot\mathbf R_l}.
+          \]</div>
+          <p>The discrete Fourier sum vanishes unless its phase is periodic on the primitive lattice. Therefore,</p>
+          <div class="math-block">\[
+            \boxed{\mathbf k'\equiv\mathbf k+\mathbf q\pmod{\mathbf G}.}
+          \]</div>
+          <p>This is a necessary momentum selection rule, not a guarantee that the surviving element is nonzero. Polarization, orbital character, spin, or other symmetries can still forbid it. For \(\mathbf q=0\), it returns the strict same-sector rule. A finite-\(\mathbf q\) distortion permits a different primitive momentum because the perturbation carries the difference.</p>
+          <p>At higher orders, products of displacement patterns carry sums of their wavevectors. These give multiphonon momentum rules. The particular single-\(\mathbf q\) expression above is the first-order electronic expansion, whereas conservation of crystal momentum in the full translation-invariant electron-lattice problem has a broader scope.</p>
+
+          <h2 id="representations">7. Relate EPC to NAC without mixing electronic bases</h2>
+          <p>For a stable reference mode of nonzero frequency, introduce a dimensionless coordinate \(X_{\mathbf q\nu}\) and define</p>
+          <div class="math-block">\[
+            Q_{\mathbf q\nu}=\ell_{\mathbf q\nu}X_{\mathbf q\nu},\qquad
+            \ell_{\mathbf q\nu}=\sqrt{\frac{\hbar}{2\omega_{\mathbf q\nu}}},
+            \qquad
+            g_{mn\nu}(\mathbf k,\mathbf q)
+              =\ell_{\mathbf q\nu}
+                \langle\psi^0_{m,\mathbf k+\mathbf q}|
+                     \hat A_{\mathbf q\nu}|\psi^0_{n\mathbf k}\rangle.
+          \]</div>
+          <p>In this convention \(\ell\) is a <em>mass-weighted</em> zero-point amplitude, not a length; \(g\) has units of energy. Other conventions introduce a reference mass and a length-valued normal coordinate. Mixing those conventions would put an incorrect mass factor in the Hamiltonian. Exact zero-frequency translations require separate treatment rather than insertion into this definition.</p>
+          <p>The reference-basis electronic Hamiltonian becomes</p>
+          <div class="math-block">\[
+            H^{\rm ep}_{m\mathbf k',n\mathbf k}(t)
+              =\left.\frac{1}{\sqrt N}\sum_\nu
+                   g_{mn\nu}(\mathbf k,\mathbf q)X_{\mathbf q\nu}(t)
+                 \right|_{\mathbf q=\mathbf k'-\mathbf k\ {\rm mod}\,\mathbf G}.
+          \]</div>
+          <p>The \(1/\sqrt N\) belongs to the chosen finite-crystal normal-coordinate normalization. The same EPC can be written as a primitive-cell matrix element of the cell-periodic perturbation, as in the <a href="https://docs.epw-code.org/Theory.html#electron-phonon-matrix-elements">EPW definitions</a>. In either form, frequencies and eigenvectors alone do not determine the electronic response: the derivative of the self-consistent electronic Hamiltonian, hence \(g\), is also required.</p>
+          <p>At the reference structure, the nondegenerate derivative identity from Section 1 now gives</p>
+          <div class="math-block">\[
+            \left.d^{\rm ad}_{m\mathbf k',n\mathbf k}\right|_0
+              =\left.\frac{1}{\sqrt N}
+                \sum_\nu
+                \frac{g_{mn\nu}(\mathbf k,\mathbf q)\dot X_{\mathbf q\nu}}
+                     {\epsilon_{n\mathbf k}-\epsilon_{m\mathbf k'}}
+                \right|_{\mathbf q=\mathbf k'-\mathbf k\ {\rm mod}\,\mathbf G}.
+          \]</div>
+          <p>This is the instantaneous <em>adiabatic</em> derivative coupling evaluated at \(\mathbf R_0\), or the leading local expression for states continued away from it. It is not the derivative coupling of the fixed reference basis. Once a finite-\(\mathbf q\) distortion breaks primitive translations, primitive \(\mathbf k\) generally ceases to be an exact quantum number of each instantaneous eigenstate.</p>
+          <p>The two coefficient equations make the distinction explicit. In a moving instantaneous eigenbasis,</p>
+          <div class="math-block">\[
+            |\Psi(t)\rangle=\sum_a a_a(t)|\phi_a(\mathbf R(t))\rangle,\qquad
+            i\hbar\dot a_a=E_a a_a-i\hbar\sum_b d^{\rm ad}_{ab}a_b.
+          \]</div>
+          <p>In the fixed equilibrium Bloch basis,</p>
+          <div class="math-block">\[
+            |\Psi(t)\rangle=\sum_{n\mathbf k}c_{n\mathbf k}(t)|\psi^0_{n\mathbf k}\rangle,
+            \qquad
+            i\hbar\dot{\mathbf c}=
+                 [\boldsymbol\epsilon+\mathbf H^{\rm ep}(t)]\mathbf c.
+          \]</div>
+          <p>The fixed basis has zero basis time derivative by construction. Its off-diagonal Hamiltonian elements transfer amplitude. With complete bases and the same Hamiltonian, these are equivalent representations of electronic evolution. Truncating bands or linearizing the Hamiltonian introduces additional approximation errors. A fixed equilibrium basis is useful as a local diabatic representation; that does not assert the existence of a globally exact diabatic basis.</p>
+
+          <h2 id="dynamics">8. Allowed momentum transfer is not yet a transition rate</h2>
+          <p>For any fixed orthonormal basis with Hermitian \(H\), the Schrödinger equation gives the population derivative</p>
+          <div class="math-block">\[
+            \frac{d|c_a|^2}{dt}
+               =\frac{2}{\hbar}\sum_{b\ne a}
+                   {\rm Im}\!\left[c_a^*H_{ab}(t)c_b\right].
+          \]</div>
+          <p>A surviving matrix element permits coherent population flow; the phase and time history determine the actual transfer. A stochastic surface-hopping rule is another layer of the dynamics, rather than a consequence of the momentum selection rule alone.</p>
+          <p>Quantizing the harmonic reference coordinates replaces \(X_{\mathbf q\nu}\) by \(b_{\mathbf q\nu}+b^\dagger_{-\mathbf q\nu}\), giving the familiar first-order interaction</p>
+          <div class="math-block">\[
+            \hat H_{\rm ep}=\frac1{\sqrt N}\sum_{mn\mathbf k\mathbf q\nu}
+                g_{mn\nu}(\mathbf k,\mathbf q)
+                \hat c^\dagger_{m,\mathbf k+\mathbf q}\hat c_{n\mathbf k}
+                \left(\hat b_{\mathbf q\nu}+\hat b^\dagger_{-\mathbf q\nu}\right).
+          \]</div>
+          <p>For an electron momentum change \(+\mathbf q\), these two terms absorb a phonon at \(\mathbf q\) or emit one at \(-\mathbf q\). In the long-time, weak-coupling harmonic limit, their transition probabilities select electron energy changes \(+\hbar\omega_{\mathbf q\nu}\) or \(-\hbar\omega_{-\mathbf q\nu}\), respectively. For reciprocal phonon spectra the paired frequencies are equal. Energy resonance comes from time integration; it was not used in the spatial selection-rule proof. A classical prescribed trajectory does not automatically impose a quantized single-phonon energy change on every surface hop.</p>
+
+          <h2 id="diagnostic">9. A reproducible finite-lattice check</h2>
+          <p>A 16-site periodic scalar model isolates the Fourier cancellation. Let the site index be \(j\), with normalized plane waves and dimensionless perturbation matrix</p>
+          <div class="math-block">\[
+            \langle j|p\rangle=\frac{e^{2\pi ipj/16}}4,\qquad
+            M_{p'p}=\frac1{16}\sum_{j=0}^{15}
+                        V_j e^{2\pi i(p-p')j/16}.
+          \]</div>
+          <p>A uniform perturbation \(V_j=1\) gives only \(M_{pp}=1\). A real cosine \(V_j=\cos(2\pi\,3j/16)\) contains both signs of the wavevector: it gives \(M_{p\pm3,p}=1/2\), with indices taken modulo 16, and zero elsewhere. The two signs are required by a real displacement; a single complex Fourier component carries only one sign.</p>
+          <figure>
+            <img src="../assets/img/hefeinamd-series/momentum-selection.svg" alt="Two 16 by 16 momentum-space matrices: a diagonal matrix for a uniform perturbation and two wrapped off-diagonals for a finite-wavevector cosine." loading="lazy" width="920" height="425">
+            <figcaption>Absolute perturbation matrix elements in a 16-site periodic lattice. Horizontal and vertical axes are the initial and final momentum indices, with \(k_p=2\pi p/(16a)\) for lattice spacing \(a\); the perturbation mode index \(r\) denotes \(q_r=2\pi r/(16a)\). Both panels use the same dimensionless color scale from zero to one. The left diagonal preserves momentum; the right wrapped bands connect \(p\) to \(p\pm3\), each with amplitude \(1/2\). The displayed matrices are evaluated by direct Fourier transformation.</figcaption>
+          </figure>
+          <p>The linked calculation agrees with the analytic matrices to better than \(10^{-13}\) in maximum absolute element error and verifies Hermiticity. This is a numerical check of the selection rule. It contains no bands, atomic forces, NAC denominator, electronic propagation, or relaxation lifetime, and therefore does not validate a material calculation or a surface-hopping algorithm.</p>
+          <p>Run <code>python assets/code/hefeinamd_k_selection.py</code> from the website repository root with NumPy and Matplotlib installed. The script regenerates the figure and its small numerical attachments:</p>
+          <ul>
+            <li><a href="../assets/code/hefeinamd_k_selection.py">Executable Fourier diagnostic</a></li>
+            <li><a href="../assets/img/hefeinamd-series/momentum-selection.csv">Complex matrix elements (CSV)</a></li>
+            <li><a href="../assets/img/hefeinamd-series/momentum-selection.json">Parameters and maximum errors (JSON)</a></li>
+          </ul>
+
+          <h2 id="workflow">10. What this means for a HefeiNAMD calculation</h2>
+          <p>Before interpreting a zero cross-momentum coupling, identify the periodicity of the actual nuclear path, rather than just the electronic k-point mesh. Then identify whether the states are instantaneous adiabatic eigenstates or fixed equilibrium Bloch states. Those two checks determine which coupling object is meaningful.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Construction</th><th>Represented nuclear motion</th><th>Consequence for primitive momentum</th></tr></thead>
+            <tbody>
+              <tr><td>Primitive-cell periodic MD with any electronic k mesh</td><td>Primitive \(q=0\) patterns</td><td>Time-derivative NAC between distinct k sectors is exactly zero under the stated symmetry assumptions.</td></tr>
+              <tr><td>Periodic supercell MD</td><td>Primitive q values commensurate with the supercell</td><td>Folded primitive components can mix within one supercell momentum sector.</td></tr>
+              <tr><td>Reference-basis EPC dynamics</td><td>Explicit \(Q_{\mathbf q\nu}(t)\) on a chosen q mesh</td><td>Off-diagonal Hamiltonian elements connect k and k+q when the EPC is allowed.</td></tr>
+            </tbody>
+          </table></div>
+          <p>The EPC route needs reference electronic energies, mode eigenvectors and normalization, electronic derivatives \(g\), and an actual time history of the mode coordinates. A phonon dispersion supplies frequencies; it does not supply the complete electronic Hamiltonian or a real-time trajectory. Prescribing harmonic motion, using an anharmonic MD path, or introducing a nuclear quantum dynamics approximation are separate decisions.</p>
+          <p>Likewise, the classical-path approximation specifies that nuclear motion is supplied without the selected carrier's feedback. It does not cause the cross-k zero: the decisive condition here is translation symmetry. Keeping these assumptions separate explains why increasing the number of k points, adding anharmonic forces within a primitive cell, or changing a hopping rule cannot restore the spatial modes absent from that cell.</p>
+
+          <h2 id="sources">Sources and further reading</h2>
+          <ul>
+            <li>Z. Zheng et al., <a href="https://arxiv.org/html/2210.00529v3"><em>Ab initio Real-Time Quantum Dynamics of Charge Carriers in Momentum Space</em></a>, especially Eqs. (4)–(10) for the moving-basis NAC, fixed equilibrium basis, and EPC Hamiltonian. Journal article: <a href="https://doi.org/10.1038/s43588-023-00456-9">Nature Computational Science (2023)</a>.</li>
+            <li><a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace">Author's momentum-space NAMD code and tutorials</a>.</li>
+            <li><a href="https://docs.epw-code.org/Theory.html#electron-phonon-matrix-elements">EPW theory: electron-phonon matrix elements</a>, for the cell-periodic perturbation and normalization conventions.</li>
+            <li>Related foundations on this site: <a href="mqc-background.html#nac-formulas">NAC/HST formulas</a>, <a href="fssh-tully-benchmark.html">FSSH</a>, and <a href="ordered-kubo-sho-correlations.html#transitions">quantum correlations required by electronic transitions</a>.</li>
+          </ul>
+          <section class="series-footer" aria-labelledby="hefeinamd-series-map">
+            <h2 id="hefeinamd-series-map">HefeiNAMD series map</h2>
+            <ol class="series-list" start="0">
+              <li><a href="hefeinamd-training-hands-on-workflow.html">Part 0: How to Prepare a HefeiNAMD Training</a> — the workshop workflow, prepared data, and rehearsal.</li>
+              <li><a href="hefeinamd-nac-crystal-momentum.html">Part I: When Does Inter-k NAC Vanish?</a> — translation symmetry, finite-q phonons, and the EPC representation.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="hefeinamd-training-hands-on-workflow.html">&lt;- Part 0: Training Preparation</a><a href="../series.html?series=hefeinamd">HefeiNAMD series</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

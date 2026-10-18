@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://lihuigao21.github.io/posts/hefeinamd-nac-crystal-momentum.html</loc>
+    <lastmod>2026-10-18</lastmod>
+  </url>
+  <url>
     <loc>https://lihuigao21.github.io/posts/open-quantum-systems-tcl2-nz2.html</loc>
     <lastmod>2026-10-17</lastmod>
   </url>
@@ -578,15 +582,15 @@
   </url>
   <url>
     <loc>https://lihuigao21.github.io/tags.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-18</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/series.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-18</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/hefeinamd-training-hands-on-workflow.html</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-10-18</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/mes-pimd-geometric-phase-thermodynamics.html</loc>

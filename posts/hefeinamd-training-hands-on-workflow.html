@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="A practical note on preparing a complete HefeiNAMD training with slides, server environment, precomputed data, Slurm scripts, pseudo jobs, and hands-on rehearsal.">
-    <title>How to Prepare a HefeiNAMD Training | Lihui Gao</title>
+    <title>HefeiNAMD 0: How to Prepare a HefeiNAMD Training | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
   </head>
@@ -35,12 +35,17 @@
     <main id="top">
       <article class="post">
         <header class="post-header">
-          <p class="section-label">Nonadiabatic Dynamics</p>
+          <p class="section-label">HefeiNAMD Series - Part 0</p>
           <h1>How to Prepare a HefeiNAMD Training</h1>
           <p class="post-meta">2026.07.08 - HefeiNAMD / Training / Slurm / Workflow</p>
         </header>
 
         <div class="post-content">
+          <nav class="series-nav" aria-label="HefeiNAMD series navigation">
+            <a href="hefeinamd-training-hands-on-workflow.html" aria-current="page">0. Training Preparation</a>
+            <a href="hefeinamd-nac-crystal-momentum.html">I. Inter-k NAC</a>
+          </nav>
+          <p class="muted-note">This workshop note is Part 0 of the HefeiNAMD series. It establishes the practical calculation chain; <a href="hefeinamd-nac-crystal-momentum.html">Part I</a> begins the scientific discussion with translation symmetry, nonadiabatic coupling, and momentum transfer. The original workshop text below is retained.</p>
           <p class="lead">
             A HefeiNAMD training with a hands-on session is not just a slide lecture. The practical bottleneck is the training environment: a shared conference server, many participants submitting jobs at the same time, and a workflow whose real production path can take far longer than the classroom window. This note summarizes how I would prepare a complete training package after a recent HefeiNAMD workshop trip.
           </p>
@@ -156,10 +161,18 @@
           <p>
             The main lesson is that a computational workshop should be prepared like a small reproducible software release. Slides explain the method, but the hands-on session lives or dies by tested environments, clean directories, precomputed outputs, and a fallback path that still teaches the real dependency graph. For HefeiNAMD, this is especially important because the scientific chain is long: MD, SCF snapshots, CA-NAC, input generation, dynamics, and analysis all have to describe the same physical time window and electronic band window.
           </p>
+          <section class="series-footer" aria-labelledby="hefeinamd-series-map">
+            <h2 id="hefeinamd-series-map">HefeiNAMD series map</h2>
+            <ol class="series-list" start="0">
+              <li><a href="hefeinamd-training-hands-on-workflow.html">Part 0: How to Prepare a HefeiNAMD Training</a> — the workshop workflow, prepared data, and rehearsal.</li>
+              <li><a href="hefeinamd-nac-crystal-momentum.html">Part I: When Does Inter-k NAC Vanish?</a> — translation symmetry, finite-q phonons, and the EPC representation.</li>
+            </ol>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="Article navigation">
           <a href="../index.html">&lt;- Back to article list</a>
+          <a href="hefeinamd-nac-crystal-momentum.html">Part I: Inter-k NAC -&gt;</a>
         </nav>
       </article>
     </main>
