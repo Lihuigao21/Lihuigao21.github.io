@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The real-space NAMD route: supercell folding, molecular-dynamics snapshots, overlap-based nonadiabatic coupling, electronic propagation, and fewest-switches surface hopping.">
+    <title>HefeiNAMD II: Supercells, NAC, and Surface Hopping | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">HefeiNAMD Series - Part II</p>
+          <h1>Supercells, NAC, and Surface Hopping</h1>
+          <p class="post-meta">2026.10.18 - Real-Space NAMD / Supercells / Nonadiabatic Coupling / FSSH</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="HefeiNAMD series navigation">
+            <a href="hefeinamd-training-hands-on-workflow.html">0. Training Preparation</a>
+            <a href="hefeinamd-nac-crystal-momentum.html">I. Inter-k NAC</a>
+            <a href="hefeinamd-real-space-supercell-fssh.html" aria-current="page">II. Real-Space NAMD</a>
+          </nav>
+          <p class="lead"><a href="hefeinamd-nac-crystal-momentum.html">Part I</a> identified a precise restriction: when every nuclear configuration retains the primitive translations, different primitive crystal momenta remain separate. The real-space nonadiabatic molecular dynamics (NAMD) route relaxes that restriction by enlarging the simulation cell. The larger cell admits more spatial patterns of atomic motion and contains the corresponding folded electronic states. Wavefunction changes along this trajectory supply nonadiabatic coupling (NAC), which enters electronic propagation and a surface-hopping description.</p>
+          <p>The sequence matters. Folding tells us which wavelengths and electronic components fit inside the calculation. Molecular dynamics (MD) supplies their actual motion. Electronic-structure snapshots supply energies and wavefunctions. Their time dependence supplies NAC. Finally, fewest-switches surface hopping (FSSH) converts electronic population flow into stochastic changes of an active-state label. This article follows that chain, then distinguishes a prescribed nuclear path from FSSH with nuclear feedback.</p>
+
+          <h2 id="folding">1. Enlarge the cell to admit more wavelengths</h2>
+          <p>Consider a one-dimensional primitive lattice with spacing \(a\) and reciprocal vector \(b=2\pi/a\). An \(M\)-cell supercell has length \(L=Ma\) and reciprocal spacing \(B_s=b/M\). A displacement pattern with primitive wavevector \(q\) is compatible with this supercell when</p>
+          <div class="math-block">\[
+            u_{l+M,\kappa}=u_{l\kappa},
+            \qquad e^{iqMa}=1,
+            \qquad q_r=\frac{r}{M}b,\quad r=0,\ldots,M-1.
+          \]</div>
+          <p>All these \(q_r\) differ by supercell reciprocal vectors, so they fold to supercell phonon wavevector \(Q=0\), or supercell \(\Gamma\). Relative to the primitive cell, most of them have nonzero wavevector. The three-dimensional condition is the same: the phase must be one under every supercell translation. For a diagonal \(M_1\times M_2\times M_3\) expansion, the compatible primitive q mesh has those subdivisions along the three reciprocal directions.</p>
+          <p>The electronic folding follows the same geometry. At supercell electronic momentum \(K=0\), a perfectly repeated equilibrium crystal contains the primitive components</p>
+          <div class="math-block">\[
+            k_r=\frac{r}{M}b,\qquad k_r\equiv0\pmod{B_s}.
+          \]</div>
+          <p>Each primitive band supplies \(M\) folded supercell bands. Thus a larger cell can include several primitive electronic momenta in one supercell momentum sector. This is a reorganization of the same states at the undistorted geometry; simply copying a perfect primitive crystal does not create a new coupling. Adding more supercell electronic K points samples additional sectors, but a trajectory that preserves the supercell translations still cannot couple different supercell K sectors.</p>
+
+          <h2 id="example">2. A four-cell example separates folding from coupling</h2>
+          <p>For \(M=4\), the allowed primitive wavevectors are \(0\), \(b/4\), \(b/2\), and \(3b/4\); the last is equivalent to \(-b/4\). All fold to supercell \(\Gamma\). In a monatomic nearest-neighbor harmonic chain with mass \(m\) and spring constant \(C\), define \(\omega_0=\sqrt{C/m}\). Its dispersion and the frequencies represented at supercell \(\Gamma\) are</p>
+          <div class="math-block">\[
+            \omega(q)=2\omega_0|\sin(qa/2)|,\qquad
+            \{\omega(q_r)\}/\omega_0=\{0,\sqrt2,2,\sqrt2\}.
+          \]</div>
+          <figure>
+            <img src="../assets/img/hefeinamd-series/supercell-phonon-folding.svg" alt="A monatomic-chain phonon dispersion with four primitive wavevectors marked as modes represented at four-cell supercell Gamma." loading="lazy" width="720" height="380">
+            <figcaption>The blue line is the primitive phonon dispersion of the dimensionless nearest-neighbor chain. Orange markers show the four compatible primitive q values in a four-cell supercell; their frequencies are measured in units of \(\omega_0=\sqrt{C/m}\). Every marker has supercell \(Q=0\). Folding retains their distinct frequencies; it does not turn the finite-frequency vibrations into a uniform translation.</figcaption>
+          </figure>
+          <p>A real displacement proportional to \(\cos(2\pi l/4)\) has the cell pattern \((1,0,-1,0)\). It is periodic after four cells but not after one. Its two Fourier components have wavevectors \(\pm b/4\). If the electronic potential responds with the same spatial modulation, it can connect folded primitive electronic components separated by those momenta.</p>
+          <p>To check this spatial statement independently of an electronic-structure calculation, take four normalized plane waves and a dimensionless site potential:</p>
+          <div class="math-block">\[
+            \langle l|r\rangle=\frac12e^{2\pi irl/4},\qquad
+            V_l=\cos(2\pi l/4),\qquad
+            \langle r'|V|r\rangle=
+              \frac12\left(\delta_{r',r+1}+\delta_{r',r-1}\right).
+          \]</div>
+          <p>The indices in this expression are taken modulo four. A uniform potential is diagonal in the same basis. The modulated potential has off-diagonal elements even though all four basis states share supercell \(K=0\).</p>
+          <figure>
+            <img src="../assets/img/hefeinamd-series/supercell-perturbation-matrix.svg" alt="Four by four matrices showing a diagonal uniform perturbation and a cosine perturbation connecting neighboring primitive momentum indices within supercell Gamma." loading="lazy" width="720" height="360">
+            <figcaption>Absolute potential matrix elements between the four primitive electronic momentum components, indexed by \(r\). Both panels use the same dimensionless color scale. The uniform perturbation preserves each primitive momentum; the four-cell cosine connects \(r\) to \(r\pm1\) with amplitude \(1/2\). This checks how spatial modulation permits mixing within supercell \(\Gamma\), rather than predicting a transition rate.</figcaption>
+          </figure>
+          <p>The <a href="../assets/code/hefeinamd_supercell_folding.py">executable diagnostic</a> constructs the four-site dynamical matrix, verifies its Fourier eigenvalues and the two potential matrices to an absolute tolerance of \(10^{-13}\), and generates these figures. The <a href="../assets/img/hefeinamd-series/supercell-folding.csv">folded-mode table</a> and <a href="../assets/img/hefeinamd-series/supercell-folding.json">error summary</a> are also available. Run <code>python assets/code/hefeinamd_supercell_folding.py</code> with NumPy and Matplotlib from the website root. This is a folding and Fourier check; it does not calculate material NACs or run NAMD.</p>
+
+          <h2 id="trajectory">3. MD supplies the motion inside the supercell</h2>
+          <p>Once the cell is enlarged, its primitive copies must be allowed to have different displacements. The atoms still interact; the change is that the internal copies are no longer constrained to move identically. If every copy is constrained to follow the same displacement, the primitive translations remain intact and Part I's restriction survives. Increasing the number of atoms while retaining that constraint gains no finite-q nuclear motion.</p>
+          <p>In a prescribed-path calculation, one can equilibrate the chosen supercell at the target temperature and then record a production trajectory \(\mathbf R(t_j)\). The NVT-to-NVE sequence in <a href="hefeinamd-training-hands-on-workflow.html">Part 0</a> is one practical route: NVT controls the temperature during equilibration, and NVE production evolves at fixed particle number, volume, and total energy. This preparation is distinct from the later electronic dynamics.</p>
+          <p>Forces evaluated along MD need not be harmonic. The trajectory can include anharmonic motion within the spatial degrees of freedom of the supercell. The cell still excludes incommensurate wavelengths and imposes a longest available wavelength. Finite size, trajectory duration, and thermal sampling therefore remain physical convergence questions. A particular phonon need not be assigned to every frame in order to compute the wavefunction changes.</p>
+
+          <h2 id="snapshots">4. Each configuration defines an instantaneous electronic basis</h2>
+          <p>At each saved geometry, solve the electronic-structure problem and retain a consistent band window. In a Kohn-Sham (KS) description, write</p>
+          <div class="math-block">\[
+            \hat H_{\rm KS}(\mathbf R(t_j))|\phi_\alpha(t_j)\rangle
+               =\epsilon_\alpha(t_j)|\phi_\alpha(t_j)\rangle.
+          \]</div>
+          <p>The label \(\alpha\) identifies an instantaneous supercell state. At the perfect reference structure its primitive momentum content can be identified by folding. At a thermally distorted configuration, primitive translation symmetry is generally broken, so a state can contain several primitive momentum components. It is generally incorrect to assign every distorted eigenstate one exact primitive k label.</p>
+          <p>The real-space route obtains the time dependence directly from these configurations. It does not require a first-order Taylor expansion of the electronic Hamiltonian about the equilibrium structure. Its approximations instead include the chosen electronic-structure model, cell size, nuclear dynamics, retained bands, and subsequent dynamical closure.</p>
+
+          <h2 id="nac">5. Consecutive wavefunctions supply NAC</h2>
+          <p>Use the scalar time-derivative convention of Part I:</p>
+          <div class="math-block">\[
+            d_{\alpha\beta}(t)=
+               \langle\phi_\alpha(t)|\partial_t\phi_\beta(t)\rangle
+               =\dot{\mathbf R}\cdot\mathbf D_{\alpha\beta},
+            \qquad
+            \mathbf D_{\alpha\beta}=
+               \langle\phi_\alpha|\nabla_{\mathbf R}\phi_\beta\rangle.
+          \]</div>
+          <p>The scalar \(d\) has units of inverse time; \(\mathbf D\) is the derivative-coupling vector. Where analytic derivatives are unavailable, adjacent-frame wavefunctions provide the overlap matrix</p>
+          <div class="math-block">\[
+            S_{\alpha\beta}(t,t+\Delta t)
+               =\langle\phi_\alpha(t)|\phi_\beta(t+\Delta t)\rangle.
+          \]</div>
+          <p>After consistent phase and state matching, an antisymmetrized finite-difference estimate is</p>
+          <div class="math-block">\[
+            d_{\alpha\beta}\!\left(t+\frac{\Delta t}{2}\right)
+              \approx
+              \frac{S_{\alpha\beta}(t,t+\Delta t)
+                     -S_{\beta\alpha}^{*}(t,t+\Delta t)}
+                   {2\Delta t}.
+          \]</div>
+          <p>The <a href="mqc-background.html#nac-formulas">NAC/Hammes-Schiffer–Tully discussion</a> derives the general overlap construction. In a supercell, both wavefunctions belong to the same supercell momentum sector, while their primitive momentum content may change. The vanishing cross-sector overlap in Part I no longer excludes coupling between those folded components.</p>
+          <p>Arbitrary orbital phases and swaps of nearly degenerate eigenvectors can produce misleading overlap changes. Phase matching, subspace tracking, a sufficient band window, and timestep convergence are essential. A band index alone is not a stable state identity across snapshots. At degeneracies, retain and track the coupled subspace rather than dividing by an energy gap. If tracking rotates a nondegenerate set of eigenstates by a general unitary matrix, transform the energy matrix consistently; it will no longer necessarily be diagonal.</p>
+
+          <h2 id="propagation">6. Energies and NAC form the electronic propagation matrix</h2>
+          <p>Expand the carrier wavefunction in the moving adiabatic KS basis:</p>
+          <div class="math-block">\[
+            |\Psi(t)\rangle=\sum_\alpha c_\alpha(t)|\phi_\alpha(t)\rangle.
+          \]</div>
+          <p>The basis itself changes with time. Inserting this expansion into the electronic Schrödinger equation gives</p>
+          <div class="math-block">\[
+            i\hbar\dot c_\alpha
+              =\epsilon_\alpha c_\alpha
+                  -i\hbar\sum_\beta d_{\alpha\beta}c_\beta,
+            \qquad
+            H^{\rm eff}_{\alpha\beta}
+              =\epsilon_\alpha\delta_{\alpha\beta}-i\hbar d_{\alpha\beta}.
+          \]</div>
+          <p>The diagonal energies accumulate phase; the moving-basis term couples amplitudes. Since \(d_{\alpha\beta}=-d_{\beta\alpha}^{*}\), the effective matrix is Hermitian when its inputs are consistent. The energy difference alone cannot transfer population. Even very close states remain uncoupled if the relevant NAC is zero.</p>
+          <p>For an overlap-based implementation, the MD snapshot interval, electronic propagation step, and interpolation of energies and NAC are separate numerical choices. Norm conservation and anti-Hermiticity checks detect numerical problems, but neither establishes convergence of a carrier relaxation time.</p>
+
+          <h2 id="fssh">7. FSSH samples the electronic population flow</h2>
+          <p>Electronic amplitudes and the active state have different roles. The amplitudes describe a coherent superposition. FSSH assigns each trajectory an active-state label and uses stochastic switches to follow population transfer. With \(P_a=|c_a|^2\), the preceding coefficient equation implies</p>
+          <div class="math-block">\[
+            \dot P_a=-\sum_{b\ne a}J_{a\to b},\qquad
+            J_{a\to b}=2\,{\rm Re}\!\left[c_a^*d_{ab}c_b\right],
+            \qquad J_{b\to a}=-J_{a\to b}.
+          \]</div>
+          <p>Positive \(J_{a\to b}\) is outward flow from state \(a\). For an active trajectory on \(a\) with \(P_a>0\), the elementary fewest-switches attempt probability over a sufficiently small electronic step \(\delta t\) is</p>
+          <div class="math-block">\[
+            g_{a\to b}=
+               \frac{\delta t}{P_a}\max(0,J_{a\to b}),\qquad b\ne a.
+          \]</div>
+          <p>A uniform random number selects a destination from the cumulative probabilities or leaves the active state unchanged. The step must be small enough for a valid total probability; a total above one calls for a smaller step or appropriate substepping. The full <a href="fssh-tully-benchmark.html#fewest-switches">FSSH derivation and Tully benchmark</a> give the general background. Here its connection to the supercell calculation is explicit: the wavefunction overlaps determine \(d\), which determines amplitude flow, which supplies the attempted switches.</p>
+          <p>A nonzero NAC does not guarantee a hop at each instant: electronic coherence and the direction of population flow also enter. Conversely, FSSH cannot generate a physically justified transition from a missing symmetry-forbidden coupling. Folding and nuclear sampling must provide the relevant degrees of freedom before the hopping algorithm is applied.</p>
+
+          <h2 id="cpa">8. Specify whether the nuclei respond to a hop</h2>
+          <p>In full FSSH with nuclear feedback, the active many-electron adiabatic surface supplies the force. Writing its total potential energy as \(U_A(\mathbf R)\), one propagates nuclear momenta using \(-\nabla_{\mathbf R}U_A\). An accepted switch to \(B\) adjusts the momenta to satisfy</p>
+          <div class="math-block">\[
+            \sum_I\frac{|\mathbf P_I'|^2}{2M_I}+U_B(\mathbf R)
+              =\sum_I\frac{|\mathbf P_I|^2}{2M_I}+U_A(\mathbf R).
+          \]</div>
+          <p>For real derivative couplings, the standard adjustment changes momenta along the derivative-coupling vector; the corresponding velocity change includes the inverse nuclear masses. A scalar time-derivative coupling alone does not determine this multidimensional direction. If insufficient kinetic energy prevents an upward switch, it is frustrated. The total surface energy \(U_A\) must not be identified automatically with a single KS orbital energy \(\epsilon_\alpha\). A feedback calculation needs a consistent excited-state energy and force model.</p>
+          <p>A common real-space HefeiNAMD strategy instead uses the <em>classical-path approximation</em> (CPA): generate a nuclear trajectory in advance and reuse it for the selected carrier's electronic dynamics. In this route, active-state switches do not recompute the saved nuclear path or apply the full feedback loop above. This is the prescribed-path workflow described in the <a href="https://arxiv.org/html/2210.00529v3">real-space methodology of Zheng et al., Eqs. (1)–(4)</a>.</p>
+          <p>The population-flow formula explains the basic FSSH idea; a particular program can additionally use thermal acceptance factors or decoherence corrections. Those choices must be stated with the actual version and protocol. They are separate from supercell folding and the overlap-based NAC construction. An ensemble of active-state occupations is also a distinct estimator from the ensemble average of \(|c_\alpha|^2\).</p>
+
+          <h2 id="workflow">9. The practical real-space calculation chain</h2>
+          <ol>
+            <li><strong>Select the supercell.</strong> Relate its compatible primitive q and folded k components to the transitions of interest. Distinguish cell-size convergence from electronic integration-mesh convergence.</li>
+            <li><strong>Sample nuclear motion.</strong> Relax and equilibrate the supercell, allow the internal cells to move independently, and save the production trajectory with a documented ensemble and temperature.</li>
+            <li><strong>Prepare electronic snapshots.</strong> Use consistent electronic settings and retain the states needed to cover the initial excitation and accessible final energies.</li>
+            <li><strong>Construct energies and NAC.</strong> Match states and phases between adjacent frames; check the snapshot interval and the retained subspace.</li>
+            <li><strong>Propagate amplitudes and switches.</strong> Specify the initial electronic state, propagation step, hopping rule, decoherence treatment, nuclear feedback or CPA, and statistical sampling.</li>
+            <li><strong>Define the observable.</strong> Report whether a population means coherent electronic weight or active-state occupation. Momentum-resolved results require projection or unfolding onto primitive momentum sectors; supercell band labels alone do not supply them.</li>
+          </ol>
+          <p>The resulting picture connects the steps without attributing extra physics to folding: the larger cell admits the motion, the trajectory changes the instantaneous states, NAC measures their rotation, and FSSH supplies a stochastic active-state description. Finite size, classical nuclei, electronic-structure errors, state truncation, and the chosen feedback/decoherence approximation still bound the calculation.</p>
+
+          <h2 id="sources">Sources and further reading</h2>
+          <ul>
+            <li><a href="https://hefei-namd.org/code/">Official HefeiNAMD code and teaching page</a>; <a href="https://github.com/QijingZheng/Hefei-NAMD">source repository</a>.</li>
+            <li>Z. Zheng et al., <a href="https://arxiv.org/html/2210.00529v3">Introduction and real-space methodology</a>: the finite-supercell momentum restriction and instantaneous-KS, prescribed-path formulation.</li>
+            <li>J. C. Tully, <a href="https://doi.org/10.1063/1.459170"><em>Molecular dynamics with electronic transitions</em></a>, J. Chem. Phys. 93, 1061–1071 (1990); <a href="https://xuv.scs.illinois.edu/chem540/GroupProjects/Benke_Hammer_SourcePaper1.pdf">article copy hosted by the University of Illinois</a>.</li>
+            <li>S. Hammes-Schiffer and J. C. Tully, <a href="https://doi.org/10.1063/1.467455"><em>Proton transfer in solution: Molecular dynamics with quantum transitions</em></a>, J. Chem. Phys. 101, 4657–4667 (1994); <a href="https://xuv.scs.illinois.edu/chem540/GroupProjects/Benke_Hammer_SourcePaper2.pdf">article copy hosted by the University of Illinois</a>.</li>
+          </ul>
+          <section class="series-footer" aria-labelledby="hefeinamd-series-map">
+            <h2 id="hefeinamd-series-map">HefeiNAMD series map</h2>
+            <ol class="series-list" start="0">
+              <li><a href="hefeinamd-training-hands-on-workflow.html">Part 0: How to Prepare a HefeiNAMD Training</a> — the workshop workflow, prepared data, and rehearsal.</li>
+              <li><a href="hefeinamd-nac-crystal-momentum.html">Part I: When Does Inter-k NAC Vanish?</a> — the problem, its symmetry condition, and its physical scope.</li>
+              <li><a href="hefeinamd-real-space-supercell-fssh.html">Part II: Supercells, NAC, and Surface Hopping</a> — folding, nuclear trajectories, overlap-based NAC, and FSSH.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="hefeinamd-nac-crystal-momentum.html">&lt;- Part I: Inter-k NAC</a><a href="../series.html?series=hefeinamd">HefeiNAMD series</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

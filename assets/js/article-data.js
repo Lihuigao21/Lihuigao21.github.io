@@ -3,7 +3,7 @@ window.SITE_SERIES = [
     id: "hefeinamd",
     title: "HefeiNAMD 系列",
     label: "HefeiNAMD",
-    description: "从讲座准备出发，逐步理解非绝热耦合、晶体动量、声子与电子—声子耦合动力学。",
+    description: "从讲座准备出发，逐步理解非绝热耦合、晶体动量、超胞与实空间非绝热动力学。",
   },
   {
     id: "open-quantum-systems",
@@ -63,13 +63,24 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "hefeinamd-real-space-supercell-fssh",
+    title: "HefeiNAMD II: Supercells, NAC, and Surface Hopping",
+    path: "posts/hefeinamd-real-space-supercell-fssh.html",
+    date: "2026-10-18",
+    dateText: "2026.10.18",
+    description: "Follow the real-space route from supercell folding and nuclear trajectories to overlap-based NAC, electronic propagation, and fewest-switches surface hopping.",
+    tags: ["HefeiNAMD", "Nonadiabatic Dynamics", "Supercells", "FSSH", "Model Calculation"],
+    series: "hefeinamd",
+    part: 2,
+  },
+  {
     slug: "hefeinamd-nac-crystal-momentum",
     title: "HefeiNAMD I: When Does Inter-k NAC Vanish?",
     path: "posts/hefeinamd-nac-crystal-momentum.html",
     date: "2026-10-18",
     dateText: "2026.10.18",
-    description: "Derive the strict cross-k NAC zero under translation-preserving nuclear motion, then connect finite-q phonons, supercell folding, and the EPC Hamiltonian.",
-    tags: ["HefeiNAMD", "Nonadiabatic Dynamics", "Electron-Phonon Coupling", "Crystal Momentum", "Model Calculation"],
+    description: "Why orthogonality alone does not imply zero NAC, when translation symmetry makes the zero exact, and what primitive-cell MD excludes.",
+    tags: ["HefeiNAMD", "Nonadiabatic Dynamics", "Translation Symmetry", "Crystal Momentum", "Model Calculation"],
     series: "hefeinamd",
     part: 1,
   },

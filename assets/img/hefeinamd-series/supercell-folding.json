@@ -1,0 +1,11 @@
+{
+  "primitive_cells": 4,
+  "omega0": 1,
+  "maximum_absolute_errors": {
+    "dynamical_matrix": 4.441721212618397e-16,
+    "dynamical_eigenvalues": 8.586881206085195e-16,
+    "uniform_perturbation": 1.1704836984704332e-16,
+    "finite_q_perturbation": 1.5308084989341913e-16
+  },
+  "scope": "Folding and perturbation-matrix checks only; no NAMD propagation."
+}
