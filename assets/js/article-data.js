@@ -68,7 +68,7 @@ window.SITE_ARTICLES = [
     path: "posts/hefeinamd-epc-hamiltonian.html",
     date: "2026-10-18",
     dateText: "2026.10.18",
-    description: "Build a time-dependent electronic Hamiltonian from reference Bloch states, linear electron-phonon response, and phonon coordinates along a chosen nuclear path.",
+    description: "Build the EPC Hamiltonian, with a FAQ on method choice, hopping rules, and finite-temperature phonon extensions.",
     tags: ["HefeiNAMD", "Nonadiabatic Dynamics", "Electron-Phonon Coupling", "Crystal Momentum", "Model Calculation"],
     series: "hefeinamd",
     part: 3,
