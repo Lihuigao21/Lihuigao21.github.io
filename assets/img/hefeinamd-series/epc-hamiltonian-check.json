@@ -1,0 +1,15 @@
+{
+  "sites": 4,
+  "linear_coefficient_over_E0": 0.4,
+  "quadratic_coefficient_over_E0": 0.25,
+  "time_plot_amplitude": 0.4,
+  "maximum_absolute_errors": {
+    "independent_Hamiltonian_constructions": 4.440892098500626e-16,
+    "Hermiticity": 0.0,
+    "selected_matrix_element": 1.214306433183765e-16,
+    "quadratic_error_law": 6.938893903907228e-18
+  },
+  "fitted_error_power": 2.000000000000001,
+  "source_sha256": "b116fddbc679cb909416d99052985a3a86d1ca807dac15b45ab6ab453ad9aa5c",
+  "scope": "Fixed-basis linear Hamiltonian and Taylor truncation only; no dynamics or material validation."
+}

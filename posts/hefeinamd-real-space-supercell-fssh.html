@@ -28,6 +28,7 @@
             <a href="hefeinamd-training-hands-on-workflow.html">0. Training Preparation</a>
             <a href="hefeinamd-nac-crystal-momentum.html">I. Inter-k NAC</a>
             <a href="hefeinamd-real-space-supercell-fssh.html" aria-current="page">II. Real-Space NAMD</a>
+            <a href="hefeinamd-epc-hamiltonian.html">III. EPC Dynamics</a>
           </nav>
           <p class="lead"><a href="hefeinamd-nac-crystal-momentum.html">Part I</a> identified a precise restriction: when every nuclear configuration retains the primitive translations, different primitive crystal momenta remain separate. The real-space nonadiabatic molecular dynamics (NAMD) route relaxes that restriction by enlarging the simulation cell. The larger cell admits more spatial patterns of atomic motion and contains the corresponding folded electronic states. Wavefunction changes along this trajectory supply nonadiabatic coupling (NAC), which enters electronic propagation and a surface-hopping description.</p>
           <p>The sequence matters. Folding tells us which wavelengths and electronic components fit inside the calculation. Molecular dynamics (MD) supplies their actual motion. Electronic-structure snapshots supply energies and wavefunctions. Their time dependence supplies NAC. Finally, fewest-switches surface hopping (FSSH) converts electronic population flow into stochastic changes of an active-state label. This article follows that chain, then distinguishes a prescribed nuclear path from FSSH with nuclear feedback.</p>
@@ -177,10 +178,11 @@
               <li><a href="hefeinamd-training-hands-on-workflow.html">Part 0: How to Prepare a HefeiNAMD Training</a> — the workshop workflow, prepared data, and rehearsal.</li>
               <li><a href="hefeinamd-nac-crystal-momentum.html">Part I: When Does Inter-k NAC Vanish?</a> — the problem, its symmetry condition, and its physical scope.</li>
               <li><a href="hefeinamd-real-space-supercell-fssh.html">Part II: Supercells, NAC, and Surface Hopping</a> — folding, nuclear trajectories, overlap-based NAC, and FSSH.</li>
+              <li><a href="hefeinamd-epc-hamiltonian.html">Part III: The EPC Route to Carrier Dynamics</a> — reference states, linear response, mode coordinates, and the time-dependent Hamiltonian.</li>
             </ol>
           </section>
         </div>
-        <nav class="post-nav" aria-label="Article navigation"><a href="hefeinamd-nac-crystal-momentum.html">&lt;- Part I: Inter-k NAC</a><a href="../series.html?series=hefeinamd">HefeiNAMD series</a></nav>
+        <nav class="post-nav" aria-label="Article navigation"><a href="hefeinamd-nac-crystal-momentum.html">&lt;- Part I: Inter-k NAC</a><a href="hefeinamd-epc-hamiltonian.html">Part III: EPC Dynamics -&gt;</a></nav>
       </article>
     </main>
     <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>

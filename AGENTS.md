@@ -112,6 +112,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 - Except for user-authored life notes governed by the preceding rules, do not simply paste raw source notes into a technical article. Rewrite, compress, and organize them.
 - Remove duplicated derivations, unclear commentary, and irrelevant implementation details.
 - Keep technical claims grounded in the supplied source files, papers, code, or generated results.
+- For permanent source-code citations, pin the commit and derive line numbers from the original source's LF-separated lines. Web extractors may renumber or omit lines; their displayed line numbers are not reliable GitHub anchors.
 - When the user specifies an ordered scientific argument and chapter structure, map each requested question to its section before rewriting and verify that order after editing. Keep the required assumptions and intermediate derivations visible; a generic theory catalogue or FAQ is not a substitute for the requested chain.
 - Distinguish separate articles from chapters within one article. When the user asks for multiple articles, give each its own page, title, metadata and contents, repair cross-article references, and update every series navigation and index entry.
 - If formulas are OCRed from screenshots or PDFs, verify them against source LaTeX or code when possible.

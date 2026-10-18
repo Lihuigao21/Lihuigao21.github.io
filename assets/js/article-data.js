@@ -3,7 +3,7 @@ window.SITE_SERIES = [
     id: "hefeinamd",
     title: "HefeiNAMD 系列",
     label: "HefeiNAMD",
-    description: "从讲座准备出发，逐步理解非绝热耦合、晶体动量、超胞与实空间非绝热动力学。",
+    description: "从讲座准备出发，逐步理解非绝热耦合、晶体动量，以及实空间超胞与电子—声子耦合两条动力学路线。",
   },
   {
     id: "open-quantum-systems",
@@ -62,6 +62,17 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    slug: "hefeinamd-epc-hamiltonian",
+    title: "HefeiNAMD III: The EPC Route to Carrier Dynamics",
+    path: "posts/hefeinamd-epc-hamiltonian.html",
+    date: "2026-10-18",
+    dateText: "2026.10.18",
+    description: "Build a time-dependent electronic Hamiltonian from reference Bloch states, linear electron-phonon response, and phonon coordinates along a chosen nuclear path.",
+    tags: ["HefeiNAMD", "Nonadiabatic Dynamics", "Electron-Phonon Coupling", "Crystal Momentum", "Model Calculation"],
+    series: "hefeinamd",
+    part: 3,
+  },
   {
     slug: "hefeinamd-real-space-supercell-fssh",
     title: "HefeiNAMD II: Supercells, NAC, and Surface Hopping",

@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="How a fixed reference Bloch basis, linear electron-phonon matrix elements, and time-dependent phonon coordinates construct the EPC Hamiltonian for carrier dynamics.">
+    <title>HefeiNAMD III: The EPC Route to Carrier Dynamics | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">HefeiNAMD Series - Part III</p>
+          <h1>The EPC Route to Carrier Dynamics</h1>
+          <p class="post-meta">2026.10.18 - Electron-Phonon Coupling / Crystal Momentum / Electronic Dynamics</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="HefeiNAMD series navigation">
+            <a href="hefeinamd-training-hands-on-workflow.html">0. Training Preparation</a>
+            <a href="hefeinamd-nac-crystal-momentum.html">I. Inter-k NAC</a>
+            <a href="hefeinamd-real-space-supercell-fssh.html">II. Real-Space NAMD</a>
+            <a href="hefeinamd-epc-hamiltonian.html" aria-current="page">III. EPC Dynamics</a>
+          </nav>
+          <p class="lead"><a href="hefeinamd-real-space-supercell-fssh.html">Part II</a> admitted finite-wavevector nuclear motion by enlarging the simulation cell, then obtained nonadiabatic coupling from electronic wavefunctions along the trajectory. The electron-phonon coupling (EPC) route builds the time-dependent electronic Hamiltonian from a different starting point: reference Bloch states, their linear response to lattice displacements, and phonon coordinates that evolve in time.</p>
+          <p>The central chain is <em>reference electronic structure + phonon modes + EPC matrix elements + a nuclear path → electronic Hamiltonian → carrier dynamics</em>. A phonon dispersion alone supplies only part of this information. We will derive the matrix construction, identify where the trajectory enters, and separate the underlying idea from choices made by the public HefeiNAMD-EPC implementation.</p>
+
+          <h2 id="reference">1. Keep the reference electronic basis fixed</h2>
+          <p>Choose a reference geometry \(\mathbf R_0\). Its Kohn-Sham (KS) Hamiltonian defines the Bloch states and energies</p>
+          <div class="math-block">\[
+            \hat H_0|n\mathbf k;0\rangle
+              =\epsilon^0_{n\mathbf k}|n\mathbf k;0\rangle,\qquad
+            |\Psi(t)\rangle=\sum_{n\mathbf k}C_{n\mathbf k}(t)|n\mathbf k;0\rangle .
+          \]</div>
+          <p>The basis states remain those of \(\mathbf R_0\), even when the nuclei move. Consequently their time derivatives vanish. The physical electronic Hamiltonian at a displaced geometry is generally not diagonal in this basis:</p>
+          <div class="math-block">\[
+            H_{m\mathbf k',n\mathbf k}(t)
+              =\epsilon^0_{n\mathbf k}\delta_{mn}\delta_{\mathbf k'\mathbf k}
+                +\langle m\mathbf k';0|\delta\hat H(\mathbf R(t))|n\mathbf k;0\rangle .
+          \]</div>
+          <p>This is a fixed reference Bloch representation. It has the practical character of a diabatic representation, but choosing it does not establish a globally complete, strictly diabatic finite band manifold. The retained states must still cover the dynamics of interest. This representation is the starting point of <a href="https://arxiv.org/html/2210.00529v3#S2">Zheng et al.'s momentum-space formulation, Eqs. (5)–(9)</a>.</p>
+
+          <h2 id="expansions">2. Expand the electronic Hamiltonian in displacement</h2>
+          <p>Let \(u_{l\kappa a}\) be the displacement of atom \(\kappa\), in primitive cell \(l\), along Cartesian direction \(a\). The leading change in the electronic Hamiltonian is</p>
+          <div class="math-block">\[
+            \delta\hat H
+              =\sum_{l\kappa a}u_{l\kappa a}
+                 \left.\frac{\partial\hat H}{\partial u_{l\kappa a}}\right|_0
+                 +O(u^2).
+          \]</div>
+          <p>The derivative describes how the electrons respond to moving an atom. In a self-consistent KS calculation, it includes the induced change in electronic density and potential, not merely the derivative of a bare ionic potential. Keeping this term defines <em>linear EPC</em>. Computing it once lets us assemble approximate Hamiltonians for many displacements without solving a fresh electronic eigenproblem at every time.</p>
+          <p>This approximation is distinct from the harmonic approximation to the nuclear potential energy \(U\):</p>
+          <div class="math-block">\[
+            U(\mathbf R_0+\mathbf u)
+              =U_0+\frac12\sum_{IJ}u_I\Phi_{IJ}u_J+O(u^3).
+          \]</div>
+          <p>Here \(I,J\) collect atomic and Cartesian indices, and the linear nuclear-energy term vanishes at equilibrium. Linear EPC truncates the <em>electronic operator</em> after first order. Harmonic nuclear dynamics truncates the <em>nuclear potential energy</em> after second order. One may use a nonharmonic trajectory with linear EPC, but doing so does not restore the electronic terms that were omitted.</p>
+
+          <h2 id="coordinates">3. Phonons organize the atomic displacements</h2>
+          <p>Consider a Born-von Kármán periodic crystal containing \(N_p\) primitive cells. Normalize the dimensionless phonon eigenvectors by</p>
+          <div class="math-block">\[
+            \sum_{\kappa a}e_{\kappa a,\nu}^{*}(\mathbf q)
+                 e_{\kappa a,\nu'}(\mathbf q)=\delta_{\nu\nu'} .
+          \]</div>
+          <p>Using mass-weighted normal coordinates \(Q_{\mathbf q\nu}\), expand the displacement as</p>
+          <div class="math-block">\[
+            u_{l\kappa a}(t)=
+              \frac{1}{\sqrt{N_pM_\kappa}}\sum_{\mathbf q\nu}
+                e_{\kappa a,\nu}(\mathbf q)
+                Q_{\mathbf q\nu}(t)e^{i\mathbf q\cdot\mathbf R_l}.
+          \]</div>
+          <p>\(\mathbf R_l\) is the equilibrium lattice vector, \(M_\kappa\) is the atomic mass, \(\mathbf q\) is the phonon wavevector, and \(\nu\) labels its branch. The eigenvector specifies <em>which atoms move and in which directions</em>; \(Q(t)\) specifies <em>how far along that pattern the system has moved</em>. The frequency \(\omega_{\mathbf q\nu}\) supplies its harmonic time scale.</p>
+          <p>Real atomic displacements require matched opposite-wavevector modes. In a consistent phase convention,</p>
+          <div class="math-block">\[
+            e_{\kappa a,\nu}(-\mathbf q)=e_{\kappa a,\nu}^{*}(\mathbf q),
+            \qquad Q_{-\mathbf q,\nu}=Q_{\mathbf q\nu}^{*}.
+          \]</div>
+          <p>They cannot be sampled as two unrelated real vibrations. Independent real sine and cosine modes provide one convenient way to enforce this condition. A phonon dispersion gives the frequencies; it does not specify the normal coordinates, their initial amplitudes, or their phases.</p>
+
+          <h2 id="matrix-elements">4. EPC matrix elements measure the electronic response to a mode</h2>
+          <p>Insert the displacement expansion into the linear electronic Hamiltonian. Define the mode derivative operator</p>
+          <div class="math-block">\[
+            \hat{\mathcal V}_{\mathbf q\nu}
+              =\sum_{l\kappa a}
+                \frac{e_{\kappa a,\nu}(\mathbf q)}{\sqrt{M_\kappa}}
+                e^{i\mathbf q\cdot\mathbf R_l}
+                \left.\frac{\partial\hat H}{\partial u_{l\kappa a}}\right|_0,
+            \qquad
+            \delta\hat H^{(1)}(t)=
+                \frac{1}{\sqrt{N_p}}\sum_{\mathbf q\nu}
+                    Q_{\mathbf q\nu}(t)\hat{\mathcal V}_{\mathbf q\nu}.
+          \]</div>
+          <p>The matrix element of this operator asks a concrete question: how strongly does this displacement pattern mix two reference electronic states? Translating the crystal produces a lattice phase sum</p>
+          <div class="math-block">\[
+            \frac{1}{N_p}\sum_l
+               e^{i(\mathbf k+\mathbf q-\mathbf k')\cdot\mathbf R_l}
+               =\delta_{\mathbf k',\,\mathbf k+\mathbf q\ {\rm mod}\,\mathbf G}.
+          \]</div>
+          <p>Thus a mode with wavevector \(\mathbf q\) connects \(\mathbf k\) to \(\mathbf k+\mathbf q\), modulo a reciprocal lattice vector \(\mathbf G\). For nonzero \(\mathbf q\), this perturbation carries finite crystal momentum, unlike the translation-preserving path in <a href="hefeinamd-nac-crystal-momentum.html#strict-zero">Part I</a>. Other symmetries may still make an allowed matrix element vanish.</p>
+          <p>For each stable, nonzero-frequency mode define a mass-weighted zero-point scale and an energy-valued EPC matrix element:</p>
+          <div class="math-block">\[
+            \ell_{\mathbf q\nu}=\sqrt{\frac{\hbar}{2\omega_{\mathbf q\nu}}},
+            \qquad
+            g_{mn\nu}(\mathbf k,\mathbf q)=
+              \ell_{\mathbf q\nu}
+              \langle m,\mathbf k+\mathbf q;0|
+                 \hat{\mathcal V}_{\mathbf q\nu}|n,\mathbf k;0\rangle .
+          \]</div>
+          <p>The Bloch states here are normalized over the full periodic crystal. With mass-weighted \(Q\), both \(Q\) and \(\ell\) have units of square-root mass times length; \(Q/\ell\) is dimensionless and \(g\) has units of energy. Some conventions introduce a reference mass and a length-valued normal coordinate instead. The product \(gQ/\ell\) must remain consistent when changing conventions.</p>
+          <p>The full-operator definition also accommodates nonlocal terms. For a local potential, extracting its Bloch phase yields the usual primitive-cell matrix element between cell-periodic electronic functions. The <a href="https://docs.epw-code.org/Theory.html#electron-phonon-matrix-elements">EPW theory documentation</a> gives that standard convention and the self-consistent perturbation construction. Frequencies and polarization vectors alone cannot supply \(g\): they describe the lattice, while \(g\) also depends on the electronic states and their response.</p>
+
+          <h2 id="hamiltonian">5. Multiply each response by its actual displacement</h2>
+          <p>The linear EPC Hamiltonian in the fixed reference basis is now</p>
+          <div class="math-block">\[
+            \boxed{\begin{aligned}
+            H_{m\mathbf k',n\mathbf k}(t)
+              &amp;=\epsilon^0_{n\mathbf k}\delta_{mn}\delta_{\mathbf k'\mathbf k}\\
+              &amp;\quad+\frac{1}{\sqrt{N_p}}\sum_{\mathbf q\nu}
+                 g_{mn\nu}(\mathbf k,\mathbf q)
+                 \frac{Q_{\mathbf q\nu}(t)}{\ell_{\mathbf q\nu}}
+                 \delta_{\mathbf k',\,\mathbf k+\mathbf q\ {\rm mod}\,\mathbf G}.
+            \end{aligned}}
+          \]</div>
+          <p>The three ingredients have separate jobs. \(g\) measures the electronic sensitivity to a mode; \(Q(t)/\ell\) measures its instantaneous displacement; the momentum condition selects the electronic state pairs it can connect. The reference energies provide the unperturbed spectrum. Even a large \(g\) produces no instantaneous linear perturbation when that coordinate is zero. A nonzero coordinate can also shift diagonal energies, particularly through q = 0 contributions.</p>
+          <p>The complex phases of \(g\), the electronic states, and the phonon eigenvectors must be consistent. A table of \(|g|^2\), adequate for some rate formulas, does not generally contain enough phase information to reconstruct this Hamiltonian. Opposite-q matching and the Hermitian electronic response must yield \(H(t)=H^\dagger(t)\). \(N_p\) belongs to the normalization volume and cannot be changed as an arbitrary coupling-strength parameter.</p>
+          <p>Dense k/q grids can be generated through primitive-cell perturbation calculations and interpolation. They represent many spatial wavelengths without explicitly running a molecular-dynamics trajectory in an equally large real-space cell. The wavelengths have not disappeared: they are encoded in the q grid and mode coordinates. This reduces one source of cost, while matrix-element storage, band truncation, and k/q convergence remain.</p>
+
+          <h2 id="trajectory">6. The Hamiltonian still needs a nuclear path</h2>
+          <p>For an independent, mass-weighted real harmonic mode, let \(P=\dot Q\) and write</p>
+          <div class="math-block">\[
+            H_{\rm ph}=\frac12(P^2+\omega^2Q^2),\qquad
+            Q(t)=Q_0\cos\omega t+\frac{P_0}{\omega}\sin\omega t .
+          \]</div>
+          <p>The frequency does not determine \(Q_0\) or \(P_0\). An initial ensemble or a specified preparation must supply them. In a quantum thermal harmonic oscillator, with \(\beta=1/(k_BT)\), the coordinate variance is</p>
+          <div class="math-block">\[
+            n(\omega,T)=\frac{1}{e^{\beta\hbar\omega}-1},\qquad
+            \langle\hat Q^2\rangle
+               =\frac{\hbar}{2\omega}(2n+1).
+          \]</div>
+          <p>This identifies a thermal fluctuation scale, including a zero-point term. It does not uniquely prescribe a collection of real-time trajectories or make a classical coordinate into a quantum operator.</p>
+          <p>For example, <a href="https://light-and-molecules.gitlab.io/newton-x-package/manual/theo_background/#wigner-distribution">Gaussian Wigner sampling</a> with this coordinate variance, momentum variance \(\hbar\omega(2n+1)/2\), and zero coordinate-momentum covariance reproduces the independent harmonic mode's symmetrized linear-coordinate correlation under harmonic propagation. The ordinary ordered quantum correlation additionally has an imaginary commutator contribution. Keeping a zero-point variance alone therefore does not establish quantum absorption/emission asymmetry or detailed balance. This example is an ensemble choice, not a description of the default code sampler.</p>
+          <p>In the inspected public source, <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/epcoup.f90#L1434-L1462"><code>EPCTYPE=1</code></a> initializes two equal real factors \(\sqrt{n+1/2}\) and advances their positive- and negative-frequency phases. For matched frequencies their sum corresponds to</p>
+          <div class="math-block">\[
+            \frac{Q_{\mathbf q\nu}(t)}{\ell_{\mathbf q\nu}}
+              =\sqrt{n_{\mathbf q\nu}+\tfrac12}
+                  \left(e^{-i\omega_{\mathbf q\nu}t}
+                       +e^{i\omega_{\mathbf q\nu}t}\right).
+          \]</div>
+          <p>This branch does not randomly sample the initial phonon phases. Different initial-time offsets select different segments of the prescribed oscillations. The Bose factor changes the driving amplitude; it does not by itself renormalize the input harmonic frequencies into a finite-temperature anharmonic dispersion.</p>
+          <p>A second conceptual route is to obtain \(\mathbf u(t)\) from an atomic trajectory and project it onto the reference modes:</p>
+          <div class="math-block">\[
+            Q_{\mathbf q\nu}(t)=\frac{1}{\sqrt{N_p}}
+               \sum_{l\kappa a}\sqrt{M_\kappa}\,
+                  e_{\kappa a,\nu}^{*}(\mathbf q)
+                  u_{l\kappa a}(t)e^{-i\mathbf q\cdot\mathbf R_l}.
+          \]</div>
+          <p>This can carry nonharmonic time dependence, provided the trajectory contains the required wavelengths. A small primitive-cell trajectory still cannot generate missing finite-q modes by projection. The repository has an <code>EPCTYPE=2</code> decomposition routine, but the inspected active propagation path does not establish a complete connection from its projected-coordinate array to the Hamiltonian driver. That interface needs verification before being treated as a working alternative. Rigid zero-frequency translations must be handled separately, and unstable imaginary-frequency modes cannot be inserted into a stable thermal harmonic-oscillator prescription.</p>
+
+          <h2 id="propagation">7. Propagate the electrons, then specify the hopping approximation</h2>
+          <p>With \(a,b\) denoting band-and-k pairs, the fixed-basis coefficient equation is simply</p>
+          <div class="math-block">\[
+            i\hbar\dot C_a(t)=\sum_bH_{ab}(t)C_b(t).
+          \]</div>
+          <p>Compare this with the instantaneous adiabatic representation of Part II, whose coefficient propagation matrix is \(\epsilon_\alpha(t)\delta_{\alpha\beta}-i\hbar d_{\alpha\beta}(t)\). There the off-diagonal term arises from the moving basis. Here the basis is fixed and the displaced physical Hamiltonian has off-diagonal elements. Energy-valued \(g\) is not a numerical substitute for inverse-time NAC \(d\).</p>
+          <p>For complete representations of the same model and path, a time-dependent unitary basis transformation relates these two descriptions, including the moving-basis term. Actual calculations also differ through displacement truncation, nuclear paths, band windows, and hopping choices. Merely changing representation does not make those approximations equivalent.</p>
+          <p>Electronic propagation alone determines coherent amplitudes. Its outward population current is</p>
+          <div class="math-block">\[
+            \dot{|C_a|^2}=-\sum_{b\ne a}J_{a\to b},\qquad
+            J_{a\to b}=-\frac{2}{\hbar}
+                        {\rm Im}\!\left[C_a^{*}H_{ab}(t)C_b\right].
+          \]</div>
+          <p>A stochastic active-state scheme is an additional construction; <a href="hefeinamd-real-space-supercell-fssh.html#fssh">Part II</a> explains the fewest-switches surface-hopping (FSSH) idea. In this EPC source, <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/hamil.f90#L236-L287">electronic propagation uses the time-dependent matrix</a>, while <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/SurfHop.f90#L393-L473">the switching routine</a> also uses precomputed, broadened scattering weights built from squared EPC amplitudes, occupations, and energy matching, with a thermal acceptance factor. These weights are neither \(H_{ab}(t)\) itself nor a consequence forced by the basis transformation. The switching model must be assessed separately from the Hamiltonian construction.</p>
+          <p>The classical-path approximation (CPA) is another independent choice: the nuclei or mode coordinates follow a prescribed path without responding dynamically to the selected electronic excitation. It is not defined by the use of a fixed basis. In the inspected branch, accumulated phonon-excitation counts are separate from the coordinates driving \(H(t)\); reporting such counts does not establish feedback into the next nuclear step.</p>
+
+          <h2 id="diagnostic">8. A four-site check separates representation from truncation</h2>
+          <p>Continue Part II's four-site periodic model, with site index \(l=0,\ldots,3\) and Bloch index \(r=0,\ldots,3\). Use normalized plane waves and a nearest-neighbor reference Hamiltonian:</p>
+          <div class="math-block">\[
+            \langle l|r\rangle=\tfrac12e^{i\pi rl/2},\qquad
+            H^0_{rr'}=-2E_0\cos(\pi r/2)\delta_{rr'} .
+          \]</div>
+          <p>Let a prescribed dimensionless displacement travel through the ring, and define a linear on-site response:</p>
+          <div class="math-block">\[
+            x_l(t)=A\cos(\pi l/2-\omega t),\qquad
+            V_l^{(1)}(t)=\lambda x_l(t).
+          \]</div>
+          <p>The independent Fourier selection rule predicts</p>
+          <div class="math-block">\[
+            H^{(1)}_{r'r}(t)=H^0_{r'r}
+              +\frac{\lambda A}{2}
+                  \left[e^{-i\omega t}\delta_{r',r+1}
+                        +e^{i\omega t}\delta_{r',r-1}\right],
+          \]</div>
+          <p>with indices modulo four. A direct transformation of the real-space Hamiltonian gives the same matrix. For \(A=0.4\) and \(\lambda=0.4E_0\), the selected element is \(H_{1,0}=0.08E_0e^{-i\omega t}\).</p>
+          <figure>
+            <img src="../assets/img/hefeinamd-series/epc-hamiltonian-time.svg" alt="Real and imaginary parts of a time-dependent momentum-space coupling, with a constant absolute magnitude." loading="lazy" width="720" height="360">
+            <figcaption>The blue solid and orange dashed curves show the real and imaginary parts of \(H_{1,0}/E_0\); the green dotted line shows its magnitude. The horizontal axis is the dimensionless mode phase \(\omega t\). A real traveling displacement gives a complex, phase-dependent Bloch matrix element, while the complete Hamiltonian remains Hermitian. This is a Hamiltonian check, not a relaxation calculation.</figcaption>
+          </figure>
+          <p>Next give the toy electronic response a quadratic term, \(V_l^{\rm full}=\lambda x_l+\eta x_l^2\), with \(\eta=0.25E_0\). At \(t=0\), the operator-norm error from retaining only the linear term is</p>
+          <div class="math-block">\[
+            \|H_{\rm full}-H_{\rm linear}\|_2=|\eta|A^2 .
+          \]</div>
+          <figure>
+            <img src="../assets/img/hefeinamd-series/epc-linearization-error.svg" alt="Logarithmic plot showing a quadratic growth of Hamiltonian truncation error with displacement amplitude." loading="lazy" width="720" height="360">
+            <figcaption>Blue circles show the directly computed spectral-norm error in units of \(E_0\), and the orange dashed line is the analytic \(|\eta|A^2/E_0\). Both axes are logarithmic; the horizontal axis is the dimensionless displacement amplitude. Changing basis leaves this error intact. A denser k mesh cannot recover a term omitted from the electronic displacement expansion.</figcaption>
+          </figure>
+          <p>The <a href="../assets/code/hefeinamd_epc_hamiltonian.py">reproducible script</a> compares the two independent linear-Hamiltonian constructions over 201 phases. Their maximum entrywise discrepancy is below \(10^{-13}E_0\), and the fitted amplitude power of the quadratic truncation error is 2. The <a href="../assets/img/hefeinamd-series/epc-hamiltonian-time.csv">matrix-element time series</a>, <a href="../assets/img/hefeinamd-series/epc-linearization-error.csv">amplitude scan</a>, and <a href="../assets/img/hefeinamd-series/epc-hamiltonian-check.json">check summary</a> are available. Run <code>python assets/code/hefeinamd_epc_hamiltonian.py</code> with NumPy and Matplotlib. These checks validate the stated toy algebra and error law, not a material model, carrier lifetime, or the source program's hopping algorithm.</p>
+
+          <h2 id="workflow">9. Put the ingredients into a calculation</h2>
+          <p>A practical EPC workflow follows the dependencies of the Hamiltonian:</p>
+          <ol>
+            <li><strong>Choose the reference structure and electronic window.</strong> Compute the electronic states and establish the initial carrier state and observable.</li>
+            <li><strong>Compute lattice modes and electronic response.</strong> Density-functional perturbation theory (DFPT) provides harmonic modes and self-consistent perturbations. Wannier interpolation can then supply bands, phonons, and complex EPC matrix elements on finer compatible k/q grids.</li>
+            <li><strong>Define the nuclear preparation and path.</strong> Supply mode amplitudes and phases or a verified projection of an atomic trajectory. State the temperature, normalization, and feedback approximation.</li>
+            <li><strong>Construct and propagate \(H(t)\).</strong> Check momentum mapping, Hermiticity, band-window and grid convergence, the nuclear sampling interval, and the electronic integration step.</li>
+            <li><strong>Specify the statistical readout.</strong> Distinguish coherent populations from active-state occupations, state the switching and decoherence rules, and identify whether phonon quantities are prescribed coordinates or accumulated event statistics.</li>
+          </ol>
+          <p>The documented upstream chain for HefeiNAMD-EPC uses Quantum ESPRESSO, Wannier90, <code>qe2pert.x</code>, and a compatible patched Perturbo to prepare <code>*_ephmat_p*.h5</code> files for <code>namd-epc</code>. <a href="https://perturbo-code.github.io/mydoc_qe2pert.html">Perturbo's official interface guide</a> describes the intermediate <code>*_epr.h5</code> database; that database is not interchangeable with the EPC program's final matrix-element files. Wannier functions serve interpolation here; the carrier coefficients above are labelled by reference Bloch band and momentum.</p>
+          <p>The method is attractive when a periodic reference crystal and momentum-resolved scattering are central to the question. Large structural rearrangements, changing bonding, strong displacement dependence, or important nuclear feedback demand further modeling. In particular, replacing harmonic frequencies by a finite-temperature phonon spectrum does not by itself update the electronic derivatives or define the real-time nuclear ensemble.</p>
+          <p>The essential distinction from Part II is where the time-dependent electronic information comes from. The real-space route repeatedly evaluates instantaneous electronic states along nuclear configurations. The linear EPC route evaluates their reference response once, resolves it into modes, and multiplies that response by coordinates along a chosen path. Both routes still need the path, a converged state space, and a specified dynamical approximation.</p>
+
+          <h2 id="sources">Sources and further reading</h2>
+          <ul>
+            <li>Z. Zheng et al., <a href="https://doi.org/10.1038/s43588-023-00456-9"><em>Ab initio real-time quantum dynamics of charge carriers in momentum space</em></a>, Nature Computational Science 3, 532–541 (2023); <a href="https://arxiv.org/html/2210.00529v3">author manuscript</a>, especially Eqs. (5)–(11).</li>
+            <li><a href="https://docs.epw-code.org/Theory.html">EPW theory documentation</a>: Bloch normalization, phonon coordinates, self-consistent perturbations, and EPC conventions. The mass-weighted coordinate convention is stated explicitly in this article.</li>
+            <li><a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/tree/689c9521b634d1b1fe291c529703d1dd657763f1">HefeiNAMD-EPC source snapshot</a>, commit <code>689c952</code>: implementation statements above refer to this version, rather than every program called momentum-space NAMD.</li>
+            <li><a href="https://perturbo-code.github.io/mydoc_qe2pert.html">Quantum ESPRESSO to Perturbo</a> and <a href="https://perturbo-code.github.io/mydoc_interpolation.html">interpolation of bands, phonons, and EPC matrix elements</a>.</li>
+            <li><a href="mqc-background.html#nac-formulas">NAC and moving-basis foundations</a>; <a href="hefeinamd-real-space-supercell-fssh.html">Part II's real-space construction and FSSH</a>.</li>
+          </ul>
+          <section class="series-footer" aria-labelledby="hefeinamd-series-map">
+            <h2 id="hefeinamd-series-map">HefeiNAMD series map</h2>
+            <ol class="series-list" start="0">
+              <li><a href="hefeinamd-training-hands-on-workflow.html">Part 0: How to Prepare a HefeiNAMD Training</a> — the workshop workflow, prepared data, and rehearsal.</li>
+              <li><a href="hefeinamd-nac-crystal-momentum.html">Part I: When Does Inter-k NAC Vanish?</a> — the problem, its symmetry condition, and its physical scope.</li>
+              <li><a href="hefeinamd-real-space-supercell-fssh.html">Part II: Supercells, NAC, and Surface Hopping</a> — folding, nuclear trajectories, overlap-based NAC, and FSSH.</li>
+              <li><a href="hefeinamd-epc-hamiltonian.html">Part III: The EPC Route to Carrier Dynamics</a> — reference states, linear response, mode coordinates, and the time-dependent Hamiltonian.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="hefeinamd-real-space-supercell-fssh.html">&lt;- Part II: Real-Space NAMD</a><a href="../series.html?series=hefeinamd">HefeiNAMD series</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
