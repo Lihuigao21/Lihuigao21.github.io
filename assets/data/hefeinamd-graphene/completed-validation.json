@@ -1,0 +1,56 @@
+{
+  "state": "completed",
+  "complete_finite_original_outputs": true,
+  "numerical_gate_passed": false,
+  "scope": "Published subset of the completed run validation; not a new audit.",
+  "files": [
+    {
+      "file": "SHPROP.194",
+      "sha256": "055747d8ad983a9a81c440f2e0602b60ee71c32cdc0ebad20558e8dbdb932beb"
+    },
+    {
+      "file": "SHPROP.20",
+      "sha256": "44a9ca5eb718033a00d62274c447c2f3500f3e5a518d01b040b2af2e5de6ce60"
+    },
+    {
+      "file": "SHPROP.14",
+      "sha256": "febc32ac0addef466f41d00878515dc66bd2880439fad0d0b013594a32835fd7"
+    },
+    {
+      "file": "PSICT.194",
+      "sha256": "71a3e0d0eb3a703efceee6da2fdb0f3a5a5942ab9c57095e04fadb9d070e4901"
+    },
+    {
+      "file": "PSICT.20",
+      "sha256": "1d534700cac8f30e2ee66950a7dd72f6bae87ddcf79d56ad27445e5035c79a13"
+    },
+    {
+      "file": "PSICT.14",
+      "sha256": "e1700e3bd470127db0fc3fb7bb38e7c2939ca044374d4f87d72ed4860a52f045"
+    },
+    {
+      "file": "PHPROP.1",
+      "sha256": "e8e20909bc088dd4611ff54b8b004f2b1dfaf6c90d00a24c6bd414b32e8699b9"
+    },
+    {
+      "file": "PHPROP.2",
+      "sha256": "a1d5a20f1a4ef4f0f61bc299e3fc574923c950b882ea3419babf247d93efdd4c"
+    },
+    {
+      "file": "PHPROP.3",
+      "sha256": "5db907e8a2a5d19767ce6a9396d31f91cd323aa0b0c540a0e2699f30635e9c62"
+    },
+    {
+      "file": "PHPROP.4",
+      "sha256": "903850ba08795b985845e4b153628691765a90b5305a29de58386adff4cdb125"
+    },
+    {
+      "file": "PHPROP.5",
+      "sha256": "f591cd3b862cececd6c01e4f4f4026d7ad32ad98494066ab3dd05b360fe7b402"
+    },
+    {
+      "file": "PHPROP.6",
+      "sha256": "c0870b765c0d5d79993873d9cfef7e0528ec94f8b994ec85ce043a95a1908deb"
+    }
+  ]
+}

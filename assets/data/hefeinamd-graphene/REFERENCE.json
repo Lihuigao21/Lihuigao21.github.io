@@ -1,0 +1,22 @@
+{
+  "ppt_sha256": "1969a7289a0a674fc50d4b5091c0555e4ee6753415c2aac5b392b2a0dd373fb3",
+  "assets": [
+    {
+      "slide": 34,
+      "entry": "ppt/media/image76.png",
+      "saved": "image76.png",
+      "bytes": 390420,
+      "sha256": "9d3496dc9a1870fd83d750029fc1d8f5e613c42b5486e7e2c4a3441179e3dfa8",
+      "image_processing": "none; original embedded bytes"
+    },
+    {
+      "slide": 34,
+      "entry": "ppt/media/image77.png",
+      "saved": "image77.png",
+      "bytes": 108829,
+      "sha256": "528ddeccb72d276a21679b3b311896fc834f114a2525a3b03de914d61ef610ee",
+      "image_processing": "none; original embedded bytes"
+    }
+  ],
+  "scope": "Figure images; no raw numeric reference or error tolerance"
+}

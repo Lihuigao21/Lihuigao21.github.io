@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Construct the EPC Hamiltonian, then compare method choice, Hamiltonians, hopping rules, and finite-temperature phonon extensions in a four-question FAQ.">
+    <meta name="description" content="Construct the EPC Hamiltonian, work through the official graphene tutorial, and compare method choice, hopping rules, and finite-temperature phonons in the FAQ.">
     <title>HefeiNAMD III: The EPC Route to Carrier Dynamics | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
@@ -181,38 +181,68 @@
           <p>A stochastic active-state scheme is an additional construction; <a href="hefeinamd-real-space-supercell-fssh.html#fssh">Part II</a> explains the fewest-switches surface-hopping (FSSH) idea. In this EPC source, <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/hamil.f90#L236-L287">electronic propagation uses the time-dependent matrix</a>, while <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/SurfHop.f90#L393-L473">the switching routine</a> also uses precomputed, broadened scattering weights built from squared EPC amplitudes, occupations, and energy matching, with a thermal acceptance factor. These weights are neither \(H_{ab}(t)\) itself nor a consequence forced by the basis transformation. The switching model must be assessed separately from the Hamiltonian construction.</p>
           <p>The classical-path approximation (CPA) is another independent choice: the nuclei or mode coordinates follow a prescribed path without responding dynamically to the selected electronic excitation. It is not defined by the use of a fixed basis. In the inspected branch, accumulated phonon-excitation counts are separate from the coordinates driving \(H(t)\); reporting such counts does not establish feedback into the next nuclear step.</p>
 
-          <h2 id="diagnostic">8. A four-site check separates representation from truncation</h2>
-          <p>Consider a four-site periodic model, with site index \(l=0,\ldots,3\) and Bloch index \(r=0,\ldots,3\). Use normalized plane waves and a nearest-neighbor reference Hamiltonian:</p>
+          <h2 id="diagnostic">8. Hands-on: the official graphene tutorial</h2>
+          <p>The authors' <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/tutorials/Training_202406_WSZhu.pptx">June 2024 training slides, pp. 21–35</a>, turn the construction above into a concrete question: how does an electron initially about 1 eV above the graphene band reference lose energy, and which phonon branches receive it? This section follows that example and compares an existing run with the original figures on slide 34. It uses the full tutorial grid and inputs, rather than a reduced demonstration.</p>
+
+          <h3 id="graphene-data">8.1 Start from the supplied first-principles data</h3>
+          <p>The complete upstream chain is a Quantum ESPRESSO electronic calculation, density-functional perturbation theory for phonons, Wannierization, and <code>qe2pert.x</code>. The resulting <code>graphene_epr.h5</code> contains the information needed for subsequent interpolation. For this run, that stage was reused from <a href="https://perturbo-code.github.io/mydoc_org.html">Perturbo's official example outputs</a>, under <code>example05-graphene-2d/qe2pert/References</code>. The corresponding SCF, NSCF, Wannier, and pseudopotential inputs were checked against the NAMD example; phonon inputs differ only in task splitting. No new SCF or DFPT calculation was performed here.</p>
+          <p>An EPR file is the input to interpolation, not yet the collection of dense-grid EPC matrices consumed by NAMD. The reference setup uses a 90 Ry plane-wave cutoff, a \(60\times60\times1\) SCF grid, a \(36\times36\times1\) NSCF grid, an \(18\times18\times1\) phonon grid, and two Wannier functions. Reusing matching inputs and metadata does not establish that this public EPR is the same binary file used by the NAMD authors, or revalidate every upstream convergence choice.</p>
+
+          <h3 id="graphene-epc">8.2 Interpolate the bands, phonons, and EPC matrices</h3>
+          <p>Use the <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/tree/689c9521b634d1b1fe291c529703d1dd657763f1/patch/2.1.0">authors' Perturbo patch</a> to write <code>graphene_ephmat_p*.h5</code> in <code>calc_mode='ephmat'</code>. The final electronic and phonon meshes are both \(90\times90\times1\): 8100 k points and 8100 q points. The author's point-generation script divides the <em>k list</em> into seven parts, \(1200\times6+900\); each part retains the full 8100-point q list. Using two MPI pools per part produces fourteen HDF5 files. Preserve the part/pool order when mapping them into the NAMD input directory.</p>
+          <p>The EPC interpolation includes bands 1–2 and uses <code>phfreq_cutoff=0.625</code> meV. NAMD separately applies its unchanged default <code>PHCUT=0.001</code> eV. These are two stages' cutoffs, not interchangeable spellings of one setting. The patched calculation also writes ASCII output; the full existing matrix output occupies about 64 GB. Only the compact inputs and result curves are attached here.</p>
+          <p>The successful run used <code>NAMDinMomentumSpace@689c952</code> without changes to its physical source, and Perturbo source recovered from the Git history in an official Docker image (commit <code>ec230a7e0a816dc40c222439b163e824c99646d6</code>), with the unedited author patch. The tutorial requests Perturbo 2.1.0; the precise identity of that release was not established for this build. This distinction limits claims about reproducing the original software environment.</p>
+
+          <h3 id="graphene-propagation">8.3 Keep the tutorial's propagation inputs</h3>
+          <p>Place the fourteen matrices in <code>h5files/</code>, retain the original <a href="../assets/data/hefeinamd-graphene/inp"><code>inp</code></a>, and use the three initial conditions transcribed from slide 31 in <a href="../assets/data/hefeinamd-graphene/INICON"><code>INICON</code></a>. Each line gives the starting nuclear-time index (1 fs spacing here), the original k-point index, and the band index. The k index is not the position in the reduced, energy-sorted electronic basis.</p>
+          <pre><code>194 2458 2
+20 2467 2
+14 3268 2</code></pre>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th scope="col">Input</th><th scope="col">Tutorial setting used</th><th scope="col">Role</th></tr></thead>
+              <tbody>
+                <tr><td><code>BMIN/BMAX</code>, <code>EMIN/EMAX</code></td><td>1–2; −4.6 to −3.5 eV</td><td>Retains 274 reference Bloch states from the dense mesh</td></tr>
+                <tr><td><code>TEMP</code>, <code>EPCTYPE</code></td><td>300 K; 1</td><td>Temperature-dependent mode amplitudes and prescribed harmonic evolution</td></tr>
+                <tr><td><code>POTIM</code>, <code>NAMDTIME</code></td><td>1 fs; 2000 fs</td><td>Nuclear-coordinate step and 2 ps propagation interval</td></tr>
+                <tr><td><code>NELM</code></td><td>1000</td><td>Electronic substeps per 1 fs: 0.001 fs per substep</td></tr>
+                <tr><td><code>NTRAJ</code>, <code>NSAMPLE</code></td><td>10000; 3</td><td>Hopping trajectories per initial sample; three starting samples</td></tr>
+                <tr><td><code>SIGMA</code>, <code>NPARTS</code></td><td>0.025 eV; 14</td><td>Scattering-weight broadening; number of EPC matrix files</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The remaining original entries, including <code>Np=8100</code> and <code>NSW=2200</code>, are retained in the downloadable input. Following the <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/README.md">author's compilation and execution instructions</a>, run <code>namd-epc</code> from the directory containing these inputs and matrices. The existing calculation used 28 MPI ranks. At runtime, the program builds the harmonic coordinates and \(H_e(t)\), propagates electronic amplitudes, and samples the implemented hopping rule. This example uses a prescribed phonon path; it does not run an atomistic MD or PIMD trajectory.</p>
+
+          <h3 id="graphene-results">8.4 Read the same observables as the tutorial</h3>
+          <p>The electron plot uses the active-state populations in the three <code>SHPROP.*</code> files, averaged with equal weight. With \(a=(n,\mathbf k)\), the blue curve is the mean <em>reference band energy</em>:</p>
           <div class="math-block">\[
-            \langle l|r\rangle=\tfrac12e^{i\pi rl/2},\qquad
-            H^0_{rr'}=-2E_0\cos(\pi r/2)\delta_{rr'} .
+            \overline E_{\mathrm{SH}}(t)-E_{\mathrm{ref}}
+              =\sum_a P_a^{\mathrm{SH}}(t)\epsilon_a^0-E_{\mathrm{ref}},
+            \qquad E_{\mathrm{ref}}=-4.5302\ {\rm eV}.
           \]</div>
-          <p>Let a prescribed dimensionless displacement travel through the ring, and define a linear on-site response:</p>
-          <div class="math-block">\[
-            x_l(t)=A\cos(\pi l/2-\omega t),\qquad
-            V_l^{(1)}(t)=\lambda x_l(t).
-          \]</div>
-          <p>The independent Fourier selection rule predicts</p>
-          <div class="math-block">\[
-            H^{(1)}_{r'r}(t)=H^0_{r'r}
-              +\frac{\lambda A}{2}
-                  \left[e^{-i\omega t}\delta_{r',r+1}
-                        +e^{i\omega t}\delta_{r',r-1}\right],
-          \]</div>
-          <p>with indices modulo four. A direct transformation of the real-space Hamiltonian gives the same matrix. For \(A=0.4\) and \(\lambda=0.4E_0\), the selected element is \(H_{1,0}=0.08E_0e^{-i\omega t}\).</p>
+          <p>The plotting reference comes from the author's graphene <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/example/perturbo/bands/bandplt_pert.py">band-plotting script</a>. This observable is not the instantaneous eigenvalue of \(H_e(t)\), nor the full electron–nuclear energy. The <code>PHPROP.*</code> energy columns contain signed increments over successive 2 fs intervals. Sum them along time to obtain the cumulative net energy assigned to each phonon branch. These files already include the program's average over the three starting samples; dividing by three again would be incorrect.</p>
           <figure>
-            <img src="../assets/img/hefeinamd-series/epc-hamiltonian-time.svg" alt="Real and imaginary parts of a time-dependent momentum-space coupling, with a constant absolute magnitude." loading="lazy" width="720" height="360">
-            <figcaption>The blue solid and orange dashed curves show the real and imaginary parts of \(H_{1,0}/E_0\); the green dotted line shows its magnitude. The horizontal axis is the dimensionless mode phase \(\omega t\). A real traveling displacement gives a complex, phase-dependent Bloch matrix element, while the complete Hamiltonian remains Hermitian. This is a Hamiltonian check, not a relaxation calculation.</figcaption>
+            <a href="../assets/img/hefeinamd-series/graphene-tutorial-comparison.png"><img src="../assets/img/hefeinamd-series/graphene-tutorial-comparison.png" alt="Original graphene tutorial figures on the left and the existing full-grid run on the right, showing electron cooling and branch-resolved phonon energy." loading="lazy" width="3190" height="2200"></a>
+            <figcaption>Graphene, 300 K, 2 ps. Left: original embedded figures from slide 34 of the authors' June 2024 training slides. Right: the existing run, plotted with the author's unmodified <code>plot_tdprop</code> and <code>plot_tdphen</code> functions. In the top row, the horizontal axis is time in fs; the vertical axis is reference band energy relative to −4.5302 eV; the logarithmic color scale gives active-state population, and blue gives its mean band energy. In the bottom row, the thickness of each colored region gives the cumulative net energy in that branch, in eV; the total is the top boundary. Red is branch 6 and orange is branch 5. The cooling trend and dominant branch agree visually. No reference curve was digitized or fitted. Open the image for full resolution.</figcaption>
           </figure>
-          <p>Next give the toy electronic response a quadratic term, \(V_l^{\rm full}=\lambda x_l+\eta x_l^2\), with \(\eta=0.25E_0\). At \(t=0\), the operator-norm error from retaining only the linear term is</p>
-          <div class="math-block">\[
-            \|H_{\rm full}-H_{\rm linear}\|_2=|\eta|A^2 .
-          \]</div>
-          <figure>
-            <img src="../assets/img/hefeinamd-series/epc-linearization-error.svg" alt="Logarithmic plot showing a quadratic growth of Hamiltonian truncation error with displacement amplitude." loading="lazy" width="720" height="360">
-            <figcaption>Blue circles show the directly computed spectral-norm error in units of \(E_0\), and the orange dashed line is the analytic \(|\eta|A^2/E_0\). Both axes are logarithmic; the horizontal axis is the dimensionless displacement amplitude. Changing basis leaves this error intact. A denser k mesh cannot recover a term omitted from the electronic displacement expansion.</figcaption>
-          </figure>
-          <p>The <a href="../assets/code/hefeinamd_epc_hamiltonian.py">reproducible script</a> compares the two independent linear-Hamiltonian constructions over 201 phases. Their maximum entrywise discrepancy is below \(10^{-13}E_0\), and the fitted amplitude power of the quadratic truncation error is 2. The <a href="../assets/img/hefeinamd-series/epc-hamiltonian-time.csv">matrix-element time series</a>, <a href="../assets/img/hefeinamd-series/epc-linearization-error.csv">amplitude scan</a>, and <a href="../assets/img/hefeinamd-series/epc-hamiltonian-check.json">check summary</a> are available. Run <code>python assets/code/hefeinamd_epc_hamiltonian.py</code> with NumPy and Matplotlib. These checks validate the stated toy algebra and error law, not a material model, carrier lifetime, or the source program's hopping algorithm.</p>
+          <p>The run's mean active-state band energy falls from 1.01648 to 0.04048 eV relative to the plotting reference. At 2 ps, the cumulative net phonon energy is 1.00892 eV, including 0.89251 eV in branch 6 and 0.10376 eV in branch 5. This example therefore shows both electronic relaxation across the retained Bloch states and a strongly unequal distribution among phonon branches.</p>
+          <p>The <a href="../assets/img/hefeinamd-series/graphene-author-electron.png">original electron figure</a>, <a href="../assets/img/hefeinamd-series/graphene-author-phonon.png">original phonon figure</a>, <a href="../assets/img/hefeinamd-series/graphene-run-electron.png">run electron figure</a>, and <a href="../assets/img/hefeinamd-series/graphene-run-phonon.png">run phonon figure</a> are also available separately. The author figures retain their embedded image bytes. The run curves retain all 2001 electronic times at 1 fs spacing and all 1001 phonon times at 2 fs spacing, without interpolation or resampling: download the <a href="../assets/data/hefeinamd-graphene/electronic-energy.csv">electronic CSV</a> and <a href="../assets/data/hefeinamd-graphene/phonon-energy.csv">phonon CSV</a>.</p>
+
+          <h3 id="graphene-interpretation">8.5 Keep the estimator and validation limits visible</h3>
+          <p><code>PSICT.*</code> contains populations from the continuously propagated amplitudes, whereas <code>SHPROP.*</code> counts active hopping states. They are distinct estimators in this implementation. At 2 ps their mean reference band energies are approximately 0.70861 and 0.04048 eV, respectively. Substituting <code>PSICT</code> for <code>SHPROP</code> would change the result being compared with the tutorial.</p>
+          <details>
+            <summary>Show the two electronic estimators and the phonon-energy curves</summary>
+            <figure>
+              <a href="../assets/img/hefeinamd-series/graphene-tutorial-observables.png"><img src="../assets/img/hefeinamd-series/graphene-tutorial-observables.png" alt="Active-state and continuous-amplitude mean band energies differ, while the cumulative phonon energy is dominated by branch 6." loading="lazy" width="1820" height="1848"></a>
+              <figcaption>Existing-run data at all native time points. Top: time in fs versus mean band energy relative to the author's reference, in eV; blue is the active-state estimator and orange is the continuous-amplitude estimator. Bottom: cumulative net phonon energy, in eV, stacked by branches 1–6 using the legend colors. The difference between the two electronic curves is far larger than the small numerical norm drift and cannot be explained by that drift.</figcaption>
+            </figure>
+          </details>
+          <p>The maximum continuous-amplitude norm deviation was \(2.5818\times10^{-5}\), above an additional \(10^{-5}\) diagnostic chosen for this run; this threshold is not an author-specified tolerance. Original outputs and <code>NELM</code> were retained without renormalization. Also, the active-state band-energy loss is 0.97599 eV, about 0.03292 eV less than the cumulative phonon energy. With broadened channel assignments and prescribed phonon motion, these plots do not establish strict total-energy conservation or nuclear feedback.</p>
+          <p>The full-grid, original-parameter run and the visual comparison are complete. The tutorial does not supply reference curve arrays, a fixed random seed, or a numerical agreement tolerance, so pointwise numerical reproduction is not certified. Mesh, timestep, and sampling convergence were not established by this comparison. These limits are separate from successfully executing the example.</p>
+          <p>For the underlying analysis, see the author's <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/scripts/postnamd.py">output reader</a> and <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/scripts/namdplt.py">plotting functions</a>. The <a href="../assets/code/hefeinamd_graphene_postprocess.py">archived postprocessor used for the comparison</a> requires the full NAMD outputs and the specified author sources; its <a href="../assets/data/hefeinamd-graphene/README.txt">input layout and scope</a> are documented separately. The compact <a href="../assets/code/hefeinamd_graphene_check.py">CSV consistency check</a> runs on the published files alone:</p>
+          <pre><code>python assets/code/hefeinamd_graphene_check.py</code></pre>
+          <p>It recomputes the quoted endpoint energies and checks time grids, the plotting offset, and the accumulated phonon increments. It performs no new dynamics and supplies no missing reference-data or convergence test.</p>
+
 
           <h2 id="workflow">9. Put the ingredients into a calculation</h2>
           <p>A practical EPC workflow follows the dependencies of the Hamiltonian:</p>
