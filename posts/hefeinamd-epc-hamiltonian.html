@@ -285,7 +285,30 @@
 
           <h3 id="faq-hamiltonians">Q2. How do the electronic Hamiltonians differ?</h3>
           <p><strong>Real-space NAMD uses a moving electronic basis; EPC uses a fixed reference basis and an approximate displaced electronic operator.</strong> “Adiabatic versus diabatic-like” describes the representation, but it does not describe all the approximations.</p>
-          <p>In instantaneous orthonormal adiabatic KS states, the physical electronic operator is diagonal. The coefficient equation also contains the motion of those basis states:</p>
+          <p>The key is whether the basis itself changes with time. In a fixed diabatic basis, only the expansion coefficients change, so the physical Hamiltonian matrix directly propagates them. In a moving adiabatic basis, both the coefficients and the basis states change. To see where the extra term comes from, expand the electronic state in an orthonormal basis:</p>
+          <div class="math-block">\[
+            |\Psi(t)\rangle=\sum_b c_b(t)|\phi_b(t)\rangle,
+            \qquad
+            \frac{d|\Psi\rangle}{dt}
+              =\sum_b\dot c_b|\phi_b\rangle
+                 +\sum_b c_b|\dot\phi_b\rangle .
+          \]</div>
+          <p>Insert this derivative into \(i\hbar\,d|\Psi\rangle/dt=\hat H_e(t)|\Psi\rangle\) and project onto \(\langle\phi_a(t)|\). Moving the basis-derivative term to the right gives</p>
+          <div class="math-block">\[
+            i\hbar\dot c_a
+              =\sum_b\left[
+                \underbrace{\langle\phi_a|\hat H_e|\phi_b\rangle}_{H_{ab}(t)}
+                -i\hbar\underbrace{\langle\phi_a|\dot\phi_b\rangle}_{d_{ab}(t)}
+              \right]c_b .
+          \]</div>
+          <p>Thus the <em>coefficient propagation matrix</em> is \(G=H-i\hbar d\): it accounts for both the physical Hamiltonian and the changing basis. The second term is required by the product rule; it does not add a new physical interaction. A fixed vector can likewise have changing components when the coordinate axes rotate.</p>
+          <p>For instantaneous adiabatic KS states, \(\hat H_e(t)|\phi_\beta(t)\rangle=\epsilon_\beta(t)|\phi_\beta(t)\rangle\), so the physical Hamiltonian matrix is diagonal:</p>
+          <div class="math-block">\[
+            H^{\rm ad}_{\alpha\beta}(t)
+              =\langle\phi_\alpha|\hat H_e(t)|\phi_\beta\rangle
+              =\epsilon_\alpha(t)\delta_{\alpha\beta}.
+          \]</div>
+          <p>The matrix that propagates the coefficients nevertheless contains the basis-motion contribution:</p>
           <div class="math-block">\[
             i\hbar\dot c_\alpha=\sum_\beta G^{\rm ad}_{\alpha\beta}c_\beta,
             \qquad
@@ -295,8 +318,8 @@
             \qquad
             d_{\alpha\beta}=\langle\phi_\alpha|\partial_t\phi_\beta\rangle .
           \]</div>
-          <p>Here \(G^{\rm ad}\) is the <em>coefficient propagation matrix</em>, not just the matrix of the instantaneous physical Hamiltonian. The NAC term has units of inverse time; multiplication by \(-i\hbar\) gives an energy. Energies and wavefunction changes come from the sampled geometries, so this construction does not impose a first-order expansion in nuclear displacement. It still inherits electronic-structure, trajectory, finite-size, and retained-state errors.</p>
-          <p>In EPC's fixed reference Bloch basis, \(a,b\) label band-and-k pairs. With \(I\) collecting atomic displacement coordinates, the same coefficient equation instead uses</p>
+          <p>The off-diagonal NAC term transfers amplitude between instantaneous adiabatic states. It has units of inverse time; multiplication by \(-i\hbar\) gives an energy. Energies and wavefunction changes come from the sampled geometries, so this construction does not impose a first-order expansion in nuclear displacement. It still inherits electronic-structure, trajectory, finite-size, and retained-state errors.</p>
+          <p>In EPC's fixed reference Bloch basis, \(\partial_t|a;0\rangle=0\), so there is no basis-motion term: \(G^{\rm fixed}=H^{\rm fixed}\). The coupling caused by nuclear motion instead appears in the time-dependent off-diagonal Hamiltonian elements. This is the precise sense in which a fixed diabatic-like basis needs only the electronic Hamiltonian to propagate the coefficients; the decisive condition is that the basis is fixed, rather than its label alone. Here \(a,b\) label band-and-k pairs. With \(I\) collecting atomic displacement coordinates, the linear EPC approximation gives</p>
           <div class="math-block">\[
             i\hbar\dot C_a=\sum_bH^{\rm EPC}_{ab}(t)C_b,
             \qquad
