@@ -35,7 +35,6 @@
               <li><a href="#silicon">Published case: nonthermal melting of silicon</a></li>
               <li><a href="#perovskites">Published case: perovskite rotations and electronic structure</a></li>
               <li><a href="#assessment">How to assess an MD trajectory</a></li>
-              <li><a href="#phonon-analysis">What phonon fitting can establish</a></li>
               <li><a href="#sources">Sources, figures, and diagnostic code</a></li>
             </ol>
           </nav>
@@ -238,46 +237,16 @@
           <p>For VASP, inspect actual forces and electronic convergence rather than relying on normal termination. At the NVT-to-NVE handoff, retain the real positions and velocities and verify their units and restart semantics. Check conserved-energy behavior over a meaningful production window; a short oscillatory segment can have a misleading fitted slope. The <a href="https://www.vasp.at/tutorials/latest/md/part1/">official MD tutorial</a> supplies the implementation context. Thermostat-generated time correlations need their own justification because a thermostat can alter dynamics even when it preserves equilibrium sampling.</p>
           <p>Thus “primitive-cell NVT is incorrect” is usually too imprecise. A more useful conclusion names the failure: incorrect sampling of the finite Hamiltonian, insufficient statistics, numerical force/integration error, or a finite-cell bias in a specified observable relative to its bulk limit.</p>
 
-          <h2 id="phonon-analysis">7. What our phonon attempts established</h2>
-          <p>The same session also tested direct velocity spectra and finite-temperature force fitting. These answer different questions: the first describes motion actually present in a finite trajectory; the second estimates an effective force model and needs predictive validation.</p>
-          <h3 id="tio2-spectra">Velocity spectra: the missing motion is visible</h3>
-          <p>The historical three NVE trajectories provide about 0.5 ps of data each. Their native spectral spacing is approximately 2 THz, so narrow frequency shifts or phonon lifetimes are not resolved. The 162-atom trajectory's primitive-Gamma projection carries only 2.35% of the total spectral weight with a Hann window, or 2.46% with a rectangular window; most of the observed motion is at finite primitive q. This is a measurement for this trajectory, not a universal mode-count fraction.</p>
-          <figure>
-            <a href="../assets/img/md-supercell-observables/tio2-vibrational-comparison.png"><img src="../assets/img/md-supercell-observables/tio2-vibrational-comparison.png" alt="Historical TiO2 velocity spectra, common Gamma projections, projected velocity correlations and sensitivity of effective force-fit frequencies." loading="lazy"></a>
-            <figcaption>Figure 7. Existing 0.5 ps TiO₂ NVE analysis, separate from the later dual-seed test. Blue: primitive electronic Gamma, about 205 K; orange: primitive electronic 3×3×3, about 339 K; green: 162-atom electronic Gamma, about 311 K. Top: unit-area total and common nuclear-Gamma kinetic-power spectra in THz⁻¹. Bottom left: normalized Gamma-projected velocity correlation. Bottom right: full-window fitted frequencies (ticks) and half-window values (dots) from the initial force model. These fitted values failed the predictive checks below and are diagnostic frequencies, not accepted phonons.</figcaption>
-          </figure>
-          <p>A primitive trajectory constrains the Gamma force block, which combines real-space interactions. Schematically, with mass factors absorbed into \(\Phi\),</p>
-          <div class="math-block">\[
-            D(\mathbf q)=\sum_{\mathbf R}\Phi(\mathbf R)e^{i\mathbf q\cdot\mathbf R},
-            \qquad D(\mathbf 0)=\sum_{\mathbf R}\Phi(\mathbf R).
-          \]</div>
-          <p>Knowing that sum does not identify its separate spatial terms. A fit or interpolation requires additional spatial information and model assumptions; it does not create nuclear motion absent from the sampled cell.</p>
-          <h3 id="tio2-force-fits">Short trajectories were only part of the fitting problem</h3>
-          <p>The initial custom, mass-weighted Gamma-force regression had full-window R² around 0.93 for the primitive \(3^3\) and supercell-projected data, yet continuous-half holdout prediction failed. Adding the parent-rutile point-group constraint directly to the fitted parameter space changed the result:</p>
-          <div class="table-scroll">
-            <table>
-              <thead><tr><th>Historical trajectory</th><th>Initial holdout R², forward / reverse</th><th>Symmetry-constrained holdout R²</th></tr></thead>
-              <tbody>
-                <tr><td>Primitive electronic \(3^3\)</td><td>−0.928 / −9.841</td><td>0.842 / 0.862</td></tr>
-                <tr><td>Supercell nuclear-Gamma projection</td><td>−3.385 / −4.026</td><td>0.865 / 0.862</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p>The same trajectories now generalized much better, so “NVE was too short” was not a sufficient explanation. This diagnostic uses a mass-weighted force objective and a parent-phase curvature assumption; it is not the default official-TDEP Cartesian objective. Window sensitivity and non-negligible residual forces remain.</p>
-          <p>Official real-space TDEP fits on the later supercell NVT windows then tested transfer between the two seeds. At a 3.5 Å cutoff, including the full long-range polar force treatment lowered held-out Cartesian force RMSE from 0.3856/0.3828 to 0.2982/0.3013 eV/Å, about 21–23%. All 27 compatible q points lacked significant imaginary modes in those models. Yet this was one cutoff: on the old NVE data, changing the polar-model cutoff from 3.5 to 4.3 Å still changed sorted frequencies by RMS 0.860 THz. Neither cross-seed agreement nor positive frequencies certified convergence.</p>
-          <p>An sTDEP pilot also evaluated eight independent configurations drawn from an artificial 300 K harmonic model. A 4.3 Å real-space fit reached pooled held-out force RMSE near 0.193 eV/Å, but retained 12 non-Gamma imaginary-frequency channels despite a stable Gamma block. It was not a self-consistent thermal model. Such an IFC cannot be used directly as a classical harmonic Gaussian covariance without an explicit, justified treatment of its unstable directions.</p>
-          <p>The session therefore established useful repairs—symmetry constraints, spatially shared interactions and long-range polar forces—while leaving sampling, cutoff and finite-temperature phonon convergence unresolved. Increasing the number of closely spaced frames alone would not address all of these problems. No converged dispersion, linewidth or lifetime is claimed here.</p>
-
           <h2 id="sources">Sources, figures, and diagnostic code</h2>
           <ul>
             <li id="ref-silicon">A. Corradini, G. Marini, and M. Calandra, <a href="https://doi.org/10.1038/s41524-025-01614-5"><em>Scalable machine learning approach to light induced order disorder phase transitions with ab initio accuracy</em></a>, npj Computational Materials 11, 151 (2025). Practical results: Figs. 11–12; phonon mechanism: Figs. 3–4. <a href="https://doi.org/10.1038/s41524-025-01748-6">The author correction</a> replaces Fig. 7. <a href="https://zenodo.org/records/14916551">Author code, GAP potentials, and data</a>.</li>
             <li id="ref-perovskites">X.-G. Zhao, Z. Wang, O. I. Malyi, and A. Zunger, <a href="https://doi.org/10.1016/j.mattod.2021.05.021"><em>Effect of static local distortions vs. dynamic motions on the stability and band gaps of cubic oxide and halide perovskites</em></a>, Materials Today 49, 107–122 (2021). The cell-symmetry case includes the original published Fig. 1, with attribution above; it is a static comparison.</li>
             <li>G. Bussi, D. Donadio, and M. Parrinello, <a href="https://doi.org/10.1063/1.2408420"><em>Canonical sampling through velocity rescaling</em></a>, Journal of Chemical Physics 126, 014101 (2007): canonical kinetic-energy fluctuations.</li>
-            <li><a href="https://www.vasp.at/tutorials/latest/md/part1/">VASP molecular-dynamics tutorial</a>; related local notes on <a href="pimd-nvt-gle-piglet.html">thermostats and ring-polymer sampling</a>, <a href="hefeinamd-nac-crystal-momentum.html">translation symmetry and nuclear motion</a>, and <a href="hefeinamd-epc-hamiltonian.html#faq-finite-temperature-phonons">finite-temperature phonon workflows</a>. Ring-polymer temperature estimators are distinct from the classical Cartesian estimator used here.</li>
+            <li><a href="https://www.vasp.at/tutorials/latest/md/part1/">VASP molecular-dynamics tutorial</a>; related local notes on <a href="pimd-nvt-gle-piglet.html">thermostats and ring-polymer sampling</a> and <a href="hefeinamd-nac-crystal-momentum.html">translation symmetry and nuclear motion</a>. Ring-polymer temperature estimators are distinct from the classical Cartesian estimator used here.</li>
             <li><a href="../assets/code/md-size-diagnostics.py">Download the analytic diagnostic and figure script</a> and run <code>python assets/code/md-size-diagnostics.py</code> from the website repository. It evaluates the canonical-width table and exact diagonal-cell compatibility conditions. With Matplotlib installed, add <code>--figures</code> to render the canonical distribution and silicon scalar-summary figures. The <a href="../assets/img/md-supercell-observables/silicon-published-values.json">published scalar values and definitions</a> are supplied separately. The script does not run MD or reproduce either material study.</li>
             <li><a href="../assets/img/md-supercell-observables/tio2-session-results.json">Download the TiO₂ session result tables and definitions</a>; <a href="../assets/img/md-supercell-observables/tio2-gap-correlations.csv">all 28 computed NVE window-correlation curves</a>. The result tables identify original source-table byte hashes. The earlier three-scheme protocol and later Langevin dual-seed protocol remain separate.</li>
           </ul>
-          <p>Figure 1 is analytic. Figures 2–4 and 7 preserve results of the existing TiO₂ calculations. Figure 5 is new artwork summarizing explicitly reported silicon values; the original time traces remain in the paper. Figure 6 is the unchanged published perovskite figure. The literature studies were not reproduced, and none of these results establishes infinite-size convergence for TiO₂.</p>
+          <p>Figure 1 is analytic. Figures 2–4 preserve results of the existing TiO₂ calculations. Figure 5 is new artwork summarizing explicitly reported silicon values; the original time traces remain in the paper. Figure 6 is the unchanged published perovskite figure. The literature studies were not reproduced, and none of these results establishes infinite-size convergence for TiO₂.</p>
         </div>
         <nav class="post-nav" aria-label="Article navigation"><a href="../index.html#articles">&lt;- Article list</a><a href="hefeinamd-nac-crystal-momentum.html">Translation symmetry and NAC -&gt;</a></nav>
       </article>

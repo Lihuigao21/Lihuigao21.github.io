@@ -178,22 +178,6 @@
     {
       "evidence": "analysis/observable-validity-001/comparison-report.md",
       "sha256": "a54d9a1e3ab61f5eb4e43ed9c9c58abeb5e871582f1efe5d823df104efb8cc20"
-    },
-    {
-      "evidence": "analysis/tdep-002/README.md",
-      "sha256": "1a817dca62cb4755a5a253432f625069c240de2d8958fd0ffe832d476719cf01"
-    },
-    {
-      "evidence": "analysis/tdep-002/gamma/interpretation-001.md",
-      "sha256": "be9139a2dca1f02ac60d6a93883cf32d37d7798b3fbb02144b6d90425d588823"
-    },
-    {
-      "evidence": "analysis/tdep-002/polar-ifc/interpretation-new-001.md",
-      "sha256": "03c69ded745aa0e251453e24ca1fe3524436d76fd7a762a381aa6f3b7069644a"
-    },
-    {
-      "evidence": "analysis/tdep-002/stdep/interpretation-002.md",
-      "sha256": "60998795cdbd24c7e2e2fc6e8a791946da1c925885b92d8506fdcdc4b82da2c2"
     }
   ]
 }
