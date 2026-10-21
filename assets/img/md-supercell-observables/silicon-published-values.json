@@ -1,0 +1,25 @@
+{
+  "doi": "10.1038/s41524-025-01614-5",
+  "figure": 12,
+  "conditions": {
+    "initial_lattice_temperature_K": 0.1,
+    "photoexcited_electrons_holes_per_atom": 0.2,
+    "approximate_time_fs": 700
+  },
+  "definition": "Squared normalized displacement projection onto all unstable modes; not an energy fraction or a single-q contribution.",
+  "records": [
+    {
+      "atoms": 512,
+      "unstable_modes": 36,
+      "total_modes": 1536,
+      "unstable_displacement_weight": 0.97
+    },
+    {
+      "atoms": 1728,
+      "unstable_modes": 120,
+      "total_modes": 5184,
+      "unstable_displacement_weight": 0.87
+    }
+  ],
+  "provenance": "Scalar values reported in the paper; no trajectory digitization or new MD."
+}

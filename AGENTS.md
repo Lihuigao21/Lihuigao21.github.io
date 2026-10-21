@@ -77,6 +77,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
   - what conclusion the reader should draw.
 - If a supplied figure contains UI overlays, cropping artifacts, or irrelevant marks, clean it before publishing when this can be done without changing the data.
 - After regenerating or replacing figures, check captions against the actual rendered colors, line styles, markers, uncertainty ranges, and tolerance guides; remove descriptions of features absent from the final images.
+- Verify the MIME type and image signature of downloaded paper figures; a browser-challenge HTML response is not an image even if its URL ends in `.jpg` or `.png`. When original images are unavailable, use explicitly reported scalar results with attribution and label any new artwork as a summary; do not reconstruct unreported trajectory curves or claim an unchanged figure reproduction.
 
 ## Code Links
 

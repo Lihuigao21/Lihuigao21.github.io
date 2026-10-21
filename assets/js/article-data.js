@@ -63,6 +63,15 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "md-supercells-kpoints-nuclear-modes",
+    title: "MD Supercells: Temperature, k Points, and Nuclear Modes",
+    path: "posts/md-supercells-kpoints-nuclear-modes.html",
+    date: "2026-10-21",
+    dateText: "2026.10.21",
+    description: "Separate canonical temperature fluctuations from finite-cell bias, then examine missing nuclear modes through published silicon and perovskite results.",
+    tags: ["Molecular Dynamics", "Supercells", "Statistical Mechanics", "Phonons", "Literature Study"],
+  },
+  {
     slug: "hefeinamd-epc-hamiltonian",
     title: "HefeiNAMD III: The EPC Route to Carrier Dynamics",
     path: "posts/hefeinamd-epc-hamiltonian.html",

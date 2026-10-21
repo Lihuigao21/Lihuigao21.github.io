@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://lihuigao21.github.io/posts/md-supercells-kpoints-nuclear-modes.html</loc>
+    <lastmod>2026-10-21</lastmod>
+  </url>
+  <url>
     <loc>https://lihuigao21.github.io/posts/hefeinamd-epc-hamiltonian.html</loc>
     <lastmod>2026-10-19</lastmod>
   </url>
