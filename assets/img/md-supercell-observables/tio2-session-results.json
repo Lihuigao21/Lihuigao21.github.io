@@ -1,0 +1,199 @@
+{
+  "scope": "Existing TiO2 trajectories from this research session. No new MD or material reproduction for this article.",
+  "model": {
+    "material": "rutile TiO2",
+    "primitive_atoms": 6,
+    "supercell_atoms": 162,
+    "supercell_repeat": [
+      3,
+      3,
+      3
+    ],
+    "primitive_electronic_mesh": [
+      3,
+      3,
+      3
+    ],
+    "supercell_electronic_mesh": [
+      1,
+      1,
+      1
+    ],
+    "ENCUT_eV": 400,
+    "EDIFF_eV": 1e-06,
+    "dt_fs": 0.5
+  },
+  "new_sampling": {
+    "NVT_duration_fs": 1000,
+    "NVE_duration_fs": 1000,
+    "NVT_MDALGO": 3,
+    "NVT_friction_ps_inverse": [
+      10,
+      10
+    ],
+    "target_temperature_K": 300,
+    "temperature_dof": "3N total kinetic temperature",
+    "main_NVT_steps": [
+      1001,
+      2000
+    ],
+    "equilibrium_certified": false,
+    "same_temperature_NVE_certified": false,
+    "thermodynamic_limit_certified": false
+  },
+  "NVT": [
+    {
+      "case": "primitive-s1",
+      "temperature_mean_K": 284.25299386403987,
+      "temperature_SD_K": 77.11928963160246,
+      "gap_mean_eV": 1.7483164000000002,
+      "gap_SD_eV": 0.14028289507648464,
+      "gap_variance_eV2": 0.01967929065104,
+      "bond_mean_A": 1.964216076111209,
+      "single_bond_thermal_SD_A": 0.06643618320579678,
+      "cell_mean_bond_temporal_SD_A": 0.0031945212873373523
+    },
+    {
+      "case": "primitive-s2",
+      "temperature_mean_K": 275.44403819789085,
+      "temperature_SD_K": 88.52893284468976,
+      "gap_mean_eV": 1.7897912,
+      "gap_SD_eV": 0.15924406011704173,
+      "gap_variance_eV2": 0.02535867068256,
+      "bond_mean_A": 1.9646049586750154,
+      "single_bond_thermal_SD_A": 0.0688834941428463,
+      "cell_mean_bond_temporal_SD_A": 0.0027650009254280615
+    },
+    {
+      "case": "supercell-s1",
+      "temperature_mean_K": 288.66207879682514,
+      "temperature_SD_K": 20.33733163394721,
+      "gap_mean_eV": 1.6137415000000002,
+      "gap_SD_eV": 0.055327637286893064,
+      "gap_variance_eV2": 0.00306114744775,
+      "bond_mean_A": 1.9656122361008497,
+      "single_bond_thermal_SD_A": 0.06976698293858061,
+      "cell_mean_bond_temporal_SD_A": 0.0007768309792730818
+    },
+    {
+      "case": "supercell-s2",
+      "temperature_mean_K": 301.1471646984229,
+      "temperature_SD_K": 16.56894157416747,
+      "gap_mean_eV": 1.605578,
+      "gap_SD_eV": 0.05069636768053506,
+      "gap_variance_eV2": 0.0025701216959999997,
+      "bond_mean_A": 1.9653909268827205,
+      "single_bond_thermal_SD_A": 0.06933331102156914,
+      "cell_mean_bond_temporal_SD_A": 0.00044941128350511466
+    }
+  ],
+  "NVE": [
+    {
+      "case": "primitive-s1",
+      "temperature_mean_K": 326.3336901604049,
+      "gap_mean_eV": 1.8393178000000001,
+      "gap_SD_eV": 0.1636753435101329,
+      "rho_10fs": 0.4408375921628771,
+      "first_nonpositive_ACF_fs": 16.0
+    },
+    {
+      "case": "primitive-s2",
+      "temperature_mean_K": 153.48929713806575,
+      "gap_mean_eV": 1.75614195,
+      "gap_SD_eV": 0.10752009144898222,
+      "rho_10fs": 0.43472529574403324,
+      "first_nonpositive_ACF_fs": 16.5
+    },
+    {
+      "case": "supercell-s1",
+      "temperature_mean_K": 309.2469612223285,
+      "gap_mean_eV": 1.6023658,
+      "gap_SD_eV": 0.051635719035954174,
+      "rho_10fs": -0.010213440495248251,
+      "first_nonpositive_ACF_fs": 10.0
+    },
+    {
+      "case": "supercell-s2",
+      "temperature_mean_K": 285.51162607449163,
+      "gap_mean_eV": 1.60041635,
+      "gap_SD_eV": 0.06041172996759404,
+      "rho_10fs": 0.03866402304422813,
+      "first_nonpositive_ACF_fs": 11.0
+    }
+  ],
+  "historical_three_scheme_NVE": [
+    {
+      "case": "6 atoms, electronic Gamma",
+      "mean_T_K": 204.51,
+      "mean_gap_eV": 3.36036,
+      "gap_SD_eV": 0.12122,
+      "mean_structure_RMS_A": 0.3671
+    },
+    {
+      "case": "6 atoms, electronic 3x3x3",
+      "mean_T_K": 339.14,
+      "mean_gap_eV": 1.86262,
+      "gap_SD_eV": 0.10481,
+      "mean_structure_RMS_A": 0.0214
+    },
+    {
+      "case": "162 atoms, electronic Gamma",
+      "mean_T_K": 310.64,
+      "mean_gap_eV": 1.61878,
+      "gap_SD_eV": 0.04576,
+      "mean_structure_RMS_A": 0.0182
+    }
+  ],
+  "historical_protocol": {
+    "duration_fs_per_stage": 500,
+    "NVT_protocol": "Velocity rescaling every 10 steps; not certified canonical",
+    "temperature_dof": "3N-3; distinct from the new Langevin total-temperature convention"
+  },
+  "NVT_equal_seed_gap_mean_difference_eV": 0.15939404999999995,
+  "NVT_mean_within_seed_variance_ratio": 7.997834978920599,
+  "definitions": {
+    "SD": "Population standard deviation within a trajectory, not uncertainty of its mean",
+    "gap": "Sampled-k KS spectral gap: min(CBM)-max(VBM), fixed electron count; not an optical gap",
+    "single_bond_SD": "RMS over fixed first-shell bonds of their temporal SD after subtracting each bond mean",
+    "ACF": "Each window demeaned separately; covariance uses N-lag available time pairs; rho=C/C(0)",
+    "first_nonpositive_ACF": "An initial oscillation diagnostic; not a lifetime or complete decay time"
+  },
+  "source_byte_identities": [
+    {
+      "evidence": "analysis/observable-validity-001/scalars/windows.csv",
+      "sha256": "38926e3cdd8193b492fb3092f77e925af760aa5736dd5081114e99bf7ad9dda9"
+    },
+    {
+      "evidence": "analysis/observable-validity-001/structure/attempt-002/structure-scalars.csv",
+      "sha256": "0e8f6655b8dacbeb81b4a70f365db8a6335d844d8b3e2bd7301988a377ca6f92"
+    },
+    {
+      "evidence": "analysis/observable-validity-001/dynamics/attempt-001/window-statistics.csv",
+      "sha256": "a2374a6236fd181450b56634c88cbdeea99327b673a37b55790cae6e14f6be04"
+    },
+    {
+      "evidence": "analysis/properties-001/report.md",
+      "sha256": "4c8f6d1490635448cb3c79b95a226c15f5d44c2445f6a77882ad253409bc5837"
+    },
+    {
+      "evidence": "analysis/observable-validity-001/comparison-report.md",
+      "sha256": "a54d9a1e3ab61f5eb4e43ed9c9c58abeb5e871582f1efe5d823df104efb8cc20"
+    },
+    {
+      "evidence": "analysis/tdep-002/README.md",
+      "sha256": "1a817dca62cb4755a5a253432f625069c240de2d8958fd0ffe832d476719cf01"
+    },
+    {
+      "evidence": "analysis/tdep-002/gamma/interpretation-001.md",
+      "sha256": "be9139a2dca1f02ac60d6a93883cf32d37d7798b3fbb02144b6d90425d588823"
+    },
+    {
+      "evidence": "analysis/tdep-002/polar-ifc/interpretation-new-001.md",
+      "sha256": "03c69ded745aa0e251453e24ca1fe3524436d76fd7a762a381aa6f3b7069644a"
+    },
+    {
+      "evidence": "analysis/tdep-002/stdep/interpretation-002.md",
+      "sha256": "60998795cdbd24c7e2e2fc6e8a791946da1c925885b92d8506fdcdc4b82da2c2"
+    }
+  ]
+}

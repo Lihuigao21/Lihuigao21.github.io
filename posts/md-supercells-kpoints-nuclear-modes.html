@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Why small-cell NVT temperatures fluctuate, why electronic k points cannot replace nuclear q modes, and how two published studies expose observable-dependent supercell errors.">
+    <meta name="description" content="Small-cell temperature fluctuations, results from rutile TiO2 NVT and NVE tests, and published silicon and perovskite examples of observable-dependent supercell effects.">
     <title>MD Supercells: Temperature, k Points, and Nuclear Modes | Lihui Gao</title>
     <link rel="canonical" href="https://lihuigao21.github.io/posts/md-supercells-kpoints-nuclear-modes.html">
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
@@ -20,18 +20,17 @@
     <main id="top">
       <article class="post">
         <header class="post-header">
-          <p class="section-label">Molecular Dynamics / Literature Study</p>
+          <p class="section-label">Molecular Dynamics / TiO₂ Tests / Literature Study</p>
           <h1>MD Supercells: Temperature, k Points, and Nuclear Modes</h1>
           <p class="post-meta">2026.10.21 - Statistical Mechanics / Supercells / Phonons</p>
         </header>
         <div class="post-content">
           <p class="lead">A primitive-cell NVT trajectory can have large temperature fluctuations even when its kinetic-energy distribution is correct. The same trajectory can still give a poor approximation to a bulk observable because it excludes most nuclear wavevectors. These are different questions: does the algorithm sample its finite system correctly, and does that finite system represent the material property of interest?</p>
-          <p>This note develops that distinction from the temperature trace to thermodynamic averages and time correlations. Two published studies provide the practical evidence: finite-wavevector soft modes in photoexcited silicon, and supercell restrictions on octahedral rotations in perovskites. Their reported results are discussed here; no new material simulation or reproduction is presented.</p>
+          <p>This note combines our existing rutile TiO₂ tests with two published studies: finite-wavevector soft modes in photoexcited silicon, and supercell restrictions on octahedral rotations in perovskites. The TiO₂ section reports calculations already completed in this research session. The literature sections use the papers' published results, with a figure for each; neither study was reproduced here.</p>
           <nav aria-label="Article contents">
             <ol>
               <li><a href="#temperature">What a fluctuating NVT temperature means</a></li>
-              <li><a href="#nvt-to-nve">What changes when NVT becomes NVE</a></li>
-              <li><a href="#k-and-q">Electronic k points and nuclear q modes</a></li>
+              <li><a href="#tio2-session">Our TiO₂ tests: which observables change?</a></li>
               <li><a href="#observables">Which missing modes matter to an observable?</a></li>
               <li><a href="#silicon">Published case: nonthermal melting of silicon</a></li>
               <li><a href="#perovskites">Published case: perovskite rotations and electronic structure</a></li>
@@ -80,44 +79,83 @@
           </figure>
           <p>The uncertainty of a <em>time-averaged</em> temperature is a different quantity. If an equilibrated trajectory supplies \(M_{\mathrm{eff}}\) effectively independent observations, its mean has an uncertainty of order \(\sigma_T/\sqrt{M_{\mathrm{eff}}}\). Correlated adjacent frames do not count as independent observations. Thermostat coupling changes the correlation time and may affect mixing; deliberately suppressing the expected kinetic-energy variance does not establish better canonical sampling. Small, nearly harmonic systems can also expose ergodicity problems in deterministic thermostats.</p>
 
-          <h2 id="nvt-to-nve">2. What changes when NVT becomes NVE</h2>
-          <p>A broad NVT distribution raises a practical concern: what happens if an ordinary equilibrated snapshot launches a much colder NVE trajectory? The snapshot contains both positions \(\mathbf R\) and momenta \(\mathbf P\), with a random total energy \(E_0=K+U\). Keeping these positions and momenta when the thermostat is removed preserves that particular energy, up to integration and electronic-force errors.</p>
-          <p>A single NVE run explores one energy shell, provided it mixes sufficiently within that shell. Its long-time average kinetic temperature need not equal the temperature parameter of the preceding NVT bath. The instantaneous launch temperature alone also does not determine the subsequent mean: potential energy participates in the exchange.</p>
-          <p>The statistical relation makes the distinction precise. Let \(\Omega(E)\) be the density of states of the same constrained Hamiltonian, \(\beta=1/(k_BT_0)\), and \(Z\) its canonical partition function. The canonical distribution mixes energies with weight</p>
-          <div class="math-block">\[
-            P_\beta(E)=\frac{\Omega(E)e^{-\beta E}}{Z}.
-          \]</div>
-          <p>For observables \(A\) and \(B\), Hamiltonian propagation of canonical initial conditions gives a canonical time correlation. Decomposing the initial measure into energy shells yields</p>
-          <div class="math-block">\[
-            C_{AB}^{\beta}(t)
-            =\langle A(\mathbf R(t),\mathbf P(t))B(\mathbf R(0),\mathbf P(0))\rangle_\beta
-            =\int dE\,P_\beta(E)C_{AB}^{E}(t).
-          \]</div>
-          <p>Here \(C_{AB}^{E}\) is the corresponding microcanonical correlation at energy \(E\). This identity concerns ensemble averages; estimating an energy-shell average with one trajectory additionally requires adequate sampling. Many properly weighted canonical launches can represent the canonical correlation, whereas one arbitrary NVE energy shell need not do so. Ensemble equivalence often helps in large systems but is not an automatic remedy for a tiny cell.</p>
-          <p>A cold NVE seed is therefore a diagnostic to interpret, not a standalone rejection of its preceding NVT. Check the launch energy, retained velocities, distributions, and independent seeds before assigning a cause. Selecting only snapshots whose instantaneous temperature is close to the bath can bias the initial ensemble; rescaling velocities imposes another preparation protocol.</p>
+          <h2 id="tio2-session">2. Our TiO₂ tests: which observables change?</h2>
+          <p>The calculations behind this discussion used bulk rutile TiO₂: a six-atom primitive cell and its \(3\times3\times3\), 162-atom supercell. The existing VASP trajectories used a 0.5 fs timestep, ENCUT = 400 eV and EDIFF = \(10^{-6}\) eV. This section reports work already completed in the research session; no new material calculation was run for this article. The 162-atom cell is a finite reference, not an established thermodynamic limit.</p>
 
-          <h2 id="k-and-q">3. Electronic k points and nuclear q modes</h2>
-          <p>Correct finite-cell sampling still leaves a spatial question. In a primitive-cell trajectory, every translated copy of an atom has the same displacement at the same time. Adding electronic k points does not remove this constraint. It refines the electronic Brillouin-zone integration used to evaluate energies, forces, and electronic observables on the allowed nuclear configurations.</p>
-          <p>To expose the missing nuclear freedom, let \(\mathbf R_l\) identify a primitive cell, \(\kappa\) an atom within it, and \(N_c\) the number of primitive cells in a supercell. A harmonic mode expansion of the displacement is</p>
-          <div class="math-block">\[
-            \mathbf u_{l\kappa}
-            =\frac{1}{\sqrt{N_cM_\kappa}}
-              \sum_{\mathbf q\nu}
-              \mathbf e_{\kappa\nu}(\mathbf q)
-              Q_{\mathbf q\nu}e^{i\mathbf q\cdot\mathbf R_l}.
-          \]</div>
-          <p>Here \(M_\kappa\) is the atomic mass, \(\nu\) a branch index, and \(Q\) a normal coordinate. The eigenvectors of the mass-weighted dynamical matrix obey \(\sum_\kappa\mathbf e_{\kappa\nu}^{\dagger}\mathbf e_{\kappa\nu'}=\delta_{\nu\nu'}\); conjugate modes make the physical displacement real. Periodicity across each supercell lattice vector \(\mathbf L_j\) requires</p>
-          <div class="math-block">\[
-            e^{i\mathbf q\cdot\mathbf L_j}=1,
-            \qquad \mathbf q\cdot\mathbf L_j\in2\pi\mathbb Z.
-          \]</div>
-          <p>For a diagonal \(n_1\times n_2\times n_3\) repetition, write \(\mathbf q=\sum_i\xi_i\mathbf b_i\), with \(\mathbf b_i\) primitive reciprocal vectors. The condition becomes \(n_i\xi_i\in\mathbb Z\). Primitive-cell MD permits only primitive \(\Gamma\) displacements, including its optical modes. A supercell permits additional primitive-cell q modes; they are folded into the supercell representation.</p>
-          <p>For example, the illustrative mode \(\boldsymbol\xi=(1/2,1/2,1/2)\) is compatible with \(2^3\) and \(4^3\) repetitions but not \(3^3\) or \(5^3\). This geometric example is not an identification of the critical wavevector in silicon. It shows why cell shape and commensurability matter alongside atom count.</p>
-          <p>For a perfectly repeated undistorted crystal, electronic band folding can relate a supercell Gamma calculation to an appropriate primitive-cell k mesh. A distorted supercell containing finite-q nuclear motion no longer has the primitive translation symmetry needed for that equivalence. Thus literal identical KPOINTS files and comparable electronic integration accuracy are different comparisons. The related <a href="hefeinamd-nac-crystal-momentum.html#strict-zero">translation-symmetry restriction on inter-k coupling</a> is derived in the HefeiNAMD foundation article.</p>
+          <h3 id="tio2-electronic-control">The initial three-scheme comparison</h3>
+          <p>The first comparison retained the inherited preparation: 0.5 ps NVT with velocity rescaling every ten steps, followed by 0.5 ps NVE. This preparation was not certified as canonical sampling. It compared primitive electronic Gamma, a primitive Gamma-centered \(3^3\) electronic mesh, and supercell electronic Gamma.</p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Historical NVE scheme</th><th>Mean T / K</th><th>Mean KS gap ± SD / eV</th><th>Mean-structure displacement RMS / Å</th></tr></thead>
+              <tbody>
+                <tr><td>6 atoms, electronic Gamma</td><td>204.51</td><td>3.36036 ± 0.12122</td><td>0.3671</td></tr>
+                <tr><td>6 atoms, electronic \(3^3\)</td><td>339.14</td><td>1.86262 ± 0.10481</td><td>0.0214</td></tr>
+                <tr><td>162 atoms, electronic Gamma</td><td>310.64</td><td>1.61878 ± 0.04576</td><td>0.0182</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The last column compares each time-averaged structure with the common starting crystal after removing overall translation; it is not an instantaneous thermal displacement. The primitive Gamma trajectory moved around a substantially different mean structure. An initial-configuration check found oxygen force RMS values of about 5.18 eV/Å at primitive Gamma, 0.192 eV/Å with the primitive \(3^3\) mesh, and 0.196 eV/Å in the replicated cell. Small reconstruction and numerical-grid differences remain in this check.</p>
+          <p>The gap change also cannot be explained mainly by searching additional k points for a lower conduction edge: on the <em>same</em> primitive \(3^3\) trajectory, the mean Gamma direct gap exceeded the sampled-k spectral gap by only 13.99 meV. This is much smaller than the approximately 1.50 eV difference between the two primitive trajectories. Electronic integration changed the forces and the structures sampled. These short, differently heated trajectories do not establish electronic or nuclear size convergence.</p>
 
-          <h2 id="observables">4. Which missing modes matter to an observable?</h2>
+          <h3 id="tio2-nvt">Matched thermostat settings: gaps differ more than local bonds</h3>
+          <p>A later test used the primitive \(3^3\) electronic mesh and supercell Gamma, each with two velocity and stochastic seeds. All four NVT inputs used the same Langevin settings: MDALGO = 3, friction 10 ps⁻¹ for Ti and O, and a 300 K target. Each seed completed 1 ps NVT followed by 1 ps NVE. The initial coordinates were shared and not already thermalized, so different seeds alone do not establish independent equilibrium samples.</p>
+          <p>The fixed NVT comparison window is steps 1001–2000, the final 0.5 ps. It was chosen by time, not by selecting frames close to 300 K, and remains a candidate sampling window rather than certified equilibrium. In this Langevin implementation the reported total kinetic temperature uses \(3N\) degrees of freedom; it is distinct from the center-of-mass-removed convention in Section 1 and the historical table above. The primitive temperature SDs are 77.12 and 88.53 K, versus 20.34 and 16.57 K for the supercell.</p>
+          <p>The gap is the sampled-k KS spectral gap, \(E_g=\min_k\epsilon_{\mathrm{CBM},k}-\max_k\epsilon_{\mathrm{VBM},k}\), at fixed electron count. Supercell folding is included. It is not an optical or quasiparticle gap. All ± values below are within-trajectory population SDs, <strong>not uncertainty bars on the means</strong>.</p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>NVT, final 0.5 ps</th><th>Mean T / K</th><th>Mean gap ± SD / eV</th><th>Mean Ti–O / Å</th><th>Single-bond thermal SD / Å</th></tr></thead>
+              <tbody>
+                <tr><td>6 atoms / seed 1</td><td>284.25</td><td>1.74832 ± 0.14028</td><td>1.964216</td><td>0.066436</td></tr>
+                <tr><td>6 atoms / seed 2</td><td>275.44</td><td>1.78979 ± 0.15924</td><td>1.964605</td><td>0.068883</td></tr>
+                <tr><td>162 atoms / seed 1</td><td>288.66</td><td>1.61374 ± 0.05533</td><td>1.965612</td><td>0.069767</td></tr>
+                <tr><td>162 atoms / seed 2</td><td>301.15</td><td>1.60558 ± 0.05070</td><td>1.965391</td><td>0.069333</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Equal-weighting the two seeds, the primitive gap is higher by <strong>0.15939 eV</strong>; the ratio of mean within-seed gap variances is <strong>8.00</strong>. Between-seed mean differences are not included in that variance ratio. The final 0.25 ps retains a gap difference even when both primitive mean temperatures are close to 300 K, but this is still not a matched-temperature equilibrium comparison. One primitive seed's two quarter-picosecond mean gaps differ by about 0.103 eV, and the block-error diagnostic has no established plateau.</p>
+          <figure>
+            <a href="../assets/img/md-supercell-observables/tio2-nvt-gap.svg"><img src="../assets/img/md-supercell-observables/tio2-nvt-gap.svg" alt="Existing TiO2 NVT gap means, variances, fixed block means and sensitivity of estimated mean errors." loading="lazy"></a>
+            <figcaption>Figure 2. Existing dual-seed NVT results. Red/orange are the six-atom cell; blue/teal are the 162-atom cell. Upper panels show final-0.5-ps means with SD bars and gap variances. Lower panels show fixed 125 fs block means over the full trajectory and a block-SE diagnostic. Grey shading marks the comparison window. The SE curves have no validated plateau.</figcaption>
+          </figure>
+          <p>Local geometry is less sensitive in this sample. The equal-seed mean Ti–O distance differs by only about 0.0011 Å, and individual-bond thermal SDs remain near 0.066–0.070 Å in both cells. This SD first removes each fixed bond's own time mean. It does not combine the static spread between long and short bonds with thermal motion.</p>
+          <p>By contrast, the temporal SD of the <em>spatially averaged</em> first-shell bond length is 0.00319/0.00277 Å in the primitive seeds and 0.000777/0.000449 Å in the supercell. Similar local motion and smaller fluctuations of a whole-cell average can coexist. Spatial averaging and correlations matter. The short trajectories and different measured temperatures do not certify bond-length equality to a 0.001 Å tolerance.</p>
+          <figure>
+            <a href="../assets/img/md-supercell-observables/tio2-nvt-bonds.svg"><img src="../assets/img/md-supercell-observables/tio2-nvt-bonds.svg" alt="Similar TiO first-shell bond distributions and individual-bond fluctuations, with smaller fluctuations of the supercell mean." loading="lazy"></a>
+            <figcaption>Figure 3. The same NVT window and colors as Figure 2. Left: first-shell Ti–O distance probability densities in Å⁻¹, not an RDF. Right: solid bars give the RMS temporal SD of fixed individual bonds; hatched bars give the temporal SD of their instantaneous cell average. The vertical axis is logarithmic. These are different estimators of structural fluctuation.</figcaption>
+          </figure>
+
+          <h3 id="tio2-nve">The 153 K seed and the gap correlation</h3>
+          <p>The NVE launches retained their actual NVT endpoint positions and velocities; no velocity rescaling was used to force a 300 K launch. All four 1 ps NVE segments passed their numerical energy-conservation checks. Their actual mean temperatures nevertheless differ substantially:</p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>NVE, full 1 ps</th><th>Mean T / K</th><th>Mean gap ± SD / eV</th><th>\(\rho(10\,\mathrm{fs})\)</th><th>First nonpositive ACF / fs</th></tr></thead>
+              <tbody>
+                <tr><td>6 atoms / seed 1</td><td>326.33</td><td>1.83932 ± 0.16368</td><td>0.441</td><td>16.0</td></tr>
+                <tr><td>6 atoms / seed 2</td><td>153.49</td><td>1.75614 ± 0.10752</td><td>0.435</td><td>16.5</td></tr>
+                <tr><td>162 atoms / seed 1</td><td>309.25</td><td>1.60237 ± 0.05164</td><td>-0.010</td><td>10.0</td></tr>
+                <tr><td>162 atoms / seed 2</td><td>285.51</td><td>1.60042 ± 0.06041</td><td>0.039</td><td>11.0</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The primitive seed at 153.49 K is therefore not a trajectory of bulk dynamics at 300 K. Its temperature alone also does not prove that the preceding finite-cell NVT was incorrect: an NVE launch retains one sampled total energy, and kinetic and potential energies continue to exchange. Here the stronger limitation is that equilibrium sampling and the appropriate launch-energy distribution have not been established.</p>
+          <p>For each window containing \(N_s\) saved frames, the computed gap covariance subtracts that window's own mean and averages each lag over its actual available pairs:</p>
+          <div class="math-block">\[
+            C(\ell\Delta t)=\frac{1}{N_s-\ell}
+            \sum_{j=1}^{N_s-\ell}(E_{g,j}-\overline E_g)
+              (E_{g,j+\ell}-\overline E_g),
+            \qquad \rho(\tau)=\frac{C(\tau)}{C(0)}.
+          \]</div>
+          <p>The covariance retains fluctuation amplitude; normalization compares temporal shape. At 10 fs the full and half-window primitive correlations span 0.335–0.467, versus −0.071–0.039 for the supercell. Thus the present difference is not only a difference in variance. First zero crossings describe an initial oscillation or loss of correlation; later recurrences prevent interpreting them as lifetimes.</p>
+          <figure>
+            <a href="../assets/img/md-supercell-observables/tio2-nve-gap-acf.svg"><img src="../assets/img/md-supercell-observables/tio2-nve-gap-acf.svg" alt="TiO2 NVE gap covariance and normalized correlations, including sensitivity to the first and last half of a trajectory." loading="lazy"></a>
+            <figcaption>Figure 4. Existing NVE results, using the colors of Figures 2–3. Upper left: gap covariance in eV²; upper right: normalized ACF over 0–100 fs. Legend temperatures are actual NVE means. Lower panels compare full, first-half, and last-half windows for seed 1 of each size; each window uses its own mean. The complete 28 window curves are linked below.</figcaption>
+          </figure>
+          <p>The complete 0–100 fs shape is less reproducible: half-window ACF distances overlap the range of cross-cell distances. Different NVE temperatures, finite sampling and cell size remain intertwined. The defensible result is that these existing primitive trajectories do not reproduce the supercell gap statistics and short-time dynamics, while their first-shell geometry is much closer. Neither the supercell nor the primitive cell has been certified against an infinite-size reference.</p>
+
+          <h2 id="observables">3. Which missing modes matter to an observable?</h2>
           <p>Every finite supercell omits infinitely many bulk wavevectors. That fact alone does not make every finite-cell result unusable: a smooth Brillouin-zone integral can converge through increasingly fine discrete sums. The scientific question is whether the omitted spatial fluctuations carry appreciable weight for the chosen observable.</p>
-          <p>A useful local model follows when an intensive, translation-invariant observable \(A\) is smooth around a reference crystal. Translation symmetry forbids linear terms at nonzero primitive q; allowed Gamma linear terms have zero average in a centered harmonic reference. Focus on the quadratic part in the <em>phonon eigenbasis</em>:</p>
+          <p>The six-atom trajectory repeats the same displacement in every translated cell. The 162-atom cell additionally permits the 27 primitive wavevectors with fractional components 0, 1/3 and 2/3. Refining electronic k integration does not introduce these nuclear degrees of freedom.</p>
+          <p>A useful local model follows when an intensive, translation-invariant observable \(A\) is smooth around a reference crystal. Translation symmetry forbids linear terms at nonzero primitive q; allowed Gamma linear terms have zero average in a centered harmonic reference. Let \(N_c\) be the number of primitive cells and \(Q_{\mathbf q\nu}\) a mass-weighted normal coordinate, with branch index \(\nu\). Use eigenvectors normalized to unit norm over the basis atoms and coordinates scaled so the harmonic potential is \(\frac12\sum_{\mathbf q\nu}\omega_{\mathbf q\nu}^2|Q_{\mathbf q\nu}|^2\). Focus on the quadratic part in the <em>phonon eigenbasis</em>:</p>
           <div class="math-block">\[
             A^{(2)}=
             \frac{1}{2N_c}\sum_{\mathbf q,\nu\nu'}
@@ -136,23 +174,16 @@
           <p>This illustrative expansion explains the joint importance of mode amplitude and coupling to the observable. A soft mode may matter strongly when its coupling is appreciable. Frequency alone is insufficient, and an unstable mode cannot be assigned a harmonic thermal variance by inserting a negative \(\omega^2\) into this formula. Band crossings, large distortions, and strong anharmonicity may also invalidate the smooth expansion.</p>
           <p>Time correlations ask for additional information. A trajectory may give an acceptable mean gap while missing the fluctuations or relaxation channels needed for the connected gap correlation</p>
           <div class="math-block">\[
-            C_{\Delta E}(t)=
+            C_{E_g}(t)=
             \left\langle
-              [\Delta E(t)-\langle\Delta E\rangle]
-              [\Delta E(0)-\langle\Delta E\rangle]
+              [E_g(t)-\langle E_g\rangle]
+              [E_g(0)-\langle E_g\rangle]
             \right\rangle.
           \]</div>
           <p>The same definition, preparation, temperature or energy ensemble, and observation window must be used across cells. Missing q modes change available channels and their coupling; short trajectories add frequency-resolution and sampling errors. A velocity spectrum summed over all q is not the same observable as a common-q projected spectrum.</p>
-          <p>The energy-shell identity in Section 2 used uncentered correlations. If each NVE correlation is centered using its own energy-shell mean, the canonical connected correlation also contains the variation of those means across energies:</p>
-          <div class="math-block">\[
-            C_{\Delta E,\mathrm c}^{\beta}(t)
-            =\int dE\,P_\beta(E)C_{\Delta E,\mathrm c}^{E}(t)
-            +\operatorname{Var}_{P_\beta}\!\left(\langle\Delta E\rangle_E\right).
-          \]</div>
-          <p>The subscript c denotes a connected correlation. Averaging independently demeaned NVE traces alone omits this between-shell contribution; equivalently, use the common canonical mean when forming the ensemble average.</p>
           <p>The appropriate reference is therefore observable-specific: the thermodynamic-limit average at fixed model, density, temperature, and electronic accuracy, or the corresponding limit of a specified dynamical correlation. For correlations, the time interval and order of size/time limits also matter. Agreement of one observable does not certify every other observable.</p>
 
-          <h2 id="silicon">5. Published case: nonthermal melting of silicon</h2>
+          <h2 id="silicon">4. Published case: nonthermal melting of silicon</h2>
           <p><a href="#ref-silicon">Corradini, Marini, and Calandra (2025)</a> predict finite-q transverse-acoustic instabilities by constrained DFPT and reproduce them with a GAP potential. The authors associate the softening with a carrier-induced Kohn anomaly. At 0.2 photoexcited electrons/holes per atom and initial lattice temperature 0.1 K, 64 atoms do not melt within the reported window; 512 and 1728 do. These are ideal-lattice launches on a photoexcited surface, conserving \(K_I+F_{\rm el}\), not equilibrated NVT-to-NVE examples.</p>
           <div class="table-scroll">
             <table>
@@ -167,7 +198,7 @@
           <p>In the 512-atom cell, 36 of 1536 modes are unstable. Around 700 fs their combined squared projection weight of the normalized displacement is about 97%; the 64-atom cell excludes the relevant unstable q modes. This is a group weight, not a single-q or energy fraction.</p>
           <figure>
             <a href="../assets/img/md-supercell-observables/silicon-published-mode-weights.svg"><img src="../assets/img/md-supercell-observables/silicon-published-mode-weights.svg" alt="Reported silicon mode counts compared with the displacement weight in their unstable subspace: about 2.3 percent of modes carry about 97 or 87 percent of normalized squared displacement." loading="lazy"></a>
-            <figcaption>Figure 2. Reported scalars from <a href="https://doi.org/10.1038/s41524-025-01614-5">Corradini et al., Fig. 12</a>, redrawn here: blue is the unstable fraction of all modes; brown is their squared normalized displacement weight near 700 fs. The percentages have different denominators. No time traces are reconstructed.</figcaption>
+            <figcaption>Figure 5. Reported scalars from <a href="https://doi.org/10.1038/s41524-025-01614-5">Corradini et al., Fig. 12</a>, redrawn here: blue is the unstable fraction of all modes; brown is their squared normalized displacement weight near 700 fs. The percentages have different denominators. No time traces are reconstructed.</figcaption>
           </figure>
           <p>The limit is low-temperature, classical nonthermal melting: room-temperature small cells can also melt, and later liquid motion is not confined to the initial soft subspace.</p>
 
@@ -180,14 +211,18 @@
           <p>A tiny component along an unstable direction grows exponentially while stable modes initially oscillate. Excluding that coordinate can remove the instability from a finite simulation. Negative curvature alone does not prove complete melting: nonlinear evolution determines whether the system reaches another crystal, a disordered state, or another outcome. The published trajectories and projections supply the material-specific evidence.</p>
           <p>A quartic model \(U(x)=-ax^2+bx^4\), with \(a,b&gt;0\), illustrates how nonlinear terms bound the motion. With effective mass \(m\), differentiating gives \(m\ddot x=2ax-4bx^3\). It explains initial growth and subsequent turnover; fitting such a model to a trajectory is a mechanism description, not an independent prediction of the whole liquid phase.</p>
 
-          <h2 id="perovskites">6. Published case: rotations and electronic structure</h2>
+          <h2 id="perovskites">5. Published case: rotations and electronic structure</h2>
           <p><a href="#ref-perovskites">Zhao, Wang, Malyi, and Zunger (2021)</a> explicitly discuss supercell size. Particular ordered octahedral rotations, such as \(a^0a^0b^-\), require compatible periodicity. Simple odd repetitions cannot represent those exact alternating patterns. Their Fig. 1 compares static SrTiO₃ energies across cell sizes and shows that admitting rotation patterns changes the accessible energy lowering.</p>
+          <figure>
+            <a href="../assets/img/md-supercell-observables/perovskite-published-supercell-fig1.jpg"><img src="../assets/img/md-supercell-observables/perovskite-published-supercell-fig1.jpg" alt="Original published SrTiO3 figure: SCAN and PBEsol static energy lowering for cells from one to five repetitions, with energy-lowering ordered rotations in the tested even cells." loading="lazy"></a>
+            <figcaption>Figure 6. Original Fig. 1 from <a href="https://doi.org/10.1016/j.mattod.2021.05.021">Zhao, Wang, Malyi, and Zunger, Materials Today 49, 107–122 (2021)</a>, reproduced unchanged from the <a href="https://ars.els-cdn.com/content/image/1-s2.0-S1369702121002030-gr1_lrg.jpg">publisher image</a>. Horizontal axis: cell repetition; vertical axis: static energy lowering relative to the minimal-cell reference, in meV per formula unit. Red circles are SCAN; blue triangles are PBEsol. Insets show ideal and ordered tilted structures. The tested even cells admit energy-lowering rotations excluded by the tested odd cells. Lines connect discrete results; this is a published static comparison, not a new MD calculation.</figcaption>
+          </figure>
           <p>The same study connects structural distortions to band gaps and band-edge structure. This establishes two linked points: a cell can exclude a relevant structural coordinate, and electronic observables depend on that coordinate. It is not a matched-temperature odd-versus-even MD benchmark. In particular, its table comparing high-symmetry, statically distorted, and thermally distorted gaps must not be read as a pure cell-size correction.</p>
           <p>The restriction concerns the specified ordered modes. Odd cells can contain other distortions and locally tilted environments; even cells are not automatically converged. <a href="https://www.sciencedirect.com/science/article/pii/S1369702121002030">See Fig. 1 and “The choice of supercell size matters.”</a></p>
           <p>A simple picture explains the commensurability constraint. Along an axis requiring an alternating rotation, the pattern is \(+,-,+,-,\ldots\). Closing an odd-length ring cannot preserve alternation across the boundary. A larger odd cell may approximate local order through defects or other patterns, but it still cannot host that exact periodic arrangement. The resulting error in an intensive observable can nevertheless shrink with size; exclusion of the exact pattern does not imply that every odd-size thermodynamic limit is wrong.</p>
 
-          <h2 id="assessment">7. How to assess an MD trajectory</h2>
-          <p>The two cases make the practical criterion concrete: validate the trajectory against the observable and the ensemble it is intended to represent. A temperature plot is one check within that assessment.</p>
+          <h2 id="assessment">6. How to assess an MD trajectory</h2>
+          <p>The TiO₂ tests and the two literature cases make the practical criterion concrete: validate the trajectory against the observable and the ensemble it is intended to represent. A temperature plot is one check within that assessment.</p>
           <div class="table-scroll">
             <table>
               <thead><tr><th>Question</th><th>Useful evidence</th><th>What it does not establish</th></tr></thead>
@@ -203,26 +238,46 @@
           <p>For VASP, inspect actual forces and electronic convergence rather than relying on normal termination. At the NVT-to-NVE handoff, retain the real positions and velocities and verify their units and restart semantics. Check conserved-energy behavior over a meaningful production window; a short oscillatory segment can have a misleading fitted slope. The <a href="https://www.vasp.at/tutorials/latest/md/part1/">official MD tutorial</a> supplies the implementation context. Thermostat-generated time correlations need their own justification because a thermostat can alter dynamics even when it preserves equilibrium sampling.</p>
           <p>Thus “primitive-cell NVT is incorrect” is usually too imprecise. A more useful conclusion names the failure: incorrect sampling of the finite Hamiltonian, insufficient statistics, numerical force/integration error, or a finite-cell bias in a specified observable relative to its bulk limit.</p>
 
-          <h2 id="phonon-analysis">8. What phonon fitting can establish</h2>
-          <p>Mode analysis helps identify why a cell matters, but fitting cannot manufacture information excluded by the trajectory. Schematically, a harmonic dynamical matrix contains a Fourier sum of real-space force constants:</p>
+          <h2 id="phonon-analysis">7. What our phonon attempts established</h2>
+          <p>The same session also tested direct velocity spectra and finite-temperature force fitting. These answer different questions: the first describes motion actually present in a finite trajectory; the second estimates an effective force model and needs predictive validation.</p>
+          <h3 id="tio2-spectra">Velocity spectra: the missing motion is visible</h3>
+          <p>The historical three NVE trajectories provide about 0.5 ps of data each. Their native spectral spacing is approximately 2 THz, so narrow frequency shifts or phonon lifetimes are not resolved. The 162-atom trajectory's primitive-Gamma projection carries only 2.35% of the total spectral weight with a Hann window, or 2.46% with a rectangular window; most of the observed motion is at finite primitive q. This is a measurement for this trajectory, not a universal mode-count fraction.</p>
+          <figure>
+            <a href="../assets/img/md-supercell-observables/tio2-vibrational-comparison.png"><img src="../assets/img/md-supercell-observables/tio2-vibrational-comparison.png" alt="Historical TiO2 velocity spectra, common Gamma projections, projected velocity correlations and sensitivity of effective force-fit frequencies." loading="lazy"></a>
+            <figcaption>Figure 7. Existing 0.5 ps TiO₂ NVE analysis, separate from the later dual-seed test. Blue: primitive electronic Gamma, about 205 K; orange: primitive electronic 3×3×3, about 339 K; green: 162-atom electronic Gamma, about 311 K. Top: unit-area total and common nuclear-Gamma kinetic-power spectra in THz⁻¹. Bottom left: normalized Gamma-projected velocity correlation. Bottom right: full-window fitted frequencies (ticks) and half-window values (dots) from the initial force model. These fitted values failed the predictive checks below and are diagnostic frequencies, not accepted phonons.</figcaption>
+          </figure>
+          <p>A primitive trajectory constrains the Gamma force block, which combines real-space interactions. Schematically, with mass factors absorbed into \(\Phi\),</p>
           <div class="math-block">\[
             D(\mathbf q)=\sum_{\mathbf R}\Phi(\mathbf R)e^{i\mathbf q\cdot\mathbf R},
-            \qquad
-            D(\mathbf 0)=\sum_{\mathbf R}\Phi(\mathbf R),
+            \qquad D(\mathbf 0)=\sum_{\mathbf R}\Phi(\mathbf R).
           \]</div>
-          <p>where mass factors are included in \(\Phi\). Knowing only the Gamma block constrains a sum of interactions, not their separate spatial dependence. Different real-space models can share that block while predicting different dispersions. Effective-force fitting or interpolation may add a justified interaction model and independent force data; a primitive-cell trajectory by itself has not sampled the missing finite-q nuclear motion.</p>
-          <p>For finite-temperature fitting, small training residuals and an acoustic sum rule do not certify predictive phonons. Check force prediction on separated time blocks or independent trajectories, model-range sensitivity, every compatible q mode, and the intended observable. A harmonic Gaussian sampler also requires positive curvature in its sampled non-translational directions; an unstable mode needs a treatment beyond assigning it a harmonic thermal variance.</p>
-          <p>The governing distinction remains the same throughout: electronic integration accuracy, finite-system sampling, spatial representativeness, and dynamical accuracy are separate requirements. A calculation can satisfy one while failing another.</p>
+          <p>Knowing that sum does not identify its separate spatial terms. A fit or interpolation requires additional spatial information and model assumptions; it does not create nuclear motion absent from the sampled cell.</p>
+          <h3 id="tio2-force-fits">Short trajectories were only part of the fitting problem</h3>
+          <p>The initial custom, mass-weighted Gamma-force regression had full-window R² around 0.93 for the primitive \(3^3\) and supercell-projected data, yet continuous-half holdout prediction failed. Adding the parent-rutile point-group constraint directly to the fitted parameter space changed the result:</p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Historical trajectory</th><th>Initial holdout R², forward / reverse</th><th>Symmetry-constrained holdout R²</th></tr></thead>
+              <tbody>
+                <tr><td>Primitive electronic \(3^3\)</td><td>−0.928 / −9.841</td><td>0.842 / 0.862</td></tr>
+                <tr><td>Supercell nuclear-Gamma projection</td><td>−3.385 / −4.026</td><td>0.865 / 0.862</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The same trajectories now generalized much better, so “NVE was too short” was not a sufficient explanation. This diagnostic uses a mass-weighted force objective and a parent-phase curvature assumption; it is not the default official-TDEP Cartesian objective. Window sensitivity and non-negligible residual forces remain.</p>
+          <p>Official real-space TDEP fits on the later supercell NVT windows then tested transfer between the two seeds. At a 3.5 Å cutoff, including the full long-range polar force treatment lowered held-out Cartesian force RMSE from 0.3856/0.3828 to 0.2982/0.3013 eV/Å, about 21–23%. All 27 compatible q points lacked significant imaginary modes in those models. Yet this was one cutoff: on the old NVE data, changing the polar-model cutoff from 3.5 to 4.3 Å still changed sorted frequencies by RMS 0.860 THz. Neither cross-seed agreement nor positive frequencies certified convergence.</p>
+          <p>An sTDEP pilot also evaluated eight independent configurations drawn from an artificial 300 K harmonic model. A 4.3 Å real-space fit reached pooled held-out force RMSE near 0.193 eV/Å, but retained 12 non-Gamma imaginary-frequency channels despite a stable Gamma block. It was not a self-consistent thermal model. Such an IFC cannot be used directly as a classical harmonic Gaussian covariance without an explicit, justified treatment of its unstable directions.</p>
+          <p>The session therefore established useful repairs—symmetry constraints, spatially shared interactions and long-range polar forces—while leaving sampling, cutoff and finite-temperature phonon convergence unresolved. Increasing the number of closely spaced frames alone would not address all of these problems. No converged dispersion, linewidth or lifetime is claimed here.</p>
 
           <h2 id="sources">Sources, figures, and diagnostic code</h2>
           <ul>
             <li id="ref-silicon">A. Corradini, G. Marini, and M. Calandra, <a href="https://doi.org/10.1038/s41524-025-01614-5"><em>Scalable machine learning approach to light induced order disorder phase transitions with ab initio accuracy</em></a>, npj Computational Materials 11, 151 (2025). Practical results: Figs. 11–12; phonon mechanism: Figs. 3–4. <a href="https://doi.org/10.1038/s41524-025-01748-6">The author correction</a> replaces Fig. 7. <a href="https://zenodo.org/records/14916551">Author code, GAP potentials, and data</a>.</li>
-            <li id="ref-perovskites">X.-G. Zhao, Z. Wang, O. I. Malyi, and A. Zunger, <a href="https://doi.org/10.1016/j.mattod.2021.05.021"><em>Effect of static local distortions vs. dynamic motions on the stability and band gaps of cubic oxide and halide perovskites</em></a>, Materials Today 49, 107–122 (2021). The case above uses the published cell-symmetry argument and structural/electronic results; no figure from this paper is reproduced.</li>
+            <li id="ref-perovskites">X.-G. Zhao, Z. Wang, O. I. Malyi, and A. Zunger, <a href="https://doi.org/10.1016/j.mattod.2021.05.021"><em>Effect of static local distortions vs. dynamic motions on the stability and band gaps of cubic oxide and halide perovskites</em></a>, Materials Today 49, 107–122 (2021). The cell-symmetry case includes the original published Fig. 1, with attribution above; it is a static comparison.</li>
             <li>G. Bussi, D. Donadio, and M. Parrinello, <a href="https://doi.org/10.1063/1.2408420"><em>Canonical sampling through velocity rescaling</em></a>, Journal of Chemical Physics 126, 014101 (2007): canonical kinetic-energy fluctuations.</li>
             <li><a href="https://www.vasp.at/tutorials/latest/md/part1/">VASP molecular-dynamics tutorial</a>; related local notes on <a href="pimd-nvt-gle-piglet.html">thermostats and ring-polymer sampling</a>, <a href="hefeinamd-nac-crystal-momentum.html">translation symmetry and nuclear motion</a>, and <a href="hefeinamd-epc-hamiltonian.html#faq-finite-temperature-phonons">finite-temperature phonon workflows</a>. Ring-polymer temperature estimators are distinct from the classical Cartesian estimator used here.</li>
-            <li><a href="../assets/code/md-size-diagnostics.py">Download the analytic diagnostic and figure script</a> and run <code>python assets/code/md-size-diagnostics.py</code> from the website repository. It evaluates the canonical-width table and exact diagonal-cell compatibility conditions. With Matplotlib installed, add <code>--figures</code> to render the two figures. The <a href="../assets/img/md-supercell-observables/silicon-published-values.json">published scalar values and definitions</a> are supplied separately. The script does not run MD or reproduce either material study.</li>
+            <li><a href="../assets/code/md-size-diagnostics.py">Download the analytic diagnostic and figure script</a> and run <code>python assets/code/md-size-diagnostics.py</code> from the website repository. It evaluates the canonical-width table and exact diagonal-cell compatibility conditions. With Matplotlib installed, add <code>--figures</code> to render the canonical distribution and silicon scalar-summary figures. The <a href="../assets/img/md-supercell-observables/silicon-published-values.json">published scalar values and definitions</a> are supplied separately. The script does not run MD or reproduce either material study.</li>
+            <li><a href="../assets/img/md-supercell-observables/tio2-session-results.json">Download the TiO₂ session result tables and definitions</a>; <a href="../assets/img/md-supercell-observables/tio2-gap-correlations.csv">all 28 computed NVE window-correlation curves</a>. The result tables identify original source-table byte hashes. The earlier three-scheme protocol and later Langevin dual-seed protocol remain separate.</li>
           </ul>
-          <p>Figure 1 is an analytic illustration; Figure 2 summarizes explicitly reported numerical values with new artwork. The original silicon curves remain in the linked paper, especially Figs. 11–12; no original paper image is reproduced here. The derivations and analytic diagnostic are explanatory additions. The silicon results do not establish a bulk-convergence claim for TiO₂ or another material.</p>
+          <p>Figure 1 is analytic. Figures 2–4 and 7 preserve results of the existing TiO₂ calculations. Figure 5 is new artwork summarizing explicitly reported silicon values; the original time traces remain in the paper. Figure 6 is the unchanged published perovskite figure. The literature studies were not reproduced, and none of these results establishes infinite-size convergence for TiO₂.</p>
         </div>
         <nav class="post-nav" aria-label="Article navigation"><a href="../index.html#articles">&lt;- Article list</a><a href="hefeinamd-nac-crystal-momentum.html">Translation symmetry and NAC -&gt;</a></nav>
       </article>

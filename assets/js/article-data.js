@@ -68,7 +68,7 @@ window.SITE_ARTICLES = [
     path: "posts/md-supercells-kpoints-nuclear-modes.html",
     date: "2026-10-21",
     dateText: "2026.10.21",
-    description: "Separate canonical temperature fluctuations from finite-cell bias, then examine missing nuclear modes through published silicon and perovskite results.",
+    description: "Compare existing TiO₂ NVT and NVE results, then examine observable-dependent supercell effects through published silicon and perovskite figures.",
     tags: ["Molecular Dynamics", "Supercells", "Statistical Mechanics", "Phonons", "Literature Study"],
   },
   {
