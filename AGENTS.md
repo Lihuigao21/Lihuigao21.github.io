@@ -20,6 +20,8 @@ This file defines how future agents should write, revise, and publish articles f
 - Treat `life.html` as the section landing page. Treat `mind.html` as the “精神世界” module, not as a separate top-level site category. Put additional lifestyle module pages under `life/`.
 - When publishing any new life-note page, update the hand-maintained “最新十篇” list in `life.html` so it contains the newest ten life records in reverse chronological order.
 - When adding the first note to an empty module, replace its placeholder with an `archive-list` under “记录索引”. Locate that heading explicitly so new records do not enter a separate pinned list.
+- When removing pinned lists, move entries found only there into the module's formal “记录索引” in date order before removing the pinned section. Preserve existing article URLs and check that every former pinned article remains reachable.
+- Notes from the “不断更新” source folder should update their existing canonical pages when available. Preserve the original publication date and show the latest update date in metadata; create a new page only for a new note.
 - Do not force this section into the technical-article requirements for benchmark results, code links, or reproducible computational workflows.
 - Keep agent-authored introductions, summaries, and interface copy restrained, sincere, precise, and non-performative. This style guidance does not authorize editing, toning down, or summarizing the user's own life-note text; for user-authored notes, the preservation rules under “Editing Existing Articles” take priority.
 - Future notes in this section should stay in Chinese unless the user explicitly asks for bilingual or English text.
@@ -37,6 +39,7 @@ This file defines how future agents should write, revise, and publish articles f
 - Article text, captions, code snippets, and linked example scripts must avoid machine-specific paths such as local workspace directories. Use repository-relative paths, published URLs, or generic placeholders when a path is necessary.
 - Before publishing, scan new article text and code blocks for private paths, personal identifiers, raw terminal prompts, environment dumps, and accidental credentials.
 - Credential scans must inspect the matched token and nearby context before reporting a leak. Do not treat ordinary page slugs such as `sk-list-...` as API keys merely because they begin with `sk-`; use a sufficiently specific secret pattern and separately verify every hit.
+- Private-path scans must distinguish Windows drive prefixes from URL schemes. A bare drive-letter pattern can falsely match `s:/` inside `https://`; use an appropriate token boundary and inspect each match before blocking publication.
 - A user's explicit approval to publish their own display nickname permits preserving that nickname verbatim. Distinguish an approved display nickname from a login ID, contact identifier, or credential; do not repeatedly ask about the same approved nickname.
 
 ## Article Shape
