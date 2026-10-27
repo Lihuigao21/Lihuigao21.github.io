@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Derive both CPS equations from their Hamiltonians, track canonical and physical nuclear momentum, and compare paired Tully trajectories with a converged quantum reference.">
+    <title>MQC VIII: Diabatic and Adiabatic CPS Dynamics | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+<header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">MQC Series - Part VIII</p>
+          <h1>Diabatic and Adiabatic CPS Dynamics</h1>
+          <p class="post-meta">2026.10.27 - CPS / Hamiltonian Dynamics / Nonadiabatic Couplings</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="MQC series navigation">
+            <a href="mqc-background.html">0. Background</a>
+            <a href="fssh-tully-benchmark.html">I. FSSH</a>
+            <a href="ehrenfest-tully-benchmark.html">II. Ehrenfest</a>
+            <a href="pmatrix-decoherence-balance.html">III. P-Matrix</a>
+            <a href="mmst-zpe-leakage.html">IV. MMST</a>
+            <a href="spin-mint-three-state-morse-reproduction.html">V. Spin Mapping</a>
+            <a href="cps-foundations-dual-kernels.html">VI. CPS Kernels</a>
+            <a href="cps-trajectories-classical-feedback.html">VII. CPS Dynamics</a>
+            <a href="cps-diabatic-adiabatic-eom.html">VIII. Basis EOM</a>
+          </nav>
+          <p class="lead">Diagonalizing the electronic potential does not remove nonadiabatic dynamics. It moves the coupling into the coordinate dependence of the electronic basis. Deriving the resulting trajectory equations requires transforming the canonical structure as carefully as the energy.</p>
+          <p><a href="cps-foundations-dual-kernels.html">Part VI</a> established the CPS kernel and its dual; <a href="cps-trajectories-classical-feedback.html">Part VII</a> separated exact electronic representation from approximate coupled trajectories. This part derives the diabatic and adiabatic equations of the same classical mapping Hamiltonian, without skipping the nuclear momentum transformation, and tests their equivalence on one Tully model.</p>
+          <p><strong>Scope.</strong> Use one nuclear coordinate and a complete, finite \(F\)-state model with a smooth square unitary matrix \(U(R)\). Set \(\hbar=1\). The result is an exact change of variables within the chosen classical eCMM dynamics, not a proof of exact quantum electron–nuclear dynamics. Here \(P=M\dot R\) is physical nuclear momentum; \(\Pi\) will denote a different, canonical momentum after the basis change.</p>
+          <nav aria-label="Article contents"><ol>
+            <li><a href="#diabatic">The diabatic Hamiltonian and canonical equations</a></li>
+            <li><a href="#moving-basis">A moving electronic basis changes the brackets</a></li>
+            <li><a href="#canonical-momentum">Constructing the adiabatic canonical momentum</a></li>
+            <li><a href="#electronic-eom">Hamilton equations for the moving electronic variables</a></li>
+            <li><a href="#nuclear-eom">Deriving the physical nuclear force</a></li>
+            <li><a href="#gradient">The full gradient matrix and the two-state equations</a></li>
+            <li><a href="#workflow">Preparation, propagation, and physical readout</a></li>
+            <li><a href="#benchmark">One model, two propagation bases, one physical comparison</a></li>
+            <li><a href="#limits">What the agreement establishes</a></li>
+            <li><a href="#code">Code, data, and sources</a></li>
+          </ol></nav>
+
+          <h2 id="diabatic">1. The Diabatic Hamiltonian and Canonical Equations</h2>
+          <p>Start in a fixed orthonormal diabatic electronic basis. The physical model is a nuclear kinetic operator plus a Hermitian electronic potential matrix. Its scalar CPS mapping Hamiltonian is</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            H_d(R,P,z_d)
+            &=\frac{P^2}{2M}+\operatorname{Tr}[K_dV(R)]\\
+            &=\frac{P^2}{2M}+z_d^\dagger V(R)z_d
+                 -\gamma\operatorname{Tr}V(R),\\
+            K_d&=z_dz_d^\dagger-\gamma I,\qquad
+            z_{d,n}=\frac{x_n+ip_n}{\sqrt2}.
+            \end{aligned}
+          \]</div>
+          <p>The mapping coordinates and momenta obey \(\{x_n,p_m\}=\delta_{nm}\); the nuclear variables obey \(\{R,P\}=1\). All nuclear–electronic cross brackets initially vanish. For the real symmetric potential used below, the same Hamiltonian reads</p>
+          <div class="math-block">\[
+            H_d=\frac{P^2}{2M}
+                +\frac12x^{\mathsf T}Vx
+                +\frac12p^{\mathsf T}Vp
+                -\gamma\operatorname{Tr}V.
+          \]</div>
+          <p>Differentiate with respect to the real canonical variables, holding \(R\) fixed:</p>
+          <div class="math-block">\[
+            \dot x=\partial_pH_d=Vp,\qquad
+            \dot p=-\partial_xH_d=-Vx.
+          \]</div>
+          <p>The complex electronic equation follows by combining these two real equations:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot z_d
+            &=\frac{\dot x+i\dot p}{\sqrt2}
+             =\frac{Vp-iVx}{\sqrt2}\\
+            &=-iV\frac{x+ip}{\sqrt2}
+             =-iVz_d.
+            \end{aligned}
+          \]</div>
+          <p>This is a classical Hamilton equation for mapping variables. Its TDSE-like form alone does not prove that the coupled nuclear trajectories are quantum exact. The real-variable quadratic expression above assumes real symmetric \(V\); the complex expression \(z_d^\dagger Vz_d\) remains valid for general Hermitian \(V\).</p>
+          <p>To carry out a coordinate-dependent complex transformation, first derive the complex bracket explicitly:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \{z_{d,n},z_{d,m}^*\}
+            &=\frac12\{x_n+ip_n,x_m-ip_m\}\\
+            &=\frac12[-i\{x_n,p_m\}+i\{p_n,x_m\}]\\
+            &=-i\delta_{nm}.
+            \end{aligned}
+          \]</div>
+          <p>Thus \(\dot z_{d,n}=-i\,\partial H_d/\partial z_{d,n}^*\). Equivalently, a formal complex canonical pair is \(q_n=z_{d,n}\), \(\pi_n=i z_{d,n}^*\). This notation retains the original real degrees of freedom; \(z\) and \(z^*\) are not additional independent physical amplitudes.</p>
+          <p>Now differentiate the same Hamiltonian with respect to nuclear variables. Write \(V'=\partial_RV\):</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot R&=\partial_PH_d=\frac PM,\\
+            \dot P&=-\partial_RH_d
+             =-z_d^\dagger V'z_d+\gamma\operatorname{Tr}V'\\
+             &=-\operatorname{Tr}[K_dV'].
+            \end{aligned}
+          \]</div>
+          <p>The CPS sphere is an invariant surface of these equations. Since \(V^\dagger=V\),</p>
+          <div class="math-block">\[
+            \frac{d}{dt}(z_d^\dagger z_d)
+            =iz_d^\dagger Vz_d-iz_d^\dagger Vz_d=0.
+          \]</div>
+          <p>Therefore an initial sample with \(z_d^\dagger z_d=s=1+F\gamma\) remains on that sphere under the continuous equations. The canonical brackets are defined in the embedding mapping phase space; finite-step numerical conservation must still be checked.</p>
+
+          <h2 id="moving-basis">2. A Moving Electronic Basis Changes the Brackets</h2>
+          <p>At each nuclear position, choose the columns of \(U(R)\) as orthonormal adiabatic eigenvectors:</p>
+          <div class="math-block">\[
+            U^\dagger VU=E,\qquad
+            E=\operatorname{diag}(E_1,\ldots,E_F),\qquad
+            z_a=U^\dagger z_d.
+          \]</div>
+          <p>The basis rotation depends on \(R\), so its derivative must be included. Define the nonadiabatic coupling matrix</p>
+          <div class="math-block">\[
+            d=U^\dagger U',\qquad
+            d_{ij}=\langle\phi_i|\partial_R\phi_j\rangle.
+          \]</div>
+          <p>Differentiating \(U^\dagger U=I\) gives \((U^\dagger)'U+U^\dagger U'=0\). Substituting the definition of \(d\), then multiplying by \(U^\dagger\) on the right, gives the first identity below. Multiplication of \(d=U^\dagger U'\) by \(U\) gives the second:</p>
+          <div class="math-block">\[
+            (U^\dagger)'=-dU^\dagger,\qquad
+            U'=Ud,\qquad d^\dagger=-d.
+          \]</div>
+          <p>The energy expressed using \(z_a\) is straightforward:</p>
+          <div class="math-block">\[
+            H_a^{\mathrm{kin}}
+            =\frac{P^2}{2M}+z_a^\dagger Ez_a
+                         -\gamma\operatorname{Tr}E.
+          \]</div>
+          <p>But a simple-looking energy does not guarantee unchanged canonical brackets. Applying the old brackets to the new amplitude gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \{z_a,P\}
+            &=\{U^\dagger(R)z_d,P\}\\
+            &=(U^\dagger)'z_d+U^\dagger\{z_d,P\}\\
+            &=-dU^\dagger z_d=-dz_a.
+            \end{aligned}
+          \]</div>
+          <p>Meanwhile the electronic bracket is unchanged:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \{z_{a,i},z_{a,j}^*\}
+            &=\sum_{nm}U_{ni}^*U_{mj}
+                       \{z_{d,n},z_{d,m}^*\}\\
+            &=-i\sum_nU_{ni}^*U_{nj}
+             =-i\delta_{ij}.
+            \end{aligned}
+          \]</div>
+          <p>The new cross bracket \(\{z_a,P\}=-dz_a\) is the crucial change. Keeping \(P\) as physical momentum is legitimate, but then the nuclear and electronic brackets are coupled. Treating \((R,P,z_a)\) as independent canonical variables would discard this coupling.</p>
+
+          <h2 id="canonical-momentum">3. Constructing the Adiabatic Canonical Momentum</h2>
+          <p>Seek a new nuclear momentum \(\Pi=P+\mathcal A(R,z_a)\) that commutes with the electronic amplitudes. Here \(\Pi\) denotes nuclear canonical momentum, not the rank-one projector notation used in Part VI. Because \(\mathcal A\) contains no \(P\),</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \{z_{a,i},\Pi\}
+            &=-(dz_a)_i+\{z_{a,i},\mathcal A\}\\
+            &=-(dz_a)_i-i\frac{\partial\mathcal A}{\partial z_{a,i}^*}.
+            \end{aligned}
+          \]</div>
+          <p>Setting this to zero requires \(\partial\mathcal A/\partial z_{a,i}^*=i(dz_a)_i\). One choice is</p>
+          <div class="math-block">\[
+            \boxed{\mathcal A=i z_a^\dagger d z_a},\qquad
+            \frac{\partial\mathcal A}{\partial z_{a,i}^*}
+              =i\sum_jd_{ij}z_{a,j}.
+          \]</div>
+          <p>This is a real scalar: \(\mathcal A^*=-iz_a^\dagger d^\dagger z_a=iz_a^\dagger dz_a\). Consequently,</p>
+          <div class="math-block">\[
+            \boxed{\Pi=P+\mathcal A},\qquad
+            P=\Pi-\mathcal A,\qquad
+            \{R,\Pi\}=1,\qquad\{z_a,\Pi\}=0.
+          \]</div>
+          <p>The electronic brackets retain their canonical complex form. In these variables the governing Hamiltonian is</p>
+          <div class="math-block">\[
+            \boxed{
+            H_a^{\mathrm{can}}(R,\Pi,z_a)
+            =\frac{[\Pi-\mathcal A(R,z_a)]^2}{2M}
+             +z_a^\dagger E(R)z_a-\gamma\operatorname{Tr}E(R).
+            }
+          \]</div>
+          <p>This is the original classical mapping Hamiltonian in new canonical coordinates. It is not obtained by taking a CPS symbol of the square of a quantum covariant momentum. A matrix product need not map to the ordinary product of its symbols; those are different constructions.</p>
+          <p>An equivalent check uses the canonical one-form, up to a total differential:</p>
+          <div class="math-block">\[
+            P\,\mathrm{d}R+i z_d^\dagger \mathrm{d}z_d
+            =(P+i z_a^\dagger d z_a)\,\mathrm{d}R+i z_a^\dagger \mathrm{d}z_a.
+          \]</div>
+          <p>In this identity the exterior differentials describe phase-space changes, while the unadorned matrix \(d=U^\dagger U'\) is the NAC. Both derivations identify the same canonical momentum.</p>
+
+          <h2 id="electronic-eom">4. Hamilton Equations for the Moving Electronic Variables</h2>
+          <p>Only now apply standard Hamilton equations to \(H_a^{\mathrm{can}}\). Temporarily write \(z=z_a\) and define \(v=(\Pi-\mathcal A)/M=P/M\). The coordinate equation is</p>
+          <div class="math-block">\[
+            \dot R=\frac{\partial H_a^{\mathrm{can}}}{\partial\Pi}
+                   =\frac{\Pi-\mathcal A}{M}=\frac PM.
+          \]</div>
+          <p>For the electronic equation, differentiate the kinetic term at fixed \(R,\Pi\):</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \frac{\partial}{\partial z_i^*}
+            \frac{(\Pi-\mathcal A)^2}{2M}
+            &=-\frac{\Pi-\mathcal A}{M}
+                \frac{\partial\mathcal A}{\partial z_i^*}\\
+            &=-iv(dz)_i.
+            \end{aligned}
+          \]</div>
+          <p>The potential contributes \(\partial_{z_i^*}(z^\dagger Ez)=(Ez)_i\), while the trace offset has no electronic derivative. Combining the two terms gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot z_i
+            &=-i\frac{\partial H_a^{\mathrm{can}}}{\partial z_i^*}\\
+            &=-i[(Ez)_i-iv(dz)_i]\\
+            &=-i(Ez)_i-v(dz)_i.
+            \end{aligned}
+          \]</div>
+          <p>The minus sign in the NAC term follows from \((-i)(-i)=-1\). Restoring the subscript,</p>
+          <div class="math-block">\[
+            \boxed{\dot z_a=-iEz_a-\frac PMdz_a.}
+          \]</div>
+          <p>The first term produces electronic phase evolution on diagonal energies. The second describes amplitudes in a basis that rotates as the nuclei move. Adiabatic representation does not mean Born–Oppenheimer single-surface dynamics.</p>
+
+          <h2 id="nuclear-eom">5. Deriving the Physical Nuclear Force</h2>
+          <p>The canonical momentum equation gives \(\dot\Pi\), not yet \(\dot P\). A prime denotes a derivative with respect to \(R\). Differentiating the Hamiltonian at fixed \(\Pi,z,z^*\) gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot\Pi
+            &=-\partial_RH_a^{\mathrm{can}}\\
+            &=v\partial_R\mathcal A
+               -z^\dagger E'z+\gamma\operatorname{Tr}E'.
+            \end{aligned}
+          \]</div>
+          <p>Since \(P=\Pi-\mathcal A\), the physical force is \(\dot P=\dot\Pi-\dot{\mathcal A}\). The total derivative of \(\mathcal A=i z^\dagger d(R)z\) contains three terms:</p>
+          <div class="math-block">\[
+            \dot{\mathcal A}
+            =i\dot z^\dagger dz
+             +i z^\dagger d'z\,\dot R
+             +i z^\dagger d\dot z.
+          \]</div>
+          <p>The middle term is \(v\partial_R\mathcal A\). The electronic equation and its adjoint are</p>
+          <div class="math-block">\[
+            \dot z=-iEz-vdz,\qquad
+            \dot z^\dagger=iz^\dagger E+vz^\dagger d,
+          \]</div>
+          <p>where the sign in the adjoint uses \(d^\dagger=-d\). Substitute separately into the other two terms:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            i\dot z^\dagger dz
+              &=-z^\dagger Edz+ivz^\dagger d^2z,\\
+            iz^\dagger d\dot z
+              &=z^\dagger dEz-ivz^\dagger d^2z.
+            \end{aligned}
+          \]</div>
+          <p>The \(d^2\) terms cancel, leaving</p>
+          <div class="math-block">\[
+            \boxed{\dot{\mathcal A}
+            =v\partial_R\mathcal A+z^\dagger(dE-Ed)z.}
+          \]</div>
+          <p>Subtract this result from the canonical momentum equation. The \(v\partial_R\mathcal A\) terms also cancel:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot P
+            &=[v\partial_R\mathcal A-z^\dagger E'z
+                          +\gamma\operatorname{Tr}E']\\
+            &\quad-[v\partial_R\mathcal A+z^\dagger(dE-Ed)z]\\
+            &=-z^\dagger[E'+dE-Ed]z
+                          +\gamma\operatorname{Tr}E'.
+            \end{aligned}
+          \]</div>
+          <p>The extra force is therefore required by the same Hamiltonian that generated the electronic NAC term. Keeping the NAC in electronic propagation while dropping its corresponding force changes the coupled dynamics.</p>
+
+          <h2 id="gradient">6. The Full Gradient Matrix and the Two-State Equations</h2>
+          <p>To identify the matrix in the force, define \(G=U^\dagger V'U\). Differentiate all three factors in \(E=U^\dagger VU\):</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            E'&=(U^\dagger)'VU+U^\dagger V'U+U^\dagger VU'\\
+              &=-dE+G+Ed.
+            \end{aligned}
+          \]</div>
+          <p>Thus</p>
+          <div class="math-block">\[
+            \boxed{G=E'+[d,E]},\qquad
+            G_{ij}=\delta_{ij}E_i'+(E_j-E_i)d_{ij}.
+          \]</div>
+          <p>The diagonal is the energy gradient; the offdiagonal part is the energy gap times the NAC. Since a commutator has zero trace, \(\operatorname{Tr}G=\operatorname{Tr}E'\). The complete physical-momentum equations are therefore</p>
+          <div class="math-block">\[
+            \boxed{
+            \begin{aligned}
+            \dot R&=P/M,\\
+            \dot z_a&=-iEz_a-(P/M)dz_a,\\
+            \dot P&=-\operatorname{Tr}[K_aG],\qquad
+            K_a=z_az_a^\dagger-\gamma I.
+            \end{aligned}}
+          \]</div>
+          <p>For the real two-state example, take</p>
+          <div class="math-block">\[
+            E=\begin{pmatrix}E_1&0\\0&E_2\end{pmatrix},\qquad
+            d=\begin{pmatrix}0&d_{12}\\-d_{12}&0\end{pmatrix},\qquad
+            \Delta E=E_2-E_1.
+          \]</div>
+          <p>Then \(G_{12}=G_{21}=\Delta E\,d_{12}\), and the individual equations are</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \dot z_1&=-iE_1z_1-(P/M)d_{12}z_2,\\
+            \dot z_2&=-iE_2z_2+(P/M)d_{12}z_1,\\
+            \dot P&=-(|z_1|^2-\gamma)E_1'
+                     -(|z_2|^2-\gamma)E_2'\\
+                  &\quad-2\Delta E\,d_{12}\operatorname{Re}(z_1^*z_2).
+            \end{aligned}
+          \]</div>
+          <p>The last line makes the coherence-dependent nuclear force explicit. In the same real gauge, \(\mathcal A=-2d_{12}\operatorname{Im}(z_1^*z_2)\): the shift between canonical and physical momentum depends on the relative mapping phase.</p>
+          <p>Two consistency checks follow directly. First, the anti-Hermitian electronic generator preserves the sphere:</p>
+          <div class="math-block">\[
+            \frac{d}{dt}(z_a^\dagger z_a)
+            =(iz_a^\dagger E+vz_a^\dagger d)z_a
+              +z_a^\dagger(-iEz_a-vdz_a)=0.
+          \]</div>
+          <p>Second, \(K_a=U^\dagger K_dU\) and \(G=U^\dagger V'U\) imply</p>
+          <div class="math-block">\[
+            \operatorname{Tr}[K_aG]
+            =\operatorname{Tr}[U^\dagger K_dV'U]
+            =\operatorname{Tr}[K_dV'].
+          \]</div>
+          <p>Thus the nuclear force is identical in the two representations when evaluated on transformed versions of the same state. The numerical test below checks whether independent integrations preserve that equivalence.</p>
+
+          <h2 id="workflow">7. Preparation, Propagation, and Physical Readout</h2>
+          <p>A fair comparison starts from one physical preparation. For each sample draw \((R_0,P_0)\) from the specified nuclear distribution and draw an electronic direction uniformly on the CPS sphere. Define \(s=1+F\gamma\), and retain the initial weight</p>
+          <div class="math-block">\[
+            z_{d,0}^\dagger z_{d,0}=s,\qquad
+            w_0=F\operatorname{Tr}[\rho_{d,0}K_\gamma(z_{d,0})].
+          \]</div>
+          <p>Start the diabatic integrator with \(z_{d,0}\). Start the adiabatic integrator with \(z_{a,0}=U^\dagger(R_0)z_{d,0}\), the same physical momentum \(P_0\), and the same weight. If a canonical adiabatic integrator is used instead, initialize \(\Pi_0=P_0+\mathcal A(R_0,z_{a,0})\). Assigning state index zero independently in both bases generally prepares different states.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Stage</th><th>Diabatic route</th><th>Adiabatic route</th></tr></thead>
+            <tbody>
+              <tr><td>Electronic input</td><td>Full \(V(R),V'(R)\).</td><td>\(E(R),E'(R),d(R)\), with a consistent smooth frame.</td></tr>
+              <tr><td>Propagation</td><td>Use \(-iVz_d\) and \(-\operatorname{Tr}(K_dV')\).</td><td>Use \(-iEz_a-vdz_a\) and \(-\operatorname{Tr}(K_aG)\).</td></tr>
+              <tr><td>Nuclear momentum in this test</td><td>Physical \(P=M\dot R\).</td><td>The same physical \(P\); the code integrates the derived equations directly.</td></tr>
+              <tr><td>Time stepping</td><td>Re-evaluate \(V,V'\) at every RK4 stage.</td><td>Re-evaluate \(E,E',d\) at every RK4 stage.</td></tr>
+              <tr><td>Final observable</td><td>Choose a physical measurement basis.</td><td>Transform each sample into that same measurement basis before averaging.</td></tr>
+            </tbody>
+          </table></div>
+          <p>The force uses the Hamiltonian kernel \(K_\gamma\). Physical readout uses the matched dual, recalled from Part VI:</p>
+          <div class="math-block">\[
+            D_\gamma(z)
+            =\frac{F+1}{s^2}zz^\dagger-\frac{1-\gamma}{s}I,
+            \qquad \widetilde\rho=w_0D_\gamma(z_t).
+          \]</div>
+          <p>For adiabatic propagation, fixed diabatic populations are obtained from</p>
+          <div class="math-block">\[
+            \widetilde\rho_d^{(\alpha)}(t)
+            =w_{0,\alpha}U(R_\alpha)
+                 D_\gamma(z_{a,\alpha})U^\dagger(R_\alpha),\qquad
+            P_n^d(t)\approx\frac1N\sum_\alpha
+                  [\widetilde\rho_d^{(\alpha)}(t)]_{nn}.
+          \]</div>
+          <p>Conversely, the diabatic integrator gives local adiabatic populations by transforming its sample estimator with \(U^\dagger(R_\alpha)\) and \(U(R_\alpha)\) before averaging. A rotation at the ensemble-average geometry is a different operation. The quantum reference uses the matching position-resolved adiabatic projector before integrating over nuclear position.</p>
+          <p>The two parameter choices are both full-sphere scalar eCMM calculations. The shorthand “CPS W” means the W kernel, and “CPS half” means \(\gamma=1/2\):</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Choice, \(F=2\)</th><th>Sphere</th><th>Force kernel</th><th>Readout dual</th></tr></thead>
+            <tbody>
+              <tr><td>W: \(\gamma=(\sqrt3-1)/2\)</td><td>\(z^\dagger z=\sqrt3\)</td><td>\(K_W=zz^\dagger-\gamma_W I\)</td><td>\(D_W=K_W\)</td></tr>
+              <tr><td>\(\gamma=1/2\)</td><td>\(z^\dagger z=2\)</td><td>\(K=zz^\dagger-I/2\)</td><td>\(D=3zz^\dagger/4-I/4\)</td></tr>
+            </tbody>
+          </table></div>
+          <p>The half choice shares the oscillator offset of ordinary MMST in this convention, but the present spherical sampling and matched-dual estimator are not the complete full-space MMST/LSC workflow. The W choice corresponds to the self-dual spin-mapping representation when conventions are aligned. Neither label specifies a new nuclear force beyond the eCMM Hamiltonian above.</p>
+          <p>No sample estimator is clipped or normalized to trace one, and \(w_0\) is not multiplied into the single-trajectory force. Samples are averaged after their statistical weights have been attached to the physical estimator.</p>
+
+          <h2 id="benchmark">8. One Model, Two Propagation Bases, One Physical Comparison</h2>
+          <p>Use ToyModel's simple avoided crossing, in atomic units:</p>
+          <div class="math-block">\[
+            V(R)=\begin{pmatrix}a(R)&b(R)\\b(R)&-a(R)\end{pmatrix},\quad
+            \begin{aligned}
+            a(R)&=0.01\operatorname{sgn}(R)[1-e^{-1.6|R|}],\\
+            b(R)&=0.005e^{-R^2},\qquad M=2000.
+            \end{aligned}
+          \]</div>
+          <p>The electronic state is the fixed diabatic projector \(|0\rangle\langle0|\). The nuclear wavepacket is</p>
+          <div class="math-block">\[
+            \psi_0(R)\propto e^{-(R+4)^2+20iR},\qquad
+            \langle R\rangle=-4,\quad\sigma_R=0.5,\quad
+            \langle P\rangle=20,\quad\sigma_P=1.
+          \]</div>
+          <p>Trajectories sample the positive Wigner distribution of this minimum-uncertainty Gaussian. No momentum half-axis truncation is applied. Both propagation routes use identical nuclear samples and basis-related mapping samples representing the same initial phase-space state. Both gamma choices use the same electronic sphere directions scaled to their own radius.</p>
+          <figure>
+            <a href="../assets/img/mqc-series/cps-basis-model-check.svg"><img src="../assets/img/mqc-series/cps-basis-model-check.png" alt="Tully diabatic and adiabatic potentials, analytic NAC, and the maximum discrepancy between propagation bases" loading="lazy" width="2250" height="684"></a>
+            <figcaption>Left: the same two diabatic potentials (dashed) and adiabatic energies (solid), in Hartree versus Bohr. Center: the real-gauge NAC in inverse Bohr, localized near the crossing. Its pointed minimum is an analytic feature of the C1 Tully potential. Right: the maximum difference across four physical population curves over 0–800 a.u.; both gamma choices lie far below the predeclared 2×10<sup>−4</sup> tolerance. The NAC sign depends on the chosen eigenvector gauge; paired observables do not.</figcaption>
+          </figure>
+          <p>The independently propagated diabatic and adiabatic branches use RK4 with a 1 a.u. step and retain all 801 output times through 800 a.u. All trajectories continue to the final time; there is no exit-based freezing. A smooth analytic angle frame supplies the energies, gradients, and NAC in the adiabatic branch. This is a controlled finite-time test, not an asymptotic scattering-channel study.</p>
+          <p>The nuclear quantum reference propagates the same two-component wavepacket with FFT Strang splitting on a periodic box [−20,20], 2048 grid points, and a 0.5 a.u. step. Its 1601 actual output points are retained. Fixed diabatic populations are component norms; local adiabatic populations project the wavefunction at each grid point before spatial integration.</p>
+          <figure>
+            <a href="../assets/img/mqc-series/cps-basis-populations.svg"><img src="../assets/img/mqc-series/cps-basis-populations.png" alt="Four matched physical population curves comparing quantum propagation with two eCMM kernels in diabatic and adiabatic propagation bases" loading="lazy" width="2070" height="1332"></a>
+            <figcaption>Top: fixed diabatic populations. Bottom: local adiabatic populations. Black is the converged numerical quantum reference; blue is eCMM with the W kernel; orange is eCMM with gamma=1/2. Solid and dashed curves use diabatic and adiabatic propagation, respectively, with the same physical readout in each panel. The two propagation bases overlap. Shading shows conventional 95% pointwise intervals for the diabatic-propagation estimates; the paired adiabatic estimates have essentially the same uncertainty. Time is in atomic units.</figcaption>
+          </figure>
+          <p>Independent batches of 500 samples were added until all four population curves in both propagation bases had a maximum pointwise 95% half-width below 0.03 and the maximum cumulative-mean change was below 0.003 for three consecutive batches. Both gamma choices stopped at 16,500 samples. These are declared empirical finite-precision criteria; data-dependent stopping does not turn conventional pointwise intervals into simultaneous or optional-stopping coverage guarantees.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Quantity, full time window</th><th>W kernel</th><th>\(\gamma=1/2\)</th></tr></thead>
+            <tbody>
+              <tr><td>Maximum population difference between propagation bases</td><td>7.38×10<sup>−8</sup></td><td>2.02×10<sup>−7</sup></td></tr>
+              <tr><td>Maximum single-trajectory mapping-energy drift / Hartree</td><td>4.65×10<sup>−7</sup></td><td>5.12×10<sup>−7</sup></td></tr>
+              <tr><td>Maximum sphere-radius-squared drift</td><td>5.61×10<sup>−9</sup></td><td>6.93×10<sup>−9</sup></td></tr>
+              <tr><td>Maximum population difference from quantum reference, including sampling error</td><td>0.01536</td><td>0.01584</td></tr>
+              <tr><td>Maximum pointwise 95% half-width</td><td>0.01676</td><td>0.01690</td></tr>
+            </tbody>
+          </table></div>
+          <p>The population agreement between bases is much tighter than the statistical uncertainty because the samples are paired. It is an ensemble-mean statement: the largest individual-trajectory readout differences were about 9.4×10<sup>−5</sup> and 8.2×10<sup>−5</sup>, respectively. No claim is made that finite-step trajectories coincide exactly.</p>
+          <p>At 800 a.u., the quantum fixed-diabatic state-0 population is 0.492393. W gives 0.486999 ± 0.011964 and gamma=1/2 gives 0.487267 ± 0.012012, using the pointwise intervals above. These data do not resolve an accuracy ranking between the two gamma choices.</p>
+          <p>Finite sampling also leaves a small constant normalization offset: the estimated total population is about 1.00827 for W and 1.00955 for half, equal to the finite-sample mean of the initial weight up to integration error. The initial population deviations are about 0.00550 and 0.00670. These offsets are retained rather than removed by trace normalization.</p>
+          <p>Discretization was checked separately from sampling. The quantum tests change one numerical parameter at a time; the trajectory step test uses the same 50 samples and compares the complete common-time population curves:</p>
+          <figure>
+            <a href="../assets/img/mqc-series/cps-basis-controls.svg"><img src="../assets/img/mqc-series/cps-basis-controls.png" alt="Population differences under quantum and trajectory refinement and between propagation bases, all below the declared tolerance" loading="lazy" width="1710" height="684"></a>
+            <figcaption>Each bar is the maximum absolute population difference over the common output times and relevant population curves. Gray bars change one quantum numerical parameter; blue and orange bars show trajectory-step or propagation-basis comparisons for W and half. The dotted line is the same 2×10<sup>−4</sup> population tolerance. The log axis separates small numerical discrepancies from the much larger sampling uncertainty; these bars do not measure error against the full quantum dynamics.</figcaption>
+          </figure>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Control</th><th>Maximum population change</th><th>Scope</th></tr></thead>
+            <tbody>
+              <tr><td>Quantum step: 0.5 → 0.25 a.u.</td><td>9.09×10<sup>−7</sup></td><td>Fixed box and grid</td></tr>
+              <tr><td>Quantum grid: 2048 → 4096 points</td><td>3.16×10<sup>−9</sup></td><td>Fixed box and step</td></tr>
+              <tr><td>Quantum box: [−20,20] → [−40,40]</td><td>1.29×10<sup>−13</sup></td><td>Fixed spatial spacing and step</td></tr>
+              <tr><td>Trajectory step: 1 → 0.5 a.u., W</td><td>1.81×10<sup>−6</sup></td><td>50 paired initial samples</td></tr>
+              <tr><td>Trajectory step: 1 → 0.5 a.u., half</td><td>1.88×10<sup>−6</sup></td><td>50 paired initial samples</td></tr>
+            </tbody>
+          </table></div>
+          <p>Every population change is below 2×10<sup>−4</sup>. The quantum norm error is below 1.4×10<sup>−12</sup>, and probability within 2 Bohr of a box edge is below 8.7×10<sup>−15</sup>. Position and momentum expectation differences also pass their separate 0.002 a.u. budgets. The 50-sample step check is not presented as a half-step rerun of all 16,500 trajectories; energy, sphere, and basis diagnostics cover the complete production ensemble.</p>
+          <p>Related implementation controls include frozen-nuclear comparison with a matrix exponential, the moving-frame chain rule, full gradient reconstruction, and a refined short-time comparison with ToyModel's existing ECMM splitting integrator. All 28 associated ToyModel tests passed. Formal RK4 order is checked on a smooth LVC control: the Tully potential is only C1 at zero, so an ideal fourth-order ratio across its derivative junction is not assumed.</p>
+          <p>The algebra involving \(d′\) is understood separately on the two sides of zero. At the junction, the final physical-momentum equations extend continuously: the potential gradient and the NAC remain continuous, and the derivative of the NAC has canceled from the force. No impulsive force is introduced at the crossing.</p>
+
+          <h2 id="limits">9. What the Agreement Establishes</h2>
+          <p>The paired calculation supports a precise conclusion: with the same preparation, matched estimator, full gradient force, and a consistent moving frame, the independently propagated branches reproduce the same classical eCMM dynamics in diabatic and adiabatic coordinates.</p>
+          <p>The quantum comparison asks a separate question. Its maximum population discrepancy is about 0.015–0.016 at the current sampling precision, and includes initial and later sampling error. It cannot all be assigned to classical nuclear backreaction error. Neither self-duality nor a canonical coordinate transformation restores the quantum terms omitted when adopting classical coupled trajectories.</p>
+          <p>This model is traceless: \(\operatorname{Tr}V=0\). Thus the explicit scalar trace offset vanishes here. Gamma still changes the sphere radius and the representation/readout, but this benchmark does not isolate the trace-offset contribution to the force in a general Hamiltonian.</p>
+          <p>Completeness means completeness within the defined finite model, so \(U\) is square and unitary. A truncated, geometry-dependent ab initio electronic subspace can require additional projection or geometric terms. Multidimensional connections, degeneracies, global gauge patches, derivative-coupling interfaces, NaF forces, and real-system simulations are outside the present numerical validation.</p>
+
+          <h2 id="code">10. Code, Data, and Sources</h2>
+          <p>The calculation was performed with ToyModel. The downloadable adapter below contains the kernel, dual, smooth-frame helper, and paired integrator with their minimal dependencies, so it runs independently of a private project installation. The runner preserves the original random-number pool sizes and seeds, and reproduces the same accepted sampling rule.</p>
+          <ul class="code-list">
+            <li><a href="../assets/code/mqc/cps_basis_dynamics.py">cps_basis_dynamics.py</a>: standalone dynamics adapter; NumPy.</li>
+            <li><a href="../assets/code/mqc/cps_basis_benchmark.py">cps_basis_benchmark.py</a>: quantum controls, paired propagation, sampling statistics, and dense-data figures; NumPy, SciPy, Matplotlib.</li>
+            <li><a href="../assets/code/mqc/cps_basis_controls.py">cps_basis_controls.py</a>: plot the recorded discretization and representation controls; Matplotlib.</li>
+            <li><a href="../assets/data/mqc-viii/validation.json">Validation metadata</a>: protocol, seeds, result summaries, numerical controls, and displayed-curve checks.</li>
+            <li>W data: <a href="../assets/data/mqc-viii/W_diabatic.csv">diabatic propagation</a> and <a href="../assets/data/mqc-viii/W_adiabatic.csv">adiabatic propagation</a>.</li>
+            <li>Half data: <a href="../assets/data/mqc-viii/half_diabatic.csv">diabatic propagation</a> and <a href="../assets/data/mqc-viii/half_adiabatic.csv">adiabatic propagation</a>.</li>
+            <li><a href="../assets/data/mqc-viii/quantum.csv">Quantum reference</a> and <a href="../assets/data/mqc-viii/model.csv">potential/NAC samples</a>.</li>
+          </ul>
+          <pre><code>python assets/code/mqc/cps_basis_benchmark.py --output results --validate
+python assets/code/mqc/cps_basis_benchmark.py --output smoke --smoke 50
+python assets/code/mqc/cps_basis_benchmark.py --output figures --plot-data assets/data/mqc-viii</code></pre>
+          <p>The full command uses independent batches until the declared stopping rule is met. The smoke command checks execution only. CSV rows retain every output time; trajectory tables contain eight estimator means followed by their standard errors. No clipping, trace renormalization, statistical smoothing, or figure-path simplification is used.</p>
+          <ol class="references">
+            <li>David Tong, <em>Classical Dynamics</em>, Chapter 4, <a href="https://www.damtp.cam.ac.uk/user/tong/dynamics/dynhtml/S4.html">The Hamiltonian Formalism</a>. Standard Hamilton equations, Poisson brackets, and canonical transformations.</li>
+            <li>X. He, Z. Gong, B. Wu, and J. Liu, “Negative Zero-Point-Energy Parameter in the Meyer–Miller Mapping Model for Nonadiabatic Dynamics,” <em>Journal of Physical Chemistry Letters</em> <strong>12</strong>, 2496–2501 (2021). <a href="https://doi.org/10.1021/acs.jpclett.1c00232">Journal</a> · <a href="https://arxiv.org/abs/2205.11928">Open manuscript</a>. Constrained mapping Hamiltonian and matched inverse representation; see also the explicit conventions in Part VI.</li>
+            <li>J. E. Runeson and J. O. Richardson, “Generalized spin mapping for quantum-classical dynamics,” <em>Journal of Chemical Physics</em> <strong>152</strong>, 084110 (2020). <a href="https://doi.org/10.1063/1.5143412">Journal</a> · <a href="https://arxiv.org/html/1912.10906v1">Open manuscript</a>. Generalized Stratonovich–Weyl mapping and classical trajectories; gamma conventions must be aligned before comparison.</li>
+          </ol>
+
+          <section class="series-footer" aria-labelledby="mqc-series-map">
+            <h2 id="mqc-series-map">MQC series map</h2>
+            <ol class="series-list">
+              <li><a href="mqc-background.html">Part 0: Background and Working Assumptions</a> - why electronic–nuclear dynamics needs a closure.</li>
+              <li><a href="fssh-tully-benchmark.html">Part I: Fewest-Switches Surface Hopping</a> - active surfaces, transition probabilities, and Tully scattering.</li>
+              <li><a href="ehrenfest-tully-benchmark.html">Part II: Ehrenfest Mean-Field Dynamics</a> - continuous electronic amplitudes and mean forces.</li>
+              <li><a href="pmatrix-decoherence-balance.html">Part III: P-Matrix Decoherence and Detailed Balance</a> - density-matrix corrections and toy diagnostics.</li>
+              <li><a href="mmst-zpe-leakage.html">Part IV: MMST Mapping and ZPE Leakage</a> - oscillator mapping, actions, and force/readout diagnostics.</li>
+              <li><a href="spin-mint-three-state-morse-reproduction.html">Part V: Spin Mapping and Spin-MInt</a> - finite-state spin geometry, propagation, and model benchmarks.</li>
+              <li><a href="cps-foundations-dual-kernels.html">Part VI: CPS Foundations and Dual Kernels</a> - motivation, scalar kernel, sphere measure, and dual reconstruction.</li>
+              <li><a href="cps-trajectories-classical-feedback.html">Part VII: CPS Trajectories and Classical Feedback</a> - electronic Poisson brackets, nuclear feedback, and trajectory workflows.</li>
+              <li><a href="cps-diabatic-adiabatic-eom.html">Part VIII: Diabatic and Adiabatic CPS Dynamics</a> - canonical momentum, full moving-basis equations, and a paired Tully benchmark.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="cps-trajectories-classical-feedback.html">&lt;- Part VII: CPS Dynamics</a><a href="../series.html#mqc">MQC series</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

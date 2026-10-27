@@ -63,6 +63,17 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "cps-diabatic-adiabatic-eom",
+    title: "MQC VIII: Diabatic and Adiabatic CPS Dynamics",
+    path: "posts/cps-diabatic-adiabatic-eom.html",
+    date: "2026-10-27",
+    dateText: "2026.10.27",
+    description: "Derive both CPS equations from their Hamiltonians, track canonical and physical nuclear momentum, and compare paired Tully trajectories with a converged quantum reference.",
+    tags: ["MQC", "CPS", "Hamiltonian Dynamics", "Nonadiabatic Dynamics", "Model Calculation"],
+    series: "mqc",
+    part: 8,
+  },
+  {
     slug: "md-supercells-kpoints-nuclear-modes",
     title: "MD Supercells: Temperature, k Points, and Nuclear Modes",
     path: "posts/md-supercells-kpoints-nuclear-modes.html",
