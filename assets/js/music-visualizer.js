@@ -47,12 +47,12 @@
       if (seek && elapsed && duration) {
         const length = Number.isFinite(audio.duration) ? audio.duration : 0;
         seek.disabled = !length;
-        seek.max = length || 282.378;
+        seek.max = length || 256;
         seek.value = audio.currentTime;
         seek.style.setProperty("--progress", `${length ? audio.currentTime / length * 100 : 0}%`);
         seek.setAttribute("aria-valuetext", `${formatTime(audio.currentTime)} / ${formatTime(length)}`);
         elapsed.textContent = formatTime(audio.currentTime);
-        duration.textContent = length ? formatTime(length) : "4:42";
+        duration.textContent = length ? formatTime(length) : "4:16";
       }
       if (mute) {
         mute.setAttribute("aria-pressed", String(audio.muted));
