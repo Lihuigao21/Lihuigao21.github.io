@@ -516,6 +516,12 @@ h3 {
   background: var(--surface);
 }
 
+.post-content .life-song-player {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
 .post-content figcaption {
   margin-top: 8px;
   color: var(--subtle);

@@ -5,6 +5,7 @@ const tagLabels = document.querySelectorAll(".tags span");
 
 const articlePath = window.location.pathname;
 const lifeModulePages = new Set([
+  "art-reviews.html",
   "coffee-talk.html",
   "daily.html",
   "dreams-creation.html",

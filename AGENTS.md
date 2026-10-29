@@ -73,6 +73,8 @@ Avoid purely theoretical articles with no result. If the source material is theo
 - Figures should show actual numerical, conceptual, or workflow results, not decorative filler.
 - For HefeiNAMD articles, prefer the authors' official tutorial/example results. Do not invent toy-model figures merely to meet the result requirement. When using official results, cite the exact source, preserve the original figure, distinguish displayed results from a new reproduction, and check packaged inputs against the tutorial's illustrative parameters.
 - In browser QA, trigger lazy-loaded figures by scrolling them into view or setting their loading attribute to eager before awaiting image decoding. Awaiting decode on offscreen lazy images can leave the audit pending without checking any figures.
+- For embedded local video, use a responsive native player with controls and inline mobile playback. Validate actual playback, audio-track presence, seeking, MIME type, and published asset bytes; a rendered player alone does not prove the media works.
+- Inspect MP4 tracks before choosing the player: an MP4 can contain only audio. Use an audio player for audio-only MP4 files, preserve the original bytes, and verify decoded audio and seeking instead of requiring nonzero video dimensions.
 - Every figure must have a precise caption explaining:
   - what the axes mean,
   - what each curve/color/line style represents,
@@ -145,6 +147,7 @@ Before committing or pushing article changes:
 ## Site Boundaries
 
 - Individual pages under `posts/` and individual life-note pages under `life/` have separate public Giscus discussion threads, keyed by page pathname. Module landing pages do not create discussion threads.
+- Keep every lifestyle module landing filename in `lifeModulePages` in `assets/js/main.js`, including `art-reviews.html`, so module pages do not accidentally receive article discussion threads.
 - `posts/` contains published HTML articles.
 - `life.html` is the public Chinese landing page for the “生活记录” section.
 - `mind.html` is the public Chinese “精神世界” module within “生活记录”.
