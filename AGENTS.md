@@ -76,6 +76,7 @@ Avoid purely theoretical articles with no result. If the source material is theo
 - For embedded local video, use a responsive native player with controls and inline mobile playback. Validate actual playback, audio-track presence, seeking, MIME type, and published asset bytes; a rendered player alone does not prove the media works.
 - Inspect MP4 tracks before choosing the player: an MP4 can contain only audio. Use an audio player for audio-only MP4 files, preserve the original bytes, and verify decoded audio and seeking instead of requiring nonzero video dimensions.
 - Music visualizers must use real audio analysis and retain native playback when Web Audio cannot start. Check resume failures before an analyser exists, pause/background animation shutdown, reduced motion, and no-JavaScript fallback. Keep lyric lines sharing a timestamp in one cue; do not invent evenly spaced timings. For native-control browser tests, use stable locator clicks rather than viewport coordinates captured during smooth scrolling.
+- When the user requests a whole-page artistic composition, integrate the elements at that scale instead of boxing each widget separately; scope the theme to the requested page and keep comments reachable below. Custom playback controls must resume an existing AudioContext independently of visual-effect toggles; test suspension followed by playback with effects off.
 - Every figure must have a precise caption explaining:
   - what the axes mean,
   - what each curve/color/line style represents,
