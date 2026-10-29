@@ -136,6 +136,8 @@ and capture both staged and working-tree diff checks before printing results.
 
 Before committing or pushing article changes:
 
+Deployment verification must distinguish transport failures from stale published content. Use the host's working network/proxy route, preserve per-file results, and retry only failed or mismatched assets while retaining verified hashes.
+
 1. Confirm that technical articles are English-only; the `life.html`, `mind.html`, and `life/` pages are the explicit Chinese-language exceptions.
 2. Confirm that no absolute local paths, private personal information, credentials, or raw private environment details appear in published article text, captions, or code snippets.
 3. Check that all local links and image paths resolve.
