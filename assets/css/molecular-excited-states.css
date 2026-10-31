@@ -1,0 +1,64 @@
+/* Scientific controls follow the site's existing typography and palette. */
+.molecular-example {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--line, #deded8);
+  border-radius: 4px;
+  background: var(--bg, #fbfbfa);
+  min-width: 0;
+}
+.molecular-example h3 { margin-bottom: 0.75rem; }
+.molecular-example canvas,
+.molecular-example svg,
+.molecular-example .molecular-fallback {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+.molecular-example canvas,
+.molecular-example .molecular-average-chart,
+.molecular-example .molecular-controls { display: none; }
+.molecular-example.is-ready canvas,
+.molecular-example.is-ready .molecular-average-chart { display: block; }
+.molecular-example.is-ready .molecular-controls { display: grid; }
+.molecular-example.is-ready .molecular-fallback { display: none; }
+.molecular-controls {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 0.75rem 1rem;
+  margin: 0.75rem 0;
+}
+.molecular-controls label { display: grid; gap: 0.2rem; min-width: 0; }
+.molecular-controls input[type="range"] { width: 100%; min-width: 0; margin: 0; }
+.molecular-controls select,
+.molecular-controls button {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  font: inherit;
+  color: var(--ink, #222);
+  background: var(--surface, #fff);
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line, #deded8);
+  border-radius: 3px;
+}
+.molecular-controls button { align-self: end; cursor: pointer; }
+.molecular-example .molecular-status {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted, #666);
+  overflow-wrap: anywhere;
+}
+.molecular-example output { font-variant-numeric: tabular-nums; }
+.molecular-example .molecular-average-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0.5rem 0;
+}
+.molecular-example figcaption { margin-bottom: 0; }
+@media (max-width: 520px) {
+  .molecular-example { padding: 0.65rem; }
+  .molecular-controls { grid-template-columns: minmax(0, 1fr); }
+}

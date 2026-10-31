@@ -1,0 +1,19 @@
+{
+  "finite_and_shapes": true,
+  "electron_count": 114,
+  "gap_eV": 3.1412621451233664,
+  "state_average_energy_hartree": -683.9258527028868,
+  "G_gap_NAC_residual_hartree_per_bohr": 0.0,
+  "rotation_distance_error_angstrom": 1.7763568394002505e-15,
+  "schematic_occupation_counts": [
+    12,
+    12
+  ],
+  "evidence_scope": "One completed reference label; no basis or active-space convergence claim.",
+  "source_example_sha256": "78f93c794413c33b29bd6bdb8a2b29694a475a7bf753fd5f64449f53009ec52b",
+  "figures": {
+    "active-space.svg": "09f0882a653b1dd42e912b75a8beecf54fc966e20603f528b03f4f32b545c34b",
+    "motor-geometry.svg": "53848cd75adda4c049b64390f5947a93b07d25cfb2d5bd33d68ed13d74bebf8d",
+    "two-state-energy.svg": "0ea302f4e63ee7e823af4a2e20dc355fae199c24b18f8968d6a65da56367de7d"
+  }
+}

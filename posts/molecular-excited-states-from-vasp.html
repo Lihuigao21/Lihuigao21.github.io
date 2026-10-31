@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Follow one real molecular-motor calculation from a familiar VASP single-point workflow to two-state SA-CASSCF energies, forces, and nonadiabatic couplings.">
+    <title>Molecular Excited States I: From VASP to SA-CASSCF | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/molecular-excited-states.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="../assets/vendor/mathjax-3.2.2/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Molecular Excited States — Part I</p>
+          <h1>From VASP to SA-CASSCF</h1>
+          <p class="post-meta">2026.10.31 · Electronic Structure / Molecular Motors / Excited States</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="Molecular excited states series">
+            <a href="molecular-excited-states-from-vasp.html" aria-current="page">I. From VASP to SA-CASSCF</a>
+            <a href="../series.html?series=molecular-excited-states">Series index</a>
+          </nav>
+          <p class="lead">A VASP single-point calculation starts with fixed nuclei and ends with an electronic energy and nuclear forces. A molecular excited-state calculation retains that starting point, but asks for several electronic states of the same molecule. This series follows one actual 30-atom molecular motor, beginning with the calculation that turns a single geometry into two energies, two force vectors, and a nonadiabatic coupling.</p>
+          <p>The starting knowledge is ordinary ground-state Kohn–Sham DFT: a structure, a basis, an SCF loop, an energy, and forces. The immediate goal is to read the molecular input and its output without confusing an orbital with a many-electron state. Later parts will examine the orbital basis and RHF equations, configuration interaction and CASSCF, derivatives and coupling conventions, and the sampling and machine-learning workflow. The <a href="mqc-background.html">MQC series</a> already explains the subsequent nuclear dynamics; this series supplies the electronic-structure information those equations require.</p>
+          <nav aria-label="Article contents"><ol>
+            <li><a href="#geometry">Start with one frozen geometry</a></li>
+            <li><a href="#basis">Separate the basis from the electronic method</a></li>
+            <li><a href="#scf">Identify what the SCF loop solves</a></li>
+            <li><a href="#states">Ask for two total electronic states</a></li>
+            <li><a href="#active-space">Allow more than one occupation pattern</a></li>
+            <li><a href="#state-average">Optimize orbitals shared by two states</a></li>
+            <li><a href="#derivatives">Obtain forces and derivative coupling</a></li>
+            <li><a href="#result">Read one completed calculation</a></li>
+            <li><a href="#reproduce">Inspect the data and reproduce the figures</a></li>
+          </ol></nav>
+
+          <h2 id="geometry">1. Start with One Frozen Geometry</h2>
+          <p>Imagine extracting a frame from a VASP molecular-dynamics trajectory, writing a POSCAR, and running a static electronic calculation. All nuclear positions are parameters during the electronic solve. Denote their collection by \(\mathbf R=(\mathbf R_1,\ldots,\mathbf R_{N_{\mathrm{at}}})\). A consistent ground-state energy \(E_0(\mathbf R)\) and its derivative supply the nuclear force:</p>
+          <div class="math-block">\[
+            \mathbf F_A^{(0)}=-\frac{d E_0(\mathbf R)}{d\mathbf R_A}.
+          \]</div>
+          <p>A molecular single-point calculation uses the same separation of tasks. Our example is the motor geometry distributed with the PSiNaD nonadiabatic tutorial, with composition \(\mathrm C_{13}\mathrm H_{14}\mathrm N_2\mathrm O\). It contains 30 nuclei and, at charge zero,</p>
+          <div class="math-block">\[
+            N_e=13(6)+14(1)+2(7)+8=114
+          \]</div>
+          <p>electrons. The calculation discussed here is all-electron. Its electron count therefore comes from the nuclear charges and molecular charge, rather than the valence-electron count of a selected PAW dataset.</p>
+          <p>The displayed configuration is one sampled geometry of that same motor. Its coordinates are held fixed while the electronic labels are computed. The sampling stage used an xTB Hessian and SHARC Wigner proposals; those proposals supply geometries, while the labels below come from PySCF SA-CASSCF. A proposal geometry is not itself a converged electronic calculation.</p>
+<figure class="molecular-example" data-molecular-example data-molecular-geometry data-example-src="../assets/code/molecular-excited-states/motor-example.json" id="motor-geometry-explorer">
+  <h3>Inspect one actual reference geometry</h3>
+  <img class="molecular-fallback" src="../assets/img/molecular-excited-states/motor-geometry.svg" alt="Actual sampled 30-atom motor geometry; carbon gray, hydrogen white, nitrogen blue, oxygen brown." loading="lazy">
+  <canvas width="640" height="430" role="img" aria-label="Actual molecular geometry; use the rotation controls below."></canvas>
+  <div class="molecular-controls">
+    <label>Rotate around the vertical axis<input type="range" min="-180" max="180" value="16" step="1" data-yaw aria-label="Vertical-axis rotation in degrees"></label>
+    <label>Tilt the geometry<input type="range" min="-90" max="90" value="-24" step="1" data-pitch aria-label="Geometry tilt in degrees"></label>
+    <label>Calculated force vectors<select data-force-state><option value="none">Geometry only</option><option value="0">S0 forces</option><option value="1">S1 forces</option></select></label>
+    <button type="button" data-reset-view>Reset view</button>
+  </div>
+  <p class="molecular-status" data-geometry-status aria-live="polite"></p>
+  <p class="molecular-status" data-widget-error></p>
+  <figcaption>One fixed sampled geometry of the actual tutorial motor. The rotation changes the view, not the nuclear coordinates. Force arrows are calculated as minus the corresponding state gradient and share one scale across both states. Arrows are not a propagated displacement. Connectivity guides are inferred from distances and do not assign bond orders.</figcaption>
+</figure>
+          <p>In a VASP calculation with smearing, the printed free energy and the reported zero-smearing energy require a consistent interpretation. The analogy used throughout this article is the fixed-geometry energy-and-force workflow, not a numerical identification of molecular energies with every quantity printed as TOTEN.</p>
+
+          <h2 id="basis">2. Separate the Basis from the Electronic Method</h2>
+          <p>Before changing how electron interaction is approximated, identify how an orbital is represented. In a periodic plane-wave calculation, an orbital is expanded in plane waves; ENCUT limits their kinetic energies. In this isolated-molecule calculation, a molecular orbital is expanded in atom-centered Gaussian basis functions:</p>
+          <div class="math-block">\[
+            \psi_{n\mathbf k}(\mathbf r)
+              =\sum_{\mathbf G}a_{n\mathbf k,\mathbf G}
+                   e^{i(\mathbf k+\mathbf G)\cdot\mathbf r},
+            \qquad
+            \phi_p(\mathbf r)
+              =\sum_\mu C_{\mu p}\chi_\mu(\mathbf r;\mathbf R).
+          \]</div>
+          <p>The first expression is the familiar plane-wave representation of the smooth orbital in a PAW calculation; PAW also provides augmentation information. In the second expression, \(\chi_\mu\) are basis functions centered on nuclei, and \(C_{\mu p}\) are coefficients determined by the electronic calculation. The chosen basis is <code>6-31g*</code>. Its split-valence functions and polarization functions give the orbitals room to change shape. A later part will unpack that notation quantitatively.</p>
+          <p>Both approaches use a finite representation, but 6-31G* is not an ENCUT expressed in another unit. Basis convergence follows a family of Gaussian basis sets rather than increasing one plane-wave cutoff. Likewise, changing the basis and changing the electronic method are separate decisions. Molecules can be treated with DFT, and periodic systems can use methods beyond DFT; the distinction here concerns the settings actually used.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Familiar task</th><th>Current molecular calculation</th><th>Meaning of the correspondence</th></tr></thead>
+            <tbody>
+              <tr><td>POSCAR: species and positions</td><td>XYZ coordinates plus molecular charge and spin</td><td>Define the nuclei and electron count.</td></tr>
+              <tr><td>Periodic cell and k-point sampling</td><td>Isolated molecule, without crystal k points</td><td>Choose the spatial boundary conditions.</td></tr>
+              <tr><td>Plane waves controlled by ENCUT</td><td>Atom-centered 6-31G* functions</td><td>Choose a finite orbital representation.</td></tr>
+              <tr><td>PAW dataset and exchange–correlation functional</td><td>All-electron nuclear charges; RHF reference and SA-CASSCF treatment</td><td>Specify core treatment and electronic approximation separately from the basis.</td></tr>
+              <tr><td>Ground-state total energy and forces</td><td>Two state energies, two forces, and derivative coupling</td><td>Specify what the electronic calculation must return.</td></tr>
+            </tbody>
+          </table></div>
+          <p>The plane-wave cutoff definition is documented in the <a href="https://www.vasp.at/wiki/ENCUT">VASP ENCUT reference</a>. The table is a functional correspondence, not a one-to-one conversion of input tags.</p>
+
+          <h2 id="scf">3. Identify What the SCF Loop Solves</h2>
+          <p>With a basis chosen, the coefficients still have to be determined. In ground-state KS-DFT, a trial density defines an effective potential; solving for orbitals gives a new density; the process is repeated until self-consistency. Restricted Hartree–Fock, or RHF, also iterates orbitals and an effective one-electron operator. It treats exchange through the Hartree–Fock exchange operator rather than a chosen DFT exchange–correlation functional.</p>
+          <p>SCF names the self-consistent solution process. It is not a synonym for DFT. In a nonorthogonal Gaussian basis the RHF equations have the matrix form</p>
+          <div class="math-block">\[
+            \mathbf F[\mathbf P]\,\mathbf C
+             =\mathbf S\,\mathbf C\,\boldsymbol\varepsilon,
+            \qquad
+            S_{\mu\nu}=\langle\chi_\mu|\chi_\nu\rangle.
+          \]</div>
+          <p>Here \(\mathbf P\) is the density matrix, \(\mathbf F\) is the Fock matrix, \(\mathbf S\) is the overlap matrix, and the columns of \(\mathbf C\) define molecular orbitals. Because the Fock matrix depends on the density constructed from those orbitals, this is a nonlinear self-consistency problem. A closed-shell RHF reference for 114 electrons doubly occupies 57 spatial orbitals.</p>
+          <p>KS orbitals belong to an auxiliary noninteracting description of the density. RHF instead uses a single Slater determinant as an approximation to the interacting wavefunction. Their similar orbital-solving workflows should not erase this difference. The <a href="https://pyscf.org/user/scf.html">PySCF SCF documentation</a> describes the HF and KS implementations.</p>
+          <p>Our jobs perform or reuse a converged RHF reference, then undertake a separate multiconfigurational optimization. For continuation across geometries, the actual CASSCF initial orbitals and configuration coefficients are projected from retained earlier wavefunctions. Freshly converged RHF orbitals are therefore not automatically the CASSCF starting orbitals in this implementation. This is useful to know when reading the logs, but it does not change the distinction between reference SCF and the final electronic method.</p>
+
+          <h2 id="states">4. Ask for Two Total Electronic States</h2>
+          <p>The reference has supplied orbital information, but the requested output is larger: two electronic states of the entire molecule. The difference between an orbital energy and a many-electron energy must therefore be explicit.</p>
+          <p>At fixed \(\mathbf R\), the nonrelativistic electronic Hamiltonian contains electron kinetic energy, electron–nucleus attraction, electron–electron repulsion, and a constant nuclear repulsion. In atomic units, define</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \hat H_{\mathrm{el}}(\mathbf R)
+             ={}&-\frac12\sum_i\nabla_i^2
+               -\sum_{iA}\frac{Z_A}{|\mathbf r_i-\mathbf R_A|}
+               +\sum_{i&lt;j}\frac{1}{|\mathbf r_i-\mathbf r_j|}\\
+              &+\sum_{A&lt;B}\frac{Z_AZ_B}{|\mathbf R_A-\mathbf R_B|}.
+            \end{aligned}
+          \]</div>
+          <p>The indices \(i,j\) label electrons and \(A,B\) label nuclei; \(Z_A\) is a nuclear charge. Nuclear repulsion is included in our \(E_I(\mathbf R)\) convention. The electronic eigenproblem is</p>
+          <div class="math-block">\[
+            \hat H_{\mathrm{el}}(\mathbf R)\Psi_I
+             =E_I(\mathbf R)\Psi_I .
+          \]</div>
+          <p>Each \(\Psi_I\) depends on the coordinates and spins of all 114 electrons. The target \(S_0\) and \(S_1\) are the lowest and next singlet roots in the chosen electronic model, with total spin \(S=0\). They have the same electron number and nuclear geometry. An excited singlet need not have the closed-shell occupation pattern of the RHF reference.</p>
+          <p>Orbital eigenvalues \(\varepsilon_p\) and total-state energies \(E_I\) are different objects. In VASP, a KS band eigenvalue is not the total energy of the crystal; similarly, a molecular LUMO eigenvalue is not the total energy of \(S_1\). At this fixed geometry the excitation energy is</p>
+          <div class="math-block">\[
+            \Delta E_{01}(\mathbf R)=E_1(\mathbf R)-E_0(\mathbf R).
+          \]</div>
+          <p>In general it cannot be replaced by the HOMO–LUMO orbital gap. The interacting excited state includes the response and correlation of the electrons. Changing \(\mathbf R\) and solving again generates a separate potential-energy surface for each root. A vertical excitation compares the two energies at the same geometry; relaxing the excited-state geometry is a further nuclear optimization.</p>
+
+          <h2 id="active-space">5. Allow More Than One Occupation Pattern</h2>
+          <p>To distinguish correlated electronic states, we need a wavefunction flexible enough to combine different electron occupations. A Slater determinant is an antisymmetrized product of occupied spin orbitals: it specifies one occupation pattern while respecting fermionic exchange. A multiconfigurational wavefunction combines several such patterns, or spin-adapted combinations of them:</p>
+          <div class="math-block">\[
+            \Psi_I=\sum_K c_{KI}\,
+              \Phi_K(\phi_1,\phi_2,\ldots).
+          \]</div>
+          <p>The \(\Phi_K\) are configuration basis functions; \(c_{KI}\) are their expansion coefficients for state \(I\). The orbitals are shared in our state-averaged calculation, but the coefficients are different for the two roots. Thus the same orbital set can represent different many-electron states. Full configuration interaction uses all allowed configurations in a specified finite orbital basis. CASSCF restricts that combinatorial problem to an active space and also optimizes the orbitals.</p>
+          <p>Our input <code>CASSCF(12e,9o)</code> selects 12 active electrons and nine active <em>spatial</em> orbitals. Each spatial orbital has two spin-orbital partners. Within this active space, all configurations compatible with the electron number and selected spin symmetry are available. The remaining electrons are not removed:</p>
+          <div class="math-block">\[
+            \underbrace{51\times2}_{\text{inactive electrons}}
+            +\underbrace{12}_{\text{active electrons}}
+            =114.
+          \]</div>
+          <p>The 51 inactive spatial orbitals remain doubly occupied in every allowed configuration. External orbitals are unoccupied in that expansion. “Inactive” constrains occupation; it does not mean their orbital shapes are necessarily frozen. Orbital optimization can rotate the inactive, active, and external subspaces through the permitted nonredundant rotations.</p>
+          <figure>
+            <img src="../assets/img/molecular-excited-states/active-space.svg" alt="Occupation schematic showing 51 doubly occupied inactive spatial orbitals, nine active spatial orbitals with 12 electrons, and empty external orbitals." loading="lazy">
+            <figcaption>The occupation restrictions of the actual 12-electron, nine-orbital model. Any individual active-space occupation shown is illustrative, not a measured dominant configuration or a set of computed orbital energies. Twelve active electrons remain part of the full 114-electron wavefunction.</figcaption>
+          </figure>
+          <p>This is an approximation to the molecule. It allows substantial correlation inside the chosen active space, while omitting configurations with inactive holes or external occupations. Solving this model accurately does not make it exact for the complete molecular Hamiltonian. The adequacy of the active orbitals over a photochemical path is a separate scientific question; a successful local calculation does not answer it.</p>
+          <p>The distinction between CASCI and CASSCF is described in the <a href="https://pyscf.org/user/mcscf.html">PySCF MCSCF documentation</a>: CASCI varies configuration coefficients at fixed orbitals, whereas CASSCF also relaxes the orbitals.</p>
+
+          <h2 id="state-average">6. Optimize Orbitals Shared by Two States</h2>
+          <p>The configuration expansion explains what is varied beyond RHF. The next question is which energy should guide the orbital changes when two roots must be represented together.</p>
+          <p>For fixed orbitals, construct the Hamiltonian matrix in the configuration basis and solve for two roots:</p>
+          <div class="math-block">\[
+            H_{KL}=\langle\Phi_K|\hat H_{\mathrm{el}}|\Phi_L\rangle,
+            \qquad
+            \sum_L H_{KL}c_{LI}=E_Ic_{KI},
+            \quad I=0,1.
+          \]</div>
+          <p>The matrix depends on the orbitals through one- and two-electron integrals. CASSCF changes those orbitals, which changes the matrix and its eigenvectors, and iterates the coupled problem. In our equal-weight state-averaged calculation, the orbital objective is</p>
+          <div class="math-block">\[
+            E_{\mathrm{SA}}=\frac12E_0+\frac12E_1.
+          \]</div>
+          <p>The shared orbitals are optimized for that objective, and the individual roots retain their own energies. This reduces a bias toward optimizing the orbital set solely for one target state. It does not mean the molecule was initialized as a physical 50:50 mixture. A later dynamical initial state may occupy \(S_1\), \(S_0\), or a specified superposition; that preparation is a separate choice.</p>
+          <figure class="molecular-example" data-molecular-example data-molecular-average data-example-src="../assets/code/molecular-excited-states/motor-example.json" id="motor-average-explorer">
+  <h3>Move the optimization weights, with the energies held fixed</h3>
+  <img class="molecular-fallback" src="../assets/img/molecular-excited-states/two-state-energy.svg" alt="The two actual total energies and their equal-weight mean at one molecular geometry." loading="lazy">
+  <svg class="molecular-average-chart" viewBox="0 0 560 310" role="img" aria-label="State energies remain fixed while a dashed arithmetic-mean line moves with the selected weight."></svg>
+  <div class="molecular-controls">
+    <label>Weight on S0 in this frozen-energy illustration<input type="range" min="0" max="1" value="0.5" step="0.01" data-average-weight></label>
+    <button type="button" data-reset-weight>Restore equal weights</button>
+  </div>
+  <p class="molecular-average-readout"><output data-average-label>w0 = 0.50, w1 = 0.50</output><span>Weighted mean: <output data-average-value>−683.9258527 Ha</output></span></p>
+  <p class="molecular-status" data-widget-error></p>
+  <figcaption>The solid lines are the two actual total energies at one fixed geometry; the dashed line is their weighted arithmetic mean, shown relative to E0. This control does not rerun CASSCF: orbitals, wavefunctions and state energies remain fixed. A real calculation with changed state-average weights would reoptimize the common orbitals. The slider does not set physical electronic populations.</figcaption>
+</figure>
+          <p>The interactive weight above illustrates only the arithmetic \(wE_0+(1-w)E_1\) for the two retained energies. In an actual new state-averaged optimization, changing the weights would generally change the orbitals and both root energies. The widget does not perform that electronic calculation.</p>
+          <p>This distinction also explains why a line reporting a converged RHF energy is not the end of the job. The multiconfigurational calculation must converge its configuration coefficients and shared orbital optimization. The final labels in this example are SA-CASSCF results, not RHF orbital energies.</p>
+
+          <h2 id="derivatives">7. Obtain Forces and Derivative Coupling</h2>
+          <p>Two energies identify the local electronic gap, but a nuclear trajectory also needs how those energies and states change when the nuclei move. The force on nucleus \(A\) on state \(I\) is</p>
+          <div class="math-block">\[
+            \mathbf F_A^{(I)}=-\frac{dE_I}{d\mathbf R_A},
+            \qquad I=0,1.
+          \]</div>
+          <p>The derivative is a total derivative of the optimized state energy. If \(\boldsymbol\theta\) collects orbital and configuration parameters, the chain rule gives</p>
+          <div class="math-block">\[
+            \frac{dE_I}{d\mathbf R_A}
+            =\left.\frac{\partial E_I}{\partial\mathbf R_A}\right|_{\boldsymbol\theta}
+             +\frac{\partial E_I}{\partial\boldsymbol\theta}
+                  \frac{d\boldsymbol\theta}{d\mathbf R_A}.
+          \]</div>
+          <p>Constraints and stationarity allow response terms to be reorganized, but they cannot simply all be discarded. Shared orbitals are stationary for \(E_{\mathrm{SA}}\), while an individual \(E_I\) is generally not stationary with respect to those orbital changes. Atom-centered basis functions also move with their nuclei, producing basis-derivative, or Pulay, contributions. The analytic gradient machinery therefore solves a response/Lagrange-multiplier problem. A converged electronic optimization is necessary, but is not itself the completed force calculation.</p>
+          <p>The additional vector coupling measures the change of the electronic basis with nuclear position. With real, orthonormal states, define our convention as</p>
+          <div class="math-block">\[
+            \mathbf d_{01,A}
+              =\left\langle\Psi_0\middle|
+                 \frac{\partial\Psi_1}{\partial\mathbf R_A}
+                \right\rangle,
+            \qquad
+            \mathbf d_{10,A}=-\mathbf d_{01,A}.
+          \]</div>
+          <p>These are couplings between two many-electron states. They should not be silently identified with couplings between two selected KS orbitals in a carrier-dynamics calculation. Along a prescribed nuclear motion, the contraction \(\sum_A\dot{\mathbf R}_A\cdot\mathbf d_{01,A}\) enters the electronic propagation. The <a href="mqc-background.html#born-huang-couplings">Born–Huang discussion in MQC 0</a> derives this connection; <a href="cps-diabatic-adiabatic-eom.html">MQC VIII</a> treats the subsequent trajectory equations.</p>
+          <p>The public label also contains the energy-gap-scaled off-diagonal coupling</p>
+          <div class="math-block">\[
+            \mathbf G_{01,A}
+              =\Delta E_{01}\,\mathbf d_{01,A}.
+          \]</div>
+          <p>We use this definition consistently, including its sign. Multiplying by the gap changes the units from inverse length to energy per length. For exact differentiable nondegenerate eigenstates in a fixed complete representation, differentiating the eigenproblem and projecting onto the other state yields the familiar off-diagonal derivative relation. Finite basis sets and approximate state-averaged wavefunctions require their own analytic response treatment; the label definition alone does not prove such a calculation exact.</p>
+          <p>The stored force is the negative gradient. In the full exported \(G\) tensor, the diagonal blocks contain state gradients, while the off-diagonal blocks use the gap-scaled convention above. In particular, \(G_{10}=(E_0-E_1)d_{10}=G_{01}\) for these real states, although \(d_{10}=-d_{01}\). This example uses bare, no-ETF NACs. The <a href="https://pyscf.org/pyscf_api_docs/pyscf.nac.html">PySCF NAC reference</a> documents the available ETF and energy-gap conventions. Overall electronic phases must also be fixed consistently: changing the sign of one state reverses its off-diagonal coupling, without changing that state's energy or force.</p>
+
+          <h2 id="result">8. Read One Completed Calculation</h2>
+          <p>We can now read the actual output in the same spirit as inspecting an energy and force block after a VASP single point. For the displayed motor geometry, the two retained root energies are</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            E_0&=-683.9835723301915\ E_h,\\
+            E_1&=-683.8681330755821\ E_h.
+            \end{aligned}
+          \]</div>
+          <p>Subtracting the two totals gives the fixed-geometry excitation gap, while averaging them gives the orbital-optimization objective:</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            \Delta E_{01}&=0.1154392546093\ E_h
+                           \simeq3.141262\ \mathrm{eV},\\
+            E_{\mathrm{SA}}&=-683.9258527028868\ E_h.
+            \end{aligned}
+          \]</div>
+          <figure>
+            <img src="../assets/img/molecular-excited-states/two-state-energy.svg" alt="Actual S0 and S1 total energies at one fixed geometry, their 3.141262 eV gap, and the equal-weight state average." loading="lazy">
+            <figcaption>Two many-electron energies at the same geometry, with the reference energy stated on the axis. The midpoint marks the equal-weight SA objective. These are calculated roots of the chosen SA-CASSCF model, not HOMO and LUMO eigenvalues. The diagram contains no nuclear coordinate scan, transition intensity, or population dynamics.</figcaption>
+          </figure>
+          <p>The digits reproduce the retained numerical output; they are not a statement of molecular accuracy to that many decimals. The electronic calculation used practical convergence settings, including an MC energy threshold of \(10^{-8}\ E_h\) and an orbital-gradient threshold of \(10^{-4}\). No basis-set, active-space, or experimental accuracy claim follows from those thresholds.</p>
+          <p>For 30 atoms, each state gradient contains \(30\times3=90\) components. The off-diagonal NAC likewise has 90 components. The published sample contains coordinates in angstrom, energies in hartree, forces in hartree per bohr, NACs in inverse bohr, and gap-scaled couplings in hartree per bohr. Gradients are recovered as minus the forces. A reader should therefore be able to identify the following complete label:</p>
+          <div class="math-block">\[
+            \mathbf R
+              \longmapsto
+              \bigl(E_0,E_1,\mathbf F^{(0)},\mathbf F^{(1)},
+                    \mathbf d_{01},\mathbf G_{01}\bigr).
+          \]</div>
+          <p>This map is the object the electronic-structure workflow supplies. It can be queried directly during a trajectory, or sampled at many geometries to train a surrogate. Here the data establish a completed local label. They do not establish a globally reliable photochemical active space, a converged training set, or a validated HamGNN/NaF trajectory.</p>
+
+          <h2 id="reproduce">9. Inspect the Data and Reproduce the Figures</h2>
+          <p>The compact <a href="../assets/code/molecular-excited-states/motor-example.json">public example JSON</a> contains the geometry, state energies, forces, and couplings used in the figures. Its units and conventions are included. The accompanying scripts inspect the label and regenerate the static illustrations:</p>
+          <ul>
+            <li><a href="../assets/code/molecular-excited-states/inspect_motor_label.py">Inspect energies, forces, electron count, and coupling identities</a>.</li>
+            <li><a href="../assets/code/molecular-excited-states/render_figures.py">Regenerate the geometry, active-space schematic, and energy diagram</a>.</li>
+            <li><a href="../assets/js/molecular-excited-states.js">Interactive figure source</a>.</li>
+          </ul>
+          <p>These files reproduce the displayed data checks and figures without access to a private workstation. They do not rerun a complete CASSCF electronic optimization. Reproducing a particular multiconfigurational stationary solution also requires the active-orbital preparation and wavefunction initialization; a fresh default active-space choice is not guaranteed to recover the same solution.</p>
+          <p>The calculation can now be described precisely: choose a geometry and basis; construct or reuse a reference; optimize two correlated singlet roots with shared orbitals; solve the state-gradient and coupling response equations; and retain the resulting physical quantities with consistent units and phase conventions. The familiar single-point structure survives, while the electronic object being solved has expanded.</p>
+          <h3>Sources and related reading</h3>
+          <ol>
+            <li><a href="https://www.vasp.at/wiki/ENCUT">VASP Wiki: ENCUT</a> — plane-wave basis cutoff.</li>
+            <li><a href="https://pyscf.org/user/scf.html">PySCF: Self-consistent field methods</a> — HF and KS reference calculations.</li>
+            <li><a href="https://pyscf.org/user/ci.html">PySCF: Configuration interaction</a> — finite-basis configuration expansions.</li>
+            <li><a href="https://pyscf.org/user/mcscf.html">PySCF: Multiconfiguration self-consistent field</a> — CASCI, CASSCF, and state averaging.</li>
+            <li><a href="https://pyscf.org/pyscf_api_docs/pyscf.grad.sacasscf.html">PySCF: State-averaged CASSCF gradients</a> and <a href="https://pyscf.org/pyscf_api_docs/pyscf.nac.html">nonadiabatic couplings</a> — derivative implementations and conventions.</li>
+            <li>PSiNaD nonadiabatic tutorial — molecular-system provenance; the present electronic labels use PySCF, rather than the tutorial's OM2/GUGA-CI Hamiltonian. <a href="https://github.com/xshinhe/PSiNad/blob/95de9228f150ba97aaf02ecaf4a6f8b34eed9d3e/docs/manu/nonadiabatic.md">Tutorial at the retained source revision</a>.</li>
+          </ol>
+          <h2 id="series-map">Molecular Excited States Series</h2>
+          <ul class="series-list"><li><a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a> — one real fixed-geometry calculation.</li></ul>
+          <p>Planned next topics are the Gaussian basis and RHF self-consistency, configuration interaction and active-space optimization, state-specific gradients and NACs, and sampling and surrogate-driven dynamics. Each will continue with the same motor rather than changing the example at every step.</p>
+        </div>
+        <div class="post-nav"><a href="../series.html?series=molecular-excited-states">Series index</a><a href="../index.html#articles">All articles</a></div>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/molecular-excited-states.js"></script>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

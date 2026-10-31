@@ -1,5 +1,11 @@
 window.SITE_SERIES = [
   {
+    id: "molecular-excited-states",
+    title: "分子激发态计算",
+    label: "Molecular Excited States",
+    description: "从熟悉的 VASP 单点计算出发，以同一个分子马达理解 RHF、CASSCF、激发态力、非绝热耦合与后续机器学习动力学。",
+  },
+  {
     id: "hefeinamd",
     title: "HefeiNAMD 系列",
     label: "HefeiNAMD",
@@ -62,6 +68,17 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    slug: "molecular-excited-states-from-vasp",
+    title: "Molecular Excited States I: From VASP to SA-CASSCF",
+    path: "posts/molecular-excited-states-from-vasp.html",
+    date: "2026-10-31",
+    dateText: "2026.10.31",
+    description: "Follow one actual molecular-motor geometry from a VASP-style single point to SA-CASSCF energies, state forces, and nonadiabatic coupling.",
+    tags: ["Molecular Excited States", "Electronic Structure", "CASSCF", "PySCF", "Real-System Calculation"],
+    series: "molecular-excited-states",
+    part: 1,
+  },
   {
     slug: "cps-diabatic-adiabatic-eom",
     title: "MQC VIII: Diabatic and Adiabatic CPS Dynamics",
