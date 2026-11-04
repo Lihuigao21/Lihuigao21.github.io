@@ -7,6 +7,7 @@
     <title>生活记录 | Lihui Gao</title>
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/playlist.css?v=20261104">
   </head>
   <body>
     <header class="site-header">
@@ -40,7 +41,10 @@
           这里记录每天生活中值得留下的部分：行动、感受、关系、食物、地点、探索未知、技能、反思、正反馈、回忆和公共观察。它不是原始日记，而是公开版本的生活索引，用来保存能被以后重新理解的片段。
         </p>
         <div class="life-random-portal">
-          <button class="life-random-button" type="button" data-random-life>随机遇见过去的我</button>
+          <div class="life-hero-actions">
+            <button class="life-random-button" type="button" data-random-life>随机遇见过去的我</button>
+            <a class="life-random-button life-playlist-link" href="life/playlist.html">我的歌单</a>
+          </div>
           <p class="life-random-note" data-random-life-status aria-live="polite">从已经公开的生活记录里，随机翻开一页。</p>
         </div>
       </section>
@@ -220,7 +224,7 @@
       <a href="#top">返回顶部</a>
     </footer>
 
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/life-random.js"></script>
+    <script src="assets/js/main.js?v=20261104-playlist"></script>
+    <script src="assets/js/life-random.js?v=20261104-playlist"></script>
   </body>
 </html>

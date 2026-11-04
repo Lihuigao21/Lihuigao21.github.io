@@ -15,6 +15,7 @@ const lifeModulePages = new Set([
   "life-experience.html",
   "memories.html",
   "people.html",
+  "playlist.html",
   "positive-feedback.html",
   "reflection.html",
   "relationship.html",

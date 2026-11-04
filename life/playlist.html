@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Lihui Gao 的歌单，收录生活记录中的歌曲，可连续播放并打开每首歌的歌词与随记。">
+    <title>我的歌单 | 生活记录 | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/playlist.css?v=20261104">
+  </head>
+  <body class="playlist-page">
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="返回首页">
+        <span class="brand-mark">LG</span>
+        <span class="brand-name">Lihui Gao</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="../index.html#articles">文章</a>
+        <a href="../tags.html">标签</a>
+        <a href="../series.html">系列</a>
+        <a href="../life.html" aria-current="page">生活记录</a>
+        <a href="../index.html#archive">归档</a>
+        <span class="contact-text">联系方式：23110190022@m.fudan.edu.cn</span>
+        <a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+    <main id="top">
+      <article class="post life-post" data-playlist>
+        <header class="post-header">
+          <h1>我的歌单</h1>
+          <p class="playlist-intro">生活记录里的歌，共 2 首。</p>
+        </header>
+        <section class="playlist-player" aria-label="音乐播放器">
+          <div class="playlist-playing-meta">
+            <div><h2 data-playlist-title>孤独患者</h2><p data-playlist-artist>陈奕迅</p></div>
+            <span class="playlist-duration" data-playlist-duration>4:31</span>
+          </div>
+          <audio class="playlist-audio" controls preload="metadata" aria-label="孤独患者，陈奕迅">
+            <source src="../assets/media/gu-du-huan-zhe-eason-chan-2026-11-04.mp4?v=9d8d16685bf6" type="audio/mp4">
+            你的浏览器不支持音频播放，可<a href="../assets/media/gu-du-huan-zhe-eason-chan-2026-11-04.mp4?v=9d8d16685bf6">打开音频文件</a>。
+          </audio>
+          <div class="playlist-controls" hidden>
+            <button class="playlist-control" type="button" data-playlist-previous disabled>上一首</button>
+            <button class="playlist-control" type="button" data-playlist-next>下一首</button>
+          </div>
+          <p class="playlist-status" data-playlist-status role="status">已选择：孤独患者</p>
+          <a data-playlist-details href="art-gu-du-huan-zhe-2026-11-04.html" aria-label="打开 孤独患者 的歌词与随记">歌词与随记 →</a>
+        </section>
+        <ol class="playlist-track-list" aria-label="全部歌曲">
+          <li class="playlist-track" data-playlist-track data-title="孤独患者" data-artist="陈奕迅" data-media="../assets/media/gu-du-huan-zhe-eason-chan-2026-11-04.mp4?v=9d8d16685bf6" data-duration="271.3">
+            <div><a class="playlist-track-title" href="art-gu-du-huan-zhe-2026-11-04.html">孤独患者</a><p class="playlist-track-artist">陈奕迅</p></div>
+            <div class="playlist-track-meta"><time datetime="2026-11-04">2026.11.04</time><span>4:31</span></div>
+            <button class="playlist-track-play" type="button" data-playlist-play aria-label="播放 孤独患者" aria-pressed="false" hidden>播放</button>
+          </li>
+          <li class="playlist-track" data-playlist-track data-title="Photograph" data-artist="Boyce Avenue × Bea Miller" data-media="../assets/media/photograph-boyce-avenue-bea-miller-2026-10-29.mp4?v=256s" data-duration="256.0">
+            <div><a class="playlist-track-title" href="art-photograph-2026-10-29.html">Photograph</a><p class="playlist-track-artist">Boyce Avenue × Bea Miller</p></div>
+            <div class="playlist-track-meta"><time datetime="2026-10-29">2026.10.29</time><span>4:16</span></div>
+            <button class="playlist-track-play" type="button" data-playlist-play aria-label="播放 Photograph" aria-pressed="false" hidden>播放</button>
+          </li>
+        </ol>
+        <p class="playlist-note">点击曲名，打开这首歌的歌词、频谱和随记。</p>
+        <noscript><p>可以用上方播放器听第一首，或点击曲名进入每首歌的页面播放。</p></noscript>
+        <nav class="post-nav" aria-label="生活记录导航"><a href="../life.html">← 返回生活记录</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer">
+      <p>(c) <span id="year"></span> Lihui Gao. 使用 GitHub Pages 构建。</p>
+      <a href="#top">返回顶部</a>
+    </footer>
+    <script src="../assets/js/main.js?v=20261104-playlist"></script>
+    <script defer src="../assets/js/playlist.js?v=20261104"></script>
+  </body>
+</html>

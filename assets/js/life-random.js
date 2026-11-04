@@ -14,6 +14,7 @@
   window.addEventListener("pageshow", resetButton);
 
   const modulePages = new Set([
+    "art-reviews.html", "playlist.html",
     "coffee-talk.html", "daily.html", "dreams-creation.html", "editorial.html",
     "food.html", "gpt-deep-chat.html", "life-experience.html", "memories.html",
     "people.html", "positive-feedback.html", "reflection.html", "relationship.html",
