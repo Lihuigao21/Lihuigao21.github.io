@@ -34,6 +34,15 @@ This file defines how future agents should write, revise, and publish articles f
 - Preserve public-site safety especially carefully here. The user has explicitly confirmed that life-note material submitted through their daily-record directories is approved for verbatim public publication, including personal incidents, health or emotional details, and contextual references to other people; do not repeatedly request confirmation or silently anonymize, generalize, or rewrite it. Credentials, secrets, and direct personal identifiers must not be published.
 - For “感情” and other relationship notes, explicit confirmation is required before publishing another person's identifiable private words. Do not automatically generalize or rewrite the passage. The user's own words may be published verbatim when the user explicitly submits or confirms them for publication.
 
+## Fixed song display template
+
+- All future song showcases in the Chinese life section use `scripts/templates/song-display.html`, extracted from `life/art-photograph-2026-10-29.html`. This is the user's fixed default, including songs submitted under 艺术评论. Change its visual direction only when explicitly requested.
+- Preserve the full-page cream-toned composition: large vinyl record and song metadata, unframed scrolling lyrics, a real audio-driven spectrum spanning the stage, compact playback controls, and the original note, credits, and per-page comments below. Keep responsive layout, reduced motion, native audio controls, and complete static lyrics as fallbacks.
+- Render new standalone HTML with `scripts/new-song-page.py` and reuse `assets/css/music-visualizer.css` / `assets/js/music-visualizer.js`. This is an authoring helper, not a site build dependency. See `scripts/templates/README.md` for the input format and publication checklist.
+- Supply each song's title, performer, actual duration, inspected audio format, original lyrics, note, and credits separately. Playback labels and duration fallbacks must come from that page, never from Photograph. Use only a matching real lyric time axis; without one, keep static lyrics and do not invent timings. Retain shared timestamps in one cue.
+- Preserve the Photograph reference's existing title, note, lyrics, timing JSON, 4:16 trimmed media, media URL version, and page pathname. Do not copy its song-specific information into another showcase. Follow the normal life-note index, latest-ten, sitemap, privacy, browser, and publication checks for every new song page.
+- Serve generated previews at their intended `life/` pathname during browser QA so pathname-based comments and navigation are exercised. Run visual detectors on rendered HTML with resolved asset URLs; unresolved template placeholders cannot provide a valid stylesheet or typography audit.
+
 ## Public-Site Safety
 
 - Treat the website as fully public. Do not publish private local filesystem paths, absolute machine paths, usernames, email addresses beyond the intentional public contact already in the site chrome, account names, tokens, API keys, internal URLs, or other personal information.

@@ -21,6 +21,13 @@ Keep raw source materials, notebooks, PDFs, and drafts in the local `articles/` 
 
 For published computational notes, prefer compact executable scripts under `assets/code/`. Large notebooks and binary dumps should stay local unless they are deliberately cleaned and documented.
 
+## Add a Song Showcase
+
+Song pages use the fixed full-page vinyl, lyrics, and live-spectrum layout in
+`scripts/templates/song-display.html`. Render a new static page with
+`scripts/new-song-page.py`; its content format and publication checks are in
+`scripts/templates/README.md`. The site still has no build step.
+
 ## Deploy to GitHub Pages
 
 1. Use the repository `Lihuigao21.github.io`.

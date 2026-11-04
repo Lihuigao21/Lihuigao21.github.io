@@ -28,6 +28,9 @@
     const elapsed = root.querySelector("[data-music-elapsed]");
     const duration = root.querySelector("[data-music-duration]");
     const mute = root.querySelector("[data-music-mute]");
+    const songTitle = root.dataset.songTitle || "歌曲";
+    const configuredDuration = Number(root.dataset.duration || seek?.getAttribute("max"));
+    const fallbackDuration = Number.isFinite(configuredDuration) && configuredDuration > 0 ? configuredDuration : 0;
     const formatTime = (time) => `${Math.floor(time / 60)}:${String(Math.floor(time % 60)).padStart(2, "0")}`;
 
     function wakeAudio() {
@@ -41,18 +44,18 @@
     function refreshTransport() {
       const playing = !audio.paused && !audio.ended;
       root.classList.toggle("is-playing", playing);
-      playButtons.forEach((button) => button.setAttribute("aria-label", `${playing ? "暂停" : "播放"} Photograph`));
+      playButtons.forEach((button) => button.setAttribute("aria-label", `${playing ? "暂停" : "播放"} ${songTitle}`));
       const hint = root.querySelector(".music-record-hint");
       if (hint) hint.textContent = playing ? "点击唱片暂停" : "点击唱片播放";
       if (seek && elapsed && duration) {
         const length = Number.isFinite(audio.duration) ? audio.duration : 0;
         seek.disabled = !length;
-        seek.max = length || 256;
+        seek.max = length || fallbackDuration;
         seek.value = audio.currentTime;
         seek.style.setProperty("--progress", `${length ? audio.currentTime / length * 100 : 0}%`);
         seek.setAttribute("aria-valuetext", `${formatTime(audio.currentTime)} / ${formatTime(length)}`);
         elapsed.textContent = formatTime(audio.currentTime);
-        duration.textContent = length ? formatTime(length) : "4:16";
+        duration.textContent = length || fallbackDuration ? formatTime(length || fallbackDuration) : "—:—";
       }
       if (mute) {
         mute.setAttribute("aria-pressed", String(audio.muted));
@@ -256,7 +259,7 @@
       viewport.className = "music-lyrics-window";
       viewport.tabIndex = 0;
       viewport.setAttribute("role", "region");
-      viewport.setAttribute("aria-label", "Photograph 歌词");
+      viewport.setAttribute("aria-label", `${songTitle} 歌词`);
       const title = paragraphs[0].cloneNode(true);
       title.className = "music-lyrics-title";
       viewport.append(title);
