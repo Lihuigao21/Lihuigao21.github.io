@@ -69,6 +69,17 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    slug: "molecular-hessian-wigner-sampling",
+    title: "Molecular Excited States II: From Hessians to Wigner Initial Conditions",
+    path: "posts/molecular-hessian-wigner-sampling.html",
+    date: "2026-11-05",
+    dateText: "2026.11.05",
+    description: "Derive independent harmonic normal modes, sample their Wigner distributions, and reconstruct molecular coordinates and velocities with interactive figures.",
+    tags: ["Molecular Excited States", "Normal Modes", "Wigner Sampling", "Initial Conditions", "Real-System Calculation"],
+    series: "molecular-excited-states",
+    part: 2,
+  },
+  {
     slug: "molecular-excited-states-from-vasp",
     title: "Molecular Excited States I: From VASP to SA-CASSCF",
     path: "posts/molecular-excited-states-from-vasp.html",

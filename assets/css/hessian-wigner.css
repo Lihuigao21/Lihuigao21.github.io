@@ -1,0 +1,64 @@
+/* Harmonic teaching figures inherit the article's typography and palette. */
+.hw-widget {
+  min-width: 0;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--line, #deded8);
+  border-radius: 4px;
+  background: var(--bg, #fbfbfa);
+}
+.hw-widget h3 { margin: 0 0 0.8rem; }
+.hw-widget canvas,
+.hw-widget .hw-fallback,
+.hw-widget .hw-fallback img,
+.hw-widget .hw-fallback svg { display: block; width: 100%; max-width: 100%; }
+.hw-widget canvas { display: none; height: 380px; }
+.hw-widget[data-hw-widget="phase"] canvas { height: 390px; }
+.hw-widget .hw-controls,
+.hw-widget .hw-readout { display: none; }
+.hw-widget.is-ready canvas { display: block; }
+.hw-widget.is-ready .hw-controls { display: grid; }
+.hw-widget.is-ready .hw-readout { display: flex; }
+.hw-widget.is-ready .hw-fallback { display: none; }
+.hw-controls {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 0.75rem 1rem;
+  margin: 0.9rem 0;
+}
+.hw-controls label { display: grid; min-width: 0; gap: 0.2rem; }
+.hw-controls input[type="range"] { width: 100%; min-width: 0; margin: 0; accent-color: #315f85; }
+.hw-controls select,
+.hw-controls button {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--line, #deded8);
+  border-radius: 3px;
+  color: var(--ink, #222);
+  background: var(--surface, #fff);
+  font: inherit;
+}
+.hw-controls button { cursor: pointer; }
+.hw-controls button:hover { border-color: var(--muted, #666); }
+.hw-controls input:focus-visible,
+.hw-controls select:focus-visible,
+.hw-controls button:focus-visible { outline: 2px solid #315f85; outline-offset: 3px; }
+.hw-controls input:disabled { opacity: 0.45; }
+.hw-controls .hw-checkbox { display: flex; align-items: center; gap: 0.5rem; align-self: center; }
+.hw-checkbox input { flex: 0 0 auto; accent-color: #315f85; }
+.hw-widget output,
+.hw-readout { font-variant-numeric: tabular-nums; }
+.hw-readout { flex-wrap: wrap; gap: 0.3rem 1.2rem; margin: 0.65rem 0; font-size: 0.92rem; }
+.hw-readout span { min-width: 0; overflow-wrap: anywhere; }
+.hw-status { margin: 0.6rem 0; color: var(--muted, #666); font-size: 0.9rem; overflow-wrap: anywhere; }
+.hw-widget.has-error .hw-status { color: var(--ink, #222); font-weight: 600; }
+.hw-widget figcaption { margin-bottom: 0; overflow-wrap: anywhere; }
+.hw-widget ::selection { color: #172b3c; background: #dce8f1; }
+@media (max-width: 600px) {
+  .hw-widget { padding: 0.65rem; }
+  .hw-widget canvas { height: 300px; }
+  .hw-widget[data-hw-widget="phase"] canvas { height: 560px; }
+  .hw-controls { grid-template-columns: minmax(0, 1fr); }
+}

@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Derive independent harmonic normal modes, sample their Wigner distributions, and reconstruct molecular coordinates and velocities with interactive figures.">
+    <title>Molecular Excited States II: From Hessians to Wigner Initial Conditions | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/hessian-wigner.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="../assets/vendor/mathjax-3.2.2/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+ <header class="post-header">
+  <p class="section-label">Molecular Excited States — Part II</p>
+  <h1>From Hessians to Wigner Initial Conditions</h1>
+  <p class="post-meta">2026.11.05 · Normal Modes / Nuclear Initial Conditions / Molecular Motors</p>
+ </header>
+ <div class="post-content">
+<nav class="series-nav" aria-label="Molecular excited states series">
+ <a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a>
+ <a href="molecular-hessian-wigner-sampling.html" aria-current="page">II. Hessians and Wigner Sampling</a>
+ <a href="../series.html?series=molecular-excited-states">Series index</a>
+</nav>
+<p class="lead">An optimized geometry supplies one point on a molecular potential-energy surface. An ensemble of initial conditions also needs the spread of nuclear positions and momenta. The route used here is to approximate the local vibrations as independent harmonic oscillators, sample their Wigner distributions, and transform the sampled normal coordinates back into atomic coordinates and velocities.</p>
+<p>This is the nuclear counterpart of a familiar phonon calculation. We continue with the same 30-atom molecular motor as <a href="molecular-excited-states-from-vasp.html">Part I</a>. The main question is practical: how did one tutorial structure become a pool of 2000 candidate geometries without first running a molecular-dynamics trajectory? The harmonic model explains that construction. Its initial-state approximation and the later NaF propagation are separate choices.</p>
+<nav aria-label="Article contents"><ol>
+  <li><a href="#one-geometry">Why one optimized geometry is insufficient</a></li>
+  <li><a href="#hessian">Read the local curvature from the Hessian</a></li>
+  <li><a href="#normal-modes">Obtain independent harmonic normal modes</a></li>
+  <li><a href="#ground-wigner">Represent a quantum oscillator in phase space</a></li>
+  <li><a href="#thermal-wigner">Include temperature and draw each mode</a></li>
+  <li><a href="#reconstruct">Reconstruct the whole molecule</a></li>
+  <li><a href="#point-energy">Understand what a sampled energy means</a></li>
+  <li><a href="#actual-workflow">Follow the actual xTB–SHARC–CASSCF workflow</a></li>
+  <li><a href="#numerical-check">Run the numerical check</a></li>
+  <li><a href="#limits">Identify what this initial distribution covers</a></li>
+</ol></nav>
+
+<h2 id="one-geometry">1. Why One Optimized Geometry Is Insufficient</h2>
+<p>In a VASP relaxation, the atomic forces approach zero at an equilibrium structure. The same condition applies to an isolated molecule. Let \(\mathbf R\) collect its \(3N\) Cartesian coordinates, and let \(E(\mathbf R)\) denote the electronic potential energy used to prepare the nuclei. An optimized stationary structure \(\mathbf R_0\) satisfies</p>
+<div class="math-block">\[
+  \nabla E(\mathbf R_0)\simeq 0.
+\]</div>
+<p>This condition determines a center. It does not specify a nuclear distribution around that center. At finite temperature the molecule has thermally occupied vibrations; at zero temperature its nuclear wavefunction still has a finite width. Giving every trajectory exactly \(\mathbf R_0\) and zero velocity would remove both sources of initial nuclear spread.</p>
+<p>To construct that spread, we first need the restoring forces near \(\mathbf R_0\). A local harmonic model supplies those forces and a tractable quantum initial distribution. Throughout the derivation, \(\omega\) means angular frequency, while a reported vibrational wavenumber \(\tilde\nu\) in cm<sup>−1</sup> obeys \(\omega=2\pi c\tilde\nu\). Masses, lengths, energies, and time must use a consistent unit system.</p>
+
+<h2 id="hessian">2. Read the Local Curvature from the Hessian</h2>
+<p>Write \(\Delta\mathbf R=\mathbf R-\mathbf R_0\). Expanding the energy about the stationary geometry gives</p>
+<div class="math-block">\[
+ E(\mathbf R_0+\Delta\mathbf R)
+ =E_0+\underbrace{\nabla E(\mathbf R_0)^{\mathsf T}\Delta\mathbf R}_{\simeq0}
+ +\frac12\Delta\mathbf R^{\mathsf T}\mathbf K\Delta\mathbf R
+ +O(\lVert\Delta\mathbf R\rVert^3),
+ \qquad
+ K_{ab}=\left.\frac{\partial^2E}{\partial R_a\partial R_b}\right|_{\mathbf R_0}.
+\]</div>
+<p>The Hessian \(\mathbf K\) is a matrix of local force constants. Its diagonal entries describe curvature along individual Cartesian coordinates. Off-diagonal entries describe how displacing one coordinate changes the force along another. These couplings are why independently shaking every atom would not reproduce the harmonic nuclear distribution.</p>
+<p>A central finite-difference construction uses analytical forces, with \(F_a=-\partial E/\partial R_a\):</p>
+<div class="math-block">\[
+ K_{ab}\simeq-
+ \frac{F_a(\mathbf R_0+\delta\mathbf e_b)
+       -F_a(\mathbf R_0-\delta\mathbf e_b)}{2\delta}.
+\]</div>
+<p>Here \(\mathbf e_b\) is a Cartesian unit displacement and \(\delta\) is the displacement size. This is the same force-constant logic used by VASP finite-difference phonon calculations. A crystal adds periodicity and wavevector-dependent dynamical matrices; an isolated molecular Hessian describes the finite molecule directly. <a href="https://www.vasp.at/wiki/Phonons_from_finite_differences">VASP documents the force-constant construction and its zone-center scope</a>.</p>
+<p>Our motor has \(N=30\), so its Cartesian Hessian is \(90\times90\). A stationary point alone is not proof of a minimum: negative curvature in the internal vibrational subspace produces an imaginary frequency. Such a direction must be diagnosed before applying a stable-oscillator initial-state model.</p>
+
+<h2 id="normal-modes">3. Obtain Independent Harmonic Normal Modes</h2>
+<p>Curvature alone does not determine a vibration frequency. A heavy atom accelerates less than a light atom under the same force. Introduce the diagonal Cartesian mass matrix, repeating each atomic mass three times:</p>
+<div class="math-block">\[
+ \mathbf M=\operatorname{diag}(m_1,m_1,m_1,\ldots,m_N,m_N,m_N).
+\]</div>
+<p>The harmonic equation of motion is \(\mathbf M\Delta\ddot{\mathbf R}=-\mathbf K\Delta\mathbf R\). Define mass-weighted displacement \(\mathbf y=\mathbf M^{1/2}\Delta\mathbf R\); multiplying the equation by \(\mathbf M^{-1/2}\) gives</p>
+<div class="math-block">\[
+ \ddot{\mathbf y}=-\mathbf D\mathbf y,
+ \qquad \mathbf D=\mathbf M^{-1/2}\mathbf K\mathbf M^{-1/2}.
+\]</div>
+<p>In the internal vibrational subspace, diagonalize the symmetric matrix \(\mathbf D\). Collect its orthonormal eigenvectors as columns of \(\mathbf L\):</p>
+<div class="math-block">\[
+ \mathbf D\mathbf e_k=\omega_k^2\mathbf e_k,
+ \qquad \mathbf L^{\mathsf T}\mathbf L=\mathbf I,
+ \qquad \mathbf L^{\mathsf T}\mathbf D\mathbf L
+       =\operatorname{diag}(\omega_1^2,\ldots,\omega_f^2).
+\]</div>
+<p>For an isolated nonlinear molecule, the six rigid translations and rotations are excluded, leaving \(f=3N-6\) internal modes. The motor therefore has 84 vibrational modes. Linear molecules have five rigid modes and require a different count. The projection and normalization must match the format expected by the sampler.</p>
+<p>Let \(\boldsymbol\pi=\mathbf M\dot{\mathbf R}\) be the atomic Cartesian momentum. The normal coordinates and their conjugate momenta are</p>
+<div class="math-block">\[
+ \mathbf Q=\mathbf L^{\mathsf T}\mathbf M^{1/2}\Delta\mathbf R,
+ \qquad
+ \mathbf P=\mathbf L^{\mathsf T}\mathbf M^{-1/2}\boldsymbol\pi.
+\]</div>
+<p>Within this vibrational subspace, the inverse relations are \(\Delta\mathbf R=\mathbf M^{-1/2}\mathbf L\mathbf Q\) and \(\boldsymbol\pi=\mathbf M^{1/2}\mathbf L\mathbf P\). Substitute them into kinetic and potential energy:</p>
+<div class="math-block">\[
+ T=\frac12\boldsymbol\pi^{\mathsf T}\mathbf M^{-1}\boldsymbol\pi
+   =\frac12\mathbf P^{\mathsf T}\mathbf P,
+ \qquad
+ U-E_0=\frac12\mathbf Q^{\mathsf T}\mathbf L^{\mathsf T}\mathbf D\mathbf L\mathbf Q
+      =\frac12\sum_k\omega_k^2Q_k^2.
+\]</div>
+<p>The resulting Hamiltonian is</p>
+<div class="math-block">\[
+ \boxed{H_{\mathrm{harm}}=E_0+
+ \sum_{k=1}^{f}\left(\frac{P_k^2}{2}+\frac{\omega_k^2Q_k^2}{2}\right).}
+\]</div>
+<p>This is the independent-SHO approximation. Each oscillator is a collective nuclear vibration. Its effective mass is one because its coordinate is mass weighted. Independence holds in the local quadratic model; higher-order terms in the actual potential can couple the modes.</p>
+<figure>
+ <img src="../assets/img/hessian-wigner/motor-mode-patterns.svg" alt="Three actual collective modes of the motor, with displacement arrows on the same equilibrium structure." loading="lazy">
+ <figcaption>Three of the motor's actual GFN2-xTB normal modes, spanning 47.7, 994.5, and 3511.7 cm<sup>−1</sup>. Axes are projected Cartesian positions in angstrom. Teal arrows show three times the displacement from setting one mode to its zero-temperature coordinate standard deviation; the factor of three improves visibility. Mode signs are arbitrary. These arrows describe mode patterns, not a propagated trajectory.</figcaption>
+</figure>
+
+<h2 id="ground-wigner">4. Represent a Quantum Oscillator in Phase Space</h2>
+<p>The harmonic reduction tells us what the modes are, but not how to initialize them. At zero temperature, quantize one mass-weighted mode:</p>
+<div class="math-block">\[
+ \hat H_k=\frac{\hat P_k^2}{2}+\frac{\omega_k^2\hat Q_k^2}{2},
+ \qquad [\hat Q_k,\hat P_k]=i\hbar.
+\]</div>
+<p>Suppress the mode index for a moment. The ground-state wavefunction is a Gaussian,</p>
+<div class="math-block">\[
+ \psi_0(Q)=\left(\frac{\omega}{\pi\hbar}\right)^{1/4}
+           \exp\!\left(-\frac{\omega Q^2}{2\hbar}\right).
+\]</div>
+<p>Sampling \(|\psi_0(Q)|^2\) supplies a coordinate, but a trajectory also needs a momentum. The Wigner transform represents the density operator \(\hat\rho\) on phase space:</p>
+<div class="math-block">\[
+ W(Q,P)=\frac{1}{2\pi\hbar}\int_{-\infty}^{\infty}d\xi\,
+ e^{-iP\xi/\hbar}
+ \left\langle Q+\frac\xi2\middle|\hat\rho\middle|Q-\frac\xi2\right\rangle.
+\]</div>
+<p>For the ground state, the density-matrix factor inside this integral is</p>
+<div class="math-block">\[
+ \psi_0\!\left(Q+\frac\xi2\right)
+ \psi_0^*\!\left(Q-\frac\xi2\right)
+ =\sqrt{\frac{\omega}{\pi\hbar}}
+   \exp\!\left(-\frac{\omega Q^2}{\hbar}
+               -\frac{\omega\xi^2}{4\hbar}\right).
+\]</div>
+<p>The Fourier integral of this Gaussian contributes \(\sqrt{4\pi\hbar/\omega}\exp[-P^2/(\hbar\omega)]\). Combining the factors gives</p>
+<div class="math-block">\[
+ \boxed{W_0(Q,P)=\frac{1}{\pi\hbar}
+ \exp\!\left[-\frac{\omega Q^2+P^2/\omega}{\hbar}\right].}
+\]</div>
+<p>Its integral over phase space is one. Integrating out \(P\) recovers \(|\psi_0(Q)|^2\); integrating out \(Q\) recovers the momentum probability density. More generally, Wigner averages reproduce expectations of the corresponding symmetrically ordered operators. A Wigner function is a quasiprobability, but this particular ground-state function is everywhere nonnegative and can be sampled with ordinary positive weights.</p>
+<p>The exponent separates into a coordinate term and a momentum term. Thus independent standard normal random variables \(\xi_Q,\xi_P\sim\mathcal N(0,1)\) generate a sample through</p>
+<div class="math-block">\[
+ Q=\sqrt{\frac{\hbar}{2\omega}}\,\xi_Q,
+ \qquad P=\sqrt{\frac{\hbar\omega}{2}}\,\xi_P.
+\]</div>
+<p>The coordinate width grows as a mode becomes softer, while its momentum width decreases. Their product is \(\sigma_Q\sigma_P=\hbar/2\). Even at zero temperature neither width vanishes. Position and momentum here are phase-space sampling variables; they are not a prescription for simultaneously measuring two noncommuting operators on one molecule.</p>
+
+<h2 id="thermal-wigner">5. Include Temperature and Draw Each Mode</h2>
+<p>At finite temperature, a harmonic mode occupies vibrational levels \(n=0,1,\ldots\) with Boltzmann probabilities. Set \(\beta=1/(k_{\mathrm B}T)\) and define</p>
+<div class="math-block">\[
+ C_k=\coth\!\left(\frac{\beta\hbar\omega_k}{2}\right).
+\]</div>
+<p>The exact harmonic thermal Wigner function remains a Gaussian:</p>
+<div class="math-block">\[
+ W_{\beta,k}(Q_k,P_k)=\frac{1}{\pi\hbar C_k}
+ \exp\!\left[-\frac{\omega_kQ_k^2+P_k^2/\omega_k}{\hbar C_k}\right].
+\]</div>
+<details><summary>Derive the thermal factor from the vibrational-state mixture</summary>
+ <p>For one mode, let \(r=e^{-\beta\hbar\omega}\) and \(s=(\omega Q^2+P^2/\omega)/\hbar\). The level probabilities are \(p_n=(1-r)r^n\); the level Wigner functions are \(W_n=(-1)^ne^{-s}L_n(2s)/(\pi\hbar)\), where \(L_n\) is a Laguerre polynomial. Use the generating function</p>
+ <div class="math-block">\[
+  \sum_{n=0}^{\infty}t^nL_n(x)=\frac{1}{1-t}
+  \exp\!\left(-\frac{tx}{1-t}\right).
+ \]</div>
+ <p>Taking \(t=-r\) gives the signed mixture before any sampling:</p>
+ <div class="math-block">\[
+  \sum_np_nW_n
+  =\frac{1-r}{\pi\hbar(1+r)}
+    \exp\!\left[-s\frac{1-r}{1+r}\right],
+  \qquad C=\frac{1+r}{1-r}
+          =\coth\!\left(\frac{\beta\hbar\omega}{2}\right).
+ \]</div>
+ <p>This positive Gaussian is the exact harmonic thermal target. Individual excited-state Wigner functions can be negative; their signed thermal sum must be formed consistently.</p>
+</details>
+<p>Since the harmonic Hamiltonian is a sum of independent mode Hamiltonians, its thermal density operator is a tensor product. Its Wigner function therefore factorizes:</p>
+<div class="math-block">\[
+ \hat\rho_\beta=\bigotimes_k\hat\rho_{\beta,k},
+ \qquad W_\beta(\mathbf Q,\mathbf P)=\prod_kW_{\beta,k}(Q_k,P_k).
+\]</div>
+<p>Consequently, all coordinate and momentum draws can be made independently in the normal-mode basis:</p>
+<div class="math-block">\[
+ \boxed{
+ Q_k=\sqrt{\frac{\hbar C_k}{2\omega_k}}\,\xi_{Q,k},
+ \qquad
+ P_k=\sqrt{\frac{\hbar\omega_kC_k}{2}}\,\xi_{P,k}.}
+\]</div>
+<p>As \(T\to0\), \(C_k\to1\) and the ground-state widths are recovered. When \(k_{\mathrm B}T\gg\hbar\omega_k\), \(\coth x\simeq1/x\), so</p>
+<div class="math-block">\[
+ \sigma_{Q_k}^2\longrightarrow\frac{k_{\mathrm B}T}{\omega_k^2},
+ \qquad \sigma_{P_k}^2\longrightarrow k_{\mathrm B}T.
+\]</div>
+<p>These are the classical canonical widths in mass-weighted coordinates. The limit depends on the frequency of each mode. A low-frequency deformation can be thermally active while a high-frequency stretching mode remains close to its quantum ground state at the same temperature.</p>
+<figure class="hw-widget" data-hw-widget="molecule" data-source="../assets/code/hessian-wigner/motor-normal-modes.json">
+  <h3>From normal coordinates to a molecular geometry</h3>
+  <div class="hw-fallback"><img src="../assets/img/hessian-wigner/motor-mode-patterns.svg" alt="Actual motor normal-mode patterns, available without JavaScript."></div>
+  <canvas data-hw-canvas width="800" height="420" role="img" aria-label="Molecular geometry reconstructed from independent harmonic Gaussian position and momentum draws."></canvas>
+  <div class="hw-controls" data-hw-controls>
+    <label>Normal mode<select data-hw-field="mode" aria-label="Normal mode"></select></label>
+    <label><span>Position draw: <output data-hw-value="position">1.00</output> standard deviations</span><input data-hw-field="position" type="range" min="-2" max="2" step="0.01" value="1"></label>
+    <label><span>Temperature: <output data-hw-value="temperature">0</output> K</span><input data-hw-field="temperature" type="range" min="0" max="300" step="1" value="0"></label>
+    <label>Reconstruction<select data-hw-field="scope"><option value="single">One normal mode</option><option value="all">All 84 normal modes</option></select></label>
+    <button type="button" data-hw-action="resample">Draw all modes independently</button>
+    <label class="hw-checkbox"><input data-hw-field="velocity" type="checkbox">Show velocity arrows</label>
+    <label><span>View angle: <output data-hw-value="yaw">25</output> degrees</span><input data-hw-field="yaw" type="range" min="-180" max="180" step="1" value="25"></label>
+  </div>
+  <div class="hw-readout" data-hw-readout aria-live="polite"></div>
+  <p class="hw-status" data-hw-status role="status">Strict harmonic Gaussian teaching figure; not a replay of SHARC 4.1 finite-temperature output.</p>
+  <figcaption>Gray outlines show the equilibrium geometry; filled atoms and solid bonds show the selected displacement. Positions and momenta use independent Gaussian coordinates. The slider spans a demonstration range only; this is an initial-condition picture, with no dynamics.</figcaption>
+</figure>
+<figure>
+ <img src="../assets/img/hessian-wigner/wigner-marginals.svg" alt="Quantum and classical position marginal densities at 50 K for 47.7 and 1000 inverse-centimeter harmonic modes." loading="lazy">
+ <figcaption>Analytic coordinate marginals at 50 K. Teal solid: exact harmonic thermal Wigner; brown dashed: classical canonical. Each panel uses its own dimensionless coordinate \(q=\sqrt{\omega/\hbar}\,Q\). The 1000 cm<sup>−1</sup> classical distribution is much narrower because it omits zero-point spread. These are teaching curves, not histograms of the SHARC candidate pool.</figcaption>
+</figure>
+
+<h2 id="reconstruct">6. Reconstruct the Whole Molecule</h2>
+<p>Independent modes do not mean independent atoms. Each normal-mode eigenvector specifies a collective pattern across the whole molecule. After drawing all \((Q_k,P_k)\), use the inverse transformation:</p>
+<div class="math-block">\[
+ \boxed{\mathbf R=\mathbf R_0+\mathbf M^{-1/2}\mathbf L\mathbf Q,
+ \qquad \mathbf v=\mathbf M^{-1/2}\mathbf L\mathbf P.}
+\]</div>
+<p>Writing the same relation for atom \(i\), with \(\mathbf e_{ik}\) its three-component part of mode \(k\), makes the assembly explicit:</p>
+<div class="math-block">\[
+ \mathbf R_i=\mathbf R_{i,0}+\frac{1}{\sqrt{m_i}}\sum_k\mathbf e_{ik}Q_k,
+ \qquad
+ \mathbf v_i=\frac{1}{\sqrt{m_i}}\sum_k\mathbf e_{ik}P_k.
+\]</div>
+<p>One independent draw of all 84 mode pairs gives one complete molecular coordinate-and-velocity set. Repeating the draw gives an ensemble without propagating an MD trajectory between samples. The atomic displacements are generally correlated, as their covariance shows:</p>
+<div class="math-block">\[
+ \left\langle\Delta\mathbf R\Delta\mathbf R^{\mathsf T}\right\rangle
+ =\mathbf M^{-1/2}\mathbf L\,
+  \operatorname{diag}(\sigma_{Q_1}^2,\ldots,\sigma_{Q_f}^2)
+  \mathbf L^{\mathsf T}\mathbf M^{-1/2}.
+\]</div>
+<p>The off-diagonal entries need not vanish. Independent normal coordinates have become correlated Cartesian displacements. This is the precise meaning of sampling independent oscillators and then assembling the molecule.</p>
+<figure class="hw-widget" data-hw-widget="phase">
+  <h3>Thermal Wigner and classical phase space</h3>
+  <div class="hw-fallback"><img src="../assets/img/hessian-wigner/wigner-marginals.svg" alt="Analytic quantum and classical position densities at 50 K."></div>
+  <canvas data-hw-canvas width="800" height="440" role="img" aria-label="Thermal Wigner and classical one-standard-deviation ellipses and position marginal Gaussian densities on fixed dimensionless axes."></canvas>
+  <div class="hw-controls" data-hw-controls>
+    <label><span>Frequency: <output data-hw-value="frequency">1000</output> cm<sup>−1</sup></span><input data-hw-field="frequency" type="range" min="40" max="3500" step="1" value="1000"></label>
+    <label><span>Temperature: <output data-hw-value="temperature">0</output> K</span><input data-hw-field="temperature" type="range" min="0" max="500" step="1" value="0"></label>
+    <button type="button" data-hw-action="reset">Reset to 1000 cm⁻¹, 0 K</button>
+  </div>
+  <div class="hw-readout" data-hw-readout aria-live="polite"></div>
+  <p class="hw-status" data-hw-status role="status">Strict harmonic Gaussian teaching figure; not a replay of SHARC 4.1 finite-temperature output.</p>
+  <figcaption>Blue: thermal Wigner; dashed brown: classical canonical distribution. The ellipses have one-standard-deviation semiaxes, enclosing 39.3% of a two-dimensional Gaussian. Axes use a fixed 1000 cm⁻¹ reference; a panel explicitly marks any clipped tails. At zero temperature the classical distribution is a point and its position marginal is a delta distribution.</figcaption>
+</figure>
+<p>The single-mode slider displays one chosen coordinate coefficient, while its momentum is drawn separately. Selecting all modes combines independent coordinate and momentum draws. The displayed velocities come from \(\mathbf P\), not from differentiating a manually moved slider. Neither view performs a time propagation.</p>
+
+<h2 id="point-energy">7. Understand What a Sampled Energy Means</h2>
+<p>A harmonic ground state has a sharply defined quantum energy \(\hbar\omega/2\). Its Wigner samples nevertheless occupy the full phase plane. Evaluating the classical harmonic function on those points gives</p>
+<div class="math-block">\[
+ E_{\mathrm{cl}}=\frac{P^2}{2}+\frac{\omega^2Q^2}{2},
+ \qquad
+ \langle E_{\mathrm{cl}}\rangle_{W_0}=\frac{\hbar\omega}{2}.
+\]</div>
+<p>The equality constrains the ensemble mean. It does not constrain each point to one energy shell. Define \(q=\sqrt{\omega/\hbar}Q\), \(p=P/\sqrt{\hbar\omega}\), and \(\epsilon=E_{\mathrm{cl}}/(\hbar\omega)=(q^2+p^2)/2\). The ground-state density is \(e^{-q^2-p^2}/\pi\). Integrating it over the polar angle gives</p>
+<div class="math-block">\[
+ \mathcal P(\epsilon)=2e^{-2\epsilon},
+ \quad\epsilon\ge0,
+ \qquad \langle\epsilon\rangle=\frac12.
+\]</div>
+<p>Many points therefore have \(E_{\mathrm{cl}}&lt;\hbar\omega/2\). They are phase-space samples of the ground-state density operator, not individual quantum energy eigenstates. Rescaling every point to the same zero-point energy would replace the Gaussian distribution by an energy shell and change the initial state. A projective quantum energy measurement is a different operation: it returns \(\hbar\omega/2\) with certainty for this ground state.</p>
+<figure>
+ <img src="../assets/img/hessian-wigner/wigner-point-energy.svg" alt="Exponential distribution of classical harmonic energies evaluated on ground-state Wigner points, with mean one half." loading="lazy">
+ <figcaption>Analytic distribution of the classical energy function evaluated on ground-state Wigner points. Teal: \(2e^{-2\epsilon}\); dashed brown: its mean at \(\epsilon=1/2\). The curve is not the distribution of outcomes of a quantum energy measurement. Its weight below one half is a feature of the representation, not evidence of an initial zero-point-energy leak.</figcaption>
+</figure>
+
+<h2 id="actual-workflow">8. Follow the Actual xTB–SHARC–CASSCF Workflow</h2>
+<p>The derivation above describes the exact thermal distribution of a quadratic model. The actual dataset construction has two further choices: which electronic method supplies that model, and how the installed sampler implements its finite-temperature proposal.</p>
+<p>The input was the 30-atom motor from the <a href="https://github.com/xshinhe/PSiNad/blob/95de9228f150ba97aaf02ecaf4a6f8b34eed9d3e/docs/manu/nonadiabatic.md">PSiNaD tutorial</a>. GFN2-xTB 6.7.1 optimized this structure and computed a numerical Hessian. The <a href="https://xtb-docs.readthedocs.io/en/latest/hessian.html">xTB frequency documentation</a> describes this optimization-plus-Hessian route. The existing Hessian was mass weighted and projected to the 84 internal modes, whose frequencies span 47.744 to 3511.746 cm<sup>−1</sup>. All 84 positive modes were retained. PySCF's normal-mode analysis utility assisted the conversion; that use of PySCF did not perform a new CASSCF Hessian calculation.</p>
+<p>SHARC 4.1 then generated 2000 candidate coordinate-and-velocity sets at 50 K. Masses were passed explicitly to maintain consistency with the Hessian conversion. In a generic directory containing the prepared frequency file and mass-input file, the sampling command has the form</p>
+<pre><code>python wigner.py -n 2000 -t 50 -r 2026103107 \
+  -f 4 -m -L 0.1 -x -o initconds normal-modes.molden &lt; masses.stdin</code></pre>
+<p>The mode file contains coordinates, frequencies, and orthonormal mass-weighted eigenvectors in SHARC's format 4. The 0.1 cm<sup>−1</sup> cutoff did not remove any of these 84 internal modes. The <code>initconds</code> output retains velocities as well as coordinates; its companion XYZ file alone is insufficient to reconstruct the full phase-space initial conditions.</p>
+<p>There is an implementation distinction at finite temperature. The retained <a href="https://github.com/sharc-md/sharc4/blob/8f11e3f521857f80c9747d60eb930d14dbd0e89c/bin/wigner.py">SHARC source</a> proposes dimensionless coordinates and momenta in a finite square, selects a vibrational level during each rejection proposal, and never accepts a negative value of that level's Wigner function. Reading that logic gives a proposal density proportional to</p>
+<div class="math-block">\[
+ \mathbf1_{[-5,5]^2}(q,p)\sum_np_n[W_n(q,p)]_+,
+ \qquad [a]_+=\max(a,0).
+\]</div>
+<p>This is not the signed sum \(\sum_np_nW_n\) derived in Section 5. The script also adjusts the center of mass and removes translational and rotational velocity components by default. Its finite-temperature candidate distribution therefore must be distinguished from the exact Gaussian illustrated above. A prior deterministic quadrature for the softest mode at 50 K found about a −4.08% coordinate-variance difference for the positive-part proposal. That number concerns the proposal before final coordinate/velocity processing; it is not a moment validation of all 2000 output records or of the selected training data.</p>
+<p>From the 2000 candidates, 140 initial records and 1000 additional training candidates were selected. PySCF SA2-CASSCF(12,9)/6-31G* supplied their two-state energies, gradients, and nonadiabatic-coupling labels. The final merged dataset contains 1128 admitted records: 126 from the first batch, 879 from the additional batch, and 123 recovered by small-step electronic optimization. The remaining 12 selected records were not included. This is the origin of the seed dataset used before the subsequent DPGEN augmentation.</p>
+<p>The roles remain distinct: xTB proposes a nuclear distribution; SHARC generates candidate phase-space points; CASSCF labels the selected geometries. Computing CASSCF labels does not reweight those points into a CASSCF equilibrium ensemble. Selection for geometric diversity also changes the training distribution relative to the original sampling distribution.</p>
+
+<h2 id="numerical-check">9. Run the Numerical Check</h2>
+<p>A compact reproducible example draws 50,000 independent exact harmonic Gaussian samples at 50 K for all 84 retained modes, with NumPy seed 20261105. It tests mode means, variances, and cross correlations, then reconstructs Cartesian displacements and velocities and transforms them back to mode coordinates. This exercise checks the Gaussian sampler and the normal-mode transformation; it does not rerun the deployed SHARC proposal or validate a molecular potential.</p>
+<div class="table-scroll"><table>
+ <thead><tr><th>Check</th><th>Observed value</th><th>Declared limit</th></tr></thead>
+ <tbody>
+  <tr><td>Largest absolute standardized mean</td><td>0.01451</td><td>0.02683</td></tr>
+  <tr><td>Largest absolute relative variance error</td><td>0.01826</td><td>0.03795</td></tr>
+  <tr><td>Largest absolute off-diagonal correlation</td><td>0.01733</td><td>0.02683</td></tr>
+  <tr><td>Mode → Cartesian → mode maximum error, in mode standard deviations</td><td>2.09 × 10<sup>−14</sup></td><td>10<sup>−10</sup></td></tr>
+ </tbody>
+</table></div>
+<p>The moment limits are six-standard-error engineering checks at the stated sample count, not a proof that every property of a distribution has converged. The mean and correlation limits use \(6/\sqrt{N_s}\); the relative variance limit uses \(6\sqrt{2/(N_s-1)}\). Position–momentum and inter-mode correlations are tested together. The small reconstruction error checks the inverse transformation using the exported modes and consistent masses.</p>
+<p>Download the following files into one directory:</p>
+<ul>
+ <li><a href="../assets/code/hessian-wigner/motor-normal-modes.json">Actual optimized motor geometry, masses, frequencies, and normal-mode eigenvectors</a>.</li>
+ <li><a href="../assets/code/hessian-wigner/sample_harmonic.py">Gaussian sampler, moment checks, coordinate reconstruction, and static-figure generator</a>.</li>
+ <li><a href="../assets/code/hessian-wigner/numerical-check.json">Numerical-check output</a> and <a href="../assets/code/hessian-wigner/curve-quality.json">analytic-curve quality checks</a>.</li>
+ <li><a href="../assets/js/hessian-wigner.js">Interactive-figure source</a>.</li>
+</ul>
+<pre><code>python sample_harmonic.py --output wigner-example \
+  --samples 50000 --seed 20261105 --temperature 50</code></pre>
+<p>The script requires NumPy and Matplotlib. It preserves the standardized Gaussian draws and analytic plot arrays in the chosen output directory. Analytic curves are checked for finite values, ordered abscissae, isolated spikes, endpoint behavior, and plotting-grid refinement; they are not smoothed. These checks concern the displayed examples, rather than the convergence of a later trajectory ensemble.</p>
+
+<h2 id="limits">10. Identify What This Initial Distribution Covers</h2>
+<p>The independent-oscillator approximation is a local model of internal nuclear vibrations around one minimum. It can provide zero-point and thermal spread within that model, but a single Hessian does not describe a whole photochemical reaction path, multiple conformers, barrier crossing, or strongly anharmonic torsions. Those regions require additional sampling and appropriate physical checks.</p>
+<p>After initialization, the nuclei can be propagated with NaF on nonquadratic, electronically coupled potential-energy surfaces. They are not required to continue as independent harmonic oscillators. Conversely, using a quantum-informed initial distribution does not make a subsequent classical-trajectory propagation exact quantum nuclear dynamics. Choosing the initial electronic state, including any excitation-window or oscillator-strength selection, is also a separate preparation step.</p>
+<p>In the current workflow, the xTB/SHARC seed pool supplies initial geometrical coverage and CASSCF supplies the labels. For the next stage, a HamGNN committee is intended to guide short PSiNaD/NaF explorations and identify geometries for new labels. The harmonic construction explains where the first geometries and velocities came from; the planned active-learning loop addresses coverage along the dynamics that follows.</p>
+
+<h3>Sources and related reading</h3>
+<ol>
+ <li><a href="https://www.vasp.at/wiki/Phonons_from_finite_differences">VASP Wiki: Phonons from finite differences</a> — force constants, dynamical matrices, and periodic-system scope.</li>
+ <li><a href="https://xtb-docs.readthedocs.io/en/latest/hessian.html">xTB: Calculation of Vibrational Frequencies</a> — optimization, numerical Hessians, and imaginary-mode diagnostics.</li>
+ <li><a href="https://sharc-md.org/?page_id=1454">SHARC 4.1 Manual</a>, Wigner Distribution Sampling — frequency/mode input and initial-condition output.</li>
+ <li><a href="https://github.com/sharc-md/sharc4/blob/8f11e3f521857f80c9747d60eb930d14dbd0e89c/bin/wigner.py">SHARC source at the retained v4.1 commit</a> — vibrational-state selection, rejection sampling, reconstruction, and rigid-motion removal. The exact thermal Gaussian demonstration in this article is deliberately distinguished from this implementation.</li>
+ <li><a href="https://pyscf.org/_modules/pyscf/hessian/thermo.html">PySCF normal-mode analysis source</a> — mass weighting and rigid-motion projection.</li>
+ <li><a href="https://github.com/xshinhe/PSiNad/blob/95de9228f150ba97aaf02ecaf4a6f8b34eed9d3e/docs/manu/nonadiabatic.md">PSiNaD nonadiabatic tutorial at the retained source revision</a> — provenance of the molecular motor.</li>
+</ol>
+<h2 id="series-map">Molecular Excited States Series</h2>
+<ul class="series-list">
+ <li><a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a> — what one fixed-geometry electronic calculation returns.</li>
+ <li><a href="molecular-hessian-wigner-sampling.html" aria-current="page">II. From Hessians to Wigner Initial Conditions</a> — how one structure generates a nuclear initial ensemble.</li>
+</ul>
+
+ </div>
+ <div class="post-nav"><a href="molecular-excited-states-from-vasp.html">Previous: From VASP to SA-CASSCF</a><a href="../series.html?series=molecular-excited-states">Series index</a></div>
+</article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script defer src="../assets/js/hessian-wigner.js"></script>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "distribution": "Exact harmonic Gaussian; not actual SHARC candidate-pool moments.",
+  "samples": 50000,
+  "seed": 20261105,
+  "temperature_K": 50.0,
+  "mode_count": 84,
+  "atom_count": 30,
+  "frequency_min_cm1": 47.74427051947139,
+  "frequency_max_cm1": 3511.746370844337,
+  "maximum_standardized_mean_abs": 0.014506151718060016,
+  "maximum_relative_variance_error_abs": 0.018261273357692898,
+  "maximum_offdiagonal_correlation_abs": 0.01732887557331758,
+  "reconstruction_max_error_in_mode_standard_deviations": 2.0836050052102443e-14,
+  "zero_temperature_zpe_eV": 6.55712821672194,
+  "finite_temperature_mean_harmonic_energy_eV": 6.56252780113283,
+  "acceptance_limits": {
+    "max_abs_standardized_mean": 0.026832815729997475,
+    "max_abs_relative_variance_error": 0.03794771140103197,
+    "max_abs_offdiagonal_correlation": 0.026832815729997475,
+    "reconstruction_relative_error": 1e-10
+  },
+  "input_sha256": "f1489b6589c48ef9d53fc756697a03b6615a24137790cf832ec9f0fbe8e81092",
+  "source_sha256": "293ce002f3823109a5854bf8a328453e17b7049ef4e98936c167e640fc28bed8",
+  "scientific_scope": "Sampler and coordinate-transformation checks only; no electronic-surface or dynamics accuracy claim.",
+  "passed": true
+}

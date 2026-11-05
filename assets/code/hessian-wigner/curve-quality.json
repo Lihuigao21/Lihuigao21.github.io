@@ -1,0 +1,74 @@
+{
+  "contract": {
+    "grid_points": 1601,
+    "maximum_normalized_high_frequency_rms": 0.0005,
+    "maximum_normalized_high_frequency_residual": 0.003,
+    "maximum_normalized_grid_refinement_error": 0.0003,
+    "maximum_endpoint_excess_ratio": 3.0,
+    "maximum_isolated_spikes": 0,
+    "scope": "Analytic teaching curves on stated finite plotting intervals; not NAMD convergence."
+  },
+  "series": {
+    "47.74427_Quantum_harmonic": {
+      "finite": true,
+      "strictly_increasing_abscissa": true,
+      "duplicate_points": 0,
+      "normalized_high_frequency_residual_rms": 1.1636522287516355e-05,
+      "normalized_high_frequency_residual_max": 2.9799666654763386e-05,
+      "normalized_grid_refinement_error": 3.7250041212539108e-06,
+      "endpoint_excess_ratio": 0.9776936366054658,
+      "isolated_spikes": 0,
+      "values_smoothed": false,
+      "passed": true
+    },
+    "47.74427_Classical": {
+      "finite": true,
+      "strictly_increasing_abscissa": true,
+      "duplicate_points": 0,
+      "normalized_high_frequency_residual_rms": 1.2944003087922598e-05,
+      "normalized_high_frequency_residual_max": 3.4345673489131676e-05,
+      "normalized_grid_refinement_error": 4.293270011798029e-06,
+      "endpoint_excess_ratio": 0.9741486673310954,
+      "isolated_spikes": 0,
+      "values_smoothed": false,
+      "passed": true
+    },
+    "1000.00000_Quantum_harmonic": {
+      "finite": true,
+      "strictly_increasing_abscissa": true,
+      "duplicate_points": 0,
+      "normalized_high_frequency_residual_rms": 1.7154488138900773e-05,
+      "normalized_high_frequency_residual_max": 4.9997875067668245e-05,
+      "normalized_grid_refinement_error": 6.249863282446139e-06,
+      "endpoint_excess_ratio": 0.9620409430037604,
+      "isolated_spikes": 0,
+      "values_smoothed": false,
+      "passed": true
+    },
+    "1000.00000_Classical": {
+      "finite": true,
+      "strictly_increasing_abscissa": true,
+      "duplicate_points": 0,
+      "normalized_high_frequency_residual_rms": 0.00012666801570532758,
+      "normalized_high_frequency_residual_max": 0.0007189487481342364,
+      "normalized_grid_refinement_error": 8.989525668546495e-05,
+      "endpoint_excess_ratio": 8.207042100259107e-89,
+      "isolated_spikes": 0,
+      "values_smoothed": false,
+      "passed": true
+    },
+    "ground_state_point_energy_density": {
+      "finite": true,
+      "strictly_increasing_abscissa": true,
+      "duplicate_points": 0,
+      "normalized_high_frequency_residual_rms": 4.0405119553202885e-06,
+      "normalized_high_frequency_residual_max": 1.3957481382664838e-05,
+      "normalized_grid_refinement_error": 1.7545202034563445e-06,
+      "endpoint_excess_ratio": 1.0037570400473277,
+      "isolated_spikes": 0,
+      "values_smoothed": false,
+      "passed": true
+    }
+  },
+  "passed": true
+}
