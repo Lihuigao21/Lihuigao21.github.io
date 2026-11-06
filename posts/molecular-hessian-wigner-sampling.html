@@ -28,7 +28,8 @@
 <nav class="series-nav" aria-label="Molecular excited states series">
  <a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a>
  <a href="molecular-hessian-wigner-sampling.html" aria-current="page">II. Hessians and Wigner Sampling</a>
- <a href="../series.html?series=molecular-excited-states">Series index</a>
+ <a href="dpgen-concurrent-learning-cycle.html">III. The DP-GEN Learning Cycle</a>
+            <a href="../series.html?series=molecular-excited-states">Series index</a>
 </nav>
 <p class="lead">An optimized geometry supplies one point on a molecular potential-energy surface. An ensemble of initial conditions also needs the spread of nuclear positions and momenta. The route used here is to approximate the local vibrations as independent harmonic oscillators, sample their Wigner distributions, and transform the sampled normal coordinates back into atomic coordinates and velocities.</p>
 <p>This is the nuclear counterpart of a familiar phonon calculation. We continue with the same 30-atom molecular motor as <a href="molecular-excited-states-from-vasp.html">Part I</a>. The main question is practical: how did one tutorial structure become a pool of 2000 candidate geometries without first running a molecular-dynamics trajectory? The harmonic model explains that construction. Its initial-state approximation and the later NaF propagation are separate choices.</p>
@@ -331,10 +332,11 @@
 <ul class="series-list">
  <li><a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a> — what one fixed-geometry electronic calculation returns.</li>
  <li><a href="molecular-hessian-wigner-sampling.html" aria-current="page">II. From Hessians to Wigner Initial Conditions</a> — how one structure generates a nuclear initial ensemble.</li>
+<li><a href="dpgen-concurrent-learning-cycle.html">III. The DP-GEN Learning Cycle</a> — how exploration and reference labels expand the training domain.</li>
 </ul>
 
  </div>
- <div class="post-nav"><a href="molecular-excited-states-from-vasp.html">Previous: From VASP to SA-CASSCF</a><a href="../series.html?series=molecular-excited-states">Series index</a></div>
+ <div class="post-nav"><a href="molecular-excited-states-from-vasp.html">Previous: From VASP to SA-CASSCF</a><a href="dpgen-concurrent-learning-cycle.html">Next: The DP-GEN Learning Cycle</a></div>
 </article>
     </main>
     <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>

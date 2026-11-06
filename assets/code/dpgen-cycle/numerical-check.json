@@ -1,0 +1,93 @@
+{
+  "config": {
+    "seeds": [
+      2026110511,
+      2026110512,
+      2026110513,
+      2026110514
+    ],
+    "training_range": [
+      -0.9,
+      0.9
+    ],
+    "training_count": 13,
+    "display_range": [
+      -2.2,
+      2.2
+    ],
+    "display_count": 601,
+    "features": 24,
+    "center_range": [
+      -2.2,
+      2.2
+    ],
+    "width_range": [
+      0.35,
+      1.05
+    ],
+    "ridge": 1e-06,
+    "force_row_weight": 0.5,
+    "common_bias_slope": 0.4,
+    "default_sigma_thresholds": [
+      0.03,
+      0.15
+    ]
+  },
+  "scope": "Synthetic random-feature teaching example; no MD, HamGNN, CASSCF, or active-learning convergence result.",
+  "source_sha256": "768b13e37dd87b7d84baf4c94ea78de610344f1029a61b9552f3a376f3fb4dab",
+  "default_class_counts": {
+    "below": 360,
+    "candidate": 203,
+    "above": 38
+  },
+  "sigma_bias_invariance_max_abs": 8.326672684688674e-17,
+  "training_max_member_force_error": 0.0007547818307438448,
+  "inside_mean_force_rmse": 0.00022487319650028227,
+  "outside_mean_force_rmse": 1.6976501604895144,
+  "global_mean_force_rmse": 1.3065798747226192,
+  "biased_global_mean_force_rmse": 1.3534140100703842,
+  "sigma_force_range": [
+    8.981848186533285e-06,
+    0.17910278385654366
+  ],
+  "point_checks": [
+    {
+      "q": 0.0,
+      "reference_force": -0.24,
+      "mean_force": -0.23989332783840125,
+      "sigma_force": 4.572050223301509e-05,
+      "absolute_force_error": 0.00010667216159873649,
+      "biased_mean_force": -0.6398933278384014,
+      "biased_absolute_force_error": 0.39989332783840137
+    },
+    {
+      "q": 0.6,
+      "reference_force": 0.16684850272634086,
+      "mean_force": 0.1672204645488802,
+      "sigma_force": 0.00012560592963815968,
+      "absolute_force_error": 0.0003719618225393462,
+      "biased_mean_force": -0.23277953545111982,
+      "biased_absolute_force_error": 0.3996280381774607
+    },
+    {
+      "q": 1.2,
+      "reference_force": -0.18221798007980453,
+      "mean_force": -0.10166645167847516,
+      "sigma_force": 0.020838994457501217,
+      "absolute_force_error": 0.08055152840132937,
+      "biased_mean_force": -0.5016664516784752,
+      "biased_absolute_force_error": 0.31944847159867074
+    },
+    {
+      "q": 1.8,
+      "reference_force": -2.3036862902262323,
+      "mean_force": -0.5844482939223286,
+      "sigma_force": 0.1403662191095378,
+      "absolute_force_error": 1.7192379963039037,
+      "biased_mean_force": -0.9844482939223287,
+      "biased_absolute_force_error": 1.3192379963039036
+    }
+  ],
+  "models_sha256": "3a889ec4ace30989a8f4f15207a743a47adbb611a50c89254cb75c163fef44a2",
+  "passed": true
+}

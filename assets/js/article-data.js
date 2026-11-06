@@ -69,6 +69,23 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    "slug": "dpgen-concurrent-learning-cycle",
+    "title": "Molecular Excited States III: The DP-GEN Learning Cycle",
+    "path": "posts/dpgen-concurrent-learning-cycle.html",
+    "date": "2026-11-05",
+    "dateText": "2026.11.05",
+    "description": "Follow committee uncertainty, exploration, reference labeling, and retraining from a familiar VASP workflow to a multistate HamGNN–NaF molecular application.",
+    "tags": [
+      "Molecular Excited States",
+      "DP-GEN",
+      "Active Learning",
+      "HamGNN",
+      "Real-System Calculation"
+    ],
+    "series": "molecular-excited-states",
+    "part": 3
+  },
+  {
     slug: "molecular-hessian-wigner-sampling",
     title: "Molecular Excited States II: From Hessians to Wigner Initial Conditions",
     path: "posts/molecular-hessian-wigner-sampling.html",

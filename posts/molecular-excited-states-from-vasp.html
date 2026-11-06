@@ -28,6 +28,7 @@
           <nav class="series-nav" aria-label="Molecular excited states series">
             <a href="molecular-excited-states-from-vasp.html" aria-current="page">I. From VASP to SA-CASSCF</a>
             <a href="molecular-hessian-wigner-sampling.html">II. Hessians and Wigner Sampling</a>
+            <a href="dpgen-concurrent-learning-cycle.html">III. The DP-GEN Learning Cycle</a>
             <a href="../series.html?series=molecular-excited-states">Series index</a>
           </nav>
           <p class="lead">A VASP single-point calculation starts with fixed nuclei and ends with an electronic energy and nuclear forces. A molecular excited-state calculation retains that starting point, but asks for several electronic states of the same molecule. This series follows one actual 30-atom molecular motor, beginning with the calculation that turns a single geometry into two energies, two force vectors, and a nonadiabatic coupling.</p>
@@ -263,8 +264,9 @@
             <li>PSiNaD nonadiabatic tutorial — molecular-system provenance; the present electronic labels use PySCF, rather than the tutorial's OM2/GUGA-CI Hamiltonian. <a href="https://github.com/xshinhe/PSiNad/blob/95de9228f150ba97aaf02ecaf4a6f8b34eed9d3e/docs/manu/nonadiabatic.md">Tutorial at the retained source revision</a>.</li>
           </ol>
           <h2 id="series-map">Molecular Excited States Series</h2>
-          <ul class="series-list"><li><a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a> — one real fixed-geometry calculation.</li><li><a href="molecular-hessian-wigner-sampling.html">II. From Hessians to Wigner Initial Conditions</a> — normal modes, nuclear phase-space sampling, and coordinate reconstruction.</li></ul>
-          <p>Part II now examines normal modes and Wigner initial conditions. Further topics include the Gaussian basis and RHF self-consistency, configuration interaction and active-space optimization, state-specific gradients and NACs, and surrogate-driven dynamics. Each will continue with the same motor rather than changing the example at every step.</p>
+          <ul class="series-list"><li><a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a> — one real fixed-geometry calculation.</li><li><a href="molecular-hessian-wigner-sampling.html">II. From Hessians to Wigner Initial Conditions</a> — normal modes, nuclear phase-space sampling, and coordinate reconstruction.</li><li><a href="dpgen-concurrent-learning-cycle.html">III. The DP-GEN Learning Cycle</a> — how exploration and reference labels expand the training domain.</li>
+</ul>
+          <p>Part II examines normal modes and Wigner initial conditions, while Part III explains the DP-GEN learning cycle. Further topics include the Gaussian basis and RHF self-consistency, configuration interaction and active-space optimization, state-specific gradients and NACs, and surrogate-driven dynamics. Each will continue with the same motor rather than changing the example at every step.</p>
         </div>
         <div class="post-nav"><a href="../series.html?series=molecular-excited-states">Series index</a><a href="../index.html#articles">All articles</a></div>
       </article>

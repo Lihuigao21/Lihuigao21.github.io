@@ -1,0 +1,28 @@
+/* Committee teaching figure inherits the site's typography and quiet palette. */
+.dpgen-widget {min-width:0;margin:1.5rem 0;padding:1rem;border:1px solid var(--line,#deded8);border-radius:4px;background:var(--bg,#fbfbfa);}
+.dpgen-widget h3 {margin:0 0 .8rem;}
+.dpgen-widget canvas {display:none;width:100%;height:470px;max-width:100%;}
+.dpgen-widget .dpgen-controls,.dpgen-widget .dpgen-readout,.dpgen-widget .dpgen-legend {display:none;}
+.dpgen-widget.is-ready canvas {display:block;}
+.dpgen-widget.is-ready .dpgen-controls {display:grid;}
+.dpgen-widget.is-ready .dpgen-readout {display:block;}
+.dpgen-widget.is-ready .dpgen-legend {display:flex;}
+.dpgen-widget.is-ready .dpgen-fallback {display:none;}
+.dpgen-fallback img {display:block;max-width:100%;width:100%;height:auto;}
+.dpgen-controls {grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem 1rem;margin:.9rem 0;align-items:end;}
+.dpgen-controls label {display:grid;min-width:0;gap:.2rem;}
+.dpgen-controls input[type=range] {width:100%;min-width:0;margin:0;accent-color:#315f85;}
+.dpgen-controls input[type=number],.dpgen-controls button {box-sizing:border-box;width:100%;min-width:0;max-width:100%;padding:.35rem .55rem;border:1px solid var(--line,#deded8);border-radius:3px;background:var(--surface,#fff);color:var(--ink,#222);font:inherit;}
+.dpgen-controls button {cursor:pointer;}
+.dpgen-controls .dpgen-checkbox {display:flex;align-items:center;gap:.5rem;align-self:center;}
+.dpgen-checkbox input {flex:0 0 auto;accent-color:#315f85;}
+.dpgen-controls input:focus-visible,.dpgen-controls button:focus-visible {outline:2px solid #315f85;outline-offset:3px;}
+.dpgen-readout {font-size:.92rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+.dpgen-readout p {margin:.35rem 0;}
+.dpgen-legend {flex-wrap:wrap;gap:.25rem 1rem;margin:.4rem 0;font-size:.84rem;}
+.dpgen-legend span:before {content:"";display:inline-block;width:1.2rem;margin-right:.3rem;vertical-align:middle;border-top:2px solid currentColor;}
+.dpgen-legend .dpgen-reference {color:#292d30;}.dpgen-legend .dpgen-reference:before {border-top-style:dashed;}
+.dpgen-legend .dpgen-mean {color:#315f85;}.dpgen-legend .dpgen-member {color:#8d9fac;}.dpgen-legend .dpgen-error {color:#925e35;}
+.dpgen-status,.dpgen-widget figcaption {font-size:.9rem;color:var(--muted,#666);overflow-wrap:anywhere;}
+.dpgen-widget.has-error .dpgen-status {font-weight:600;color:var(--ink,#222);}
+@media(max-width:600px){.dpgen-widget{padding:.65rem;}.dpgen-controls{grid-template-columns:minmax(0,1fr);}.dpgen-widget canvas{height:520px;}}

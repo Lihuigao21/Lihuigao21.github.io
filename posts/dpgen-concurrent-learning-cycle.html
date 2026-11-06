@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Follow committee uncertainty, exploration, reference labeling, and retraining from a familiar VASP workflow to a multistate HamGNN–NaF molecular application.">
+    <title>Molecular Excited States III: The DP-GEN Learning Cycle | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/dpgen-cycle.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="../assets/vendor/mathjax-3.2.2/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+ <header class="post-header">
+ <p class="section-label">Molecular Excited States — Part III</p>
+ <h1>The DP-GEN Learning Cycle</h1>
+ <p class="post-meta">2026.11.05 · Active Learning / Molecular Excited States / Machine-Learned Potentials</p>
+</header>
+<div class="post-content">
+<nav class="series-nav" aria-label="Molecular excited states series">
+ <a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a>
+ <a href="molecular-hessian-wigner-sampling.html">II. Hessians and Wigner Sampling</a>
+ <a href="dpgen-concurrent-learning-cycle.html" aria-current="page">III. The DP-GEN Learning Cycle</a>
+ <a href="../series.html?series=molecular-excited-states">Series index</a>
+</nav>
+<p class="lead">A machine-learned potential can make a trajectory inexpensive, but its training data cover only a fraction of the configurations that the trajectory may visit. DP-GEN addresses the resulting data-selection problem: train a committee, explore with a model, identify informative new geometries, compute reference labels, and train again on the expanded dataset.</p>
+<p><a href="molecular-excited-states-from-vasp.html">Part I</a> explained what an excited-state electronic calculation returns. <a href="molecular-hessian-wigner-sampling.html">Part II</a> constructed initial nuclear positions and velocities using normal modes. This article follows those initial data into a learning loop. We first use the familiar VASP setting, then identify the changes needed for our molecular HamGNN–PSiNaD/NaF–PySCF workflow.</p>
+<nav aria-label="Article contents"><ol>
+ <li><a href="#coverage">Why the initial dataset is insufficient</a></li>
+ <li><a href="#roles">Separate the model, dynamics, and learning loop</a></li>
+ <li><a href="#disagreement">Measure disagreement without confusing it with error</a></li>
+ <li><a href="#iteration">Follow one complete iteration</a></li>
+ <li><a href="#multistate">Extend the loop to molecular excited states</a></li>
+ <li><a href="#example">Inspect a reproducible committee example</a></li>
+ <li><a href="#cost">Identify the cost and parallel work</a></li>
+ <li><a href="#stopping">Decide what has actually converged</a></li>
+</ol></nav>
+
+<h2 id="coverage">1. Why the Initial Dataset Is Insufficient</h2>
+<p>Imagine extracting a few hundred VASP MD frames and training a force field. The model may interpolate those frames well while remaining unreliable for a bond stretch or structural transition absent from them. Generating more frames near the same equilibrium structure does not necessarily repair that missing coverage.</p>
+<p>Our molecule has the same problem. The Wigner construction in Part II starts near one optimized geometry, with displacements determined by its harmonic modes. Excited-state motion can subsequently change torsions and bond lengths or approach a small electronic gap. Initial harmonic coverage does not establish accuracy along those paths.</p>
+<p>The retained motor seed pool contains 1128 admitted reference records, split into training and held-out subsets. Let \(\mathcal D_0\) denote only the training subset. Each subsequent loop adds accepted, distinct reference records to it; validation and test records retain their separate roles. The question is which new calculations should form that addition.</p>
+
+<h2 id="roles">2. Separate the Model, Dynamics, and Learning Loop</h2>
+<p>Three decisions are involved: how to predict electronic information, how to generate new geometries, and when to request another expensive reference calculation. DP-GEN organizes their interaction. It does not replace the underlying electronic method or prescribe a unique dynamics approximation. The original work allows different exploration strategies, including ordinary and enhanced-sampling MD. <a href="https://arxiv.org/html/1910.12690v1">The DP-GEN paper defines these components explicitly</a>.</p>
+<div class="table-scroll"><table>
+ <thead><tr><th>Role</th><th>Familiar solid-state setup</th><th>Molecular workflow here</th></tr></thead>
+ <tbody>
+  <tr><td>Reference labels</td><td>DFT energies and forces, for example VASP</td><td>PySCF SA2-CASSCF energies, gradients, and coupling</td></tr>
+  <tr><td>Learned predictor</td><td>A Deep Potential model</td><td>A custom two-state surrogate using a HamGNN backbone</td></tr>
+  <tr><td>Exploration</td><td>Model-driven MD, commonly LAMMPS</td><td>Short PSiNaD trajectories using NaF</td></tr>
+  <tr><td>Learning workflow</td><td>Train, explore, select, label, collect</td><td>DPGEN2 block with project-specific stage operators</td></tr>
+ </tbody>
+</table></div>
+<p>Standard DP-GEN commonly presents the stages as <code>00.train</code>, <code>01.model_devi</code>, and <code>02.fp</code>, with selection included in the exploration-to-labeling transition. DPGEN2 makes the selection step explicit. The molecular interfaces in the last column are our extensions, rather than a claim that the default command directly supports this combination. <a href="https://docs.deepmodeling.com/projects/dpgen/en/stable/run/overview-of-the-run-process.html">The standard run layout</a> and <a href="https://docs.deepmodeling.com/projects/dpgen2/en/latest/developer.html">DPGEN2's operator structure</a> describe the corresponding orchestration.</p>
+<p>A further distinction matters: active learning chooses useful labels, whereas enhanced sampling changes how configurations are visited. They can work together. A committee cannot identify an unvisited reaction channel merely by evaluating the same local trajectories more often.</p>
+
+<h2 id="disagreement">3. Measure Disagreement Without Confusing It with Error</h2>
+<p>For a new geometry, the reference answer is unavailable until another electronic calculation is performed. We therefore need a cheaper selection indicator. Train \(K\) models on the same training data using independent random initializations. Their different fitted predictions provide an empirical measure of model disagreement; they are not independent samples of the nuclear ensemble.</p>
+<p>For one electronic surface, let \(\mathbf F_i^{(m)}(\mathbf R)\) be the three-component force on atom \(i\) predicted by member \(m\). First average over the models:</p>
+<div class="math-block">\[
+ \overline{\mathbf F}_i(\mathbf R)
+ =\frac{1}{K}\sum_{m=1}^{K}\mathbf F_i^{(m)}(\mathbf R).
+\]</div>
+<p>Subtract that mean, square the vector norm, and average the squared differences. Taking the square root returns a quantity with force units. Finally, take the largest value over atoms:</p>
+<div class="math-block">\[
+ \sigma_F(\mathbf R)=
+ \max_i\left[
+ \frac{1}{K}\sum_{m=1}^{K}
+ \left\|\mathbf F_i^{(m)}(\mathbf R)
+       -\overline{\mathbf F}_i(\mathbf R)\right\|^2
+ \right]^{1/2}.
+\]</div>
+<p>This is the force-deviation indicator used in the original DP-GEN construction. The denominator is \(K\); there is no additional division by three. It describes the observed spread of this committee, rather than an unbiased statistical estimate of a population variance. <a href="https://arxiv.org/html/1910.12690v1">See the paper's methodology and force indicator</a>.</p>
+<p>The actual force error would instead compare the mean prediction with a reference force:</p>
+<div class="math-block">\[
+ e_F(\mathbf R)=
+ \max_i\left\|\overline{\mathbf F}_i(\mathbf R)
+                  -\mathbf F_i^{\mathrm{ref}}(\mathbf R)\right\|.
+\]</div>
+<p>There is no identity equating these two quantities. One algebraic counterexample explains why. Add the same geometry-dependent energy bias \(b(\mathbf R)\) to every member. Its force contribution is \(-\nabla_i b\), so</p>
+<div class="math-block">\[
+ \widetilde E^{(m)}=E^{(m)}+b,\qquad
+ \widetilde{\mathbf F}_i^{(m)}
+ =\mathbf F_i^{(m)}-\nabla_i b,
+ \qquad
+ \widetilde{\overline{\mathbf F}}_i
+ =\overline{\mathbf F}_i-\nabla_i b.
+\]</div>
+<p>Subtracting the new mean cancels the common contribution exactly:</p>
+<div class="math-block">\[
+ \widetilde{\mathbf F}_i^{(m)}
+ -\widetilde{\overline{\mathbf F}}_i
+ =\mathbf F_i^{(m)}-\overline{\mathbf F}_i,
+ \qquad
+ \widetilde{\sigma}_F=\sigma_F.
+\]</div>
+<p>The actual error can nevertheless change. A common architectural deficiency or restricted training domain can therefore escape a small-spread criterion. Reference spot checks are needed to calibrate selection rules and detect confident mistakes. The interactive example below makes this cancellation visible.</p>
+
+<h2 id="iteration">4. Follow One Complete Iteration</h2>
+<p>Once disagreement has been defined, we can follow how one training dataset becomes the next. The diagram separates reference-label acceptance from candidate generation; only the former enlarges the training set.</p>
+<figure style="max-width:420px;margin-left:auto;margin-right:auto">
+ <img src="../assets/img/dpgen-cycle/learning-loop.svg" width="420" height="760" loading="lazy" alt="Vertical DP-GEN workflow: dataset, train, explore, select, label, validate and merge, with a return arrow to the expanded dataset">
+ <figcaption>A conceptual learning cycle. Downward arrows pass models or candidate data to the next stage; the left return arrow carries accepted reference additions into the next training dataset. The stage order is fixed, while tasks within a stage can run in parallel. The initial Wigner construction supplies the seed; it is not repeated by every arrow.</figcaption>
+</figure>
+<h3>Train a committee</h3>
+<p>Each member sees the current \(\mathcal D_k\). Different random seeds must initialize separate models; copying one trained checkpoint four times gives no useful disagreement. The validation subset may select checkpoints, while the independent test subset remains outside model selection and candidate ranking.</p>
+<h3>Explore with the learned predictions</h3>
+<p>Choose initial coordinates, velocities, and, for nonadiabatic dynamics, an electronic initial state. A leader model supplies the predictions used by the integrator. At the inspected geometries, all members evaluate the same inputs. Thus one trajectory can be driven by one model while its reliability indicator comes from the whole committee. Different trajectories can use different leaders.</p>
+<p>These trajectories propose geometries for data acquisition. Their populations, yields, or relaxation curves are not automatically validated physical results. Early stopping is appropriate when a trajectory leaves the model's declared domain.</p>
+<h3>Select a limited, useful set</h3>
+<p>In the standard two-threshold scheme, choose lower and upper force-deviation bounds, \(\sigma_{\mathrm{lo}}\) and \(\sigma_{\mathrm{hi}}\). Frames below the lower bound are usually skipped; frames between the bounds are candidates; very high-spread frames require rejection or diagnosis under the chosen policy. These are selection categories, not proofs of accuracy or physical invalidity. The <a href="https://docs.deepmodeling.com/projects/dpgen/en/stable/run/param.html#model-devi-f-trust-lo">official parameter reference</a> specifies the bounds.</p>
+<div class="math-block">\[
+ \begin{array}{ll}
+ \sigma_F<\sigma_{\mathrm{lo}} &: \text{usually skip repeated labeling},\\
+ \sigma_{\mathrm{lo}}\leq\sigma_F<\sigma_{\mathrm{hi}}
+   &: \text{consider for reference labeling},\\
+ \sigma_F\geq\sigma_{\mathrm{hi}}
+   &: \text{diagnose severe extrapolation or instability}.
+ \end{array}
+\]</div>
+<p>Selection also needs a budget and a diversity rule. Hundreds of adjacent MD frames may describe almost the same geometry. Geometric deduplication and trajectory quotas prevent one correlated segment from consuming the entire reference budget. A high-spread but physically meaningful configuration may deserve a controlled reference calculation; a geometry containing an accidental atom overlap needs a different response.</p>
+<h3>Label, validate, and merge</h3>
+<p>Run the reference electronic method at each selected geometry. The coordinate is the model's proposal; its final energy and derivatives come from quantum chemistry. Check solver convergence, finite outputs, units, identities, and the electronic-state consistency required by the application. Failed reference calculations remain failures with their provenance; they do not become training labels.</p>
+<p>Let \(\Delta\mathcal D_k^{\mathrm{accepted}}\) contain only distinct, accepted reference records. The next training set is</p>
+<div class="math-block">\[
+ \boxed{\mathcal D_{k+1}
+ =\mathcal D_k\cup\Delta\mathcal D_k^{\mathrm{accepted}}.}
+\]</div>
+<p>The original data remain represented, and a new committee is trained on the enlarged set. Generated frames, selected frames, and accepted labels are three different counts. Completing a labeling batch is also different from establishing that the learning loop has converged.</p>
+
+<h2 id="multistate">5. Extend the Loop to Molecular Excited States</h2>
+<p>Our target propagator needs several electronic quantities at the same geometry, rather than one ground-state force. The current local two-state surrogate uses a HamGNN backbone to predict \(E_0\), \(E_1\), and a gap-scaled coupling vector. Its state forces are obtained by differentiating the predicted energies. This is a specific local multistate model; it is not an established global diabatic Hamiltonian representation. The adiabatic and diabatic propagation conventions are developed separately in <a href="cps-diabatic-adiabatic-eom.html">MQC VIII</a>.</p>
+<p>For this implementation, define the positive gap and the scaled derivative coupling as</p>
+<div class="math-block">\[
+ \Delta E=E_1-E_0,\qquad
+ \mathbf G_{01}=\Delta E\,\mathbf d_{01}.
+\]</div>
+<p>The bare derivative coupling \(\mathbf d_{01}\) has inverse-length units; \(\mathbf G_{01}\) has force units. The code reconstructs the former only within its declared positive-gap domain. It explicitly refuses an insufficient gap instead of silently replacing the denominator by a constant. This restricts the current interface near genuine degeneracies.</p>
+<p>The committee monitors the gap spread, the largest state-and-atom force spread, and the largest atom-wise \(\mathbf G_{01}\) spread. Its force definition extends the preceding formula by taking \(\max_{s,i}\), where \(s=0,1\). In the planned motor augmentation, eligible geometries are ranked using</p>
+<div class="math-block">\[
+ p(\mathbf R)=\max\left(
+ \frac{\sigma_{\Delta E}}{0.02\,\mathrm{eV}},
+ \frac{\sigma_F}{0.1\,\mathrm{eV/\mathring A}},
+ \frac{\sigma_G}{0.1\,\mathrm{eV/\mathring A}}
+ \right).
+\]</div>
+<p><strong>This project's selector ranks guarded candidates; it does not implement the illustrative lower/upper threshold rule above.</strong> The denominators make the three channels comparable for ranking. They are not certified error tolerances. The selector combines disagreement priority with a geometric-diversity reserve and per-trajectory limits.</p>
+<p>Before this ranking, the current implementation checks geometry support, connectivity, close contacts, and the local gap domain. Refused configurations are recorded and the corresponding exploration stops. They are excluded from the present automatic labeling selector. Extending the support domain requires an explicit additional labeling strategy; a refusal is not evidence that the excluded region is physically irrelevant.</p>
+<h3>Keep the electronic labels comparable</h3>
+<p>A state can change its arbitrary wavefunction sign without changing its energy or force. For real electronic states, changing the sign of just one state changes the sign of its off-diagonal NAC, and hence of \(\mathbf G_{01}\). Comparing differently phased members can manufacture a coupling disagreement. Multiplication by the gap does not remove this gauge dependence.</p>
+<p>Consequently, all committee members need consistent state labels and a common local electronic phase convention. New PySCF labels also require checks of the CASSCF active subspace, state identities, response calculations, and phase alignment. A converged electronic energy or a passed geometric guard alone establishes none of those additional properties.</p>
+<p>The retained augmentation protocol calls for four independently initialized models, 32 short NaF explorations from accepted SHARC initial conditions, and a target of 256 new accepted training records, with at most 384 labeling candidates. It retains the same SA2-CASSCF(12,9)/6-31G* reference protocol. These are protocol choices and budgets, not reported achievements of a completed augmentation round. The initial distribution is the xTB/SHARC preparation described in Part II, rather than a CASSCF equilibrium ensemble.</p>
+
+<h2 id="example">6. Inspect a Reproducible Committee Example</h2>
+<p>To inspect the selection idea without waiting for molecular calculations, consider a dimensionless one-coordinate reference:</p>
+<div class="math-block">\[
+ E(q)=0.12q^4-0.18q^2+0.08\sin(3q),\qquad
+ F(q)=-0.48q^3+0.36q-0.24\cos(3q).
+\]</div>
+<p>Four random-feature regressors fit the same 13 energy-and-force training points in \([-0.9,0.9]\), using independent seeded Gaussian features and identical fitting settings. Each force is the negative derivative of its model energy. A separate 601-point grid over \([-2.2,2.2]\) supplies synthetic candidate geometries. These are explanatory surrogate fits and a prescribed grid, not HamGNN training, MD sampling, or a completed DP-GEN reproduction.</p>
+<figure class="dpgen-widget" data-dpgen-widget data-source="../assets/code/dpgen-cycle/committee-models.json">
+ <h3>When four models agree—and when agreement is misleading</h3>
+ <div class="dpgen-fallback"><img src="../assets/img/dpgen-cycle/committee-example.svg" width="920" height="390" alt="Four random-feature force models trained on the same central interval, and their spread compared with actual error before and after a shared bias."></div>
+ <canvas aria-label="Interactive synthetic committee force predictions and error diagnostics"></canvas>
+ <div class="dpgen-legend" aria-hidden="true"><span class="dpgen-reference">Reference force</span><span class="dpgen-member">Four members</span><span class="dpgen-mean">Mean / spread</span><span class="dpgen-error">Actual error</span></div>
+ <div class="dpgen-controls">
+  <label><span>Inspect coordinate q: <output data-dpgen-output="q">0.00</output></span><input data-dpgen-control="q" type="range" min="-2.2" max="2.2" step="0.01" value="0"></label>
+  <label><span>Lower spread threshold</span><input data-dpgen-control="lo" type="number" min="0" max="0.5" step="0.005" value="0.03"></label>
+  <label><span>Upper spread threshold</span><input data-dpgen-control="hi" type="number" min="0.005" max="0.6" step="0.005" value="0.15"></label>
+  <label class="dpgen-checkbox"><input data-dpgen-control="bias" type="checkbox"><span>Add the same bias to all four models</span></label>
+  <button type="button" data-dpgen-control="reset">Reset teaching example</button>
+ </div>
+ <div class="dpgen-readout" aria-live="polite"><p data-dpgen-output="numbers"></p><p data-dpgen-output="energy"></p><p data-dpgen-output="class"></p><p data-dpgen-output="counts"></p></div>
+ <p class="dpgen-status" data-dpgen-status role="status">Synthetic random-feature example; no molecular dynamics, HamGNN, or quantum-label calculation.</p>
+ <figcaption>All axes and thresholds are dimensionless. The shaded coordinate interval contains the same 13 energy-and-force training points for every member. Gray: four seeded fits; dashed black: analytic reference; blue: committee mean or force spread; brown: actual mean-force error. Dotted horizontal guides mark two standard-style teaching thresholds; they are not the current molecular selector's ranking rule. The synthetic 601-point grid illustrates classification, not sampling efficiency or accepted dataset size. Biasing all members changes their mean while leaving their spread invariant.</figcaption>
+</figure>
+
+<p>Move the inspected coordinate to compare committee spread with the actual force error, which is available here because the reference is analytic. Adjust the two thresholds to change the candidate categories. Those thresholds teach standard-style triage; they are unrelated to the molecular ranking scales in Section 5.</p>
+<p>The shared-bias option adds \(b(q)=0.4q\) to every model energy, and therefore subtracts \(0.4\) from every model force. At \(q=0\), the force spread remains about \(4.57\times10^{-5}\), while the mean-force error changes from about \(1.07\times10^{-4}\) to \(0.400\). This is the cancellation derived in Section 3, with energy and force biases kept consistent.</p>
+<p>With the example's default thresholds \(0.03\) and \(0.15\), the grid has 360 below-threshold points, 203 candidates, and 38 above-threshold points. These counts describe a classification before any molecular reference acceptance. The mean-force RMSE is about \(2.25\times10^{-4}\) inside the training interval and \(1.70\) outside it, in the example's dimensionless units. Modest spread can coexist with a large extrapolation error even before adding the deliberate shared bias.</p>
+<p>Download the <a href="../assets/code/dpgen-cycle/committee_demo.py">teaching generator</a>, <a href="../assets/code/dpgen-cycle/committee-models.json">model parameters</a>, <a href="../assets/code/dpgen-cycle/numerical-check.json">numerical checks</a>, and <a href="../assets/code/dpgen-cycle/curve-quality.json">curve checks</a>, following the <a href="../assets/code/dpgen-cycle/README.md">reproduction notes</a>. The <a href="../assets/code/dpgen-cycle/draw_workflow.py">workflow drawing script</a> regenerates the conceptual cycle diagram. Running these examples verifies their definitions and illustrations; it does not assess the molecular potential's accuracy.</p>
+
+<h2 id="cost">7. Identify the Cost and Parallel Work</h2>
+<p>The saving comes from using inexpensive predictions for exploration and reserving quantum chemistry for selected geometries. Let \(N_{\mathrm{eval}}\) count actual geometry evaluations across all exploration trajectories, \(N_{\mathrm{label}}\) count reference calculations attempted, and \(C_{\mathrm{ML}}\) and \(C_{\mathrm{ref}}\) denote their respective per-geometry costs. A simple work estimate is</p>
+<div class="math-block">\[
+ C_{\mathrm{round}}\approx
+ \sum_{m=1}^{K}C_{\mathrm{train},m}
+ +K N_{\mathrm{eval}}C_{\mathrm{ML}}
+ +N_{\mathrm{label}}C_{\mathrm{ref}}.
+\]</div>
+<p>This assumes that all members evaluate every inspected geometry and that the leader prediction is reused. An evaluation is not necessarily one stored trajectory frame or one nuclear time step; an integrator can request several geometries per step. The expression counts work, not elapsed wall time.</p>
+<p>Committee training, separate exploration trajectories, and independent reference labels provide parallel work within their stages. The stage dependencies remain: labels must be collected and checked before the enlarged dataset can be used for the next training round. Increasing concurrency shortens suitable stages but does not create more informative candidates or make a failed CASSCF label acceptable.</p>
+<p>For our multistate reference, a selected geometry needs two-state electronic optimization and derivatives, including coupling response. The cost is therefore broader than a ground-state SCF energy alone. Actual timing measurements are needed to decide whether committee inference, gradient evaluation, or reference labeling dominates a particular round.</p>
+
+<h2 id="stopping">8. Decide What Has Actually Converged</h2>
+<p>A learning round can finish successfully while the potential is still inadequate. Assess stopping against a stated application domain: initial-state distribution, electronic states, geometries, time window, and target observables. Three complementary checks address different possible failures:</p>
+<ul>
+ <li><strong>Coverage:</strong> independent starts and relevant exploration conditions revisit the required regions without repeatedly hitting unsupported-domain stops. Few selected points are meaningful only if the exploration itself is adequate.</li>
+ <li><strong>Reference accuracy:</strong> fresh reference spot checks and independent held-out geometries show acceptable errors in energies, state forces, and couplings. Committee agreement alone does not supply this check.</li>
+ <li><strong>Observable stability:</strong> the quantities eventually needed from the dynamics remain stable under additional accepted data, model changes, and the relevant trajectory/time-step checks.</li>
+</ul>
+<p>Validation data may guide checkpoint selection; test results must not become a repeatedly tuned training target. Where trajectories contribute multiple nearby frames, split and assess them with their correlation in mind. Keep the test geometries separate from the acquisition pool, and do not count rejected, duplicate, or uncomputed candidates as new training records.</p>
+<p>Even an accurate surrogate reproduces only its chosen reference electronic method. The learning loop cannot repair an inadequate CASSCF active space, supply missing nuclear sampling, or remove the underlying approximation in NaF propagation. Its contribution is to concentrate reference calculations where they are useful for the intended simulation, while keeping the model's evidence and boundaries explicit.</p>
+
+<h2 id="references">Sources and Reproduction</h2>
+<ol>
+ <li>Yuzhi Zhang et al., <em>DP-GEN: A concurrent learning platform for the generation of reliable deep learning based potential energy models</em>. <a href="https://arxiv.org/html/1910.12690v1">Full text</a> — committee initialization, exploration, force deviation, and data generation.</li>
+ <li><a href="https://docs.deepmodeling.com/projects/dpgen/en/stable/run/overview-of-the-run-process.html">DP-GEN: Overview of the Run process</a> — standard stage layout and collection of new labels.</li>
+ <li><a href="https://docs.deepmodeling.com/projects/dpgen/en/stable/run/param.html">DP-GEN run parameters</a> — force-deviation bounds, labeling budgets, and selection controls.</li>
+ <li><a href="https://docs.deepmodeling.com/projects/dpgen2/en/latest/developer.html">DPGEN2 Developers' guide</a> — training, exploration, selection, labeling, and dataset increment interfaces.</li>
+ <li><a href="https://github.com/xshinhe/PSiNad/blob/95de9228f150ba97aaf02ecaf4a6f8b34eed9d3e/docs/manu/nonadiabatic.md">PSiNaD nonadiabatic tutorial at the retained revision</a> — provenance of the molecular example; the present workflow uses its own PySCF reference protocol and multistate surrogate.</li>
+ <li><a href="../assets/code/dpgen-cycle/README.md">Teaching example and reproducible checks</a> — seeded surrogate fits, analytic reference, shared-bias control, and the workflow SVG generator.</li>
+</ol>
+<h2 id="series-map">Molecular Excited States Series</h2>
+<ul class="series-list">
+ <li><a href="molecular-excited-states-from-vasp.html">I. From VASP to SA-CASSCF</a> — what a fixed-geometry electronic calculation returns.</li>
+ <li><a href="molecular-hessian-wigner-sampling.html">II. From Hessians to Wigner Initial Conditions</a> — how one structure generates a nuclear initial ensemble.</li>
+ <li><a href="dpgen-concurrent-learning-cycle.html" aria-current="page">III. The DP-GEN Learning Cycle</a> — how exploration and reference calculations expand the training domain.</li>
+</ul>
+
+</div>
+<div class="post-nav"><a href="molecular-hessian-wigner-sampling.html">Previous: Hessians and Wigner Sampling</a><a href="../series.html?series=molecular-excited-states">Series index</a></div>
+</article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script defer src="../assets/js/dpgen-cycle.js"></script>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
