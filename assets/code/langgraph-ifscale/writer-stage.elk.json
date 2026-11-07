@@ -1,0 +1,89 @@
+{
+  "title": "One writer in the serial experiment",
+  "subtitle": "Repeated N times, with new terms and preceding prose.",
+  "fontFamily": "Arial, sans-serif",
+  "background": "#ffffff",
+  "margin": 24,
+  "layoutOptions": {
+    "elk.direction": "DOWN",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "44",
+    "elk.padding": "[top=20,left=20,bottom=20,right=20]"
+  },
+  "nodes": [
+    {
+      "id": "stage_input",
+      "kind": "start",
+      "width": 460,
+      "height": 124,
+      "lines": [
+        "Stage input",
+        "Common rules + this stage's 500/N terms",
+        "Previous fragments + current cursor"
+      ]
+    },
+    {
+      "id": "prompt",
+      "kind": "process",
+      "width": 460,
+      "height": 100,
+      "lines": [
+        "Build this stage's prompt",
+        "Prior prose is read-only context"
+      ]
+    },
+    {
+      "id": "executor",
+      "kind": "calculation",
+      "width": 460,
+      "height": 110,
+      "lines": [
+        "Start a fresh Codex CLI session",
+        "Configured gpt-5.6-luna / high",
+        "Return one new fragment"
+      ]
+    },
+    {
+      "id": "append",
+      "kind": "process",
+      "width": 460,
+      "height": 100,
+      "lines": [
+        "Update the graph state",
+        "parts = parts + [fragment]; cursor += 1"
+      ]
+    },
+    {
+      "id": "continue",
+      "kind": "end",
+      "width": 460,
+      "height": 98,
+      "lines": [
+        "Follow the fixed edge",
+        "Next writer, or END after writer N"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "source": "stage_input",
+      "target": "prompt"
+    },
+    {
+      "id": "e1",
+      "source": "prompt",
+      "target": "executor"
+    },
+    {
+      "id": "e2",
+      "source": "executor",
+      "target": "append"
+    },
+    {
+      "id": "e3",
+      "source": "append",
+      "target": "continue"
+    }
+  ],
+  "footer": "No keyword feedback, repair loop, or final model rewrite."
+}

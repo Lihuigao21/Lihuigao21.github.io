@@ -69,6 +69,21 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    "slug": "langgraph-workflow-decomposition",
+    "title": "LangGraph: State, Context, and Task Decomposition",
+    "path": "posts/langgraph-workflow-decomposition.html",
+    "date": "2026-11-07",
+    "dateText": "2026.11.07",
+    "description": "Understand state, nodes, and context through a 500-requirement experiment, then identify useful boundaries for scientific and writing workflows.",
+    "tags": [
+      "LangGraph",
+      "Agent Workflows",
+      "Instruction Following",
+      "Benchmark",
+      "Model Calculation"
+    ]
+  },
+  {
     "slug": "dpgen-concurrent-learning-cycle",
     "title": "Molecular Excited States III: The DP-GEN Learning Cycle",
     "path": "posts/dpgen-concurrent-learning-cycle.html",

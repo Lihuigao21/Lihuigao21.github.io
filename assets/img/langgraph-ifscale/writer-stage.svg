@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="548" height="878" viewBox="0 0 548 878" data-layout-engine="elkjs" data-layout-version="0.11.1">
+<defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 z" fill="#26465f"/></marker><filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#17324d" flood-opacity="0.12"/></filter></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="274" y="48" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="30" font-weight="700" fill="#17324d">One writer in the serial experiment</text>
+<text x="274" y="76" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" fill="#4d6575">Repeated N times, with new terms and preceding prose.</text>
+<g id="edge-e0" data-edge-id="e0">
+<path d="M 274 250 L 274 294" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e1" data-edge-id="e1">
+<path d="M 274 394 L 274 438" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e2" data-edge-id="e2">
+<path d="M 274 548 L 274 592" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="edge-e3" data-edge-id="e3">
+<path d="M 274 692 L 274 736" fill="none" stroke="#26465f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g id="node-stage_input" data-node-id="stage_input">
+<rect x="44" y="126" width="460" height="124" rx="62" fill="#d9edf4" stroke="#1c6680" stroke-width="4" filter="url(#shadow)"/>
+<text x="274" y="167" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">Stage input</text>
+<text x="274" y="197" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">Common rules + this stage&apos;s 500/N terms</text>
+<text x="274" y="227" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">Previous fragments + current cursor</text>
+</g>
+<g id="node-prompt" data-node-id="prompt">
+<rect x="44" y="294" width="460" height="100" rx="22" fill="#ffffff" stroke="#3d7892" stroke-width="4" filter="url(#shadow)"/>
+<text x="274" y="338" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">Build this stage&apos;s prompt</text>
+<text x="274" y="368" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">Prior prose is read-only context</text>
+</g>
+<g id="node-executor" data-node-id="executor">
+<rect x="44" y="438" width="460" height="110" rx="22" fill="#e7f3f7" stroke="#2c718d" stroke-width="4" filter="url(#shadow)"/>
+<text x="274" y="472" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">Start a fresh Codex CLI session</text>
+<text x="274" y="502" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">Configured gpt-5.6-luna / high</text>
+<text x="274" y="532" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">Return one new fragment</text>
+</g>
+<g id="node-append" data-node-id="append">
+<rect x="44" y="592" width="460" height="100" rx="22" fill="#ffffff" stroke="#3d7892" stroke-width="4" filter="url(#shadow)"/>
+<text x="274" y="636" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">Update the graph state</text>
+<text x="274" y="666" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">parts = parts + [fragment]; cursor += 1</text>
+</g>
+<g id="node-continue" data-node-id="continue">
+<rect x="44" y="736" width="460" height="98" rx="22" fill="#dcefe8" stroke="#2f8065" stroke-width="4" filter="url(#shadow)"/>
+<text x="274" y="779" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="24" font-weight="700" fill="#17324d">Follow the fixed edge</text>
+<text x="274" y="809" text-anchor="middle" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="19" font-weight="400" fill="#17324d">Next writer, or END after writer N</text>
+</g>
+<text x="24" y="866" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="15" fill="#5c7180">No keyword feedback, repair loop, or final model rewrite.</text>
+</svg>
