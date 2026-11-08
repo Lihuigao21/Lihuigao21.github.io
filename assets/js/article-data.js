@@ -1,5 +1,11 @@
 window.SITE_SERIES = [
   {
+    id: "agent",
+    title: "Agent 系列",
+    label: "Agent Architecture",
+    description: "从模型、harness、skill、tool 与记忆出发，逐步理解 Agent 架构、LangGraph 工作流与可检验的能力提升。",
+  },
+  {
     id: "molecular-excited-states",
     title: "分子激发态计算",
     label: "Molecular Excited States",
@@ -69,6 +75,23 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
   {
+    "slug": "agent-models-harnesses-tools",
+    "title": "Agent 0: Models, Harnesses, and Tools",
+    "path": "posts/agent-models-harnesses-tools.html",
+    "date": "2026-11-08",
+    "dateText": "2026.11.08",
+    "description": "Understand models, harnesses, tools, skills, plugins, MCP, context and memory through a Codex architecture map and a scientific-workflow walkthrough.",
+    "tags": [
+      "Codex",
+      "Agent Workflows",
+      "MCP",
+      "Context Management",
+      "Conceptual Guide"
+    ],
+    "series": "agent",
+    "part": 0
+  },
+  {
     "slug": "langgraph-workflow-decomposition",
     "title": "LangGraph: State, Context, and Task Decomposition",
     "path": "posts/langgraph-workflow-decomposition.html",
@@ -81,7 +104,9 @@ window.SITE_ARTICLES = [
       "Instruction Following",
       "Benchmark",
       "Model Calculation"
-    ]
+    ],
+    "series": "agent",
+    "part": 1
   },
   {
     "slug": "dpgen-concurrent-learning-cycle",

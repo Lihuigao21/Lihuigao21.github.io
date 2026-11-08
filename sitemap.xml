@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://lihuigao21.github.io/posts/agent-models-harnesses-tools.html</loc>
+    <lastmod>2026-11-08</lastmod>
+  </url>
+  <url>
     <loc>https://lihuigao21.github.io/posts/molecular-excited-states-from-vasp.html</loc>
     <lastmod>2026-10-31</lastmod>
   </url>
@@ -1494,5 +1498,5 @@
     <loc>https://lihuigao21.github.io/posts/dpgen-concurrent-learning-cycle.html</loc>
     <lastmod>2026-11-05</lastmod>
   </url>
-  <url><loc>https://lihuigao21.github.io/posts/langgraph-workflow-decomposition.html</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://lihuigao21.github.io/posts/langgraph-workflow-decomposition.html</loc><lastmod>2026-11-08</lastmod></url>
 </urlset>

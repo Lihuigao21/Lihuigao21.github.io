@@ -1,0 +1,270 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How Codex runs an agent</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#24364c;font:15px "Segoe UI",Arial,sans-serif}header{position:sticky;top:0;z-index:2;background:#fff;border-bottom:1px solid #d9e2ec;padding:12px 24px;display:flex;align-items:center;gap:10px}strong{margin-right:auto}.node{transition:filter .18s}.node:hover{filter:drop-shadow(0 8px 9px #29466c28)}button,a{font:inherit;border:1px solid #c7d5e4;background:#fff;color:#386aab;border-radius:7px;padding:7px 13px;text-decoration:none;cursor:pointer}#viewport{height:calc(100vh - 61px);overflow:auto;padding:20px}#sheet{width:100%;max-width:none;min-width:980px;margin:auto;box-shadow:0 4px 30px #1939580a}svg{width:100%;height:auto;display:block}</style>
+<header><strong>How Codex runs an agent</strong><button id="fit">Fit</button><button id="actual">100%</button><button id="plus">+</button><button id="minus">-</button><a href="overview.svg" download>SVG</a><a href="overview.png" download>PNG</a></header><main id="viewport"><div id="sheet"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2600" height="2110" viewBox="0 0 2600 2110" role="img" aria-labelledby="title">
+<title id="title">How Codex runs an agent</title><defs><filter id="card-shadow" x="-8%" y="-12%" width="116%" height="135%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#193858" flood-opacity="0.08"/></filter>
+<marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#3068ad"/></marker>
+<marker id="blue_start" markerWidth="12" markerHeight="12" refX="0" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M10 0L0 5L10 10Z" fill="#3068ad"/></marker>
+<marker id="purple" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#8459b4"/></marker>
+<marker id="purple_start" markerWidth="12" markerHeight="12" refX="0" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M10 0L0 5L10 10Z" fill="#8459b4"/></marker>
+<marker id="teal" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#1f8374"/></marker>
+<marker id="teal_start" markerWidth="12" markerHeight="12" refX="0" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M10 0L0 5L10 10Z" fill="#1f8374"/></marker>
+<marker id="gold" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#b07b22"/></marker>
+<marker id="gold_start" markerWidth="12" markerHeight="12" refX="0" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M10 0L0 5L10 10Z" fill="#b07b22"/></marker>
+<symbol id="box" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="11" y="13" width="42" height="38" rx="7"/><path d="M20 24h24M20 33h24M20 42h13"/></symbol>
+<symbol id="user" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="19" r="11"/><path d="M12 56v-7c0-21 40-21 40 0v7"/></symbol>
+<symbol id="context" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="11" y="21" width="38" height="33" rx="5"/><path d="M17 15h37v34M23 9h37v34M19 31h21M19 40h21"/></symbol>
+<symbol id="model" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="52" cy="12" r="4"/><circle cx="12" cy="52" r="4"/><circle cx="52" cy="52" r="4"/><path d="M15 15l11 11M38 26l11-11M15 49l11-11M38 38l11 11M32 8v14M32 42v14M8 32h14M42 32h14"/></symbol>
+<symbol id="gear" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="18"/><circle cx="32" cy="32" r="7"/><path d="M32 5v9M32 50v9M5 32h9M50 32h9M13 13l7 7M44 44l7 7M13 51l7-7M44 20l7-7"/></symbol>
+<symbol id="shield" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l21 9v16c0 16-21 27-21 27S11 47 11 31V15z"/><path d="M22 31l7 7 14-16"/></symbol>
+<symbol id="book" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 16c-7-7-17-9-26-6v39c9-3 19-1 26 6 7-7 17-9 26-6V10c-9-3-19-1-26 6zM32 16v39"/></symbol>
+<symbol id="plug" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v16M43 7v16M14 23h36v9c0 10-8 18-18 18S14 42 14 32zM32 50v10"/></symbol>
+<symbol id="history" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20A24 24 0 1 1 8 38M12 6v14H0M32 17v16l11 7"/></symbol>
+<symbol id="database" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="32" cy="13" rx="22" ry="8"/><path d="M10 13v36c0 11 44 11 44 0V13M10 25c0 11 44 11 44 0M10 37c0 11 44 11 44 0"/></symbol>
+<symbol id="state" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="8" width="46" height="48" rx="6"/><path d="M18 21h8M34 21h12M18 33h8M34 33h12M18 45h8M34 45h12"/></symbol>
+<symbol id="compress" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 15h48M8 49h48M32 3v23M24 19l8 8 8-8M32 61V38M24 45l8-8 8 8"/></symbol>
+<symbol id="terminal" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="11" width="52" height="42" rx="6"/><path d="M15 22l10 10-10 10M31 42h17"/></symbol>
+<symbol id="cloud" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M17 48h32c17 0 17-26 1-27-3-19-28-20-33-2-18-1-21 29 0 29z"/></symbol>
+<symbol id="server" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="7" width="48" height="21" rx="5"/><rect x="8" y="36" width="48" height="21" rx="5"/><path d="M17 17h3M27 17h20M17 46h3M27 46h20"/></symbol>
+<symbol id="client" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="52" height="36" rx="5"/><path d="M23 56h18M32 44v12M15 19h34M15 27h22"/></symbol>
+</defs><g font-family="Inter,Segoe UI,Arial,sans-serif">
+<rect x="0" y="0" width="2600" height="2110" rx="0" fill="#fbfcfe" stroke="#fbfcfe" stroke-width="2"/>
+<text x="80" y="92" font-size="45" fill="#24364c" font-weight="700" text-anchor="start">HOW CODEX RUNS AN AGENT</text>
+<text x="82" y="137" font-size="25" fill="#728297" font-weight="400" text-anchor="start">Context in. Decisions out. Tools act. Results return.</text>
+<rect x="760" y="400" width="1100" height="970" rx="30" fill="white" stroke="#a9bfd8" stroke-width="2.5"/>
+<text x="803" y="450" font-size="26" fill="#3068ad" font-weight="700" text-anchor="start">CODEX AGENT</text>
+<text x="1120" y="450" font-size="22" fill="#728297" font-weight="400" text-anchor="start">Model + harness + tools</text>
+<rect x="820" y="476" width="980" height="830" rx="25" fill="#f2f6fc" stroke="#c1d2e7" stroke-width="2"/>
+<text x="851" y="520" font-size="22" fill="#3068ad" font-weight="700" text-anchor="start">HARNESS</text>
+<text x="1120" y="520" font-size="21" fill="#728297" font-weight="400" text-anchor="start">One controlled execution loop</text>
+<rect x="2010" y="400" width="490" height="970" rx="27" fill="#f0f8f5" stroke="#b7d9cc" stroke-width="2"/>
+<text x="2050" y="450" font-size="24" fill="#1f8374" font-weight="700" text-anchor="start">PERSISTENCE</text>
+<text x="2050" y="482" font-size="20" fill="#728297" font-weight="400" text-anchor="start">Read when needed</text>
+<rect x="80" y="700" width="500" height="610" rx="26" fill="#faf6fe" stroke="#b8a1d2" stroke-width="2" stroke-dasharray="12 10"/>
+<text x="120" y="749" font-size="25" fill="#8459b4" font-weight="700" text-anchor="start">PLUGIN</text>
+<text x="120" y="785" font-size="21" fill="#728297" font-weight="400" text-anchor="start">Skills + connections</text>
+<rect x="1790" y="88" width="710" height="232" rx="25" fill="#f3f9f6" stroke="#9ac8b3" stroke-width="2" stroke-dasharray="12 10"/>
+<text x="1830" y="130" font-size="28" fill="#1f8374" font-weight="650" text-anchor="start">LangGraph</text>
+<text x="2005" y="130" font-size="21" fill="#1f8374" font-weight="400" text-anchor="start">Orchestrate agents</text>
+<text x="2458" y="130" font-size="20" fill="#728297" font-weight="400" text-anchor="end">optional</text>
+<rect x="1830" y="165" width="150" height="94" rx="17" fill="white" stroke="#9ac8b3" stroke-width="2"/>
+<use href="#gear" x="1889" y="177" width="32" height="32" color="#1f8374"/>
+<text x="1905" y="239" font-size="21" fill="#1f8374" font-weight="600" text-anchor="middle">Agent A</text>
+<rect x="2070" y="165" width="150" height="94" rx="17" fill="white" stroke="#9ac8b3" stroke-width="2"/>
+<use href="#gear" x="2129" y="177" width="32" height="32" color="#1f8374"/>
+<text x="2145" y="239" font-size="21" fill="#1f8374" font-weight="600" text-anchor="middle">Agent B</text>
+<rect x="2310" y="165" width="150" height="94" rx="17" fill="white" stroke="#9ac8b3" stroke-width="2"/>
+<use href="#gear" x="2369" y="177" width="32" height="32" color="#1f8374"/>
+<text x="2385" y="239" font-size="21" fill="#1f8374" font-weight="600" text-anchor="middle">Agent C</text>
+<path d="M 1980,211 L 2070,211" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1980,211 L 2070,211" fill="none" stroke="#1f8374" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#teal)"/>
+<path d="M 2220,211 L 2310,211" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 2220,211 L 2310,211" fill="none" stroke="#1f8374" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#teal)"/>
+<path d="M 2145,259 L 2145,350 L 1780,350 L 1780,400" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 2145,259 L 2145,350 L 1780,350 L 1780,400" fill="none" stroke="#1f8374" stroke-width="3.5" stroke-linejoin="round" stroke-dasharray="10 8" marker-end="url(#teal)"/>
+<use href="#user" x="425" y="190" width="84" height="84" color="#3068ad"/>
+<text x="467" y="312" font-size="29" fill="#3068ad" font-weight="600" text-anchor="middle">User</text>
+<rect x="870" y="190" width="480" height="110" rx="20" fill="white" stroke="#adc2db" stroke-width="2"/>
+<use href="#client" x="898" y="211" width="62" height="62" color="#3068ad"/>
+<text x="1145" y="239" font-size="27" fill="#3068ad" font-weight="600" text-anchor="middle">Desktop / CLI / SDK</text>
+<text x="1145" y="277" font-size="20" fill="#728297" font-weight="400" text-anchor="middle">Human or program entry</text>
+<path d="M 537,245 L 870,245" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 537,245 L 870,245" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<g class="node" id="node-context" filter="url(#card-shadow)">
+<rect x="870" y="580" width="320" height="190" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="919" cy="634" r="30" fill="white"/>
+<use href="#context" x="897" y="612" width="44" height="44" color="#3068ad"/>
+<text x="963" y="643" font-size="28" fill="#3068ad" font-weight="650" text-anchor="start">Context</text>
+<text x="894" y="743" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Inputs for this model call</text>
+<circle cx="1167" cy="602" r="14" fill="#3068ad"/>
+<text x="1167" y="608" font-size="17" fill="white" font-weight="700" text-anchor="middle">1</text>
+</g>
+<g class="node" id="node-model" filter="url(#card-shadow)">
+<rect x="1330" y="580" width="360" height="190" rx="20" fill="#fff2d6" stroke="#b07b22" stroke-width="2"/>
+<circle cx="1379" cy="634" r="30" fill="white"/>
+<use href="#model" x="1357" y="612" width="44" height="44" color="#b07b22"/>
+<text x="1423" y="643" font-size="28" fill="#b07b22" font-weight="650" text-anchor="start">GPT / LLM</text>
+<text x="1354" y="743" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Reason + choose the next action</text>
+<circle cx="1667" cy="602" r="14" fill="#b07b22"/>
+<text x="1667" y="608" font-size="17" fill="white" font-weight="700" text-anchor="middle">2</text>
+</g>
+<g class="node" id="node-executor" filter="url(#card-shadow)">
+<rect x="1330" y="980" width="360" height="190" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="1379" cy="1034" r="30" fill="white"/>
+<use href="#gear" x="1357" y="1012" width="44" height="44" color="#3068ad"/>
+<text x="1423" y="1043" font-size="28" fill="#3068ad" font-weight="650" text-anchor="start">Executor</text>
+<text x="1354" y="1143" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Validate + run tool requests</text>
+<circle cx="1667" cy="1002" r="14" fill="#3068ad"/>
+<text x="1667" y="1008" font-size="17" fill="white" font-weight="700" text-anchor="middle">3</text>
+</g>
+<g class="node" id="node-policy" filter="url(#card-shadow)">
+<rect x="870" y="980" width="320" height="190" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="919" cy="1034" r="30" fill="white"/>
+<use href="#shield" x="897" y="1012" width="44" height="44" color="#3068ad"/>
+<text x="963" y="1043" font-size="28" fill="#3068ad" font-weight="650" text-anchor="start">Policy</text>
+<text x="894" y="1143" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Permissions + sandbox limits</text>
+</g>
+<rect x="905" y="829" width="250" height="110" rx="16" fill="white" stroke="#acc0d9" stroke-width="2"/>
+<use href="#compress" x="923" y="842" width="48" height="48" color="#3068ad"/>
+<text x="1045" y="879" font-size="25" fill="#3068ad" font-weight="600" text-anchor="middle">Compaction</text>
+<g class="node" id="node-instructions" filter="url(#card-shadow)">
+<rect x="180" y="489" width="350" height="140" rx="20" fill="#f4edff" stroke="#8459b4" stroke-width="2"/>
+<circle cx="229" cy="543" r="30" fill="white"/>
+<use href="#book" x="207" y="521" width="44" height="44" color="#8459b4"/>
+<text x="273" y="552" font-size="28" fill="#8459b4" font-weight="650" text-anchor="start">Instructions</text>
+<text x="204" y="602" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Goals, rules, AGENTS.md</text>
+</g>
+<g class="node" id="node-skill" filter="url(#card-shadow)">
+<rect x="140" y="805" width="380" height="170" rx="20" fill="#f4edff" stroke="#8459b4" stroke-width="2"/>
+<circle cx="189" cy="859" r="30" fill="white"/>
+<use href="#book" x="167" y="837" width="44" height="44" color="#8459b4"/>
+<text x="233" y="868" font-size="30" fill="#8459b4" font-weight="650" text-anchor="start">Skill</text>
+<text x="164" y="948" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Task methods + scripts</text>
+</g>
+<g class="node" id="node-mcp_config" filter="url(#card-shadow)">
+<rect x="140" y="1100" width="380" height="145" rx="20" fill="#f4edff" stroke="#8459b4" stroke-width="2"/>
+<circle cx="189" cy="1154" r="30" fill="white"/>
+<use href="#plug" x="167" y="1132" width="44" height="44" color="#8459b4"/>
+<text x="233" y="1163" font-size="30" fill="#8459b4" font-weight="650" text-anchor="start">MCP config</text>
+<text x="164" y="1218" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Register external tools</text>
+</g>
+<g class="node" id="node-history" filter="url(#card-shadow)">
+<rect x="2070" y="510" width="370" height="140" rx="20" fill="#e8f6f0" stroke="#1f8374" stroke-width="2"/>
+<circle cx="2119" cy="564" r="30" fill="white"/>
+<use href="#history" x="2097" y="542" width="44" height="44" color="#1f8374"/>
+<text x="2163" y="573" font-size="28" fill="#1f8374" font-weight="650" text-anchor="start">History</text>
+<text x="2094" y="623" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Past messages + tool events</text>
+</g>
+<g class="node" id="node-memory" filter="url(#card-shadow)">
+<rect x="2070" y="780" width="370" height="140" rx="20" fill="#e8f6f0" stroke="#1f8374" stroke-width="2"/>
+<circle cx="2119" cy="834" r="30" fill="white"/>
+<use href="#database" x="2097" y="812" width="44" height="44" color="#1f8374"/>
+<text x="2163" y="843" font-size="28" fill="#1f8374" font-weight="650" text-anchor="start">Memory</text>
+<text x="2094" y="893" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Recall across tasks</text>
+</g>
+<g class="node" id="node-state" filter="url(#card-shadow)">
+<rect x="2070" y="1050" width="370" height="140" rx="20" fill="#e8f6f0" stroke="#1f8374" stroke-width="2"/>
+<circle cx="2119" cy="1104" r="30" fill="white"/>
+<use href="#state" x="2097" y="1082" width="44" height="44" color="#1f8374"/>
+<text x="2163" y="1113" font-size="28" fill="#1f8374" font-weight="650" text-anchor="start">State</text>
+<text x="2094" y="1163" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Params, job IDs, checkpoints</text>
+</g>
+<path d="M 1000,300 L 1000,350 L 780,350 L 780,550 L 1000,550 L 1000,580" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1000,300 L 1000,350 L 780,350 L 780,550 L 1000,550 L 1000,580" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M 530,559 L 660,559 L 660,635 L 870,635" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 530,559 L 660,559 L 660,635 L 870,635" fill="none" stroke="#8459b4" stroke-width="3.5" stroke-linejoin="round" stroke-dasharray="10 8" marker-end="url(#purple)"/>
+<path d="M 520,890 L 710,890 L 710,710 L 870,710" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 520,890 L 710,890 L 710,710 L 870,710" fill="none" stroke="#8459b4" stroke-width="3.5" stroke-linejoin="round" stroke-dasharray="10 8" marker-end="url(#purple)"/>
+<path d="M 1190,672 L 1330,672" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1190,672 L 1330,672" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M 1510,770 L 1510,980" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1510,770 L 1510,980" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M 1330,1020 L 1250,1020 L 1250,802 L 1135,802 L 1135,770" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1330,1020 L 1250,1020 L 1250,802 L 1135,802 L 1135,770" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M 1190,1080 L 1330,1080" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1190,1080 L 1330,1080" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M 1015,770 L 1015,829" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1015,770 L 1015,829" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)" marker-start="url(#blue_start)"/>
+<path d="M 2070,580 L 1965,580 L 1965,540 L 1160,540 L 1160,580" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 2070,580 L 1965,580 L 1965,540 L 1160,540 L 1160,580" fill="none" stroke="#1f8374" stroke-width="3.5" stroke-linejoin="round" stroke-dasharray="10 8" marker-end="url(#teal)"/>
+<path d="M 2070,850 L 1965,850 L 1965,580" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 2070,850 L 1965,850 L 1965,580" fill="none" stroke="#1f8374" stroke-width="3.5" stroke-linejoin="round" stroke-dasharray="10 8" marker-end="url(#teal)"/>
+<circle cx="1965" cy="580" r="5" fill="#1f8374"/>
+<path d="M 1690,1120 L 2070,1120" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1690,1120 L 2070,1120" fill="none" stroke="#1f8374" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#teal)" marker-start="url(#teal_start)"/>
+<path d="M 1570,580 L 1570,448 L 1738,448 L 1738,245 L 1350,245" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1570,580 L 1570,448 L 1738,448 L 1738,245 L 1350,245" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="1035" y="1450" font-size="24" fill="#3068ad" font-weight="700" text-anchor="start">TOOLS</text>
+<text x="940" y="1489" font-size="21" fill="#728297" font-weight="400" text-anchor="start">Callable interfaces</text>
+<path d="M 1510,1170 L 1510,1415 L 1280,1415" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1510,1170 L 1510,1415 L 1280,1415" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-start="url(#blue_start)"/>
+<path d="M 1280,1415 L 730,1415 L 730,1520" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1280,1415 L 730,1415 L 730,1520" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M 1280,1415 L 1280,1520" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1280,1415 L 1280,1520" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<path d="M 1510,1415 L 2010,1415 L 2010,1520" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1510,1415 L 2010,1415 L 2010,1520" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<circle cx="1510" cy="1415" r="5" fill="#3068ad"/>
+<circle cx="1280" cy="1415" r="5" fill="#3068ad"/>
+<path d="M 330,1245 L 330,1462 L 630,1462 L 630,1520" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 330,1245 L 330,1462 L 630,1462 L 630,1520" fill="none" stroke="#8459b4" stroke-width="3.5" stroke-linejoin="round" stroke-dasharray="10 8" marker-end="url(#purple)"/>
+<g class="node" id="node-mcp_client" filter="url(#card-shadow)">
+<rect x="550" y="1520" width="360" height="145" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="599" cy="1574" r="30" fill="white"/>
+<use href="#plug" x="577" y="1552" width="44" height="44" color="#3068ad"/>
+<text x="643" y="1583" font-size="28" fill="#3068ad" font-weight="650" text-anchor="start">MCP Client</text>
+<text x="574" y="1638" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Connect using the protocol</text>
+</g>
+<g class="node" id="node-local_tools" filter="url(#card-shadow)">
+<rect x="1100" y="1520" width="360" height="145" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="1149" cy="1574" r="30" fill="white"/>
+<use href="#terminal" x="1127" y="1552" width="44" height="44" color="#3068ad"/>
+<text x="1193" y="1583" font-size="28" fill="#3068ad" font-weight="650" text-anchor="start">Local tools</text>
+<text x="1124" y="1638" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Run code + access files</text>
+</g>
+<g class="node" id="node-apps" filter="url(#card-shadow)">
+<rect x="1830" y="1520" width="360" height="145" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="1879" cy="1574" r="30" fill="white"/>
+<use href="#plug" x="1857" y="1552" width="44" height="44" color="#3068ad"/>
+<text x="1923" y="1583" font-size="28" fill="#3068ad" font-weight="650" text-anchor="start">App / Connector</text>
+<text x="1854" y="1638" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Connect external accounts</text>
+</g>
+<g class="node" id="node-mcp_server" filter="url(#card-shadow)">
+<rect x="550" y="1790" width="360" height="145" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="599" cy="1844" r="30" fill="white"/>
+<use href="#server" x="577" y="1822" width="44" height="44" color="#3068ad"/>
+<text x="643" y="1853" font-size="28" fill="#3068ad" font-weight="650" text-anchor="start">MCP Server</text>
+<text x="574" y="1908" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Expose tools + resources</text>
+</g>
+<g class="node" id="node-environment" filter="url(#card-shadow)">
+<rect x="1100" y="1790" width="360" height="145" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="1149" cy="1844" r="30" fill="white"/>
+<use href="#terminal" x="1127" y="1822" width="44" height="44" color="#3068ad"/>
+<text x="1193" y="1853" font-size="27" fill="#3068ad" font-weight="650" text-anchor="start">Files / Shell / HPC</text>
+<text x="1124" y="1908" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Where commands actually run</text>
+</g>
+<g class="node" id="node-services" filter="url(#card-shadow)">
+<rect x="1830" y="1790" width="360" height="145" rx="20" fill="#edf4ff" stroke="#3068ad" stroke-width="2"/>
+<circle cx="1879" cy="1844" r="30" fill="white"/>
+<use href="#cloud" x="1857" y="1822" width="44" height="44" color="#3068ad"/>
+<text x="1923" y="1853" font-size="28" fill="#3068ad" font-weight="650" text-anchor="start">Services / APIs</text>
+<text x="1854" y="1908" font-size="20" fill="#24364c" font-weight="400" text-anchor="start">Data + external actions</text>
+</g>
+<path d="M 730,1665 L 730,1790" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 730,1665 L 730,1790" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)" marker-start="url(#blue_start)"/>
+<text x="751" y="1739" font-size="22" fill="#3068ad" font-weight="500" text-anchor="start">MCP</text>
+<path d="M 1280,1665 L 1280,1790" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 1280,1665 L 1280,1790" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)" marker-start="url(#blue_start)"/>
+<path d="M 2010,1665 L 2010,1790" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 2010,1665 L 2010,1790" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)" marker-start="url(#blue_start)"/>
+<path d="M 730,1935 L 730,1990 L 2010,1990 L 2010,1935" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 730,1935 L 730,1990 L 2010,1990 L 2010,1935" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)" marker-start="url(#blue_start)"/>
+<path d="M 85,2060 L 155,2060" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 85,2060 L 155,2060" fill="none" stroke="#3068ad" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="176" y="2068" font-size="22" fill="#728297" font-weight="500" text-anchor="start">Flow</text>
+<path d="M 340,2060 L 410,2060" fill="none" stroke="white" stroke-width="11" stroke-linejoin="round"/>
+<path d="M 340,2060 L 410,2060" fill="none" stroke="#8459b4" stroke-width="3.5" stroke-linejoin="round" stroke-dasharray="10 8" marker-end="url(#purple)"/>
+<text x="431" y="2068" font-size="22" fill="#728297" font-weight="500" text-anchor="start">Load / Register</text>
+<text x="2500" y="2068" font-size="22" fill="#728297" font-weight="400" text-anchor="end">Concept map</text>
+<text x="653" y="224" font-size="21" fill="#3068ad" font-weight="500" text-anchor="start">Task</text>
+<text x="804" y="334" font-size="21" fill="#3068ad" font-weight="500" text-anchor="start">Submit task</text>
+<text x="1210" y="650" font-size="21" fill="#3068ad" font-weight="500" text-anchor="start">infer</text>
+<text x="1536" y="874" font-size="22" fill="#3068ad" font-weight="500" text-anchor="start">Tool request</text>
+<text x="1261" y="921" font-size="18" fill="#3068ad" font-weight="500" text-anchor="start">Result</text>
+<text x="1216" y="1063" font-size="20" fill="#3068ad" font-weight="500" text-anchor="start">gate</text>
+<text x="1874" y="527" font-size="20" fill="#1f8374" font-weight="500" text-anchor="start">retrieve</text>
+<text x="738" y="693" font-size="20" fill="#8459b4" font-weight="500" text-anchor="start">load</text>
+<text x="700" y="617" font-size="20" fill="#8459b4" font-weight="500" text-anchor="start">guide</text>
+<text x="350" y="1385" font-size="21" fill="#8459b4" font-weight="500" text-anchor="start">register</text>
+<text x="1533" y="1335" font-size="22" fill="#3068ad" font-weight="500" text-anchor="start">Call / return</text>
+<text x="1874" y="1099" font-size="21" fill="#1f8374" font-weight="500" text-anchor="start">read / write</text>
+<text x="1533" y="224" font-size="21" fill="#3068ad" font-weight="500" text-anchor="start">Final answer</text>
+<text x="1096" y="1974" font-size="22" fill="#3068ad" font-weight="500" text-anchor="start">Access systems</text>
+<text x="925" y="918" font-size="18" fill="#728297" font-weight="400" text-anchor="start">Summarize history</text>
+<rect x="850" y="2035" width="350" height="52" rx="13" fill="white" stroke="#b07b22" stroke-width="1.5"/>
+<text x="1025.0" y="2069" font-size="22" fill="#b07b22" font-weight="600" text-anchor="middle">MODEL: decides</text>
+<rect x="1230" y="2035" width="380" height="52" rx="13" fill="white" stroke="#3068ad" stroke-width="1.5"/>
+<text x="1420.0" y="2069" font-size="22" fill="#3068ad" font-weight="600" text-anchor="middle">HARNESS: controls</text>
+<rect x="1640" y="2035" width="320" height="52" rx="13" fill="white" stroke="#8459b4" stroke-width="1.5"/>
+<text x="1800.0" y="2069" font-size="22" fill="#8459b4" font-weight="600" text-anchor="middle">TOOLS: act</text>
+</g></svg></div></main>
+<script>const sheet=document.getElementById('sheet'),vp=document.getElementById('viewport');let w=0;const set=n=>{w=Math.max(980,Math.min(5200,n));sheet.style.width=w+'px';sheet.style.minWidth='0';};document.getElementById('fit').onclick=()=>set(vp.clientWidth-40);document.getElementById('actual').onclick=()=>set(2600);document.getElementById('plus').onclick=()=>set((w||sheet.clientWidth)*1.25);document.getElementById('minus').onclick=()=>set((w||sheet.clientWidth)/1.25);vp.addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();set((w||sheet.clientWidth)*(e.deltaY<0?1.1:1/1.1));}},{passive:false});</script></html>

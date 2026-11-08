@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Understand models, harnesses, tools, skills, plugins, MCP, context and memory through a Codex architecture map and a scientific-workflow walkthrough.">
+    <title>Agent 0: Models, Harnesses, and Tools | Lihui Gao</title>
+    <link rel="canonical" href="https://lihuigao21.github.io/posts/agent-models-harnesses-tools.html">
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">Agent Series — Part 0</p>
+          <h1>Agent 0: Models, Harnesses, and Tools</h1>
+          <p class="post-meta">2026.11.08 · Codex / Agent Architecture / Context Management</p>
+        </header>
+        <div class="post-content">
+<nav class="series-nav" aria-label="Agent series">
+  <a href="agent-models-harnesses-tools.html" aria-current="page">0. Models, Harnesses, and Tools</a>
+  <a href="langgraph-workflow-decomposition.html">I. LangGraph and Task Decomposition</a>
+  <a href="../series.html?series=agent">Series index</a>
+</nav>
+<p class="lead">A request such as “start from this crystal structure and calculate a relaxation observable” sounds like one task. Carrying it out involves many different activities: choosing a method, preparing inputs, launching programs, reading results, checking evidence, and deciding what may run next. A language model contributes to these decisions, but the working system includes much more than the model.</p>
+<p>This series starts from a practical confusion. Skills, plugins, tools, MCP, memory, and workflow frameworks are often discussed as if they were interchangeable ways to make an agent more capable. They address different parts of the system. Before comparing runtimes or adding more agents, we need to identify what each part does and how information moves between them.</p>
+<p>Part 0 builds that vocabulary around Codex and follows one scientific task through it. <a href="langgraph-workflow-decomposition.html">Part I</a> then examines explicit workflow control in LangGraph through a 500-requirement experiment. The aim is to distinguish better instructions, better access to information, and stronger execution controls before deciding which one a task needs.</p>
+
+<nav aria-label="Article contents"><ol>
+  <li><a href="#model-agent-harness">Model, agent, and harness</a></li>
+  <li><a href="#architecture-map">Read the architecture map</a></li>
+  <li><a href="#tools-skills">Tools execute; skills explain a method</a></li>
+  <li><a href="#plugins-apps-mcp">Plugins, apps, and MCP connect different things</a></li>
+  <li><a href="#context-memory">Context, compaction, memory, and state</a></li>
+  <li><a href="#scientific-task">Follow one scientific stage</a></li>
+  <li><a href="#frameworks">Where LangChain, LangGraph, and Deep Agents fit</a></li>
+  <li><a href="#design-check">A practical architecture check</a></li>
+</ol></nav>
+
+<h2 id="model-agent-harness">1. Model, Agent, and Harness</h2>
+<p>A <strong>model</strong> receives an input and generates an output. That output can contain an answer, a proposed action, or a structured request to call a tool. The model can generate a shell command, but generating the command does not run it. Some surrounding program must interpret the request, decide whether it is permitted, execute it, and return the result.</p>
+<p>An <strong>agent</strong> is the working arrangement that pursues a task through such interactions. In this article, the term includes the model, the runtime that drives it, and its available tools. An agent need not involve several models, and it need not make every decision autonomously. A single model repeatedly receiving tool results already supports an agent loop.</p>
+<p>The <strong>harness</strong> is the software around those model calls. It assembles inputs, exposes tools, handles execution and permissions, and maintains the conversation. In Codex, this surrounding machinery turns model outputs into actions in a working environment. Different projects use “runtime,” “agent framework,” and “harness” with overlapping meanings; here, harness emphasizes the machinery that makes an individual agent operate.</p>
+<p>One simplified loop is enough to see the division of work:</p>
+<ol>
+  <li>The harness assembles the current instructions, selected conversation history, tool descriptions, and relevant evidence.</li>
+  <li>The model produces a final answer or requests a tool operation.</li>
+  <li>The harness checks and dispatches an allowed operation.</li>
+  <li>The returned observation becomes part of the next model input.</li>
+  <li>The loop continues until the agent finishes, pauses, or encounters a condition requiring another decision.</li>
+</ol>
+<p>The model supplies reasoning and proposed actions. The harness supplies the execution process. OpenAI’s <a href="https://openai.com/index/unrolling-the-codex-agent-loop/">agent-loop explanation</a> describes this repeated interaction; its <a href="https://openai.com/index/unlocking-the-codex-harness/">App Server architecture article</a> explains how Codex capabilities are surfaced to clients. These are related questions: one concerns the loop, and the other concerns the interfaces around it.</p>
+
+<h2 id="architecture-map">2. Read the Architecture Map</h2>
+<figure id="agent-map">
+  <a href="../assets/img/agent-foundations/map.html" target="_blank" rel="noreferrer"><img src="../assets/img/agent-foundations/overview.svg" width="2600" height="2110" alt="Conceptual Codex architecture: instructions and skills feed context; the model requests actions; the harness executes tools and returns results; selected history and memory are retrieved; workflow state is stored separately; LangGraph can orchestrate agents."></a>
+  <figcaption><strong>Figure 1.</strong> A conceptual relationship map, not a complete source-code or physical deployment diagram. Gold identifies the model; blue identifies execution and tool interfaces; purple identifies instructions and packaged capabilities; green identifies persistent information and optional outer orchestration. Solid arrows indicate runtime interactions; dashed arrows indicate loading, registration, or the expansion of a workflow node. Connected dots mark shared routes; bridged crossings are not joins. No numerical scale is implied. <a href="../assets/img/agent-foundations/map.html" target="_blank" rel="noreferrer">Open the zoomable map</a>, or download the <a href="../assets/img/agent-foundations/overview.svg">SVG</a> / <a href="../assets/img/agent-foundations/overview.png">PNG</a>.</figcaption>
+</figure>
+<p>Start with the three numbered blocks in the center: <strong>Context → GPT/LLM → Executor → Context</strong>. The model sees an input, proposes an action, and later receives the outcome. Policy controls constrain the executor. The surrounding harness manages this interaction.</p>
+<p>Then read the sides. Instructions and skills supply relevant procedural information. History and memory can supply selected past information. Structured state records operational facts. Below the loop, tool interfaces lead to files, programs, or external services. The optional LangGraph panel shows that an outer workflow can coordinate several agents, each with its own execution arrangement.</p>
+<p>Some boxes are deliberately adjacent rather than arranged as a single stack. A plugin is a distribution package; MCP is a protocol; context is information; a harness is running software. Drawing them as consecutive execution layers would imply a dependency that does not generally exist. The boxes also do not locate the model on the user’s computer.</p>
+
+<h2 id="tools-skills">3. Tools Execute; Skills Explain a Method</h2>
+<h3>A tool is an executable interface</h3>
+<p>A <strong>tool</strong> gives the agent an operation it can request. Its description tells the model what it does, its input schema specifies acceptable arguments, and its implementation performs the action. A structure reader might accept an artifact identifier and return species, cell vectors, and coordinates. An input generator might accept a reviewed parameter set and return prepared files.</p>
+<p>The same operation can be implemented locally or through a remote service. The important separation is between the interface shown to the model and the code that actually runs. A plausible-looking tool request is not proof of execution; its returned result and retained artifacts provide the operational evidence.</p>
+<h3>A skill packages procedural knowledge</h3>
+<p>A <strong>skill</strong> supplies reusable instructions for a class of tasks. It can explain what to inspect, which decisions to make, how to use tools, and what evidence a successful result requires. In Codex, a skill contains a <code>SKILL.md</code> file and may include scripts, references, and assets. Codex can expose a skill’s name and description first, then read its full instructions when using it. This is progressive disclosure: task-specific material need not all be placed in the initial input. See <a href="https://learn.chatgpt.com/docs/build-skills">the official skills documentation</a>.</p>
+<p>For example, a relaxation skill can describe how to reason about a material and its convergence criteria. A tool prepares the actual VASP inputs. If the skill includes a validator script, that script still needs to be invoked through an executable interface. Skills and tools can therefore cooperate closely without becoming the same object.</p>
+<h3>Instructions and enforced controls have different owners</h3>
+<p>“Read the relaxation skill before preparing inputs” is an instruction the agent must follow. A program can instead make loading that skill part of stage entry, reject an incomplete input object, or refuse to start a dependent stage without an accepted predecessor. The difference is where the condition is checked.</p>
+<p>A tool allowlist can restrict the operations exposed to an agent, provided the implementation also respects that boundary. An unrestricted shell tool can still execute many programs even if only a few named scientific tools appear beside it. Effective control must account for the capabilities behind the exposed interfaces. Similarly, a script-backed skill can enforce rules; workflow software is not the only place where deterministic checks can live.</p>
+<p>The earlier article <a href="codex-skills-workflow-engineering.html">Codex Skills as Workflow Engineering</a> develops the practical construction of skills and validators. Here, the narrower purpose is to place them in the agent’s architecture.</p>
+
+<h2 id="plugins-apps-mcp">4. Plugins, Apps, and MCP Connect Different Things</h2>
+<div class="table-scroll"><table>
+  <thead><tr><th>Concept</th><th>Its role</th><th>A concrete example</th></tr></thead>
+  <tbody>
+    <tr><td>Skill</td><td>Reusable procedural guidance and supporting resources.</td><td>A structure-relaxation procedure.</td></tr>
+    <tr><td>Tool</td><td>An operation the runtime can execute.</td><td>Read a structure or submit a job.</td></tr>
+    <tr><td>App / connector</td><td>An integration with a service and its account or access configuration.</td><td>A repository service exposing search and issue tools.</td></tr>
+    <tr><td>MCP</td><td>A standard protocol for connecting a host to tool and information providers.</td><td>An MCP client requesting an operation from a server.</td></tr>
+    <tr><td>Plugin</td><td>A reusable package for distributing capabilities.</td><td>A package containing a skill and an MCP connection.</td></tr>
+  </tbody>
+</table></div>
+<p>An <strong>app</strong> in this context means an external service integration. It is not the Codex Desktop window. A connected service may provide multiple tools and require its own authorization. An integration and an individual tool therefore live at different levels.</p>
+<p><strong>MCP</strong>, the Model Context Protocol, standardizes communication between a host’s client and a server that exposes tools or information. A request can travel from the agent’s execution machinery through an MCP client to a server, which handles the operation and returns a response. The server may run locally or remotely. MCP does not by itself choose the scientific procedure, manage every model conversation, or impose a workflow. Local tools can operate without MCP. <a href="https://learn.chatgpt.com/docs/extend/mcp">OpenAI’s MCP documentation</a> explains the connection model.</p>
+<p>A <strong>plugin</strong> makes capabilities installable and reusable. It may bundle skills and MCP servers or connections. A standalone skill does not require a plugin, and installing a plugin does not automatically create a new agent with a separate conversation. Availability also depends on the client. The <a href="https://learn.chatgpt.com/docs/plugins">plugin documentation</a> distinguishes packaging from the capabilities supplied by that package.</p>
+
+<h2 id="context-memory">5. Context, Compaction, Memory, and State</h2>
+<p>For information newly supplied by files, conversation records, or external systems to affect a particular model call, it must reach that call’s input through a supported interface. This is separate from knowledge already encoded in the model’s weights. Keeping a file on disk, retaining a long chat, or saving a database record does not mean its contents are present in every inference. This makes information selection a central part of the harness.</p>
+<div class="table-scroll"><table>
+  <thead><tr><th>Information</th><th>What it represents</th><th>How it affects an action</th></tr></thead>
+  <tbody>
+    <tr><td>Current context</td><td>The information actually provided for this model call.</td><td>Directly conditions the next generated output.</td></tr>
+    <tr><td>Conversation history</td><td>Retained messages and tool events from a conversation.</td><td>Selected history or a compressed representation enters later calls.</td></tr>
+    <tr><td>Long-term memory</td><td>Useful information retained across work or tasks.</td><td>Retrieved or injected material supplies relevant past knowledge.</td></tr>
+    <tr><td>Workflow state</td><td>Explicit operational records such as artifact identities and stage outcomes.</td><td>Program logic reads it for routing, recovery, and validation; selected fields may also enter a prompt.</td></tr>
+  </tbody>
+</table></div>
+<h3>Compaction manages a limited input window</h3>
+<p>A growing conversation eventually requires selection or compression. <strong>Compaction</strong> carries useful task information forward in a shorter representation, which may include a summary or model-supported compressed items. It does not enlarge the model’s context window, and it does not guarantee lossless preservation of every instruction or observation. The full saved record and the representation used for the next call serve different purposes.</p>
+<h3>Memory makes selected past information available</h3>
+<p><strong>Long-term memory</strong> can retain preferences, recurring conventions, or useful findings across tasks. It requires a storage and retrieval policy; there is no universal requirement to implement it as a vector database. Reading such memory changes the input available to the model, not the model’s weights. Codex’s local memory is also separate from ChatGPT web memory. Required project guidance belongs in appropriate instruction files rather than depending only on helpful recall. See <a href="https://learn.chatgpt.com/docs/customization/memories">the official memory guide</a>.</p>
+<h3>Scientific state needs explicit records</h3>
+<p>“The relaxation is finished” is insufficient for a downstream calculation. Which structure was accepted? Which inputs produced it? What job ran? Which checks passed? A workflow should store those identities and outcomes as structured records and verify the underlying artifacts. A natural-language summary can explain the outcome, but it should not be the sole authority for exact parameters or stage transitions.</p>
+<p>This distinction is particularly useful in long calculations: compaction manages what fits into a conversation, memory supports recall across work, and workflow state supports controlled continuation. None substitutes for all the others.</p>
+
+<h2 id="scientific-task">6. Follow One Scientific Stage</h2>
+<p>Consider the instruction: “Relax this structure and prepare the next electronic-calculation stage.” The following is an architecture walkthrough, not a completed VASP calculation or a prescription for numerical settings.</p>
+<ol>
+  <li><strong>Identify the input.</strong> A structure-reading tool inspects the supplied artifact. The stage records its identity and the physical information needed for subsequent decisions.</li>
+  <li><strong>Load the relevant method.</strong> The relaxation agent receives its stage objective, selected system information, and the relaxation skill. Unrelated writing or trajectory-analysis instructions need not occupy its context.</li>
+  <li><strong>Prepare a candidate.</strong> The model proposes choices supported by the physical task. The input-generation tool writes a candidate package, and validators check the fields they are designed to enforce.</li>
+  <li><strong>Review before proceeding.</strong> A reviewer can inspect that package using a separate context and review instructions. A program checks the required review result before allowing the next operation. An independent review context reduces shared distraction; it does not guarantee a correct scientific judgment.</li>
+  <li><strong>Execute and inspect evidence.</strong> If job submission is within the authorized scope, the executor submits it and retains the job identity. Later checks distinguish a running job, successful program termination, numerical convergence, and scientific acceptance.</li>
+  <li><strong>Pass an explicit handoff.</strong> The next stage receives the accepted structure, relevant settings, and validation evidence. It can begin a fresh agent conversation instead of inheriting the full relaxation discussion.</li>
+</ol>
+<p>This walkthrough locates the actual controls. The skill supplies method guidance. Tools interact with files and compute systems. Review supplies an assessment. The outer program decides whether the recorded result permits progress. Explicit handoffs make context separation possible; simply naming two agents does not establish that their inputs are isolated.</p>
+<p>The original high-level scientific request can still be underspecified. A structure alone does not settle the electronic states, physical approximations, or observable definition needed for a relaxation-rate calculation. A well-organized runtime makes those decisions visible at the right stage; it does not remove the need for them.</p>
+
+<h2 id="frameworks">7. Where LangChain, LangGraph, and Deep Agents Fit</h2>
+<p>Once the individual agent is clear, framework comparisons become easier. They concern reusable software around model calls, tools, and control flow.</p>
+<div class="table-scroll"><table>
+  <thead><tr><th>System</th><th>Useful architectural role</th><th>What must still be decided</th></tr></thead>
+  <tbody>
+    <tr><td>Codex</td><td>A working agent with its own harness and supported interfaces.</td><td>Its instructions, available tools, access, and task-specific acceptance rules.</td></tr>
+    <tr><td>LangChain</td><td>Model/tool integrations and higher-level agent-building components.</td><td>Which components and middleware the application actually uses.</td></tr>
+    <tr><td>LangGraph</td><td>Explicit orchestration over state, nodes, and routes.</td><td>Stage contracts, context selection, persistence, and control conditions.</td></tr>
+    <tr><td>Deep Agents</td><td>A ready-made harness built on LangChain and LangGraph.</td><td>Model, backend, permissions, tools, and context configuration.</td></tr>
+  </tbody>
+</table></div>
+<p>LangGraph can mix deterministic functions and model-driven steps. It does not require LangChain. Deep Agents supplies an agent harness with planning, subagents, and context-management capabilities on top of that ecosystem. These descriptions follow the <a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph overview</a>, <a href="https://docs.langchain.com/oss/python/langchain/overview">LangChain overview</a>, and <a href="https://docs.langchain.com/oss/python/deepagents/overview">Deep Agents overview</a>. A framework’s name alone does not determine the actual tools or memory policy of an application.</p>
+<h3>The execution route determines who owns the context</h3>
+<p>Suppose Codex Desktop launches a Python program that runs a Deep Agents agent. There are now two conversations: the outer Codex conversation and the inner agent’s model calls. Each has its own execution process and context policy. Compacting the outer conversation does not automatically compact the inner one, nor does the inner agent automatically receive every outer skill, memory, or tool.</p>
+<p>A LangGraph node can instead call the complete Codex executor through a supported CLI or SDK route. That Codex instance then manages its own agent loop and conversation. Fresh versus resumed conversations still need to be chosen explicitly. Directly calling a model API from another framework does not import the Codex harness. The <a href="https://learn.chatgpt.com/docs/codex-sdk">Codex SDK</a> and <a href="https://learn.chatgpt.com/docs/app-server">App Server</a> provide programmatic integration paths, with different interfaces and intended uses.</p>
+<p>Graph checkpoints also do not undo external effects. If a stage submitted a compute job before an interruption, recovery must identify and reconcile that job rather than assume the external world reverted with the graph. Reliable continuation requires both saved workflow state and appropriate handling of external operations.</p>
+
+<h2 id="design-check">8. A Practical Architecture Check</h2>
+<p>The practical result of this introduction is a way to inspect a proposed system before adding another framework. For a scientific workflow, write down the owner of each item below:</p>
+<div class="table-scroll"><table>
+  <thead><tr><th>Question</th><th>A concrete answer should name</th></tr></thead>
+  <tbody>
+    <tr><td>What actually calls the model?</td><td>The Codex executor, another agent harness, or application code using a model API.</td></tr>
+    <tr><td>What enters this stage’s context?</td><td>Its goal, selected skill, relevant upstream artifacts, and required review instructions.</td></tr>
+    <tr><td>What can it execute?</td><td>Registered tool interfaces and the actual capabilities behind them.</td></tr>
+    <tr><td>What blocks an invalid transition?</td><td>A named validator, policy, or routing condition checked by code.</td></tr>
+    <tr><td>What survives interruption?</td><td>Artifact identities, job identities, accepted results, and configured durable state.</td></tr>
+    <tr><td>Who compresses each conversation?</td><td>The runtime that owns that conversation, with an explicit policy.</td></tr>
+  </tbody>
+</table></div>
+<p>If the problem is missing procedural knowledge, improve the skill and the evidence supplied at the decision point. If the problem is a missing external capability, add an appropriate tool or integration. If the problem is an invalid transition or an expensive task that cannot resume safely, implement the relevant program control. These changes may cooperate, but they solve different failure modes.</p>
+<p><a href="langgraph-workflow-decomposition.html">Part I</a> takes the next step: it examines what happens when a long instruction task is divided among separate model contexts, including the benefits, coherence costs, and token costs. This introduction makes no claim that a particular framework improves model accuracy; it establishes the architecture needed to ask that question precisely.</p>
+
+<h2 id="references">Primary References and Scope</h2>
+<p>This is an introductory synthesis of publicly documented concepts, checked on 8 November 2026. The diagram is original explanatory artwork. Product details and client support can change; it is not an exhaustive description of Codex internals.</p>
+<ul>
+  <li>OpenAI: <a href="https://openai.com/index/unrolling-the-codex-agent-loop/">Unrolling the Codex agent loop</a>; <a href="https://openai.com/index/unlocking-the-codex-harness/">Unlocking the Codex harness</a>.</li>
+  <li>Official Codex documentation: <a href="https://learn.chatgpt.com/docs/glossary">Glossary</a>; <a href="https://learn.chatgpt.com/docs/build-skills">Skills</a>; <a href="https://learn.chatgpt.com/docs/plugins">Plugins</a>; <a href="https://learn.chatgpt.com/docs/extend/mcp">MCP</a>; <a href="https://learn.chatgpt.com/docs/customization/memories">Memories</a>.</li>
+  <li>LangChain documentation: <a href="https://docs.langchain.com/oss/python/langchain/overview">LangChain</a>; <a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph</a>; <a href="https://docs.langchain.com/oss/python/deepagents/overview">Deep Agents</a>.</li>
+</ul>
+
+<section class="series-footer" aria-labelledby="agent-series-map"><h2 id="agent-series-map">Agent Series</h2><ul class="series-list">
+  <li><a href="agent-models-harnesses-tools.html">0. Models, Harnesses, and Tools</a> — the individual agent and the information around it.</li>
+  <li><a href="langgraph-workflow-decomposition.html">I. LangGraph: State, Context, and Task Decomposition</a> — explicit orchestration and the 500-requirement experiment.</li>
+</ul></section>
+        </div>
+        <div class="post-nav"><a href="../index.html#articles">All articles</a><a href="langgraph-workflow-decomposition.html">Next: LangGraph and Task Decomposition</a></div>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
