@@ -153,6 +153,8 @@ Before committing or pushing article changes:
 
 Deployment verification must distinguish transport failures from stale published content. Use the host's working network/proxy route, preserve per-file results, and retry only failed or mismatched assets while retaining verified hashes.
 
+When concurrent tasks edit a shared index or sitemap, preserve their working-tree changes and stage only the current task's entries from its recorded base. Validate the staged publication bytes separately from the merged working tree; an explicit filename list alone does not isolate unrelated changes within the same file.
+
 1. Confirm that technical articles are English-only; the `life.html`, `mind.html`, and `life/` pages are the explicit Chinese-language exceptions.
 2. Confirm that no absolute local paths, private personal information, credentials, or raw private environment details appear in published article text, captions, or code snippets.
 3. Check that all local links and image paths resolve.
