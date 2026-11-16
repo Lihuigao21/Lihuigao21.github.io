@@ -15,7 +15,7 @@ window.SITE_SERIES = [
     id: "hefeinamd",
     title: "HefeiNAMD 系列",
     label: "HefeiNAMD",
-    description: "从讲座准备出发，逐步理解非绝热耦合、晶体动量，以及实空间超胞与电子—声子耦合两条动力学路线。",
+    description: "从讲座准备出发，逐步理解非绝热耦合、晶体动量、两条动力学路线，以及零点涨落和核量子效应。",
   },
   {
     id: "open-quantum-systems",
@@ -74,6 +74,23 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    "slug": "hefeinamd-nuclear-quantum-fluctuations",
+    "title": "HefeiNAMD IV: Quantum Nuclear Fluctuations",
+    "path": "posts/hefeinamd-nuclear-quantum-fluctuations.html",
+    "date": "2026-11-16",
+    "dateText": "2026.11.16",
+    "description": "Separate CPA, zero-point fluctuations, quantum absorption and emission, and fixed-amplitude versus Wigner sampling through source inspection and analytic checks.",
+    "tags": [
+      "HefeiNAMD",
+      "Nuclear Quantum Effects",
+      "Electron-Phonon Coupling",
+      "Wigner Sampling",
+      "Analytic Diagnostic"
+    ],
+    "series": "hefeinamd",
+    "part": 4
+  },
   {
     "slug": "agent-models-harnesses-tools",
     "title": "Agent 0: Models, Harnesses, and Tools",

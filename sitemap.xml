@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://lihuigao21.github.io/posts/hefeinamd-nuclear-quantum-fluctuations.html</loc>
+    <lastmod>2026-11-16</lastmod>
+  </url>
+  <url>
     <loc>https://lihuigao21.github.io/posts/agent-models-harnesses-tools.html</loc>
     <lastmod>2026-11-08</lastmod>
   </url>
@@ -14,15 +18,15 @@
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/hefeinamd-epc-hamiltonian.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-11-16</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/hefeinamd-real-space-supercell-fssh.html</loc>
-    <lastmod>2026-10-18</lastmod>
+    <lastmod>2026-11-16</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/hefeinamd-nac-crystal-momentum.html</loc>
-    <lastmod>2026-10-18</lastmod>
+    <lastmod>2026-11-16</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/open-quantum-systems-tcl2-nz2.html</loc>
@@ -610,7 +614,7 @@
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/hefeinamd-training-hands-on-workflow.html</loc>
-    <lastmod>2026-10-18</lastmod>
+    <lastmod>2026-11-16</lastmod>
   </url>
   <url>
     <loc>https://lihuigao21.github.io/posts/mes-pimd-geometric-phase-thermodynamics.html</loc>

@@ -1,0 +1,59 @@
+{
+  "scope": "Analytic single-mode diagnostics; not a HefeiNAMD lifetime test.",
+  "coordinate": "x=Q/sigma, sigma^2=ell^2(2n+1)",
+  "normalized_moments_by_order": {
+    "fixed_amplitude_uniform_phase": {
+      "0": 1.0,
+      "2": 1.0000000000000002,
+      "4": 1.5000000000000007
+    },
+    "thermal_gaussian": {
+      "0": 0.9999999999999998,
+      "2": 1.000000000000001,
+      "4": 3.0000000000000053
+    },
+    "wigner_exponential_action_uniform_phase": {
+      "0": 1.0000000000000002,
+      "2": 0.9999999999999998,
+      "4": 3.0
+    }
+  },
+  "maximum_characteristic_function_error": 8.881784197001252e-16,
+  "short_time_perturbation_check": [
+    {
+      "n": 0.0,
+      "t_omega": 1e-05,
+      "quantum_P_over_g2_t2": 1.0,
+      "phase_averaged_P_over_g2_t2": 0.9999999999833332,
+      "short_time_limit": 1.0
+    },
+    {
+      "n": 0.4,
+      "t_omega": 1e-05,
+      "quantum_P_over_g2_t2": 1.7999999999866665,
+      "phase_averaged_P_over_g2_t2": 1.7999999999699998,
+      "short_time_limit": 1.8
+    },
+    {
+      "n": 3.0,
+      "t_omega": 1e-05,
+      "quantum_P_over_g2_t2": 6.999999999899999,
+      "phase_averaged_P_over_g2_t2": 6.999999999883332,
+      "short_time_limit": 7.0
+    }
+  ],
+  "160_meV_300_K": {
+    "hbar_omega_over_kBT": 6.189076331493505,
+    "bose_occupation": 0.002055939201991548,
+    "symmetric_over_quantum_emission_weight": 0.50102586049419
+  },
+  "checks": {
+    "fixed_moments": true,
+    "gaussian_moments": true,
+    "wigner_polar_moments": true,
+    "coherence_characteristic_functions": true,
+    "common_short_time_coefficient": true,
+    "emission_ratio_identity": true
+  },
+  "passed": true
+}

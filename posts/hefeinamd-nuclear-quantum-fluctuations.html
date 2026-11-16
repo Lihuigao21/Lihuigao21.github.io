@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Which nuclear quantum effects enter HefeiNAMD-EPC? Separate classical paths, zero-point fluctuations, quantum absorption and emission, and fixed-amplitude versus Wigner sampling.">
+    <title>HefeiNAMD IV: Quantum Nuclear Fluctuations | Lihui Gao</title>
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="../assets/vendor/mathjax-3.2.2/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">HefeiNAMD Series - Part IV</p>
+          <h1>Quantum Nuclear Fluctuations</h1>
+          <p class="post-meta">2026.11.16 - Zero-Point Motion / Classical Paths / Quantum Correlations / Wigner Sampling</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="HefeiNAMD series navigation">
+            <a href="hefeinamd-training-hands-on-workflow.html">0. Training Preparation</a>
+            <a href="hefeinamd-nac-crystal-momentum.html">I. Inter-k NAC</a>
+            <a href="hefeinamd-real-space-supercell-fssh.html">II. Real-Space NAMD</a>
+            <a href="hefeinamd-epc-hamiltonian.html">III. EPC Dynamics</a>
+            <a href="hefeinamd-nuclear-quantum-fluctuations.html" aria-current="page">IV. Nuclear Quantum Fluctuations</a>
+          </nav>
+          <p class="lead"><a href="hefeinamd-epc-hamiltonian.html">Part III</a> constructed an electronic Hamiltonian from reference Bloch states, electron-phonon coupling (EPC), and a prescribed nuclear path. Its analytic phonon driver contains a factor \(\sqrt{n+1/2}\). Does that make the nuclei quantum? The answer requires separating three questions: how large the nuclear fluctuations are, how they exchange energy with electrons, and which nuclear ensemble is actually sampled.</p>
+          <p>The zero-point term carries real physical information: it retains a finite harmonic displacement scale as temperature approaches zero. However, a fluctuation scale alone does not specify a quantum bath. We follow the active path of the public HefeiNAMD-EPC implementation, then use harmonic identities to identify what that scale establishes. The figures below evaluate these identities; they are not new material simulations or measurements of carrier lifetimes.</p>
+          <nav aria-label="Article contents"><ol>
+            <li><a href="#cpa">A quantum fluctuation scale can coexist with CPA</a></li>
+            <li><a href="#variance">What the zero-point term supplies</a></li>
+            <li><a href="#ordering">Why absorption and emission require more information</a></li>
+            <li><a href="#half-rate">The conditional factor of two</a></li>
+            <li><a href="#sampling">Equal variance, different nuclear ensembles</a></li>
+            <li><a href="#dephasing">What higher moments change</a></li>
+            <li><a href="#implementation">What a Wigner implementation must change</a></li>
+            <li><a href="#scope">Which nuclear quantum effects are covered?</a></li>
+          </ol></nav>
+
+          <h2 id="cpa">1. A quantum fluctuation scale can coexist with CPA</h2>
+          <p>In the classical path approximation (CPA), the nuclear motion used to drive the electrons is independent of the evolving electronic state. The path may come from a stored molecular-dynamics trajectory or an analytic mode expansion. Its defining feature is the absence of electronic feedback into that path.</p>
+          <p>That is the structure of the inspected default EPC route. The <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/main.f90#L65-L79">main program selects <code>runSH_EPC</code></a>. Its <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/SurfHop.f90#L74-L86">coordinate update</a> multiplies preset mode amplitudes by fixed harmonic phases before electronic propagation:</p>
+          <div class="math-block">\[
+            Q_\nu(t)\ \longrightarrow\ H_{\mathrm{el}}[Q(t)]
+            \ \longrightarrow\ \{C_a(t),\text{ electronic switches}\}.
+          \]</div>
+          <p>The code also accumulates <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/SurfHop.f90#L116-L134">phonon changes assigned to switches</a>. Those records do not update the amplitudes driving the next step. The repository contains a separate on-the-fly routine, but its call is commented out in the inspected main program. Its presence does not establish feedback in the default calculation.</p>
+          <p>CPA and nuclear quantum effects are therefore separate choices. Quantum-informed initial widths can be used on a prescribed path. Stochastic electronic switches can also be performed on that path. Neither operation by itself introduces a force or occupancy feedback into the nuclear motion. The real-space CPA construction is discussed in <a href="hefeinamd-real-space-supercell-fssh.html#cpa">Part II</a>; here the path is organized by harmonic phonon modes.</p>
+
+          <h2 id="variance">2. What the zero-point term supplies</h2>
+          <p>Consider one independent, stable, real, mass-weighted normal mode. This is the coordinate convention used in <a href="hefeinamd-epc-hamiltonian.html#coordinates">Part III</a>. Its conjugate momentum is \(P=\dot Q\), and</p>
+          <div class="math-block">\[
+            H_{\mathrm{ph}}=\frac12(P^2+\omega^2Q^2),\qquad
+            \ell=\sqrt{\frac{\hbar}{2\omega}},\qquad
+            n=\frac{1}{e^{\beta\hbar\omega}-1},\qquad
+            \beta=\frac{1}{k_BT}.
+          \]</div>
+          <p>The quantum thermal coordinate variance and the classical canonical variance are</p>
+          <div class="math-block">\[
+            \sigma^2=\langle\hat Q^2\rangle
+              =\ell^2(2n+1)
+              =\frac{\hbar}{2\omega}\coth\frac{\beta\hbar\omega}{2},
+            \qquad
+            \langle Q^2\rangle_{\mathrm{cl}}=\frac{k_BT}{\omega^2}.
+          \]</div>
+          <p>For an ordinary length coordinate with effective mass \(M\), divide these mass-weighted variances by \(M\). At low temperature the quantum width remains finite; at high temperature it approaches the classical result. Thus high-frequency modes can retain zero-point fluctuations even when their thermal excitation is negligible.</p>
+          <p>In the <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/epcoup.f90#L1434-L1462">default analytic driver</a>, two equal factors \(\sqrt{n+1/2}\) evolve with opposite frequencies. For the real-mode illustration this gives</p>
+          <div class="math-block">\[
+            Q(t)=A\cos(\omega t+\varphi),\qquad
+            A=2\ell\sqrt{n+\frac12}.
+          \]</div>
+          <p>A uniform phase average gives \(\overline{Q}=0\) and \(\overline{Q^2}=A^2/2=\sigma^2\). The amplitude therefore has the correct harmonic quantum variance under that averaging assumption. The actual driver initializes equal real factors and uses initial-time offsets; it does not independently draw Gaussian coordinates and momenta, or random phases for every mode.</p>
+          <p>These fluctuations enter the time-dependent EPC Hamiltonian throughout propagation. They can contribute to electronic energy fluctuations, mixing, and decoherence. Matching their scale is a substantive nuclear quantum correction, although it does not establish the accuracy of every resulting electronic observable. Removing \(1/2\) while retaining the Bose occupation would eliminate this zero-point width; it would not produce the full classical canonical ensemble, whose mode-energy scale is \(k_BT\).</p>
+
+          <h2 id="ordering">3. Why absorption and emission require more information</h2>
+          <p>The variance is an equal-time quantity. Energy exchange depends on a two-time correlation and on its operator order. Here we put the later-time operator first:</p>
+          <div class="math-block">\[
+            C_{>}(t)=\langle\hat Q(t)\hat Q(0)\rangle
+              =\ell^2\left[(n+1)e^{-i\omega t}+n e^{i\omega t}\right].
+          \]</div>
+          <p>The companion article on <a href="ordered-kubo-sho-correlations.html#ordering">ordered and Kubo correlations</a> introduces the reverse product order; for this autocorrelation it is the complex conjugate. Keeping this convention explicit prevents an accidental exchange of frequency signs.</p>
+          <div class="math-block">\[
+            C_{>}(t)=\ell^2\left[(2n+1)\cos\omega t-i\sin\omega t\right],
+            \qquad
+            C_{\mathrm{sym}}(t)=\frac12\langle\{\hat Q(t),\hat Q(0)\}\rangle
+              =\sigma^2\cos\omega t.
+          \]</div>
+          <p>The phase-averaged real harmonic driver reproduces \(C_{\mathrm{sym}}\). The commutator contributes the imaginary sine term. With the Fourier convention \(S_{>}(\Omega)=\int dt\,e^{i\Omega t}C_{>}(t)\), the positive-frequency peak carries \(n+1\), while the negative-frequency peak carries \(n\). These are the bath weights relevant to downward electronic energy loss and upward energy gain, respectively.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Driver or bath</th><th>Electronic absorption weight</th><th>Electronic emission weight</th><th>Low-temperature limit</th></tr></thead>
+            <tbody>
+              <tr><td>Equal amplitudes without zero-point term</td><td>\(n\)</td><td>\(n\)</td><td>Both vanish</td></tr>
+              <tr><td>Equal amplitudes with zero-point term</td><td>\(n+1/2\)</td><td>\(n+1/2\)</td><td>Both remain finite</td></tr>
+              <tr><td>Ordered quantum harmonic correlation</td><td>\(n\)</td><td>\(n+1\)</td><td>Emission remains; absorption vanishes</td></tr>
+            </tbody>
+          </table></div>
+          <p>The table compares frequency weights before additional switching corrections. The symmetry already exists without \(1/2\); the zero-point term changes the fluctuation strength. It is consequently inaccurate to identify that term as the cause of lost absorption/emission asymmetry. Wigner representation itself does not discard quantum mechanics either: operator products and response must be handled consistently rather than replaced indiscriminately by ordinary products of trajectory values.</p>
+          <p>In the inspected program, <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/epcoup.f90#L1534-L1552">both broadened scattering channels</a> use the same \(n+1/2\) amplitude factor, with energy matching near opposite phonon energies. An additional <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/SurfHop.f90#L428-L473">Boltzmann correction</a> suppresses uphill electronic switches. That supplies a thermal asymmetry, but does not on its own prove the full quantum correlation or detailed balance of the combined algorithm. Single-carrier thermal equilibrium also concerns Boltzmann populations; a Fermi-Dirac claim additionally requires a many-fermion occupation model.</p>
+
+          <h2 id="half-rate">4. The conditional factor of two</h2>
+          <p>A useful diagnostic follows if we deliberately restrict the comparison to weak coupling, matched matrix elements and final states, a stationary phase average, and a single energy-resolved resonant emission channel. In the Golden-rule limit, let \(K\) collect the identical coupling and energy-selection factors. Then</p>
+          <div class="math-block">\[
+            \Gamma_\downarrow^{\mathrm{qm}}=K(n+1),\qquad
+            \Gamma_\downarrow^{\mathrm{sym}}=K(n+\tfrac12),\qquad
+            R=\frac{\Gamma_\downarrow^{\mathrm{sym}}}
+                    {\Gamma_\downarrow^{\mathrm{qm}}}
+              =\frac{n+\tfrac12}{n+1}
+              =\frac{1+e^{-\beta\hbar\omega}}{2}.
+          \]</div>
+          <figure>
+            <img src="../assets/img/hefeinamd-series/nqe-transition-weights.svg" alt="Analytic comparison of quantum absorption and emission weights with their symmetric average, and the conditional emission-weight ratio." loading="lazy">
+            <figcaption>Figure 1. Harmonic bath frequency weights and the conditional Golden-rule emission ratio as a function of \(\hbar\omega/(k_BT)\). The left panel normalizes every weight by \(2n+1\); curve labels identify emission, absorption, and the symmetric weight. The right panel shows the emission ratio \(R\). The symmetric weight approaches half the quantum emission weight at low temperature; this is a spectral comparison, not a measured HefeiNAMD cooling-time error. The reproducible script evaluates the Bose factors and limiting cases.</figcaption>
+          </figure>
+          <p>The low-temperature limit gives a half-weight. If uphill transitions are suppressed and this one process controls exponential cooling, its lifetime would double in that restricted rate model. A high-frequency mode can reach this regime at room temperature. Nevertheless, the comparison is between Golden-rule approximations, not an unrestricted exact quantum solution, and it is not yet a statement about the program's full cooling curve.</p>
+          <p>In particular, it cannot describe the transfer during every femtosecond. To see why, take the matched model \(\hat H_{\mathrm{int}}=g\sigma_x(\hat b+\hat b^\dagger)\), an initially excited electron, and a thermal oscillator. Let \(\Omega=(\epsilon_i-\epsilon_j)/\hbar&gt;0\), and define</p>
+          <div class="math-block">\[
+            F_\mp(t)=\int_0^t ds\,e^{i(\Omega\mp\omega)s}.
+          \]</div>
+          <p>Second-order perturbation theory for the full interaction, before selecting a resonant frequency, gives</p>
+          <div class="math-block">\[
+            \begin{aligned}
+            P_\downarrow^{\mathrm{qm}}(t)
+              &amp;\simeq\frac{g^2}{\hbar^2}
+                \left[(n+1)|F_-(t)|^2+n|F_+(t)|^2\right],\\
+            \overline{P_\downarrow^{\mathrm{sym}}(t)}
+              &amp;\simeq\frac{g^2}{\hbar^2}(n+\tfrac12)
+                 \left[|F_-(t)|^2+|F_+(t)|^2\right].
+            \end{aligned}
+          \]</div>
+          <p>At strictly short times both integrals approach \(t\), so both expressions have the same leading term, \(g^2(2n+1)t^2/\hbar^2\). Energy resolution later separates the two channels. This explains how equal initial curvature and a different resonant emission weight can coexist. The identity \((n+1)+n=2(n+1/2)\) likewise equates integrated bare weights, not total electronic scattering rates after different final-state constraints are applied.</p>
+          <p>The code adds a further distinction. Its <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/SurfHop.f90#L393-L423">active switching routine</a> combines electronic coefficients with precomputed real scattering weights, rather than using the instantaneous complex Hamiltonian element in the elementary current formula. <a href="hefeinamd-epc-hamiltonian.html#faq-hopping">Part III derives that difference</a>. A universal factor-of-two correction to its reported lifetime therefore does not follow from the weight ratio alone.</p>
+          <p>A proposed rate correction must also account for the existing thermal factor. In the simple resonant model, a symmetric uphill rate already multiplied by \(e^{-\beta\hbar\omega}\), and then multiplied again by \(n/(n+1/2)\), becomes \(Kn e^{-\beta\hbar\omega}\), rather than the target \(Kn\). This double counts thermal suppression. Correct quantum rates can arise from a Hermitian Hamiltonian in the joint electron-phonon space; assigning unequal frequency amplitudes to a single classical coordinate is not a substitute for constructing that dynamics.</p>
+
+          <h2 id="sampling">5. Equal variance, different nuclear ensembles</h2>
+          <p>Operator order and nuclear sampling are different issues. Even if we only seek the symmetrized harmonic fluctuations, a correct variance does not uniquely fix the distribution of initial conditions. For fixed \(A=\sqrt2\,\sigma\) and uniform \(\varphi\), the transformation \(Q=A\cos\varphi\) yields</p>
+          <div class="math-block">\[
+            P_{\mathrm{fixed}}(Q)=
+            \begin{cases}
+              \dfrac{1}{\pi\sqrt{A^2-Q^2}},&amp; |Q|&lt;A,\\
+              0,&amp; |Q|&gt;A.
+            \end{cases}
+            \qquad
+            P_{\mathrm W}(Q)=
+              \frac{e^{-Q^2/(2\sigma^2)}}{\sqrt{2\pi\sigma^2}}.
+          \]</div>
+          <p>The first is the arcsine distribution: a harmonic trajectory moves slowly near its turning points, producing integrable endpoint singularities. The second is the coordinate marginal of the harmonic thermal Wigner distribution, including the ground state. They have equal second moments, but</p>
+          <div class="math-block">\[
+            \langle Q^4\rangle_{\mathrm{fixed}}
+              =\frac{3A^4}{8}=\frac32\sigma^4,\qquad
+            \langle Q^4\rangle_{\mathrm W}=3\sigma^4.
+          \]</div>
+          <p>The fixed-amplitude fourth moment is half the Gaussian value. These are distributions of one normal coordinate. An atomic displacement or electronic gap generally combines many modes, so a U-shaped single-mode marginal does not imply a double-peaked atomic distribution or an artificial electronic pseudogap in every material.</p>
+          <p>The full thermal harmonic Wigner distribution is Gaussian in both quadratures. A compact equivalent sampler uses two independent uniform random numbers, \(\xi\in(0,1]\) and \(u\in[0,1)\):</p>
+          <div class="math-block">\[
+            J=-(n+\tfrac12)\ln\xi,\qquad \varphi=2\pi u,
+            \qquad
+            Q_0=2\ell\sqrt J\cos\varphi,\qquad
+            P_0=-2\omega\ell\sqrt J\sin\varphi.
+          \]</div>
+          <p>Harmonic propagation then gives \(Q(t)=2\ell\sqrt J\cos(\omega t+\varphi)\). The initial quadratures are independent Gaussians with variances \(\sigma^2\) and \(\omega^2\sigma^2\). Thus every equal-time coordinate moment of the harmonic thermal state is reproduced, not only its width. The <a href="molecular-hessian-wigner-sampling.html#thermal-wigner">Hessian-to-Wigner article</a> supplies the normal-mode and Cartesian reconstruction steps; here the new issue is how that ensemble differs from a fixed-radius phase-space orbit.</p>
+          <figure>
+            <img src="../assets/img/hefeinamd-series/nqe-sampling.svg" alt="Single-mode arcsine and Gaussian distributions with equal variance, and Bessel versus Gaussian coherence factors." loading="lazy">
+            <figcaption>Figure 2. Analytic sampling comparison. The distribution panel uses \(x=Q/\sigma\), so both widths are one; the fixed-amplitude endpoints lie at \(\pm\sqrt2\). Dashed endpoint guides mark integrable singularities, whose exact peaks are not finite plotted values. The coherence panel compares the signed factors \(J_0(z)\) and \(e^{-z^2/4}\) for the same single-mode linear dephasing problem. These are analytic ensemble identities, not a carrier-dynamics simulation.</figcaption>
+          </figure>
+
+          <h2 id="dephasing">6. What higher moments change</h2>
+          <p>For independent harmonic modes with uniform phases, fixed-radius sampling and Gaussian Wigner sampling have the same classical two-time coordinate correlation. Consequently they can agree in linear-coupling, second-order perturbative calculations performed with that classical correlation. Equality of the variance alone would not be enough for arbitrary dynamics, and agreement between these two samplers does not establish the ordered quantum correlation.</p>
+          <p>Pure dephasing provides an explicit higher-order distinction. Let a prescribed real mode modulate an electronic energy gap by \(\delta\epsilon(t)=\lambda Q(t)\). The coherence factor is the characteristic function of the accumulated phase:</p>
+          <div class="math-block">\[
+            L(t)=\left\langle
+              \exp\left[-\frac{i\lambda}{\hbar}\int_0^t Q(s)\,ds\right]
+            \right\rangle.
+          \]</div>
+          <p>For the fixed-radius ensemble the integrated phase is \(z(t)\cos(\varphi+\omega t/2)\), with</p>
+          <div class="math-block">\[
+            z(t)=\frac{2\lambda A}{\hbar\omega}\sin\frac{\omega t}{2},
+            \qquad
+            L_{\mathrm{fixed}}(t)=J_0(z),\qquad
+            L_{\mathrm W}(t)=e^{-z^2/4}.
+          \]</div>
+          <p>Here \(J_0\) is a Bessel function. Its expansion and the Gaussian expansion agree at order \(z^2\), but differ at order \(z^4\). Figure 2 shows the resulting departure. A Gaussian second-cumulant expression is exact for the Gaussian prescribed noise; applying it to fixed-radius noise discards nonzero higher cumulants. This comparison concerns the coherence generated by two external classical ensembles. A full quantum dephasing calculation must also keep the appropriate operator ordering and response.</p>
+          <p>Higher-order scattering similarly depends on multi-time correlations, intermediate electronic states, and operator order. A factor of two in an equal-time fourth moment is a diagnostic of different ensembles, not a universal factor of two in all two-phonon rates. Snapshot energy histograms and dynamical spectral functions are also different observables.</p>
+          <p>The Gaussian position marginal extends beyond the turning points of an orbit with the mean zero-point energy. That stationary forbidden-region probability is not itself barrier-crossing dynamics. Wigner initial conditions followed by classical trajectories do not automatically supply quantum tunneling. Nor does a finite zero-point variance alone imply a nonzero irreversible linewidth: an isolated harmonic mode can produce recurrences.</p>
+
+          <h2 id="implementation">7. What a Wigner implementation must change</h2>
+          <p>Sampling two Gaussian quadratures is inexpensive, and each harmonic path remains analytic. The total cost depends on how many independently sampled nuclear paths need separate electronic propagation. In the current <a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/blob/689c9521b634d1b1fe291c529703d1dd657763f1/src/SurfHop.f90#L83-L108">loop structure</a>, a shared coefficient propagation precedes the stochastic trajectory loop. Increasing the number of switches on that same driver does not create independent Wigner nuclear samples. Distinct drivers generally require distinct electronic propagations and an assessment of sampling error.</p>
+          <p>For crystal modes, sampling must preserve \(Q_{-\mathbf q,\nu}=Q_{\mathbf q,\nu}^{*}\) in a compatible eigenvector gauge. Independent real sine and cosine coordinates are a convenient choice; drawing unrelated complex opposite-q coordinates would violate real atomic displacements. The sampled coordinates must also be connected consistently to both the Hamiltonian construction and the separately defined switching model. Replacing one initialization factor without checking those dependencies is insufficient.</p>
+          <p>Finally, \(J\) is a continuous phase-space sampling variable, not the integer number of phonons present in that trajectory. Even a ground-state Wigner ensemble has a distribution of classical point energies, although the quantum ground state has a sharp energy. The <a href="molecular-hessian-wigner-sampling.html#point-energy">point-energy discussion</a> explains this distinction. Setting a trajectory occupation to \(J-1/2\), then adding or removing one whenever an electron switches, is not a justified quantum feedback rule. A model for hot-phonon feedback must specify the evolving bath state, energy exchange, and sampling prescription together.</p>
+
+          <h2 id="scope">8. Which nuclear quantum effects are covered?</h2>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Physical content</th><th>Inspected analytic EPC route</th><th>What an improved initial sampler changes</th></tr></thead>
+            <tbody>
+              <tr><td>Harmonic zero-point displacement scale</td><td>Included for retained modes through \(n+1/2\)</td><td>Retains that scale</td></tr>
+              <tr><td>Bose temperature dependence</td><td>Included in preset amplitudes</td><td>Retains it in the ensemble widths</td></tr>
+              <tr><td>Full harmonic thermal coordinate distribution</td><td>Fixed amplitudes do not supply it</td><td>Gaussian Wigner sampling supplies its equal-time statistics</td></tr>
+              <tr><td>Quantum absorption/emission asymmetry</td><td>Symmetric amplitudes plus an additional thermal switching correction</td><td>Not restored by Gaussian sampling alone</td></tr>
+              <tr><td>Carrier-induced evolution of the phonon bath</td><td>Switch-associated phonon changes are recorded but do not update the driver</td><td>Requires a feedback model beyond initialization</td></tr>
+              <tr><td>Tunneling and anharmonic quantum nuclear distributions</td><td>Not generated by preset harmonic trajectories</td><td>Not supplied by harmonic Wigner initialization alone</td></tr>
+            </tbody>
+          </table></div>
+          <p>The driver also omits modes below its phonon-energy cutoff. More broadly, linear EPC and harmonic nuclear motion are separate truncations, as derived in <a href="hefeinamd-epc-hamiltonian.html#expansions">Part III</a>. A zero-point amplitude does not by itself establish a complete zero-point band-gap renormalization: the retained electronic response and contributions such as Fan and Debye-Waller terms must be identified. Likewise, a coupling that vanishes at the retained order remains zero when multiplied by a larger coordinate.</p>
+          <p>Nonharmonic forces and electronic feedback are not exclusively quantum effects. Their absence nevertheless limits which nuclear quantum phenomena this prescribed harmonic model can represent. Electronic wavefunction propagation is quantum, but that fact alone is not evidence that the nuclei undergo complete quantum dynamics.</p>
+
+          <h2 id="conclusions">Conclusions</h2>
+          <ol>
+            <li>The inspected EPC route retains harmonic zero-point and Bose thermal fluctuation scales within CPA. Its nuclear driver remains independent of the evolving electrons.</li>
+            <li>Correct symmetrized fluctuations do not by themselves supply the ordered quantum correlation governing absorption and emission. The zero-point term is not the origin of their symmetry.</li>
+            <li>A half emission weight follows in a specified Golden-rule limit. A doubled cooling lifetime requires additional dynamical assumptions and has not been established for the complete switching implementation.</li>
+            <li>Wigner sampling repairs the independent harmonic thermal initial ensemble. Its benefits, computational cost, and connection to feedback must be assessed separately from quantum energy-exchange statistics.</li>
+          </ol>
+
+          <h2 id="reproduce">Code and reproducible checks</h2>
+          <p>The <a href="../assets/code/hefeinamd_nqe_checks.py">compact diagnostic script</a> generates both figures and <a href="../assets/data/hefeinamd-nqes/nqe-check.json">numerical checks</a> for the analytic moments, polar Wigner sampler, transition weights, and short-time coefficient. It requires NumPy, SciPy, and Matplotlib:</p>
+          <pre><code>python assets/code/hefeinamd_nqe_checks.py --output-dir nqes-output</code></pre>
+          <p>The checks concern harmonic statistical identities and perturbative formulas stated above. They do not run HefeiNAMD, establish a material-specific lifetime error, or validate a new feedback algorithm.</p>
+
+          <h2 id="sources">Sources and related articles</h2>
+          <ul>
+            <li>Z. Zheng et al., <a href="https://doi.org/10.1038/s43588-023-00456-9"><em>Ab initio real-time quantum dynamics of charge carriers in momentum space</em></a>, Nature Computational Science 3, 532–541 (2023); <a href="https://arxiv.org/html/2210.00529v3">author manuscript</a>, especially the EPC Hamiltonian and analytic normal coordinate.</li>
+            <li><a href="https://github.com/ZhenfaZheng/NAMDinMomentumSpace/tree/689c9521b634d1b1fe291c529703d1dd657763f1">Pinned HefeiNAMD-EPC source</a>. Implementation statements refer to its analytic Type 1 driver and the active main-program route, not every EPC or on-the-fly method.</li>
+            <li><a href="https://light-and-molecules.gitlab.io/newton-x-package/manual/theo_background/#wigner-distribution">Newton-X theoretical background: Wigner distribution</a>, for harmonic thermal coordinate and momentum sampling.</li>
+            <li><a href="ordered-kubo-sho-correlations.html">Ordered and Kubo Correlations</a>, for operator ordering, harmonic spectra, and electronic transition weights.</li>
+            <li><a href="molecular-hessian-wigner-sampling.html">From Hessians to Wigner Initial Conditions</a>, for normal-mode reconstruction, thermal sampling, and the interpretation of sampled point energies.</li>
+          </ul>
+          <section class="series-footer" aria-labelledby="hefeinamd-series-map">
+            <h2 id="hefeinamd-series-map">HefeiNAMD series map</h2>
+            <ol class="series-list" start="0">
+              <li><a href="hefeinamd-training-hands-on-workflow.html">Part 0: How to Prepare a HefeiNAMD Training</a> — the workshop workflow, prepared data, and rehearsal.</li>
+              <li><a href="hefeinamd-nac-crystal-momentum.html">Part I: When Does Inter-k NAC Vanish?</a> — the problem, its symmetry condition, and its physical scope.</li>
+              <li><a href="hefeinamd-real-space-supercell-fssh.html">Part II: Supercells, NAC, and Surface Hopping</a> — folding, nuclear trajectories, overlap-based NAC, and FSSH.</li>
+              <li><a href="hefeinamd-epc-hamiltonian.html">Part III: The EPC Route to Carrier Dynamics</a> — reference states, linear response, mode coordinates, and the time-dependent Hamiltonian.</li>
+              <li><a href="hefeinamd-nuclear-quantum-fluctuations.html" aria-current="page">Part IV: Quantum Nuclear Fluctuations</a> — CPA, zero-point motion, ordered bath correlations, and nuclear sampling.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="hefeinamd-epc-hamiltonian.html">&lt;- Part III: EPC Dynamics</a><a href="../series.html?series=hefeinamd">HefeiNAMD series</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
