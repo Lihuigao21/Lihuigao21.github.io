@@ -74,6 +74,23 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+{
+  "slug": "trpmd-anharmonic-position-spectrum",
+  "title": "PIMD VIII: Anharmonic Spectra and Partial Repair",
+  "path": "posts/trpmd-anharmonic-position-spectrum.html",
+  "date": "2026-11-17",
+  "dateText": "2026.11.17",
+  "description": "Use a one-dimensional quartic well to separate vibrational transition weights, RPMD dephasing, physical equilibrium coupling, and partial TRPMD repair.",
+  "tags": [
+    "PIMD",
+    "RPMD",
+    "TRPMD",
+    "Anharmonicity",
+    "Kubo Correlations"
+  ],
+  "series": "pimd",
+  "part": 8
+},
   {
     "slug": "trpmd-spurious-spectral-lines",
     "title": "PIMD VII: TRPMD and Spurious Spectral Lines",

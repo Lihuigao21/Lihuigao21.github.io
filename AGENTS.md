@@ -176,3 +176,8 @@ When concurrent tasks edit a shared index or sitemap, preserve their working-tre
 - `assets/code/` contains published code attachments.
 - `articles/` contains local raw materials and should stay unpublished.
 - Keep the site static and GitHub Pages friendly; do not add a build system unless the user asks for one.
+
+## MathJax text and article structure
+
+- MathJax delimiters do not protect raw HTML characters. Write comparisons with LaTeX commands such as \lt or escape the HTML text; an unescaped less-than sign in a sum can create an unknown element and silently break article nesting. Check the parsed DOM as well as MathJax errors: article navigation must remain a direct child of the article so comments insertion works.
+- Generate a new article from a frozen template snapshot. Rebuilding from an already updated predecessor can duplicate series navigation and footer entries; require exactly one link per part and one current-page marker.

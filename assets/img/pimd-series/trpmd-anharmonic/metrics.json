@@ -1,0 +1,450 @@
+{
+  "parameters": {
+    "schema": 1,
+    "model": "H=p^2/2+q^2/2+alpha*q^4; connected linear observable A=q",
+    "units": {
+      "mass": 1.0,
+      "hbar": 1.0,
+      "omega0": 1.0
+    },
+    "beta": 8.0,
+    "alpha": [
+      0.0,
+      0.01,
+      0.5
+    ],
+    "beads": 64,
+    "beads_check": 128,
+    "dt": 0.025,
+    "dt_check": 0.0125,
+    "output_dt": 0.05,
+    "duration": 200.0,
+    "eta": 0.05,
+    "omega_min": 0.0,
+    "omega_max": 8.0,
+    "omega_step": 0.002,
+    "friction_scale": [
+      0.0,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "friction_definition": "gamma_k=2*lambda*omega_s,k; centroid gamma=0",
+    "sampling": "independent harmonic-ring Gaussian proposals, exact rejection exp(-beta*alpha*mean(q^4)); independent canonical momenta",
+    "batches": 16,
+    "paths_per_batch": 512,
+    "seed_family": 2026111703,
+    "threads": 6,
+    "correlation_estimator": "all saved time origins within each independent trajectory; known symmetry mean(q)=0; equal trajectory and batch weights",
+    "spectrum": "Splus=(2/pi)*integral_0^T C(t)*exp(-eta*t)*cos(omega*t)dt; absolute, no area normalization or clipping",
+    "gates": {
+      "exact_spectrum_relative_L1": 0.002,
+      "exact_main_frequency": 0.0001,
+      "sampling_moment_relative_error_or_5SE": 0.02,
+      "nve_max_relative_energy_drift": 0.002,
+      "production_pointwise_correlation_SE_over_C0": 0.025,
+      "main_band_area_relative_SE": 0.025,
+      "step_and_bead_L1_relative_tolerance": 0.03,
+      "step_and_bead_statistical_rule": "report discrepancy and independent batch uncertainty; a comparison below sampling resolution is a bound, not an exact zero discretization error",
+      "curve_hf_residual_RMS_over_peak": 0.001,
+      "curve_hf_residual_max_over_peak": 0.01,
+      "curve_endpoint_artifact_over_peak": 0.01,
+      "curve_isolated_spike_over_peak": 0.01
+    },
+    "output_policy": "retain per-batch correlation/spectrum, initial/final diagnostics, source/config/seed hashes; do not retain full trajectories"
+  },
+  "metrics": [
+    {
+      "peak_frequency": 1.0,
+      "peak_height": 0.7986901401090767,
+      "fwhm": 0.10007069403748614,
+      "band_area": 0.10925781804368935,
+      "alpha": 0.0,
+      "lambda_": 0.0,
+      "band": [
+        0.8,
+        1.3
+      ],
+      "band_area_SE": 0.0009889915631006196,
+      "band_area_exact": 0.10892148060188676,
+      "peak_frequency_exact": 1.0,
+      "peak_height_exact": 0.7962717640013004,
+      "fwhm_exact": 0.10006397430090497,
+      "relative_spectral_L1": 0.0031380040900350096,
+      "C0": 0.12538548777761357,
+      "C0_SE": 0.001135007776583454,
+      "C0_exact": 0.12500000000000003,
+      "max_correlation_SE_over_C0": 0.011077669056130229,
+      "all_frequency_area_estimator": 0.12538548777761357,
+      "finite_frequency_area": 0.12488541835920325
+    },
+    {
+      "peak_frequency": 1.0,
+      "peak_height": 0.7986901401090766,
+      "fwhm": 0.10007069403748636,
+      "band_area": 0.10925781804368935,
+      "alpha": 0.0,
+      "lambda_": 1.0,
+      "band": [
+        0.8,
+        1.3
+      ],
+      "band_area_SE": 0.0009889915631006165,
+      "band_area_exact": 0.10892148060188676,
+      "peak_frequency_exact": 1.0,
+      "peak_height_exact": 0.7962717640013004,
+      "fwhm_exact": 0.10006397430090497,
+      "relative_spectral_L1": 0.003138004090035018,
+      "C0": 0.1253854877776136,
+      "C0_SE": 0.0011350077765834461,
+      "C0_exact": 0.12500000000000003,
+      "max_correlation_SE_over_C0": 0.011077669056130111,
+      "all_frequency_area_estimator": 0.1253854877776136,
+      "finite_frequency_area": 0.12488541835920326
+    },
+    {
+      "peak_frequency": 1.028,
+      "peak_height": 0.7412669709671238,
+      "fwhm": 0.1041656179399566,
+      "band_area": 0.10460459226867325,
+      "alpha": 0.01,
+      "lambda_": 0.0,
+      "band": [
+        0.8,
+        1.3
+      ],
+      "band_area_SE": 0.0008375964100314413,
+      "band_area_exact": 0.10344497884277568,
+      "peak_frequency_exact": 1.028,
+      "peak_height_exact": 0.7526692319088591,
+      "fwhm_exact": 0.10009597530116376,
+      "relative_spectral_L1": 0.01643478031077344,
+      "C0": 0.1195396598084725,
+      "C0_SE": 0.0009567998520683516,
+      "C0_exact": 0.1181811936598234,
+      "max_correlation_SE_over_C0": 0.01992162915982601,
+      "all_frequency_area_estimator": 0.1195396598084725,
+      "finite_frequency_area": 0.11906296532635273
+    },
+    {
+      "peak_frequency": 1.028,
+      "peak_height": 0.7536057545036886,
+      "fwhm": 0.10162271071840945,
+      "band_area": 0.10467902723324742,
+      "alpha": 0.01,
+      "lambda_": 0.5,
+      "band": [
+        0.8,
+        1.3
+      ],
+      "band_area_SE": 0.0008284721176975932,
+      "band_area_exact": 0.10344497884277568,
+      "peak_frequency_exact": 1.028,
+      "peak_height_exact": 0.7526692319088591,
+      "fwhm_exact": 0.10009597530116376,
+      "relative_spectral_L1": 0.012364585474241541,
+      "C0": 0.11963654188490547,
+      "C0_SE": 0.0009463419757381154,
+      "C0_exact": 0.1181811936598234,
+      "max_correlation_SE_over_C0": 0.013575960411195126,
+      "all_frequency_area_estimator": 0.11963654188490547,
+      "finite_frequency_area": 0.11915842012911082
+    },
+    {
+      "peak_frequency": 1.028,
+      "peak_height": 0.7524170991169735,
+      "fwhm": 0.10161363566859138,
+      "band_area": 0.10450500726723984,
+      "alpha": 0.01,
+      "lambda_": 1.0,
+      "band": [
+        0.8,
+        1.3
+      ],
+      "band_area_SE": 0.00075904184032211,
+      "band_area_exact": 0.10344497884277568,
+      "peak_frequency_exact": 1.028,
+      "peak_height_exact": 0.7526692319088591,
+      "fwhm_exact": 0.10009597530116376,
+      "relative_spectral_L1": 0.010728572550787744,
+      "C0": 0.11944025342656059,
+      "C0_SE": 0.0008672138880352177,
+      "C0_exact": 0.1181811936598234,
+      "max_correlation_SE_over_C0": 0.013522485643007981,
+      "all_frequency_area_estimator": 0.11944025342656059,
+      "finite_frequency_area": 0.11896289987778767
+    },
+    {
+      "peak_frequency": 1.028,
+      "peak_height": 0.7505135775598285,
+      "fwhm": 0.10166618389940008,
+      "band_area": 0.10428550209696363,
+      "alpha": 0.01,
+      "lambda_": 2.0,
+      "band": [
+        0.8,
+        1.3
+      ],
+      "band_area_SE": 0.000766658593004115,
+      "band_area_exact": 0.10344497884277568,
+      "peak_frequency_exact": 1.028,
+      "peak_height_exact": 0.7526692319088591,
+      "fwhm_exact": 0.10009597530116376,
+      "relative_spectral_L1": 0.009270519394286473,
+      "C0": 0.11919674706459157,
+      "C0_SE": 0.0008758725589997348,
+      "C0_exact": 0.1181811936598234,
+      "max_correlation_SE_over_C0": 0.013544439931153961,
+      "all_frequency_area_estimator": 0.11919674706459157,
+      "finite_frequency_area": 0.11872025730295707
+    },
+    {
+      "peak_frequency": 1.62,
+      "peak_height": 0.12979260615620647,
+      "fwhm": 0.28736441389087664,
+      "band_area": 0.04293382563403262,
+      "alpha": 0.5,
+      "lambda_": 0.0,
+      "band": [
+        1.25,
+        2.15
+      ],
+      "band_area_SE": 0.0002800376347368247,
+      "band_area_exact": 0.043555243434790634,
+      "peak_frequency_exact": 1.6280000000000001,
+      "peak_height_exact": 0.29851335634765064,
+      "fwhm_exact": 0.1000338783408643,
+      "relative_spectral_L1": 0.49931045521658496,
+      "C0": 0.047642155526890564,
+      "C0_SE": 0.0003017273694522899,
+      "C0_exact": 0.04690102156443958,
+      "max_correlation_SE_over_C0": 0.01039888253731839,
+      "all_frequency_area_estimator": 0.047642155526890564,
+      "finite_frequency_area": 0.04744650515595444
+    },
+    {
+      "peak_frequency": 1.6260000000000001,
+      "peak_height": 0.18108089627123275,
+      "fwhm": 0.17658632715956535,
+      "band_area": 0.042651204846477525,
+      "alpha": 0.5,
+      "lambda_": 0.5,
+      "band": [
+        1.25,
+        2.15
+      ],
+      "band_area_SE": 0.00013830297826499874,
+      "band_area_exact": 0.043555243434790634,
+      "peak_frequency_exact": 1.6280000000000001,
+      "peak_height_exact": 0.29851335634765064,
+      "fwhm_exact": 0.1000338783408643,
+      "relative_spectral_L1": 0.30986497983746,
+      "C0": 0.04738031359050146,
+      "C0_SE": 0.00014918872101735348,
+      "C0_exact": 0.04690102156443958,
+      "max_correlation_SE_over_C0": 0.012532765216704912,
+      "all_frequency_area_estimator": 0.04738031359050146,
+      "finite_frequency_area": 0.04718566974970935
+    },
+    {
+      "peak_frequency": 1.6300000000000001,
+      "peak_height": 0.18112305242151414,
+      "fwhm": 0.17595449297321575,
+      "band_area": 0.042453306206583594,
+      "alpha": 0.5,
+      "lambda_": 1.0,
+      "band": [
+        1.25,
+        2.15
+      ],
+      "band_area_SE": 0.00019484854906364445,
+      "band_area_exact": 0.043555243434790634,
+      "peak_frequency_exact": 1.6280000000000001,
+      "peak_height_exact": 0.29851335634765064,
+      "fwhm_exact": 0.1000338783408643,
+      "relative_spectral_L1": 0.30889031357121777,
+      "C0": 0.047282750596916494,
+      "C0_SE": 0.0002106411435624702,
+      "C0_exact": 0.04690102156443958,
+      "max_correlation_SE_over_C0": 0.01065870581010078,
+      "all_frequency_area_estimator": 0.047282750596916494,
+      "finite_frequency_area": 0.047088558129684877
+    },
+    {
+      "peak_frequency": 1.6320000000000001,
+      "peak_height": 0.17483394627590257,
+      "fwhm": 0.18304985564353893,
+      "band_area": 0.042423619629823925,
+      "alpha": 0.5,
+      "lambda_": 2.0,
+      "band": [
+        1.25,
+        2.15
+      ],
+      "band_area_SE": 0.0002073508417052918,
+      "band_area_exact": 0.043555243434790634,
+      "peak_frequency_exact": 1.6280000000000001,
+      "peak_height_exact": 0.29851335634765064,
+      "fwhm_exact": 0.1000338783408643,
+      "relative_spectral_L1": 0.33859196669782055,
+      "C0": 0.04749394897928027,
+      "C0_SE": 0.00022302735560799394,
+      "C0_exact": 0.04690102156443958,
+      "max_correlation_SE_over_C0": 0.010571762888395671,
+      "all_frequency_area_estimator": 0.04749394897928027,
+      "finite_frequency_area": 0.04729883130165815
+    }
+  ],
+  "convergence": {
+    "lambda0_beads": {
+      "relative_L1": 0.024247943289648785,
+      "integrated_pointwise_SE_scale": 0.01681072732588499,
+      "comparison": "independent canonical ensembles",
+      "pass_central_L1": true
+    },
+    "lambda0_step": {
+      "relative_L1": 0.0006793262448486684,
+      "integrated_pointwise_SE_scale": 8.051905741497914e-05,
+      "comparison": "paired batches",
+      "pass_central_L1": true
+    },
+    "lambda1_beads": {
+      "relative_L1": 0.01724976421014293,
+      "integrated_pointwise_SE_scale": 0.008576452846169036,
+      "comparison": "independent canonical ensembles",
+      "pass_central_L1": true
+    },
+    "lambda1_step": {
+      "relative_L1": 0.00414211476796748,
+      "integrated_pointwise_SE_scale": 0.006793861748032395,
+      "comparison": "paired batches",
+      "pass_central_L1": true
+    }
+  },
+  "mass_diagnostic": {
+    "physical_Hamiltonian_unchanged": true,
+    "configuration_distribution_unchanged": true,
+    "standard_RPMD": false,
+    "internal_mass": 0.5
+  },
+  "width_memory": [
+    {
+      "lambda_": 0.0,
+      "width_variance": 0.008541366514003768,
+      "windowed_memory_time": 8.514493997607008,
+      "batch_memory_time_SE": 0.06081819147706215,
+      "time_window_eta": 0.05,
+      "width_C20_over_C0": 0.425946465822518
+    },
+    {
+      "lambda_": 0.5,
+      "width_variance": 0.008611889096733872,
+      "windowed_memory_time": 0.5358411770683014,
+      "batch_memory_time_SE": 0.0026966278350313293,
+      "time_window_eta": 0.05,
+      "width_C20_over_C0": 0.0028140165468284782
+    },
+    {
+      "lambda_": 1.0,
+      "width_variance": 0.008618575544348106,
+      "windowed_memory_time": 0.4767368539158928,
+      "batch_memory_time_SE": 0.00255295720510741,
+      "time_window_eta": 0.05,
+      "width_C20_over_C0": 0.0029538053745835507
+    },
+    {
+      "lambda_": 2.0,
+      "width_variance": 0.008616648722015757,
+      "windowed_memory_time": 0.6064216876184335,
+      "batch_memory_time_SE": 0.004528032457002416,
+      "time_window_eta": 0.05,
+      "width_C20_over_C0": 0.003467647641143277
+    }
+  ],
+  "harmonic_RPMD_TRPMD_max_correlation_difference": 4.510281037539698e-16,
+  "statistical_and_output_checks": {
+    "completed_ensemble_cases": 18,
+    "frozen_producer_gates_pass": true,
+    "curve_failures": [],
+    "paired_bootstrap": {
+      "0.01": {
+        "seed": 2026111706,
+        "replicates": 600,
+        "paired_original_batches": 16,
+        "quantities": [
+          "TRminusRP_peak_height",
+          "RPminusTR_FWHM",
+          "RPminusTR_relative_L1"
+        ],
+        "percentile_95_interval": [
+          [
+            0.007808782588728036,
+            0.014565049570835877
+          ],
+          [
+            0.002366731336140565,
+            0.002726620167479285
+          ],
+          [
+            0.0008367941985515105,
+            0.007699692626780599
+          ]
+        ]
+      },
+      "0.5": {
+        "seed": 2026111706,
+        "replicates": 600,
+        "paired_original_batches": 16,
+        "quantities": [
+          "TRminusRP_peak_height",
+          "RPminusTR_FWHM",
+          "RPminusTR_relative_L1"
+        ],
+        "percentile_95_interval": [
+          [
+            0.04883415011933597,
+            0.05522231324867413
+          ],
+          [
+            0.10937482205578684,
+            0.12071855874072339
+          ],
+          [
+            0.18751622576528096,
+            0.20691863389184142
+          ]
+        ]
+      }
+    },
+    "output_cadence": [
+      {
+        "lambda_": 0.0,
+        "p": 128,
+        "n": 1024,
+        "duration": 200.0,
+        "native_dt": 0.025,
+        "output_dt": [
+          0.025,
+          0.05
+        ],
+        "relative_L1_shared_0to8": 4.0980390686712315e-05,
+        "pass_": true
+      },
+      {
+        "lambda_": 1.0,
+        "p": 128,
+        "n": 1024,
+        "duration": 200.0,
+        "native_dt": 0.025,
+        "output_dt": [
+          0.025,
+          0.05
+        ],
+        "relative_L1_shared_0to8": 3.918069972704593e-05,
+        "pass_": true
+      }
+    ],
+    "curve_count": 108,
+    "status": "pass"
+  }
+}

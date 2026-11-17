@@ -1,0 +1,60 @@
+{
+  "files": {
+    "inputs/protocol.json": {
+      "sha256": "72fb060db48f3e7e6cf7b4b6dd4dedd4864352752e064bf7b839a5af76343169",
+      "bytes": 1894
+    },
+    "README.md": {
+      "sha256": "90565ca0e7e37943e7452f75cd5791f1c549e82ef8bebd8e52f6fda76da48c0c",
+      "bytes": 7946
+    },
+    "reproduce.py": {
+      "sha256": "b0423ad626820c1ac45cdad5620db5cf7010b661bdfa2eae34d3ef6a769f043a",
+      "bytes": 5333
+    },
+    "requirements.txt": {
+      "sha256": "7accabe827ac0ba6d43f84edf435fe47371f054e5be69c562963b12f4170d26d",
+      "bytes": 39
+    },
+    "work/analyze_benchmark.py": {
+      "sha256": "af09ed67c2f6aeeeecf4a26a66f09a5dd7f761c1ca0798c83070ea8799a45bf0",
+      "bytes": 14675
+    },
+    "work/benchmark_support.py": {
+      "sha256": "c18db22601cd743cf936580c82751bd267839f115d33f77dee263c1673baca58",
+      "bytes": 4678
+    },
+    "work/exact_1d.py": {
+      "sha256": "d8b9f5e7bb2764b6efe60c2bcf6f31009dd2fce859b89e1d285c460e9259e030",
+      "bytes": 10278
+    },
+    "work/final_validation.py": {
+      "sha256": "5cfc98f9b9f79ae3e343289dc531591360f86f08b4d1c6204fb09916c3798e8e",
+      "bytes": 4660
+    },
+    "work/native_engine.cpp": {
+      "sha256": "efe9ee7fadac0de1ec62f1b8b10a4890483b9f905f2f20bd27a8763133a0b7c1",
+      "bytes": 9261
+    },
+    "work/native_loader.py": {
+      "sha256": "0a826593f6cbb3144b1f076be4129c2a5e6f8655f3df0964ba2d2da526f9b086",
+      "bytes": 1050
+    },
+    "work/native_smoke_1d.py": {
+      "sha256": "ed0378b97579bb1676a0e40b5ee334c1186136cff4ff3ac109ad0274ca3cc5fb",
+      "bytes": 9817
+    },
+    "work/public_smoke_checks.py": {
+      "sha256": "4a9417db7d41f7cc03139c146e79eaa52fb38f063d98dc6724dbd9ce79ba97b1",
+      "bytes": 3356
+    },
+    "work/run_benchmark.py": {
+      "sha256": "db09e628e622ab4a3ec564b028645723fa18d3b7fe559bb436f624ff972b02ec",
+      "bytes": 8418
+    },
+    "work/run_extension.py": {
+      "sha256": "8ba0d5b0c2e9fb5ff00ffc153846560a3fadbcb539487cff1e948f4aa63599cb",
+      "bytes": 8711
+    }
+  }
+}

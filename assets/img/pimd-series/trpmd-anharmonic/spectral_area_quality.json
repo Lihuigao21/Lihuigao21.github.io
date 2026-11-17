@@ -1,0 +1,8 @@
+{
+  "finite": true,
+  "strictly_increasing_friction": true,
+  "duplicate_points": 0,
+  "representation": "discrete markers, no interpolation or continuous fit",
+  "standard_error": "independent batch SE; RPMD uses 32 batches, TRPMD 16",
+  "source_curve_gates": "metrics from validated production; no new continuous sampled curve generated"
+}

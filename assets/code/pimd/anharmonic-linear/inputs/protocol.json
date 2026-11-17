@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "model": "H=p^2/2+q^2/2+alpha*q^4; connected linear observable A=q",
+  "units": {
+    "mass": 1.0,
+    "hbar": 1.0,
+    "omega0": 1.0
+  },
+  "beta": 8.0,
+  "alpha": [
+    0.0,
+    0.01,
+    0.5
+  ],
+  "beads": 64,
+  "beads_check": 128,
+  "dt": 0.025,
+  "dt_check": 0.0125,
+  "output_dt": 0.05,
+  "duration": 200.0,
+  "eta": 0.05,
+  "omega_min": 0.0,
+  "omega_max": 8.0,
+  "omega_step": 0.002,
+  "friction_scale": [
+    0.0,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "friction_definition": "gamma_k=2*lambda*omega_s,k; centroid gamma=0",
+  "sampling": "independent harmonic-ring Gaussian proposals, exact rejection exp(-beta*alpha*mean(q^4)); independent canonical momenta",
+  "batches": 16,
+  "paths_per_batch": 512,
+  "seed_family": 2026111703,
+  "threads": 6,
+  "correlation_estimator": "all saved time origins within each independent trajectory; known symmetry mean(q)=0; equal trajectory and batch weights",
+  "spectrum": "Splus=(2/pi)*integral_0^T C(t)*exp(-eta*t)*cos(omega*t)dt; absolute, no area normalization or clipping",
+  "gates": {
+    "exact_spectrum_relative_L1": 0.002,
+    "exact_main_frequency": 0.0001,
+    "sampling_moment_relative_error_or_5SE": 0.02,
+    "nve_max_relative_energy_drift": 0.002,
+    "production_pointwise_correlation_SE_over_C0": 0.025,
+    "main_band_area_relative_SE": 0.025,
+    "step_and_bead_L1_relative_tolerance": 0.03,
+    "step_and_bead_statistical_rule": "report discrepancy and independent batch uncertainty; a comparison below sampling resolution is a bound, not an exact zero discretization error",
+    "curve_hf_residual_RMS_over_peak": 0.001,
+    "curve_hf_residual_max_over_peak": 0.01,
+    "curve_endpoint_artifact_over_peak": 0.01,
+    "curve_isolated_spike_over_peak": 0.01
+  },
+  "output_policy": "retain per-batch correlation/spectrum, initial/final diagnostics, source/config/seed hashes; do not retain full trajectories"
+}

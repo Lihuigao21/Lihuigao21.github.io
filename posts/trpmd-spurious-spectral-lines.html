@@ -33,6 +33,7 @@
             <a href="rpmd-sho-correlation.html">V. From PIMD to RPMD</a>
             <a href="normal-mode-free-ring-polymer.html">VI. Normal-Mode Free Propagation</a>
             <a href="trpmd-spurious-spectral-lines.html" aria-current="page">VII. TRPMD and Spurious Lines</a>
+            <a href="trpmd-anharmonic-position-spectrum.html">VIII. Anharmonic Spectra</a>
           </nav>
 
           <p class="lead"><a href="rpmd-sho-correlation.html">Part V</a> obtained the exact harmonic position Kubo correlation from RPMD. <a href="normal-mode-free-ring-polymer.html">Part VI</a> examined stable propagation of its normal modes. Neither result guarantees an exact spectrum for a different observable. Here I keep the harmonic potential and measure position squared. This small change exposes analytically predictable false lines, a large zero-frequency contribution, and a physical line that is much too weak. TRPMD suppresses the sharp artifacts, while leaving a substantial error in the physical-line weight.</p>
@@ -250,7 +251,7 @@
             <li><strong>TRPMD controls coherence time while preserving equilibrium statistics.</strong> The internal thermostat suppresses narrow auxiliary lines and preserves their total area. In this model it does not transfer that area into the centroid's physical delta line.</li>
             <li><strong>Removing visible artifacts is a partial repair.</strong> For the stated low-temperature test, the sharp physical line retains only about one quarter of the exact weight. Its missing intensity, residual zero-frequency term, and broad background remain material errors.</li>
           </ol>
-          <p>This benchmark isolates nonlinear-observable artifacts in a harmonic potential. In a nonlinear potential, internal fluctuations can also couple to the centroid and split a linear vibrational band, as discussed in the separate <a href="trpmd-qtip4pf-water-ir-spectrum.html">water TRPMD article</a>. That coupling is absent here. The present analytic result establishes the mechanism and limits of this test; it does not constitute an anharmonic linear-IR reproduction or an optimal-friction rule for all systems.</p>
+          <p>This benchmark isolates nonlinear-observable artifacts in a harmonic potential. In an anharmonic potential, internal fluctuations can also affect the centroid. <a href="trpmd-anharmonic-position-spectrum.html">Part VIII</a> tests this with a one-dimensional quartic well and a linear position observable. Molecular spectral artifacts are discussed in the separate <a href="trpmd-qtip4pf-water-ir-spectrum.html">water TRPMD article</a>. That coupling is absent here. The present analytic result establishes the mechanism and limits of this test; it does not constitute an anharmonic linear-IR reproduction or an optimal-friction rule for all systems.</p>
 
           <h2 id="reproduce">Code and data</h2>
           <p>The standalone script uses NumPy, SciPy, and Matplotlib. It includes the frozen parameters, exact energy-level sum, analytic mode spectra, numerical covariance propagation, independent random-path checks, all five figures, and the curve-quality record. It does not require the ToyModel package.</p>
@@ -280,10 +281,11 @@
               <li><a href="rpmd-sho-correlation.html">Part V: From PIMD to RPMD</a> - a harmonic linear-position Kubo benchmark.</li>
               <li><a href="normal-mode-free-ring-polymer.html">Part VI: Normal-Mode Free Propagation</a> - normal-mode and bead-coordinate spring integration.</li>
               <li><a href="trpmd-spurious-spectral-lines.html">Part VII: TRPMD and Spurious Spectral Lines</a> - nonlinear spectra, internal-mode artifacts, damping, and spectral-weight errors.</li>
+              <li><a href="trpmd-anharmonic-position-spectrum.html">Part VIII: Anharmonic Spectra and Partial Repair</a> - linear position, quartic forces, dephasing, and internal-mode memory.</li>
             </ol>
           </section>
         </div>
-        <nav class="post-nav" aria-label="Article navigation"><a href="normal-mode-free-ring-polymer.html">&lt;- Part VI</a><a href="../index.html">Back to article list</a></nav>
+        <nav class="post-nav" aria-label="Article navigation"><a href="normal-mode-free-ring-polymer.html">&lt;- Part VI</a><a href="trpmd-anharmonic-position-spectrum.html">Part VIII -&gt;</a><a href="../index.html">Back to article list</a></nav>
       </article>
     </main>
     <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
