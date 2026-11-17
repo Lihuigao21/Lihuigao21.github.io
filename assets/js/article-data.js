@@ -45,7 +45,7 @@ window.SITE_SERIES = [
     id: "pimd",
     title: "PIMD Series",
     label: "Path-Integral Molecular Dynamics",
-    description: "Ring-polymer sampling, thermostats, PIMC, RPMD, and normal-mode propagation.",
+    description: "Ring-polymer sampling, thermostats, PIMC, RPMD, normal-mode propagation, and TRPMD spectral diagnostics.",
   },
   {
     id: "matsubara",
@@ -74,6 +74,23 @@ window.SITE_SERIES = [
 ];
 
 window.SITE_ARTICLES = [
+  {
+    "slug": "trpmd-spurious-spectral-lines",
+    "title": "PIMD VII: TRPMD and Spurious Spectral Lines",
+    "path": "posts/trpmd-spurious-spectral-lines.html",
+    "date": "2026-11-17",
+    "dateText": "2026.11.17",
+    "description": "Predict every false line in a harmonic quadratic-observable spectrum, quantify TRPMD damping, and explain conserved area and missing physical-line intensity.",
+    "tags": [
+      "PIMD",
+      "RPMD",
+      "TRPMD",
+      "Kubo Correlations",
+      "Harmonic Benchmark"
+    ],
+    "series": "pimd",
+    "part": 7
+  },
   {
     "slug": "hefeinamd-nuclear-quantum-fluctuations",
     "title": "HefeiNAMD IV: Quantum Nuclear Fluctuations",

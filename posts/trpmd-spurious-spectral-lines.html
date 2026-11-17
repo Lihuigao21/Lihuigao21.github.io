@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="PIMD VII: an exactly solvable quadratic-observable spectrum reveals RPMD internal-mode artifacts, TRPMD damping, conserved spectral area, and the missing physical-line intensity.">
+    <title>PIMD VII: TRPMD and Spurious Spectral Lines | Lihui Gao</title>
+    <link rel="canonical" href="https://lihuigao21.github.io/posts/trpmd-spurious-spectral-lines.html">
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">PIMD Series - Part VII</p>
+          <h1>TRPMD and Spurious Spectral Lines</h1>
+          <p class="post-meta">2026.11.17 - RPMD / TRPMD / Kubo Spectra / Harmonic Benchmark</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="PIMD series navigation">
+            <a href="pimd-ring-polymer-basics.html">I. Ring-Polymer Basics</a>
+            <a href="pimd-nvt-gle-piglet.html">II. NVT and GLE</a>
+            <a href="cayley-transform-ring-polymer.html">III. Cayley Stability</a>
+            <a href="pimc-sho-metropolis.html">IV. PIMC Sampling</a>
+            <a href="rpmd-sho-correlation.html">V. From PIMD to RPMD</a>
+            <a href="normal-mode-free-ring-polymer.html">VI. Normal-Mode Free Propagation</a>
+            <a href="trpmd-spurious-spectral-lines.html" aria-current="page">VII. TRPMD and Spurious Lines</a>
+          </nav>
+
+          <p class="lead"><a href="rpmd-sho-correlation.html">Part V</a> obtained the exact harmonic position Kubo correlation from RPMD. <a href="normal-mode-free-ring-polymer.html">Part VI</a> examined stable propagation of its normal modes. Neither result guarantees an exact spectrum for a different observable. Here I keep the harmonic potential and measure position squared. This small change exposes analytically predictable false lines, a large zero-frequency contribution, and a physical line that is much too weak. TRPMD suppresses the sharp artifacts, while leaving a substantial error in the physical-line weight.</p>
+
+          <h2 id="model">1. A harmonic potential with a nonlinear observable</h2>
+          <p>The model and observable are</p>
+          <div class="math-block">\[
+            H=\frac{p^2}{2m}+\frac12m\omega_0^2q^2,\qquad A=q^2.
+          \]</div>
+          <p>I use reduced units \(m=\hbar=\omega_0=1\) and inverse temperature \(\beta=8\). The dimensionless temperature parameter \(\beta\hbar\omega_0=8\) is the same as in Part V; the observable is now nonlinear. A quadratic polarizability term gives this type of Raman correlation, although no experimental optical prefactor is included here.</p>
+          <p>The comparison concerns the connected Kubo-transformed autocorrelation, with \(\delta A=A-\langle A\rangle\):</p>
+          <div class="math-block">\[
+            C_K(t)=\frac{1}{\beta Z}\int_0^\beta d\lambda\,
+            \operatorname{Tr}\!\left[e^{-(\beta-\lambda)H}\delta A e^{-\lambda H}\delta A(t)\right],
+            \qquad Z=\operatorname{Tr}e^{-\beta H}.
+          \]</div>
+          <p>The <a href="ordered-kubo-sho-correlations.html#nonlinear">nonlinear example in Ordered and Kubo Correlations</a> derives the thermal weighting in detail. Here the necessary distinction is that \(C_K(0)\) is a Kubo static covariance, generally different from the ordinary quantum variance \(\langle(\delta A)^2\rangle\). In the ring-polymer approximation it is represented by the classical ensemble variance of the bead-averaged estimator.</p>
+          <p>For the linear observable \(q\), bead averaging retains only the centroid, and harmonic RPMD is exact. For \(q^2\), the bead average also reads the internal modes. This lets us separate a dynamical artifact from integration error without introducing an anharmonic potential.</p>
+
+          <h2 id="exact">2. Why exact has a double-frequency line and a zero-frequency term</h2>
+          <h3 id="double-frequency">Why the physical line is at \(2\omega_0\)</h3>
+          <p>A simple trajectory already gives the frequency intuition:</p>
+          <div class="math-block">\[
+            q(t)=Q\cos\omega_0t
+            \quad\Longrightarrow\quad
+            q^2(t)=\frac{Q^2}{2}+\frac{Q^2}{2}\cos2\omega_0t.
+          \]</div>
+          <p>Squaring a displacement makes the left and right turning points equivalent, so the signal repeats twice per period. The quantum selection rule gives the exact statement. Since</p>
+          <div class="math-block">\[
+            q^2=\frac{\hbar}{2m\omega_0}
+            \left(a^2+a^{\dagger2}+2\hat n+1\right),
+          \]</div>
+          <p>the nonzero off-diagonal matrix elements connect \(n\) and \(n\pm2\). Their energy difference is \(2\hbar\omega_0\). The Kubo transform changes transition weights, while the nonzero frequency remains \(2\omega_0\). Summing these matrix elements gives</p>
+          <div class="math-block">\[
+            \boxed{C_K^{\mathrm{exact}}(t)=D+A_2\cos2\omega_0t},
+          \]</div>
+          <div class="math-block">\[
+            D=\frac{\hbar^2}{4m^2\omega_0^2}\operatorname{csch}^2\!\frac b2,
+            \qquad
+            A_2=\frac{\hbar}{2\beta m^2\omega_0^3}\coth\frac b2,
+            \qquad b=\beta\hbar\omega_0.
+          \]</div>
+
+          <h3 id="thermal-dc">Why the connected correlation still contains a constant</h3>
+          <p>Each energy level has a different mean-square displacement:</p>
+          <div class="math-block">\[
+            \langle n|q^2|n\rangle
+            =\frac{\hbar}{m\omega_0}\left(n+\frac12\right).
+          \]</div>
+          <p>A thermal ensemble includes different levels with different probabilities. Subtracting the overall mean removes the common offset, but leaves the differences between these level-dependent averages. In an isolated harmonic oscillator, the occupation number is conserved: a member initially above the ensemble average retains this part of its deviation, and a member below it remains below. Their initial and later deviations therefore have a nonzero product even at arbitrarily long times.</p>
+          <div class="math-block">\[
+            D=\left(\frac{\hbar}{m\omega_0}\right)^2\operatorname{Var}(n),
+            \qquad
+            \operatorname{Var}(n)=\bar n(\bar n+1),\quad
+            \bar n=(e^b-1)^{-1}.
+          \]</div>
+          <p>This persistent thermal memory produces the zero-frequency delta line. It is a static component, not an additional low-frequency vibration. A pure ground state has no occupation variance and no such diagonal connected contribution. Thermal fluctuations alone do not imply a delta at zero: persistence also requires the relevant quantity to remain conserved. Energy exchange with a physical environment can make this memory decay.</p>
+
+          <h3 id="display-window">Why the plotted exact line has a finite width</h3>
+          <p>The isolated oscillator has no physical linewidth. To display all methods with the same resolution, I use</p>
+          <div class="math-block">\[
+            S_+(\omega;\eta)=\frac2\pi\int_0^\infty
+            C(t)\cos\omega t\,e^{-\eta t}\,dt,
+            \qquad \omega\geq0,\quad\eta=0.05\omega_0.
+          \]</div>
+          <p>The exponential observation window replaces a delta line by the Lorentz function</p>
+          <div class="math-block">\[
+            L_\eta(x)=\frac{\eta}{\pi(x^2+\eta^2)},\qquad
+            S_+^{\mathrm{exact}}=2D L_\eta(\omega)
+            +A_2\left[L_\eta(\omega-2\omega_0)+L_\eta(\omega+2\omega_0)\right].
+          \]</div>
+          <p>The half width at half maximum is \(\eta\). It is imposed resolution, not a predicted lifetime. The plotted signal at zero contains both the broadened genuine zero-frequency term and the small Lorentz tails of the double-frequency line. Letting \(\eta\to0^+\) recovers the ideal delta spectrum.</p>
+
+          <h2 id="rpmd">3. Predicting every RPMD false line</h2>
+          <p>Using the normal-mode construction from <a href="pimd-ring-polymer-basics.html">Part I</a>, write \(Q_k\) for an orthogonal real bead mode and define \(x_k=Q_k/\sqrt P\). The spring frequency and total harmonic frequency are</p>
+          <div class="math-block">\[
+            \omega_{s,k}=\frac{2P}{\beta\hbar}\sin\frac{\pi k}{P},
+            \qquad\Omega_k=\sqrt{\omega_0^2+\omega_{s,k}^2}.
+          \]</div>
+          <p>The subscript \(s\) distinguishes the auxiliary spring frequency from the actual frequency in the harmonic potential. The centroid has \(\omega_{s,0}=0\). The bead estimator and independent canonical initial conditions are</p>
+          <div class="math-block">\[
+            A_P=\frac1P\sum_jq_j^2=\sum_kx_k^2,
+            \qquad
+            x_k\sim\mathcal N\!\left(0,\frac1{\beta m\Omega_k^2}\right),
+            \quad v_k\sim\mathcal N\!\left(0,\frac1{\beta m}\right).
+          \]</div>
+          <p>RPMD gives a Gaussian coordinate covariance proportional to \(\cos\Omega_kt\). Gaussian factorization then gives</p>
+          <div class="math-block">\[
+            \operatorname{Cov}\big[x_k(0)^2,x_k(t)^2\big]
+            =2\langle x_k(0)x_k(t)\rangle^2,
+          \]</div>
+          <div class="math-block">\[
+            \boxed{C_{\mathrm{RP}}(t)=\sum_{k=0}^{P-1}a_k[1+\cos(2\Omega_kt)]},
+            \qquad a_k=\frac1{\beta^2m^2\Omega_k^4}.
+          \]</div>
+          <p>Thus each independent real mode contributes a constant and a double-frequency oscillation of equal coefficient. Internal modes give false lines at \(2\Omega_k\); the pair \(k,P-k\) is degenerate and contributes twice the single-mode weight. These frequencies and weights are predictions of the RPMD equations, not fits to the spectrum.</p>
+          <p>The weights fall as \(\Omega_k^{-4}\): high-frequency coordinates have small variance, and their squared-coordinate correlation scales as the square of that variance. Meanwhile all constant contributions add at zero. The zero-frequency peak therefore includes every normal mode, not only the centroid.</p>
+
+          <h2 id="trpmd">4. What the TRPMD thermostat changes</h2>
+          <p>TRPMD retains physical bead masses and thermostats the internal modes while leaving the centroid directly unthermostatted <a href="#ref-rossi">[1]</a>. In the scaled coordinates used here,</p>
+          <div class="math-block">\[
+            \ddot x_k=-\Omega_k^2x_k-\gamma_k\dot x_k+\xi_k(t),
+            \qquad \gamma_k=2\lambda\omega_{s,k},\quad\gamma_0=0,
+          \]</div>
+          <div class="math-block">\[
+            \langle\xi_k(t)\xi_l(t')\rangle
+            =\frac{2\gamma_k}{\beta m}\delta_{kl}\delta(t-t').
+          \]</div>
+          <p>The controllable parameter \(\lambda\) sets the friction scale. At fixed temperature, the noise strength follows the fluctuation-dissipation relation; changing friction without matching the noise would change the equilibrium distribution. This is a dynamics thermostat. The observation-window parameter \(\eta\) remains separate.</p>
+          <p>Define the normalized coordinate covariance \(f_k(t)\). It obeys</p>
+          <div class="math-block">\[
+            \ddot f_k+\gamma_k\dot f_k+\Omega_k^2f_k=0,
+            \quad f_k(0)=1,\quad\dot f_k(0)=0,
+          \]</div>
+          <div class="math-block">\[
+            f_k(t)=e^{-\gamma_kt/2}
+            \left[\cos\nu_kt+\frac{\gamma_k}{2\nu_k}\sin\nu_kt\right],
+            \quad \nu_k^2=\Omega_k^2-\frac{\gamma_k^2}{4},
+            \qquad C_{\mathrm{TRP}}(t)=2\sum_ka_kf_k(t)^2.
+          \]</div>
+          <p>The formula uses the continuous critical-damping limit or its hyperbolic continuation when necessary. Larger friction is not a monotone route to higher accuracy: excessive friction produces overdamping and slow relaxation. The original work found a broad useful friction range, with \(\lambda\approx0.5\) favorable in its examples <a href="#ref-rossi">[1]</a>.</p>
+          <p>I choose \(\lambda=1\) as the main case because it makes the mechanism particularly transparent:</p>
+          <div class="math-block">\[
+            \nu_k=\omega_0,\qquad
+            C_k(t)=2a_ke^{-2\omega_{s,k}t}
+            \left[\cos\omega_0t+\frac{\omega_{s,k}}{\omega_0}\sin\omega_0t\right]^2.
+          \]</div>
+          <p>The squared signal has an oscillatory carrier at \(2\omega_0\) and an envelope decay rate \(2\omega_{s,k}\). Its complete spectrum also contains a zero-centered contribution and a sine contribution; its maximum need not lie at the carrier frequency. Here \(\lambda=1\) critically damps the free spring modes, not the total harmonic modes. A harmonic analysis of this frequency correction also appears in the formal TRPMD derivation <a href="#ref-hele">[2]</a>.</p>
+          <p>There is no rule that transfers a selected fraction of a false peak to another normal mode. In this harmonic model the modes remain independent. Each mode's own covariance changes, its Fourier transform broadens, and the total spectrum sums these broadened contributions. The centroid receives no transferred internal-mode intensity.</p>
+
+          <h2 id="calculation">5. Calculation and comparison protocol</h2>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Quantity</th><th>Choice</th></tr></thead>
+            <tbody>
+              <tr><td>Hamiltonian and observable</td><td>Harmonic oscillator; connected \(q^2\) Kubo correlation</td></tr>
+              <tr><td>Reduced units and temperature</td><td>\(m=\hbar=\omega_0=1\), \(\beta=8\)</td></tr>
+              <tr><td>Beads</td><td>Production \(P=64\); stricter check \(128\); diagnostics \(16,32\)</td></tr>
+              <tr><td>Friction</td><td>\(\lambda=1\) main; scans \(0.25,0.5,2\); \(0\) is RPMD</td></tr>
+              <tr><td>Spectral convention</td><td>Absolute \(S_+\), common \(\eta=0.05\), plotted frequencies \([0,8]\), spacing \(0.002\)</td></tr>
+              <tr><td>Numerical covariance propagation</td><td>DOP853 through \(t=400\); relative/absolute tolerances \(10^{-11}/10^{-13}\)</td></tr>
+              <tr><td>Saved correlation interval</td><td>\(0.01\), checked at \(0.005\)</td></tr>
+              <tr><td>Independent stochastic check</td><td>\(k=1,2\), \(\lambda=0,1\); \(0\leq t\leq8\), output interval \(0.05\)</td></tr>
+              <tr><td>Paths per stochastic case</td><td>16 independent batches of 32768 single-mode paths; seed family 2026111701</td></tr>
+            </tbody>
+          </table></div>
+          <p>Three calculations are kept distinct. The quantum reference uses analytic thermal sums and independent sums over 16, 32, and 64 oscillator levels. The full RPMD/TRPMD spectra are checked by numerically propagating the covariance equations, obtaining the fourth moment by Gaussian factorization, and performing a numerical cosine transform. Finally, actual random Ornstein-Uhlenbeck paths directly check the first two internal-mode correlations. Those single-mode checks are not a claim of full ring-polymer trajectory sampling.</p>
+          <p>The stochastic propagator uses the exact linear transition matrix and stationary noise covariance, so it has no finite-step Langevin integration bias. Every displayed stochastic time is retained. Fourier zero-padding evaluates the same finite-time transform more densely; it improves display interpolation, not physical resolution. All final continuous curves pass the declared finite-value, grid, residual, endpoint, and isolated-spike checks without smoothing the plotted data.</p>
+
+          <h2 id="results">6. Spectra, mode decomposition, and validation</h2>
+          <figure>
+            <img src="../assets/img/pimd-series/trpmd-q2/spectral_comparison_final.png" alt="Absolute exact, RPMD and TRPMD quadratic-coordinate spectra, friction scan, and internal-mode correlations" loading="lazy">
+            <figcaption>Figure 1. Harmonic \(q^2\) benchmark, \(\beta=8\), \(P=64\). Spectral panels use horizontal axis \(\omega/\omega_0\) and absolute vertical axis \(S_+\), with common \(\eta=0.05\omega_0\). Black is exact, red RPMD, blue TRPMD at \(\lambda=1\); open markers are the numerical covariance/transform check. Predicted internal lines begin at 2.54272, 3.71994, and 5.10358. At those old centers, total TRPMD heights are 6.95%, 9.53%, and 11.85% of RPMD. Lower left scans friction; lower right plots each mode's normalized time correlation, with dashed RPMD and solid TRPMD. The false sharp lines are suppressed, while the physical peak remains too weak.</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/img/pimd-series/trpmd-q2/mode_resolved.png" alt="Individual centroid and internal-mode pair spectral contributions before and after thermostatting" loading="lazy">
+            <figcaption>Figure 2. The same \(S_+\) resolved into the centroid and three degenerate internal-mode pairs. Horizontal axis is \(\omega/\omega_0\); colors identify \(k\). The blue centroid contribution is unchanged. In TRPMD, internal zero-frequency and double-frequency contributions become broad continuous spectra, with no transfer between normal modes.</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/img/pimd-series/trpmd-q2/spectral_weight_budget.png" alt="Stacked full-frequency spectral areas for exact, RPMD and TRPMD, separating zero-frequency and physical delta lines from internal artifacts" loading="lazy">
+            <figcaption>Figure 3. Full positive-frequency area budgets before the common display broadening. Gray denotes the zero-frequency delta, blue the physical \(2\omega_0\) delta, red internal-mode false deltas, and green the internal continuous spectrum. Exact has \(D=0.00033569\) and \(A_2=0.06254195\). RPMD has zero-frequency weight 0.03149969, physical-line weight 0.015625, and false-line weight 0.01587469. TRPMD retains the same physical delta and a centroid zero-frequency delta of 0.015625, while internal area 0.03174938 becomes continuous. RPMD/TRPMD totals are equal; exact differs slightly because of finite \(P\).</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/img/pimd-series/trpmd-q2/trajectory_validation_final.png" alt="Independent random-path checks for the first two normal modes under RPMD and TRPMD" loading="lazy">
+            <figcaption>Figure 4. Genuine single-mode random-path validation. Horizontal axis is \(t\omega_0\); vertical axis is \(C_k(t)/C_k(0)\). Black is the analytic correlation; colored markers show all saved path-average times with pointwise 95% error bars from 16 independent batches. Each panel uses 524288 paths. The maximum discrepancy over checked times is 3.012 batch standard errors, below the declared 5-standard-error check. These bars are not a simultaneous confidence band.</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/img/pimd-series/trpmd-q2/convergence.png" alt="Persistence of the first RPMD false line under bead refinement and full-band spectral convergence diagnostics" loading="lazy">
+            <figcaption>Figure 5. Left: the first false peak in absolute \(S_+\) persists as \(P\) increases from 16 to 128. Right: relative spectral \(L^1\) differences from \(P=128\), integrated over \([0,8]\), are 0.671% for RPMD and 0.131% for TRPMD at \(P=64\), below the declared 1% line. Numerical covariance/transform spectra differ from analytic spectra by less than \(8\times10^{-6}\) of their respective maxima. These checks establish numerical control for the stated frequency band and observation window, not quantum dynamical exactness.</figcaption>
+          </figure>
+
+          <h2 id="reading">7. Reading the spectrum without confusing height, area, and frequency</h2>
+          <h3 id="large-zero">Why RPMD has such a large zero-frequency peak</h3>
+          <p>Every independent normal mode carries its own conserved energy in this harmonic RPMD model. A trajectory with a large mode amplitude has a larger time-averaged squared displacement, and retains that difference from the ensemble mean. Thus all the \(a_k\) constants accumulate at zero, while the oscillatory weights are spread across different frequencies. The zero-frequency coefficient is \(\sum_ka_k\), not merely the centroid contribution.</p>
+          <p>At this low temperature, exact occupation fluctuations are strongly suppressed because almost all thermal population is in the ground state. The classical auxiliary-mode energy fluctuations used by RPMD do not reproduce that small quantum diagonal variance. The resulting zero-frequency area is about 94 times the exact zero-frequency area. This is an error of the approximate real-time correlation, not numerical noise or the forgotten disconnected mean. Peak-height ratios additionally depend on broadening and overlapping tails.</p>
+
+          <h3 id="mode-count">Why only a few nonzero peaks are visible</h3>
+          <p>The log-scale zoom in Figure 1 shows four nonzero lines: the physical centroid line and the first three internal pairs. The full interval up to \(8\omega_0\) also contains the weak line at \(6.55543\omega_0\). The next line is already at \(8.02847\omega_0\), outside the plotted range. For \(P=64\), degeneracy leaves 33 distinct nonzero-frequency positions, extending to about \(32.06\omega_0\). Higher lines remain present but are weak because their weights fall as \(\Omega_k^{-4}\).</p>
+
+          <h3 id="area">What conserved spectral area actually means</h3>
+          <p>No spectrum has been scaled to unit area or unit peak height. With the transform convention used here,</p>
+          <div class="math-block">\[
+            \int_0^\infty S_+(\omega;\eta)\,d\omega=C(0).
+          \]</div>
+          <p>The Langevin thermostat preserves the same canonical ring-polymer distribution. Consequently the variance of \(A_P\), and therefore the full spectral area, is identical for RPMD and TRPMD. In this independent-mode model, each mode separately retains area \(2a_k\): RPMD divides it between a zero-frequency delta and a double-frequency delta, whereas TRPMD redistributes an internal mode's area into a continuous spectrum.</p>
+          <p>This is conservation of a static correlation measure. It is not conservation of the trajectory energy: the thermostat exchanges energy with its mode. Nor is it conservation of the area inside a truncated plotting window; some broadened weight can lie outside that window. Figure 3 compares all-frequency areas.</p>
+          <p>For the exact quantum system, the corresponding area is the Kubo covariance defined in Section 1. Calling it an ordinary quantum variance would be incorrect for this nonlinear observable. The ring-polymer variance is an estimator of that Kubo quantity as \(P\) is increased.</p>
+
+          <h3 id="missing-intensity">Why the physical peak is still about four times too small</h3>
+          <p>In harmonic RPMD, only the centroid oscillates at \(\omega_0\), so only its squared-coordinate term gives a sharp line at \(2\omega_0\). Its weight is</p>
+          <div class="math-block">\[
+            a_0=\frac1{\beta^2m^2\omega_0^4},\qquad
+            \frac{a_0}{A_2}=\frac2b\tanh\frac b2.
+          \]</div>
+          <p>At \(b=8\), the ratio is 0.249832. The internal beads help represent quantum equilibrium fluctuations, but RPMD propagates them at auxiliary frequencies. Their contribution therefore does not supplement the physical line as exact quantum dynamics requires. The area budget shows where the missing weight appears: too much at zero and at false nonzero lines.</p>
+          <p>Area normalization cannot fix the allocation. Exact places about 99.47% of its total area in the physical nonzero line; RPMD places about 24.80% there. Using the same observation window, the actual heights at \(2\omega_0\) are approximately 0.3982 for exact and 0.1004 for RPMD. Those heights include spectral tails, whereas \(a_0/A_2\) compares the unbroadened line coefficients.</p>
+
+          <h3 id="smearing">What is smeared, and where the weight goes</h3>
+          <p>The thermostat causes a mode to lose memory of its initial energy and phase. Both the constant and oscillating pieces of an internal squared-coordinate correlation therefore decay. Finite coherence time creates a frequency distribution of finite width. The distribution follows from \(2a_kf_k(t)^2\); no additional peak-allocation recipe is imposed.</p>
+          <p>At \(\lambda=1\), the internal oscillatory carriers move to \(2\omega_0\), but their envelopes decay. They produce broad weight rather than a new sharp physical line. The directly unthermostatted centroid retains its original delta-line coefficient. This explains why a spectrum can lose its false spikes without acquiring the correct quantum intensity. It also explains why eliminating an internal mode's permanent zero-frequency memory does not eliminate its total equilibrium fluctuation area.</p>
+
+          <h2 id="limits">8. Does increasing the bead number eventually make the spectrum exact?</h2>
+          <p>It removes the imaginary-time discretization error, while leaving the chosen real-time approximation in place. For fixed mode index,</p>
+          <div class="math-block">\[
+            \omega_{s,k}\xrightarrow{P\to\infty}\frac{2\pi k}{\beta\hbar},\qquad
+            \omega_{\mathrm{fake},k}\longrightarrow
+            2\sqrt{\omega_0^2+\left(\frac{2\pi k}{\beta\hbar}\right)^2}.
+          \]</div>
+          <p>The low internal false-line frequencies and weights have finite limits. The centroid physical-line coefficient also remains unchanged. Thus bead convergence and quantum dynamical accuracy are separate tests; Figure 5 demonstrates the former while preserving a counterexample to the latter.</p>
+          <p>The formal connection to <a href="matsubara-modes-and-phase.html">Matsubara dynamics</a> identifies additional dynamical terms discarded in RPMD <a href="#ref-relation">[3]</a>. Keeping more Matsubara structure can improve particular correlations, but the smooth-mode approximation and complex phase sampling do not provide a universal exact-spectrum guarantee <a href="#ref-matsubara">[4]</a>. A Morse oscillator coupled to a harmonic bath has yielded nearly exact nonlinear correlations in favorable damping regimes, using an implementation with additional real-noise and tail approximations; it is a successful model calculation, not an arbitrary-system theorem <a href="#ref-morse">[5]</a>.</p>
+          <p>Complete quantum propagation, or a formally exact real-time path-integral/phase-space representation, can in principle recover exact spectra when its other numerical and sampling limits are controlled. Those routes retain quantum structures that ordinary RPMD omits and can be expensive. Imaginary-time correlations followed by analytic continuation offer another route, but finite noisy data make the inversion ill-conditioned. There is no established general result that ordinary RPMD or its real Langevin-thermostatted version becomes exact for arbitrary observables solely because \(P\to\infty\).</p>
+
+          <h2 id="conclusions">9. Conclusions and scope</h2>
+          <ol>
+            <li><strong>The observable exposes the approximation.</strong> Harmonic RPMD is exact for the linear position correlation, while the nonlinear \(q^2\) spectrum reveals internal-mode false lines and an incorrect zero-frequency contribution.</li>
+            <li><strong>TRPMD controls coherence time while preserving equilibrium statistics.</strong> The internal thermostat suppresses narrow auxiliary lines and preserves their total area. In this model it does not transfer that area into the centroid's physical delta line.</li>
+            <li><strong>Removing visible artifacts is a partial repair.</strong> For the stated low-temperature test, the sharp physical line retains only about one quarter of the exact weight. Its missing intensity, residual zero-frequency term, and broad background remain material errors.</li>
+          </ol>
+          <p>This benchmark isolates nonlinear-observable artifacts in a harmonic potential. In a nonlinear potential, internal fluctuations can also couple to the centroid and split a linear vibrational band, as discussed in the separate <a href="trpmd-qtip4pf-water-ir-spectrum.html">water TRPMD article</a>. That coupling is absent here. The present analytic result establishes the mechanism and limits of this test; it does not constitute an anharmonic linear-IR reproduction or an optimal-friction rule for all systems.</p>
+
+          <h2 id="reproduce">Code and data</h2>
+          <p>The standalone script uses NumPy, SciPy, and Matplotlib. It includes the frozen parameters, exact energy-level sum, analytic mode spectra, numerical covariance propagation, independent random-path checks, all five figures, and the curve-quality record. It does not require the ToyModel package.</p>
+          <pre><code>python assets/code/pimd/trpmd_quadratic_spectrum.py --output trpmd-q2-output</code></pre>
+          <ul class="code-list">
+            <li><a href="../assets/code/pimd/trpmd_quadratic_spectrum.py">trpmd_quadratic_spectrum.py</a>: executable calculation and figure generation.</li>
+            <li><a href="../assets/img/pimd-series/trpmd-q2/spectra.csv">spectra.csv</a>: absolute exact, RPMD, and TRPMD spectra on the published frequency grid.</li>
+            <li><a href="../assets/img/pimd-series/trpmd-q2/mode_lines.csv">mode_lines.csv</a>: all distinct RPMD line positions, degeneracies, coefficients, and thermostat frictions.</li>
+            <li><a href="../assets/img/pimd-series/trpmd-q2/weight_budget.csv">weight_budget.csv</a>: the unbroadened all-frequency area categories in Figure 3; rows are exact, RPMD, and TRPMD.</li>
+          </ul>
+
+          <h2 id="references">References and related notes</h2>
+          <ol>
+            <li id="ref-rossi">M. Rossi, M. Ceriotti, and D. E. Manolopoulos, <em>How to remove the spurious resonances from ring polymer molecular dynamics</em>, J. Chem. Phys. <strong>140</strong>, 234116 (2014). <a href="https://doi.org/10.1063/1.4883861">DOI</a>; <a href="https://arxiv.org/abs/1406.1074">arXiv</a>.</li>
+            <li id="ref-hele">T. J. H. Hele, <em>How to obtain thermostatted ring polymer molecular dynamics from exact quantum dynamics and when to use it</em>. <a href="https://arxiv.org/abs/1508.05820">Author manuscript</a>.</li>
+            <li id="ref-relation">T. J. H. Hele, M. J. Willatt, A. Muolo, and S. C. Althorpe, <em>Relation of centroid molecular dynamics and ring-polymer molecular dynamics to exact quantum dynamics</em>, J. Chem. Phys. <strong>142</strong>, 191101 (2015). <a href="https://doi.org/10.1063/1.4921234">DOI</a>.</li>
+            <li id="ref-matsubara">T. J. H. Hele, M. J. Willatt, A. Muolo, and S. C. Althorpe, <em>Boltzmann-conserving classical dynamics in quantum time-correlation functions: Matsubara dynamics</em>, J. Chem. Phys. <strong>142</strong>, 134103 (2015). <a href="https://doi.org/10.1063/1.4916311">DOI</a>.</li>
+            <li id="ref-morse">A. Prada, E. S. Pós, and S. C. Althorpe, <em>Comparison of Matsubara dynamics with exact quantum dynamics for an oscillator coupled to a dissipative bath</em>. <a href="https://arxiv.org/abs/2211.02042">Author manuscript</a>.</li>
+          </ol>
+          <section class="series-footer" aria-labelledby="pimd-series-map">
+            <h2 id="pimd-series-map">PIMD series map</h2>
+            <ol class="series-list">
+              <li><a href="pimd-ring-polymer-basics.html">Part I: Ring-Polymer Basics</a> - path-integral isomorphism, normal modes, estimators, and the SHO convergence test.</li>
+              <li><a href="pimd-nvt-gle-piglet.html">Part II: NVT Thermostats and GLE</a> - PILE, GLE, PIGLET-style covariance shaping, and sampling diagnostics.</li>
+              <li><a href="cayley-transform-ring-polymer.html">Part III: Cayley Stability</a> - free ring-polymer propagation and numerical stability.</li>
+              <li><a href="pimc-sho-metropolis.html">Part IV: Path-Integral Monte Carlo</a> - local Metropolis bead moves and harmonic-observable sampling.</li>
+              <li><a href="rpmd-sho-correlation.html">Part V: From PIMD to RPMD</a> - a harmonic linear-position Kubo benchmark.</li>
+              <li><a href="normal-mode-free-ring-polymer.html">Part VI: Normal-Mode Free Propagation</a> - normal-mode and bead-coordinate spring integration.</li>
+              <li><a href="trpmd-spurious-spectral-lines.html">Part VII: TRPMD and Spurious Spectral Lines</a> - nonlinear spectra, internal-mode artifacts, damping, and spectral-weight errors.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="normal-mode-free-ring-polymer.html">&lt;- Part VI</a><a href="../index.html">Back to article list</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>
