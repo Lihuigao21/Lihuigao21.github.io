@@ -1,0 +1,66 @@
+/* Classification and reading-series navigation within the life section. */
+.art-category-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 0 0 40px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.art-category-nav a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 0;
+  font-weight: 650;
+}
+.art-category-nav span,
+.art-series-meta,
+.reading-series-position {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+.art-category + .art-category {
+  margin-top: 48px;
+}
+.post-content .art-category h2 {
+  margin: 0 0 24px;
+}
+.art-reading-series h3,
+.art-single-heading {
+  margin: 28px 0 8px;
+}
+.art-series-meta {
+  margin: 0 0 16px;
+}
+.art-single-heading {
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+.art-music-link {
+  margin: -8px 0 16px;
+}
+.reading-series-nav {
+  align-items: center;
+  gap: 8px 12px;
+}
+.reading-series-position {
+  flex-basis: 100%;
+}
+.reading-series-footer .archive-list a[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 650;
+}
+.art-category-nav a:focus-visible,
+.reading-series-nav a:focus-visible,
+.reading-series-footer a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.art-category time,
+.reading-series-footer time {
+  color: var(--muted);
+}

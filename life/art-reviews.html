@@ -7,6 +7,7 @@
     <title>艺术评论 | 生活记录 | Lihui Gao</title>
     <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/art-reviews.css?v=20261120">
   </head>
   <body>
     <header class="site-header">
@@ -35,50 +36,64 @@
     <main id="top">
       <article class="post life-post">
         <header class="post-header">
-          <p class="section-label">艺术评论</p>
           <h1>艺术评论</h1>
-          <p class="post-meta">生活记录 / 作品 / 感受与判断</p>
+          <p class="post-meta">阅读、音乐、影视与其它作品的感受和思考。</p>
         </header>
 
         <div class="post-content">
-          <p class="lead">
-            这里记录对电影、文学、音乐、绘画及其他艺术作品的观看、分析与判断。既保存作品带来的直接感受，也尝试理解它如何通过形式、语境和经验发生作用。
-          </p>
+          <nav class="art-category-nav" aria-label="艺术评论分类">
+            <a href="#art-reading">阅读<span>6 篇</span></a>
+            <a href="#art-music">音乐<span>4 篇</span></a>
+            <a href="#art-film">影视<span>2 篇</span></a>
+            <a href="#art-other">其它<span>1 篇</span></a>
+          </nav>
 
-          <h2>记录方式</h2>
-          <div class="reflection-map" aria-label="艺术评论记录方向">
-            <section class="reflection-note">
-              <h3>作品</h3>
-              <p>先交代评论对象和接触作品的具体版本、场景或背景，让讨论有清楚的落点。</p>
+          <section class="art-category" data-art-category="reading" id="art-reading" aria-labelledby="reading-heading">
+            <h2 id="reading-heading">阅读</h2>
+            <section class="art-reading-series" data-reading-series="nonviolent-communication" id="nonviolent-communication" aria-labelledby="nvc-heading">
+              <h3 id="nvc-heading">《非暴力沟通》阅读系列</h3>
+              <p class="art-series-meta">5 篇 · 第1—13章 · 按阅读顺序</p>
+              <div class="archive-list">
+              <a href="reading-nonviolent-communication-and-autonomy-2026-11-13.html"><time datetime="2026-11-13">2026.11.13</time><span>第1—2章 · 理解需求与尊重自主</span></a>
+              <a href="reading-nonviolent-communication-observation-and-requests-2026-11-16.html"><time datetime="2026-11-16">2026.11.16</time><span>第3—6章 · 观察、评价与请求</span></a>
+              <a href="reading-nonviolent-communication-listening-to-needs-2026-11-17.html"><time datetime="2026-11-17">2026.11.17</time><span>第7章 · 听见情绪背后的需要</span></a>
+              <a href="reading-nonviolent-communication-listening-and-anger-2026-11-18.html"><time datetime="2026-11-18">2026.11.18</time><span>第8—10章 · 倾听、自爱与愤怒</span></a>
+              <a href="reading-nonviolent-communication-reinforcement-and-gratitude-2026-11-19.html"><time datetime="2026-11-19">2026.11.19</time><span>第11—13章 · 强化、责任与感激</span></a>
+              </div>
             </section>
+            <h3 class="art-single-heading">其它阅读</h3>
+            <div class="archive-list">
+              <a href="reading-metamorphosis-love-and-family-risk-2026-11-19.html"><time datetime="2026-11-19">2026.11.19</time><span>《变形记》：爱、付出与家庭风险</span></a>
+            </div>
+          </section>
 
-            <section class="reflection-note">
-              <h3>形式</h3>
-              <p>观察叙事、语言、构图、声音、表演和节奏如何共同塑造体验，而不只复述内容。</p>
-            </section>
+          <section class="art-category" data-art-category="music" id="art-music" aria-labelledby="music-heading">
+            <h2 id="music-heading">音乐</h2>
+            <p class="art-music-link"><a href="playlist.html">打开我的歌单 →</a></p>
+            <div class="archive-list">
+              <a href="art-ci-bu-da-yi-2026-11-16.html"><time datetime="2026-11-16">2026.11.16</time><span>词不达意</span></a>
+              <a href="art-gu-du-huan-zhe-2026-11-04.html"><time datetime="2026-11-04">2026.11.04</time><span>孤独患者</span></a>
+              <a href="art-photograph-2026-10-29.html"><time datetime="2026-10-29">2026.10.29</time><span>Photograph</span></a>
+              <a href="art-review-grapes-ripen-2026-08-29.html"><time datetime="2026-08-29">2026.08.29</time><span>《葡萄成熟时》：等待、失收与自救</span></a>
+            </div>
+          </section>
 
-            <section class="reflection-note">
-              <h3>判断</h3>
-              <p>写清作品触动、说服或留下疑问的地方，并区分个人感受、文本证据和价值判断。</p>
-            </section>
-          </div>
+          <section class="art-category" data-art-category="film" id="art-film" aria-labelledby="film-heading">
+            <h2 id="film-heading">影视</h2>
 
-          <h2>记录索引</h2>
-          <div class="archive-list">
-            <a href="reading-nonviolent-communication-reinforcement-and-gratitude-2026-11-19.html"><time datetime="2026-11-19">2026.11.19</time><span>非暴力沟通：强化、责任与感激</span></a>
-            <a href="reading-metamorphosis-love-and-family-risk-2026-11-19.html"><time datetime="2026-11-19">2026.11.19</time><span>《变形记》：爱、付出与家庭风险</span></a>
-            <a href="reading-nonviolent-communication-listening-and-anger-2026-11-18.html"><time datetime="2026-11-18">2026.11.18</time><span>非暴力沟通：倾听、自爱与愤怒</span></a>
-            <a href="reading-nonviolent-communication-listening-to-needs-2026-11-17.html"><time datetime="2026-11-17">2026.11.17</time><span>非暴力沟通：听见情绪背后的需要</span></a>
-            <a href="reading-nonviolent-communication-observation-and-requests-2026-11-16.html"><time datetime="2026-11-16">2026.11.16</time><span>非暴力沟通：观察、评价与请求</span></a>
-            <a href="art-ci-bu-da-yi-2026-11-16.html"><time datetime="2026-11-16">2026.11.16</time><span>词不达意</span></a>
-            <a href="reading-nonviolent-communication-and-autonomy-2026-11-13.html"><time datetime="2026-11-13">2026.11.13</time><span>非暴力沟通：理解需求与尊重自主</span></a>
-            <a href="art-gu-du-huan-zhe-2026-11-04.html"><time datetime="2026-11-04">2026.11.04</time><span>孤独患者</span></a>
-            <a href="art-photograph-2026-10-29.html"><time datetime="2026-10-29">2026.10.29</time><span>Photograph</span></a>
-            <a href="art-review-pavilion-go-game-2026-09-17.html"><time datetime="2026-09-17">2026.09.17</time><span>凉亭对弈：点三三后的崩盘</span></a>
-            <a href="art-review-grapes-ripen-2026-08-29.html"><time datetime="2026-08-29">2026.08.29</time><span>《葡萄成熟时》：等待、失收与自救</span></a>
-            <a href="art-review-odyssey-2026-08-21.html"><time datetime="2026-08-21">2026.08.21</time><span>《奥德赛》：人生的奥德赛时期</span></a>
-            <a href="art-review-nobody-2026-08-18.html"><time datetime="2026-08-18">2026.08.18</time><span>《牛来》影评</span></a>
-          </div>
+            <div class="archive-list">
+              <a href="art-review-odyssey-2026-08-21.html"><time datetime="2026-08-21">2026.08.21</time><span>《奥德赛》：人生的奥德赛时期</span></a>
+              <a href="art-review-nobody-2026-08-18.html"><time datetime="2026-08-18">2026.08.18</time><span>《牛来》影评</span></a>
+            </div>
+          </section>
+
+          <section class="art-category" data-art-category="other" id="art-other" aria-labelledby="other-heading">
+            <h2 id="other-heading">其它</h2>
+
+            <div class="archive-list">
+              <a href="art-review-pavilion-go-game-2026-09-17.html"><time datetime="2026-09-17">2026.09.17</time><span>凉亭对弈：点三三后的崩盘</span></a>
+            </div>
+          </section>
         </div>
 
         <nav class="post-nav" aria-label="生活记录导航">
