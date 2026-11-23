@@ -1,0 +1,224 @@
+{
+  "seed": 2026112301,
+  "mass": 1.0,
+  "hbar": 1.0,
+  "splitting": "obabo",
+  "mass_frequency": null,
+  "chains": 32,
+  "thermalize_steps": 50000,
+  "production_steps": 250000,
+  "max_split_rhat": 1.025,
+  "stationary_timestep_relative_tolerance": 0.0003,
+  "equilibrium_gate": "Both MD estimators within 3.5 independent-chain SE plus 0.1 percent of the exact discrete-step stationary result.",
+  "timing": {
+    "batches": [
+      1,
+      32
+    ],
+    "warmup_steps": 2000,
+    "steps": 6500,
+    "repeats": 5,
+    "target_relative_se": 0.01
+  },
+  "comparisons": {
+    "london_endpoints": {
+      "left": "london_p32",
+      "right": "london_bf4k2",
+      "relative_discretization_tolerance": 0.01,
+      "readout": "bead"
+    },
+    "london_minimum_force_bf": {
+      "left": "london_p29",
+      "right": "london_bf2k4",
+      "relative_discretization_tolerance": 0.01,
+      "readout": "bead"
+    },
+    "london_path": {
+      "left": "london_p32",
+      "right": "london_bf32k5",
+      "relative_discretization_tolerance": 0.01,
+      "readout": "path"
+    },
+    "ivanov_low_temperature": {
+      "left": "ivanov_p102",
+      "right": "ivanov_bf5k4",
+      "relative_discretization_tolerance": 0.003,
+      "readout": "bead"
+    },
+    "ivanov_low_temperature_loose": {
+      "left": "ivanov_p39",
+      "right": "ivanov_bf5k2",
+      "relative_discretization_tolerance": 0.02,
+      "readout": "bead"
+    },
+    "ivanov_table_i": {
+      "left": "ivanov_p12_beta2",
+      "right": "ivanov_bf3k1_beta2",
+      "relative_discretization_tolerance": 0.003,
+      "readout": "bead"
+    }
+  },
+  "cases": [
+    {
+      "name": "london_p32",
+      "beta": 8,
+      "beads": 32,
+      "modes": 0,
+      "rule": "primitive",
+      "sites": 0,
+      "dt": 0.01,
+      "tau0": 50,
+      "stride": 250,
+      "md": true
+    },
+    {
+      "name": "london_bf4k1",
+      "beta": 8,
+      "beads": 4,
+      "modes": 1,
+      "rule": "trapezoid",
+      "sites": 20,
+      "dt": 0.01,
+      "tau0": 50,
+      "stride": 250,
+      "md": true
+    },
+    {
+      "name": "london_bf4k2",
+      "beta": 8,
+      "beads": 4,
+      "modes": 2,
+      "rule": "trapezoid",
+      "sites": 20,
+      "dt": 0.01,
+      "tau0": 50,
+      "stride": 250,
+      "md": true
+    },
+    {
+      "name": "london_bf2k4",
+      "beta": 8,
+      "beads": 2,
+      "modes": 4,
+      "rule": "trapezoid",
+      "sites": 20,
+      "dt": 0.01,
+      "tau0": 50,
+      "stride": 250,
+      "md": false
+    },
+    {
+      "name": "london_p29",
+      "beta": 8,
+      "beads": 29,
+      "modes": 0,
+      "rule": "primitive",
+      "sites": 0,
+      "dt": 0.01,
+      "tau0": 50,
+      "stride": 250,
+      "md": false
+    },
+    {
+      "name": "london_bf32k5",
+      "beta": 8,
+      "beads": 32,
+      "modes": 5,
+      "rule": "trapezoid",
+      "sites": 20,
+      "dt": 0.01,
+      "tau0": 50,
+      "stride": 250,
+      "md": true
+    },
+    {
+      "name": "london_gl4k1",
+      "beta": 8,
+      "beads": 4,
+      "modes": 1,
+      "rule": "gauss",
+      "sites": 2,
+      "dt": 0.01,
+      "tau0": 50,
+      "stride": 250,
+      "md": false
+    },
+    {
+      "name": "ivanov_p102",
+      "beta": 15.8,
+      "beads": 102,
+      "modes": 0,
+      "rule": "primitive",
+      "sites": 0,
+      "dt": 0.002,
+      "tau0": 1,
+      "stride": 125,
+      "md": true
+    },
+    {
+      "name": "ivanov_bf5k2",
+      "beta": 15.8,
+      "beads": 5,
+      "modes": 2,
+      "rule": "analytic",
+      "sites": 0,
+      "dt": 0.002,
+      "tau0": 1,
+      "stride": 125,
+      "md": true
+    },
+    {
+      "name": "ivanov_bf5k4",
+      "beta": 15.8,
+      "beads": 5,
+      "modes": 4,
+      "rule": "analytic",
+      "sites": 0,
+      "dt": 0.002,
+      "tau0": 1,
+      "stride": 125,
+      "md": true
+    },
+    {
+      "name": "ivanov_p39",
+      "beta": 15.8,
+      "beads": 39,
+      "modes": 0,
+      "rule": "primitive",
+      "sites": 0,
+      "dt": 0.002,
+      "tau0": 1,
+      "stride": 125,
+      "md": false
+    },
+    {
+      "name": "ivanov_p12_beta2",
+      "beta": 2,
+      "beads": 12,
+      "modes": 0,
+      "rule": "primitive",
+      "sites": 0,
+      "dt": 0.002,
+      "tau0": 1,
+      "stride": 125,
+      "md": false
+    },
+    {
+      "name": "ivanov_bf3k1_beta2",
+      "beta": 2,
+      "beads": 3,
+      "modes": 1,
+      "rule": "analytic",
+      "sites": 0,
+      "dt": 0.002,
+      "tau0": 1,
+      "stride": 125,
+      "md": false
+    }
+  ],
+  "timing_scope": {
+    "london": "Source trap20 action, scaled bridge amplitudes and masses, tau0, dt and PILE half-step placement. Use twice the free frequency as the friction after scaling the bridge amplitudes. The actual source executable and scaled-bridge friction rule are unspecified.",
+    "ivanov": "Analytic segment action. Same controlled PILE and dt on both methods. The paper uses Nose-Hoover-chain dynamics.",
+    "wall_clock": "Single process, interleaved trials and fixed CPU affinity when available. Data collection performed with the same cadence for all compared kernels. Timings start after warmup."
+  }
+}

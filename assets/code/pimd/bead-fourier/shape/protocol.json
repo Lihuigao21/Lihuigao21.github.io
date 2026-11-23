@@ -1,0 +1,161 @@
+{
+  "family": "V(x)=(1-s)*x^2/2+s*x^4/4",
+  "mass": 1,
+  "hbar": 1,
+  "shape": [
+    0,
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    1
+  ],
+  "reduced_beta": [
+    0.5,
+    8,
+    16
+  ],
+  "beta_rule": "beta = reduced_beta / (E1-E0) from converged quantum diagonalization at the same shape",
+  "bead_grid": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48,
+    64,
+    96,
+    128,
+    192,
+    256,
+    384
+  ],
+  "max_beads_by_reduced_beta": {
+    "0.5": 24,
+    "8": 256,
+    "16": 384
+  },
+  "schemes": [
+    {
+      "label": "primitive",
+      "modes": 0,
+      "points": 0
+    },
+    {
+      "label": "K1 L2",
+      "modes": 1,
+      "points": 2
+    },
+    {
+      "label": "K1 L4",
+      "modes": 1,
+      "points": 4
+    },
+    {
+      "label": "K2 L2",
+      "modes": 2,
+      "points": 2
+    },
+    {
+      "label": "K3 L2",
+      "modes": 3,
+      "points": 2
+    }
+  ],
+  "acceptance": {
+    "primary_relative_tolerance": 0.02,
+    "sensitivity_tolerances": [
+      0.01,
+      0.05
+    ],
+    "observables": [
+      "x2",
+      "energy"
+    ],
+    "readouts": [
+      "bead",
+      "path"
+    ],
+    "sustained_rule": "Candidate and all sampled finer bead counts pass, with at least one strictly finer confirmation.",
+    "numerical_reference_relative_tolerance": 0.0002,
+    "tie_or_boundary_policy": "Report classification unresolved if numerical uncertainty straddles an accuracy threshold that would affect the selected configuration."
+  },
+  "mechanism_control": {
+    "reduced_beta": 8,
+    "beads": [
+      4,
+      8
+    ],
+    "modes": 1,
+    "points": [
+      2,
+      8
+    ],
+    "variant": "free-bridge tail first cumulant at fixed P,K,L"
+  },
+  "md": {
+    "shape_by_reduced_beta": {
+      "0.5": [
+        0,
+        1
+      ],
+      "8": [
+        0,
+        0.25,
+        0.5,
+        0.75,
+        1
+      ],
+      "16": [
+        0,
+        0.25,
+        0.5,
+        1
+      ]
+    },
+    "force_candidates_rule": "Primitive and minimum-site BF at the primary endpoint gate. Also measure fixed K1 L2 where it selects a different configuration at reduced beta 8 if beads <=64. At s=0 and 1 at reduced beta 8 include the next finer accepted BF bead count in the same selected scheme.",
+    "dt_times_gap": 0.08,
+    "centroid_friction_over_gap": 1.0,
+    "mass_preconditioning_frequency_over_gap": 1.0,
+    "splitting": "baoab",
+    "burn": 2500,
+    "steps": 36000,
+    "stride": 4,
+    "chains": 48,
+    "seed": 2026112317,
+    "maximum_split_rhat": 1.015,
+    "minimum_ess": 1200,
+    "agreement_rule": "Each mean within 3.5 independent-chain SE plus 0.2% from the independent same-action mean. A dt/2 paired configuration preserves artificial sampling duration and has the analogous combined-SE bound.",
+    "dt_controls": [
+      {
+        "shape": 0,
+        "reduced_beta": 8
+      },
+      {
+        "shape": 0.5,
+        "reduced_beta": 8
+      },
+      {
+        "shape": 1,
+        "reduced_beta": 8
+      }
+    ]
+  },
+  "timings": {
+    "batch_sizes": [
+      1,
+      48
+    ],
+    "repeats": 5,
+    "warmup": 1500,
+    "steps": 6000,
+    "target_relative_se": 0.01,
+    "definition": "Same observables and acquisition cadence. Estimate force-dominated time via number of evaluated force sites and ToyModel wall time separately using autocorrelation and variance.",
+    "cases_rule": "All tested endpoint cases at reduced beta 8; for reduced beta 0.5 and 16 include s=0 and s=1."
+  }
+}

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Compare bead–Fourier and primitive PIMD at matched force budgets, from the harmonic bridge to quartic wells and molecular benchmarks.">
+    <title>PIMD IX: When Bead–Fourier Saves Force Evaluations | Lihui Gao</title>
+    <link rel="canonical" href="https://lihuigao21.github.io/posts/bead-fourier-path-integrals.html">
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script>window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] } };</script>
+    <script defer src="../assets/vendor/mathjax-3.2.2/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Back to home"><span class="brand-mark">LG</span><span class="brand-name">Lihui Gao</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation"><a href="../index.html#articles">Articles</a><a href="../tags.html">Tags</a><a href="../series.html">Series</a><a href="../life.html">生活记录</a><a href="../index.html#archive">Archive</a><span class="contact-text">Contact: 23110190022@m.fudan.edu.cn</span><a href="https://github.com/Lihuigao21" target="_blank" rel="noreferrer">GitHub</a></nav>
+    </header>
+    <main id="top">
+      <article class="post">
+        <header class="post-header">
+          <p class="section-label">PIMD Series - Part IX</p>
+          <h1>When Bead–Fourier Saves Force Evaluations</h1>
+          <p class="post-meta">2026.11.23 - PIMD / Bead-Fourier / Anharmonicity</p>
+        </header>
+        <div class="post-content">
+          <nav class="series-nav" aria-label="PIMD series navigation">
+            <a href="pimd-ring-polymer-basics.html">I. Ring-Polymer Basics</a>
+            <a href="pimd-nvt-gle-piglet.html">II. NVT and GLE</a>
+            <a href="cayley-transform-ring-polymer.html">III. Cayley Stability</a>
+            <a href="pimc-sho-metropolis.html">IV. PIMC Sampling</a>
+            <a href="rpmd-sho-correlation.html">V. From PIMD to RPMD</a>
+            <a href="normal-mode-free-ring-polymer.html">VI. Normal-Mode Free Propagation</a>
+            <a href="trpmd-spurious-spectral-lines.html">VII. TRPMD and Spurious Lines</a>
+            <a href="trpmd-anharmonic-position-spectrum.html">VIII. Anharmonic Spectra</a>
+            <a href="bead-fourier-path-integrals.html" aria-current="page">IX. Bead–Fourier</a>
+          </nav>
+
+          <p class="lead">Suppose two neighboring beads are already fixed. With one extra coordinate, ordinary path-integral molecular dynamics (PIMD) can insert a bead at the midpoint. Bead–Fourier PIMD (BF-PIMD) can use a single sine amplitude to bend the entire segment. Both spend one additional degree of freedom. The question is which change gives the potential the information it needs to assign the segment its quantum statistical weight.</p>
+
+          <p><a href="pimd-ring-polymer-basics.html">Part I</a> derived the ordinary ring-polymer measure, and <a href="normal-mode-free-ring-polymer.html">Part VI</a> used a Fourier transform to propagate its free springs. Here the sine functions change the finite-resolution equilibrium measure itself. A harmonic bridge shows why the change can save force evaluations. Turning the same well into a quartic well reverses the comparison at a fixed force budget.</p>
+
+          <h2 id="one-segment">1. The segment between two beads</h2>
+          <p>Let \(P\) be the number of beads, \(\beta\) the inverse temperature, and \(\epsilon=\beta/P\) the imaginary-time slice in inverse-energy units. In the trace of \(e^{-\beta H}\), a primitive PIMD link between \(q\) and \(q'\) has the weight</p>
+          <div class="math-block">\[
+            \rho_0(q,q';\epsilon)
+            \exp\!\left[-\frac{\epsilon}{2}\{V(q)+V(q')\}\right],
+          \]</div>
+          <p>where \(\rho_0\) is the free-particle kernel. The symmetric factorization charges half of the potential action to each endpoint. The exact kernel has the same free prefactor and a conditional average over all intervening free paths, given those two endpoints.</p>
+          <div class="math-block">\[
+            \begin{aligned}
+              \rho(q,q';\epsilon)&=\rho_0(q,q';\epsilon)\\
+              &\ \times\mathbb E_{\rm free}\!\left[
+                e^{-\epsilon\int_0^1 V(x(u))\,du}
+              \right].
+            \end{aligned}
+          \]</div>
+          <p>Here \(u\) runs from 0 to 1 along the segment. A free bridge consists of the chord plus a fluctuation that vanishes at its endpoints. The sine expansion diagonalizes the free kinetic weight on this interval.</p>
+          <div class="math-block">\[
+            \begin{aligned}
+              x(u)&=(1-u)q+u q'\\
+                  &\quad+\sum_{k=1}^{\infty}a_k\sin(k\pi u),\\
+              \operatorname{Var}_{\rm free}(a_k)&=
+              \frac{2\epsilon\hbar^2}{m(k\pi)^2}.
+            \end{aligned}
+          \]</div>
+          <p>The \(a_k\) are independent Gaussians in the free bridge. The potential reweights the amplitudes together with the endpoints. BF truncates the sum at \(K\) and samples the retained amplitudes, using \(L\) weighted evaluations of \(V\) per segment.</p>
+          <div class="math-block">\[
+            \epsilon\int_0^1 V(x(u))\,du
+            \ \longmapsto\
+            \epsilon\sum_{\ell=1}^L w_\ell V(x(u_\ell)).
+          \]</div>
+          <p>Each force at \(x(u_\ell)\) contributes to the variables that built that point. The chain rule multiplies it by \(w_\ell(1-u_\ell)\), \(w_\ell u_\ell\), or \(w_\ell\sin(k\pi u_\ell)\), with a common factor \(\epsilon\) for the dimensionless action. These forces and the free springs define the sampling problem. The \(K=0\) chord with an endpoint trapezoid recovers the primitive action. The \(K=0\) chord with interior quadrature already changes that action. A global normal-mode transform of ordinary PIMD, by comparison, preserves the action and the number of bead coordinates.</p>
+
+          <h2 id="harmonic-bridge">2. Why one sine can beat one midpoint</h2>
+          <p>Fix \(q=q'=q_0\) and use \(m=\hbar=\omega=1\) in the harmonic well \(V(x)=x^2/2\). Write \(x(u)=q_0+b(u)\) and \(\bar b=\int_0^1 b(u)\,du\). The segment contributes</p>
+          <div class="math-block">\[
+            \begin{aligned}
+              \int_0^1 V(q_0+b(u))\,du
+                &=\tfrac12q_0^2+q_0\bar b\\
+                &\quad+\tfrac12\int_0^1 b(u)^2\,du .
+            \end{aligned}
+          \]</div>
+          <p>When \(q_0\) lies to the right of the minimum, a negative \(\bar b\) lowers the potential action. The area of the bend matters because the force acts along the whole segment. A one-coordinate approximation can reproduce the fluctuations at \(u=1/2\) and still misjudge the fluctuations of the segment mean.</p>
+          <p>An explicit midpoint samples the exact free displacement \(\delta=x(1/2)-q_0\), with variance \(\epsilon/4\). At fixed \(\delta\), the free conditional mean is a tent with area \(\delta/2\). The two primitive half-links assign the same integral to the force term linear in the displacement. Its free area variance is \(\epsilon/16\), or 75% of the full bridge value \(\epsilon/12\).</p>
+          <p>A single sine has only about 81% of the exact <em>midpoint</em> variance. Its area is \(2a_1/\pi\), so it retains \(8\epsilon/\pi^4\), or 98.6% of the exact <em>area</em> variance. With two interior Gauss–Legendre points, the sampled area still retains 92.3%. The first sine matches the direction to which a nearly constant force along the link is most sensitive.</p>
+          <p>The potential term quadratic in \(b\) also matters. It can be included by completing the square in the Gaussian integrals for this model. An added coordinate \(z\) enters the exponent as \(-A z^2-Dq_0z-\epsilon q_0^2/2\). Integrating \(z\) gives \(C=\epsilon/2-D^2/(4A)\). For example, the analytically integrated first sine gives \(A=\pi^2/(4\epsilon)+\epsilon/4\) and \(D=2\epsilon/\pi\). Write the diagonal kernel as \(\rho(q_0,q_0;\epsilon)\propto e^{-Cq_0^2}\). For a single coarse segment of length \(\epsilon=1\) this gives the following check.</p>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Harmonic link coefficients">
+            <table>
+              <caption>Diagonal harmonic kernel at \(\epsilon=1\)</caption>
+              <thead><tr><th scope="col">Representation</th><th scope="col">Coefficient \(C\)</th><th scope="col">Value</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Exact bridge</th><td>\(\tanh(\epsilon/2)\)</td><td>0.462117</td></tr>
+                <tr><th scope="row">One explicit midpoint, two primitive links</th><td>\(\epsilon/2-\epsilon^3/[4(8+\epsilon^2)]\)</td><td>0.472222</td></tr>
+                <tr><th scope="row">One sine, two Gauss–Legendre nodes</th><td>\(\epsilon/(2[1+2\epsilon^2 f^2/\pi^2])\)</td><td>0.464278</td></tr>
+                <tr><th scope="row">One sine, analytic segment integral</th><td>\(\epsilon/2-4\epsilon^3/[\pi^2(\pi^2+\epsilon^2)]\)</td><td>0.462714</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Here \(f=\sin[\pi(1-1/\sqrt{3})/2]\) is the value of the first sine at either quadrature node. For the same coarse ring of \(P\) segments, inserting one ordinary midpoint per segment and using \(K=1,L=2\) each cost \(2P\) force sites per step. The smaller error in \(C\) demonstrates an advantage for the diagonal link only. The full-ring comparison below tests the combined influence of diagonal and off-diagonal links.</p>
+          <p>One way to see why the harmonic result is possible is to look at higher \(k\). Each additional amplitude has free variance proportional to \(k^{-2}\), while its overlap with the linear potential response along the chord scales as \(k^{-1}\). At fixed slice length its contribution to the endpoint-dependent Gaussian action is therefore of order \(k^{-4}\). Higher modes can make the path rough while contributing weakly to the relative weights of its endpoints. In physical units the ratio of harmonic to free stiffness for mode \(k\) is \((\epsilon\hbar\omega/k\pi)^2\). Both the slice length and the curvature sampled by the path matter.</p>
+
+          <h2 id="convergence">3. Change the potential at the same force budget</h2>
+          <p>The ToyModel test uses a single family with \(m=\hbar=1\).</p>
+          <div class="math-block">\[
+            \begin{gathered}
+              V_s(x)=\frac{1-s}{2}x^2+\frac{s}{4}x^4,\\
+              s\in\{0,0.1,0.25,0.5,0.75,1\}.
+            \end{gathered}
+          \]</div>
+          <p>For each \(s\) the reduced inverse temperature is \(B=\beta(E_1-E_0)\), where \(E_1-E_0\) is the first quantum gap of that well. Holding \(B\) fixed holds the first-excited to ground-state Boltzmann ratio at \(e^{-B}\). The numerical value of \(\beta\) and the higher-state weights can change with \(s\). The scan covers \(B=0.5,8,16\).</p>
+          <p>The convergence targets are the thermal \(\langle x^2\rangle\) and energy. The quantum reference comes from a refined spatial diagonalization. For each finite action, a separate transfer-kernel calculation integrates the local amplitudes and contracts the cyclic product of kernels. This measures discretization bias independently of thermostat sampling and time-step error. The energy is read as the virial observable \(V_s+xV_s'/2\), using the identity below.</p>
+          <div class="math-block">\[
+            E=(1-s)\langle x^2\rangle+\frac{3s}{4}\langle x^4\rangle.
+          \]</div>
+          <p>The BF <em>endpoint estimator</em> averages this observable over the beads. The <em>action-grid estimator</em> averages it over the weighted interior positions that define the potential action. Scaling the coordinates in the finite partition function gives the action-grid energy as its thermodynamic derivative. Both estimators approach the same quantum observable on refinement. At finite \(P,K,L\), each has its own bias.</p>
+          <p>At \(B=8\), hold the force budget at 16 sites per step. Compare ordinary \(P=16\) with BF \((P,K,L)=(8,1,2)\), both using the endpoint estimator. The harmonic maximum relative error across the two observables falls from 2.98% to 0.30%. For the pure quartic it rises from 5.54% to 12.48%. On the very same BF action the action-grid energy errors are about \(-16.42\%\) and \(-21.80\%\), respectively. A good endpoint value can coexist with a poor estimate along the full segment.</p>
+          <p>The wider scan asks for both observables to be within 2% of the quantum reference, at the candidate bead count and all sampled refinements, with at least one finer point. The table reports the first persistent pass on the tested grid for each scheme, then selects the BF scheme with the fewest force sites. These are grid-based thresholds.</p>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Force-site convergence at B equals eight">
+            <table>
+              <caption>Endpoint convergence at \(B=8\), using a 2% bias threshold</caption>
+              <thead>
+                <tr><th scope="col">Quartic weight \(s\)</th><th scope="col">Ordinary beads and force sites</th><th scope="col">BF \((P,K,L)\)</th><th scope="col">BF force sites</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">0</th><td>24</td><td>(2, 1, 2)</td><td>4</td></tr>
+                <tr><th scope="row">0.10</th><td>24</td><td>(3, 1, 2)</td><td>6</td></tr>
+                <tr><th scope="row">0.25</th><td>24</td><td>(8, 2, 2)</td><td>16</td></tr>
+                <tr><th scope="row">0.50</th><td>24</td><td>(12, 2, 2)</td><td>24</td></tr>
+                <tr><th scope="row">0.75</th><td>32</td><td>(24, 2, 2)</td><td>48</td></tr>
+                <tr><th scope="row">1</th><td>32</td><td>(24, 3, 2)</td><td>48</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <figure>
+            <a href="../assets/img/pimd-series/bead-fourier/force_vs_shape.png"><img src="../assets/img/pimd-series/bead-fourier/force_vs_shape.png" width="2280" height="703" loading="lazy" alt="Force-site ratios versus quartic weight at three reduced temperatures"></a>
+            <figcaption>Figure 1. Ordinary-to-BF force sites per step on a logarithmic scale, against quartic weight \(s\) at each \(B\). Crosses fix \(K=1,L=2\). Open circles select the least expensive tested endpoint configuration. Triangles use the action-grid estimator. The dashed line marks equal force counts. Endpoint savings are strongest near the harmonic end of the two colder scans.</figcaption>
+          </figure>
+          <p>At \(B=0.5\), two sites suffice for either method with the endpoint estimator across the family. At \(B=16\) the endpoints still favor BF for the first three shapes, and the least expensive case is \(s=0.1\). The boundary varies with temperature and need not move monotonically with \(s\). At \(B=8\) and \(16\) the action-grid estimator needs more BF force sites than ordinary PIMD at all six tested shapes.</p>
+
+          <h2 id="missing-tail">4. What the omitted modes do in the quartic well</h2>
+          <p>At a quadrature node let \(x\) denote the path built from the retained modes. Add back the free omitted fluctuation \(\eta\) at that node, with variance</p>
+          <div class="math-block">\[
+            \sigma^2(u)=\frac{2\epsilon}{\pi^2}
+            \sum_{k=K+1}^\infty\frac{\sin^2(k\pi u)}{k^2}.
+          \]</div>
+          <p>The effective action is the negative log of the conditional average of the exponential of the potential action. Its first cumulant uses the Gaussian-averaged potential pointwise. For this family the pointwise average is explicit.</p>
+          <div class="math-block">\[
+            \begin{aligned}
+              \mathbb E[V_s(x+\eta)]-V_s(x)
+                &=\frac{1-s}{2}\sigma^2\\
+                &\quad+\frac{3s}{2}\sigma^2x^2+\frac{3s}{4}\sigma^4.
+            \end{aligned}
+          \]</div>
+          <p>The first and last terms are independent of \(x\) and cancel when normalizing the endpoint distribution. At \(s=0\) this first-cumulant change leaves the normalized endpoint moments unchanged. Higher cumulants still contain the effect of harmonic path reweighting. At \(s\gt0\) the middle term adds curvature \(3s\sigma^2\) to the conditional potential. The wiggles are more costly on the sides of the well, so integrating them out penalizes large retained excursions. A truncation that sets them to zero loses this effect.</p>
+          <p>At the pure quartic end, with \(B=8,P=8,K=1,L=2\), adding just this term to the sampled action moves the endpoint energy error from \(+12.48\%\) to \(-2.25\%\). With eight quadrature nodes the corresponding change is \(+8.85\%\) to \(-1.49\%\). Across the 20 paired nonharmonic controls, both endpoint errors shrink in 18 cases. At the remaining two configurations the first-cumulant correction overcompensates. This isolates one source of the error while leaving higher cumulants and other discretization errors in play.</p>
+          <figure>
+            <a href="../assets/img/pimd-series/bead-fourier/tail_control.png"><img src="../assets/img/pimd-series/bead-fourier/tail_control.png" width="1862" height="684" loading="lazy" alt="Signed errors in endpoint moments and energies before and after averaging the omitted tail"></a>
+            <figcaption>Figure 2. Signed percentage errors in endpoint \(\langle x^2\rangle\) and energy, at \(B=8,P=8,K=1\) as \(s\) varies. Circles and crosses are the original BF action at two and eight quadrature nodes. Squares and triangles add the first cumulant of the omitted tail at those same node counts. The shaded strip is the \(\pm2\%\) bias interval.</figcaption>
+          </figure>
+          <p>Quadrature error can cancel part of the truncation error. For \(B=16,s=0.1,P=3,K=1\), the endpoint energy error changes from \(+1.43\%\) with two quadrature nodes to \(-11.61\%\) with four. Refining \(L\) resolves the potential integral for the retained path, which can expose the bias that was already present in that path. This is why a single favorable \(P,K,L\) is weak evidence for convergence.</p>
+
+          <h2 id="cost">5. Force evaluations and time to a statistical result</h2>
+          <p>Ordinary PIMD uses \(P_{\rm ord}\) force sites per step. BF with interior quadrature uses \(P_{\rm BF}L\). A trapezoid with \(L\) panels has \(L+1\) points per segment, with endpoints shared between neighbors, so the full ring still has \(P_{\rm BF}L\) distinct sites. Counting these sites answers a question about discretization and cost per step. The actual work to estimate a mean also depends on fluctuations and correlations.</p>
+          <div class="math-block">\[
+            \begin{aligned}
+              T_{\rm target}&=n_{\rm target}\,t_{\rm step},\\
+              \operatorname{SE}(\bar A)^2&\simeq
+              \frac{\sigma_A^2}{N}\left(1+2\sum_{r\ge1}\rho_A(r)\right).
+            \end{aligned}
+          \]</div>
+          <p>Here \(N\) counts saved draws at the chosen stride, \(\sigma_A^2\) is the estimator variance and \(\rho_A(r)\) is its lag-\(r\) autocorrelation. With serial cost dominated by forces, the comparison is between \(n_{\rm target}P_{\rm ord}\) and \(n_{\rm target}P_{\rm BF}L\), with each method's own \(n_{\rm target}\). With cheap forces, the measured time to propagate and evaluate an entire step also matters.</p>
+          <p>The ToyModel timing comparisons used Langevin BAOAB, with mass preconditioning, a common \(\Delta\,dt=0.08\) and centroid friction \(\gamma_0/\Delta=1\), where \(\Delta=E_1-E_0\) in the model units. Each sampling case used 48 independent chains, 2,500 burn-in steps and 36,000 production steps, saving every fourth step. Means were checked against their finite-action references, with selected half-step controls. Five interleaved timing repeats measured both single-path step cost and 48-chain batch step cost. The batch timing and effective sample count give the projected time from equilibrium to 1% relative standard error for both observables.</p>
+          <p>For the harmonic case at \(B=8\), the four-site BF scheme needs only one-sixth as many force sites per step, but projects to 1.52 times the total force sites and 11.08 times the projected wall time. Refining it from two to three coarse beads changes these ratios to 0.96 and 4.78. At \(B=16\) a harmonic configuration projects to 0.86 times the total force sites and 3.81 times the wall time. In the measured ToyModel comparisons the algebra and the sampling cost outweigh the savings in the cheap analytic force.</p>
+          <figure>
+            <a href="../assets/img/pimd-series/bead-fourier/timing_by_shape.png"><img src="../assets/img/pimd-series/bead-fourier/timing_by_shape.png" width="1862" height="646" loading="lazy" alt="Total force-site and wall-time ratios at matching statistical error"></a>
+            <figcaption>Figure 3. BF-to-ordinary ratios for the estimated total force sites and ToyModel wall time at \(B=8\), using the least-force-site tested BF endpoint scheme at each timed \(s\). The dashed line marks equal cost. The projections use the 2% bias gate and a 1% relative standard error target, with wall time based on measured 48-chain batch throughput.</figcaption>
+          </figure>
+
+          <h2 id="literature">6. What the published examples reproduce</h2>
+          <h3 id="harmonic-reproductions">Harmonic toy models</h3>
+          <p>Ivanov and coauthors tested a harmonic oscillator and a hydrogen atom. London and Momeni considered harmonic and anharmonic oscillators. The reproductions here target their harmonic equilibrium tests, where the finite action and the quantum answer can both be integrated analytically. [<a href="https://doi.org/10.1103/PhysRevE.67.066710">Ivanov et al.</a>, <a href="https://arxiv.org/html/2510.09961v2#S3.SS1">London and Momeni, model systems</a>]</p>
+          <p>London and Momeni used a unit harmonic oscillator and a 20-panel trapezoid for the BF action. The independent Gaussian calculation falls within all 70 plotted error bars of their equilibrium Figure 1 at \(\beta=8\), counting both estimators. The figure does not specify a confidence convention for the bars. At a strict 1% endpoint energy bias, BF with \(P=4,K=2\) uses 80 force sites per step, versus 32 for the ordinary \(P=32\) comparator on their grid. In the local OBABO implementation, the corresponding single-path step times were 41.1 and 21.5 microseconds. [<a href="https://arxiv.org/html/2510.09961v2#S4.SS1">London and Momeni, Paper II, section IV.1</a>]</p>
+          <p>The chosen thermostat changes the outcome at fixed statistical error. With the paper's centroid thermostat time constant \(\tau_0=50\), the BF case needs about 0.37 times the ordinary production steps by stationary Gaussian covariance. Combining that with measured 32-chain batch throughput gives projected costs of 5.28 s for BF and 9.96 s for ordinary PIMD, at 1% relative standard error. With \(\tau_0=1\) the stationary calculation projects BF to cost 2.16 times as much, keeping the actions and timing rates fixed. The action-grid comparison at the same bias and sampling targets is also slower for BF on the published grid.</p>
+          <p>Ivanov, Lyubartsev, and Laaksonen give an analytic harmonic segment action. At \(\beta=2\) their three-bead, one-mode calculation reports endpoint energy 0.655. The same finite action gives 0.656194, close to the quantum value 0.656518. In their low-temperature example at \(\beta=15.8\), the analytic five-bead, two-mode calculation gives 0.493921 against 0.500000 for the quantum reference, a \(-1.216\%\) error. Four modes give \(-0.231\%\). The four-mode action meets the quoted 0.3% accuracy. Its projected cost at that accuracy was 2.40 times that of ordinary PIMD in a local comparison using PILE thermostats for both methods. [<a href="https://doi.org/10.1103/PhysRevE.67.066710">Ivanov et al., section II.C</a>]</p>
+
+          <h3 id="water-ice">Liquid water and ice</h3>
+          <p>The atomistic paper reports a different favorable combination. For q-TIP4P/F liquid water at 300 K and hexagonal ice at 150 K, endpoint radial distribution functions agree with ordinary PIMD references at 32 and 64 beads, respectively. BF uses \(P=8,K=1,L=2\) for both, or 16 force sites per step. The reported serial step speedups are about \(2.25\times\) and \(5.5\times\), with reductions in neighbor-list and normal-mode work as well as force calls. The comparison times individual steps at a resolution chosen for those structural observables. [<a href="https://arxiv.org/html/2611.18749v1#S4.SS1">Radial distribution functions</a>, <a href="https://arxiv.org/html/2611.18749v1#S4.SS3">computational performance</a>]</p>
+          <p>The harmonic bridge shows what makes the speedup possible. A few low modes can account for most of the motion to which a particular link weight or estimator responds. A nearly quadratic potential over the thermally sampled segment and an observable insensitive to omitted fluctuations offer favorable conditions. The quartic control shows how that advantage disappears when the omitted fluctuations change the shape of the effective potential. The water and ice results establish a gain for the reported RDFs and implementation. Transferring it to another observable, temperature, or potential takes a new matched-accuracy comparison.</p>
+
+          <h2 id="code">Calculation files</h2>
+          <ul class="code-list">
+            <li><a href="../assets/code/pimd/bead-fourier/harmonic_segment_check.py">Single-segment Gaussian check</a> for the midpoint, sine, and two-node formulas in Section 2.</li>
+            <li><a href="../assets/code/pimd/bead-fourier/shape/README.md">ToyModel shape scan protocol</a> and <a href="../assets/code/pimd/bead-fourier/shape/figure_data.json">data behind Figures 1–3</a>. The executable checks include the <a href="../assets/code/pimd/bead-fourier/shape/reference.py">transfer-kernel reference</a>, <a href="../assets/code/pimd/bead-fourier/shape/tail_control.py">tail control</a>, <a href="../assets/code/pimd/bead-fourier/shape/run_shape_md.py">sampling and timing</a>, and <a href="../assets/code/pimd/bead-fourier/shape/plot_shape.py">figure generator</a>.</li>
+            <li><a href="../assets/code/pimd/bead-fourier/author/README.md">Harmonic literature reproductions</a>, with an <a href="../assets/code/pimd/bead-fourier/author/reproduce.py">equilibrium and stationary-covariance runner</a>. <a href="../assets/code/pimd/bead-fourier/author/efficiency.json">Harmonic cost data</a>.</li>
+          </ul>
+
+          <h2 id="references">References</h2>
+          <ol>
+            <li>N. London and M. R. Momeni, <em>Real-time dynamics with bead-Fourier path integrals. II. Bead-Fourier RPMD</em>. <a href="https://arxiv.org/abs/2510.09961v2">arXiv:2510.09961v2</a>.</li>
+            <li>S. D. Ivanov, A. P. Lyubartsev, and A. Laaksonen, <em>Bead-Fourier path integral molecular dynamics</em>, Phys. Rev. E <strong>67</strong>, 066710 (2003). <a href="https://doi.org/10.1103/PhysRevE.67.066710">DOI</a>.</li>
+            <li>N. London and M. R. Momeni, <em>Real-time dynamics with bead-Fourier path integrals. III. Atomistic condensed-phase simulations</em>. <a href="https://arxiv.org/abs/2611.18749v1">arXiv:2611.18749v1</a>.</li>
+          </ol>
+
+          <section class="series-footer" aria-labelledby="pimd-series-map">
+            <h2 id="pimd-series-map">PIMD series map</h2>
+            <ol class="series-list">
+              <li><a href="pimd-ring-polymer-basics.html">Part I: Ring-Polymer Basics</a> - path-integral isomorphism, normal modes, estimators, and the SHO convergence test.</li>
+              <li><a href="pimd-nvt-gle-piglet.html">Part II: NVT Thermostats and GLE</a> - PILE, GLE, PIGLET-style covariance shaping, and sampling diagnostics.</li>
+              <li><a href="cayley-transform-ring-polymer.html">Part III: Cayley Stability</a> - free ring-polymer propagation and numerical stability.</li>
+              <li><a href="pimc-sho-metropolis.html">Part IV: Path-Integral Monte Carlo</a> - local Metropolis bead moves and harmonic-observable sampling.</li>
+              <li><a href="rpmd-sho-correlation.html">Part V: From PIMD to RPMD</a> - a harmonic linear-position Kubo benchmark.</li>
+              <li><a href="normal-mode-free-ring-polymer.html">Part VI: Normal-Mode Free Propagation</a> - normal-mode and bead-coordinate spring integration.</li>
+              <li><a href="trpmd-spurious-spectral-lines.html">Part VII: TRPMD and Spurious Spectral Lines</a> - nonlinear spectra, internal-mode artifacts, damping, and spectral-weight errors.</li>
+              <li><a href="trpmd-anharmonic-position-spectrum.html">Part VIII: Anharmonic Spectra and Partial Repair</a> - linear position, quartic forces, dephasing, and internal-mode memory.</li>
+              <li><a href="bead-fourier-path-integrals.html">Part IX: When Bead–Fourier Saves Force Evaluations</a> - imaginary-time bridge modes, anharmonic convergence, and efficiency.</li>
+            </ol>
+          </section>
+        </div>
+        <nav class="post-nav" aria-label="Article navigation"><a href="trpmd-anharmonic-position-spectrum.html">&lt;- Part VIII</a><a href="../index.html">Back to article list</a></nav>
+      </article>
+    </main>
+    <footer class="site-footer"><p>(c) <span id="year"></span> Lihui Gao. Built with GitHub Pages.</p><a href="#top">Back to top</a></footer>
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

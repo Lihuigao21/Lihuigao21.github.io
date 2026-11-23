@@ -75,6 +75,22 @@ window.SITE_SERIES = [
 
 window.SITE_ARTICLES = [
 {
+  "slug": "bead-fourier-path-integrals",
+  "title": "PIMD IX: When Bead–Fourier Saves Force Evaluations",
+  "path": "posts/bead-fourier-path-integrals.html",
+  "date": "2026-11-23",
+  "dateText": "2026.11.23",
+  "description": "Compare bead–Fourier and primitive PIMD at matched force budgets, from the harmonic bridge to quartic wells and molecular benchmarks.",
+  "tags": [
+    "PIMD",
+    "Bead-Fourier",
+    "Anharmonicity",
+    "Benchmark"
+  ],
+  "series": "pimd",
+  "part": 9
+},
+{
   "slug": "trpmd-anharmonic-position-spectrum",
   "title": "PIMD VIII: Anharmonic Spectra and Partial Repair",
   "path": "posts/trpmd-anharmonic-position-spectrum.html",

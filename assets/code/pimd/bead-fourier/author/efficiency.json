@@ -1,0 +1,1504 @@
+{
+  "schema": 1,
+  "batch_wall_clock_definition": "Measured wall seconds per batch step for one or 32 vectorized chains. Projected sampling time is the required number of 32-chain batch steps, derived from the exact stationary asymptotic variance at the acquisition stride, multiplied by the median measured seconds per batch step. The projection begins from an equilibrated ensemble.",
+  "source_references": {
+    "london": "https://arxiv.org/pdf/2510.09961v2#page=6",
+    "london_pdf_sha256": "004a2ce59225d6ded63247d12514a323be15a747e7714adfb3e1c771221c0a67",
+    "ivanov": "https://doi.org/10.1103/PhysRevE.67.066710",
+    "ivanov_pdf_sha256": "6f89e33b97853de8e882f7acc4f0661272d3da223a732a0d67eae5b4e28c7c29"
+  },
+  "source_checks": {
+    "london_drawn_bars_matching_independent_energies": 70,
+    "london_drawn_bar_total": 70,
+    "london_max_abs_difference_from_drawn_central_energy": 0.0032519033245631546,
+    "london_quantum_energy": 0.5003355752008413,
+    "ivanov_quantum_energy": 0.5000001374507916,
+    "ivanov_raster_calibration_max_abs_energy_error": 0.00021633719041491695,
+    "max_independent_finite_action_energy_difference": 8.881784197001252e-16,
+    "validated_md_cells": 7,
+    "validated_md_readouts": 14
+  },
+  "reference": {
+    "london_p32": {
+      "case": {
+        "name": "london_p32",
+        "beta": 8,
+        "beads": 32,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": true
+      },
+      "quantum_energy": 0.5003355752008413,
+      "stationary_residual": 2.630898502092519e-14,
+      "spectral_radius": 0.9999000049998332,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.49647888517744637,
+          "stationary_energy": 0.4964933238871095,
+          "finite_action_relative_error": -0.007708206680779761,
+          "timestep_rel_bias": 2.9082223019338826e-05,
+          "variance": 0.06335548929835738,
+          "asymptotic_variance_per_draw": 0.658108563468363,
+          "correlation_samples": 10.387553955572178,
+          "dt_refinement_relative_shift": 2.181194253969565e-05
+        },
+        "path": {
+          "finite_action_energy": 0.49647888517744626,
+          "stationary_energy": 0.49649332388710943,
+          "finite_action_relative_error": -0.007708206680779983,
+          "timestep_rel_bias": 2.9082223019338826e-05,
+          "variance": 0.06335548929835735,
+          "asymptotic_variance_per_draw": 0.6581085634683628,
+          "correlation_samples": 10.387553955572178,
+          "dt_refinement_relative_shift": 2.1811942539473606e-05
+        }
+      }
+    },
+    "london_bf4k1": {
+      "case": {
+        "name": "london_bf4k1",
+        "beta": 8,
+        "beads": 4,
+        "modes": 1,
+        "rule": "trapezoid",
+        "sites": 20,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": true
+      },
+      "quantum_energy": 0.5003355752008413,
+      "stationary_residual": 3.4912344502721897e-16,
+      "spectral_radius": 0.9996336915711761,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.4944117155520584,
+          "stationary_energy": 0.4944190530894451,
+          "finite_action_relative_error": -0.01183977302914141,
+          "timestep_rel_bias": 1.4840945624650104e-05,
+          "variance": 0.12720281311479253,
+          "asymptotic_variance_per_draw": 0.245008469172802,
+          "correlation_samples": 1.9261246129179335,
+          "dt_refinement_relative_shift": 1.1130732347819361e-05
+        },
+        "path": {
+          "finite_action_energy": 0.3849499572009367,
+          "stationary_energy": 0.38495659639330404,
+          "finite_action_relative_error": -0.2306164576716082,
+          "timestep_rel_bias": 1.724689727367057e-05,
+          "variance": 0.06059623567544098,
+          "asymptotic_variance_per_draw": 0.2159231648135066,
+          "correlation_samples": 3.5633098724153585,
+          "dt_refinement_relative_shift": 1.2935193095087172e-05
+        }
+      }
+    },
+    "london_bf4k2": {
+      "case": {
+        "name": "london_bf4k2",
+        "beta": 8,
+        "beads": 4,
+        "modes": 2,
+        "rule": "trapezoid",
+        "sites": 20,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": true
+      },
+      "quantum_energy": 0.5003355752008413,
+      "stationary_residual": 3.634498280772001e-16,
+      "spectral_radius": 0.9996336915711761,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.4978087009175912,
+          "stationary_energy": 0.4978159896055267,
+          "finite_action_relative_error": -0.0050503590160178025,
+          "timestep_rel_bias": 1.4641543874205354e-05,
+          "variance": 0.12869460250516998,
+          "asymptotic_variance_per_draw": 0.24700125980922136,
+          "correlation_samples": 1.9192821998832368,
+          "dt_refinement_relative_shift": 1.0981181890024061e-05
+        },
+        "path": {
+          "finite_action_energy": 0.4248476953715474,
+          "stationary_energy": 0.42485444005748996,
+          "finite_action_relative_error": -0.15087450017719017,
+          "timestep_rel_bias": 1.587553849557999e-05,
+          "variance": 0.06228883671447681,
+          "asymptotic_variance_per_draw": 0.21850508994457574,
+          "correlation_samples": 3.507933386943347,
+          "dt_refinement_relative_shift": 1.1906675909223452e-05
+        }
+      }
+    },
+    "london_bf2k4": {
+      "case": {
+        "name": "london_bf2k4",
+        "beta": 8,
+        "beads": 2,
+        "modes": 4,
+        "rule": "trapezoid",
+        "sites": 20,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": false
+      },
+      "quantum_energy": 0.5003355752008413,
+      "stationary_residual": 7.150048770752462e-16,
+      "spectral_radius": 0.9997266362858963,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.4953465401123944,
+          "stationary_energy": 0.4953513400522399,
+          "finite_action_relative_error": -0.009971377882622479,
+          "timestep_rel_bias": 9.69006434248243e-06,
+          "variance": 0.24567856401131677,
+          "asymptotic_variance_per_draw": 0.45780419632990393,
+          "correlation_samples": 1.8634275162436067,
+          "dt_refinement_relative_shift": 7.26756757085667e-06
+        },
+        "path": {
+          "finite_action_energy": 0.4157101709419294,
+          "stationary_energy": 0.4157145122394307,
+          "finite_action_relative_error": -0.16913729195638771,
+          "timestep_rel_bias": 1.0443087046452249e-05,
+          "variance": 0.06222702280277814,
+          "asymptotic_variance_per_draw": 0.29780923111210533,
+          "correlation_samples": 4.785850546891496,
+          "dt_refinement_relative_shift": 7.83233909018577e-06
+        }
+      }
+    },
+    "london_p29": {
+      "case": {
+        "name": "london_p29",
+        "beta": 8,
+        "beads": 29,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": false
+      },
+      "quantum_energy": 0.5003355752008413,
+      "stationary_residual": 2.3113212464421112e-14,
+      "spectral_radius": 0.9999000049998332,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.4956514626448944,
+          "stationary_energy": 0.4956658703931385,
+          "finite_action_relative_error": -0.009361941840866694,
+          "timestep_rel_bias": 2.9068305714696763e-05,
+          "variance": 0.0634543930871172,
+          "asymptotic_variance_per_draw": 0.6582077813949624,
+          "correlation_samples": 10.37292690659419,
+          "dt_refinement_relative_shift": 2.1801473613081157e-05
+        },
+        "path": {
+          "finite_action_energy": 0.49565146264489424,
+          "stationary_energy": 0.49566587039313836,
+          "finite_action_relative_error": -0.009361941840867027,
+          "timestep_rel_bias": 2.9068305714696763e-05,
+          "variance": 0.06345439308711716,
+          "asymptotic_variance_per_draw": 0.6582077813949616,
+          "correlation_samples": 10.372926906594184,
+          "dt_refinement_relative_shift": 2.1801473613081157e-05
+        }
+      }
+    },
+    "london_bf32k5": {
+      "case": {
+        "name": "london_bf32k5",
+        "beta": 8,
+        "beads": 32,
+        "modes": 5,
+        "rule": "trapezoid",
+        "sites": 20,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": true
+      },
+      "quantum_energy": 0.5003355752008413,
+      "stationary_residual": 8.215735786452884e-14,
+      "spectral_radius": 0.9998885633086375,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.5003220299354545,
+          "stationary_energy": 0.5003316659349369,
+          "finite_action_relative_error": -2.7072361147517654e-05,
+          "timestep_rel_bias": 1.9259594632892174e-05,
+          "variance": 0.06417326816682362,
+          "asymptotic_variance_per_draw": 0.6001997822709448,
+          "correlation_samples": 9.352800619576938,
+          "dt_refinement_relative_shift": 1.4445406702368047e-05
+        },
+        "path": {
+          "finite_action_energy": 0.49584881524880076,
+          "stationary_energy": 0.4958590085829884,
+          "finite_action_relative_error": -0.008967501361939911,
+          "timestep_rel_bias": 2.0557343033189568e-05,
+          "variance": 0.06287913560934563,
+          "asymptotic_variance_per_draw": 0.5899255033042332,
+          "correlation_samples": 9.381895879887914,
+          "dt_refinement_relative_shift": 1.5418628081631525e-05
+        }
+      }
+    },
+    "london_gl4k1": {
+      "case": {
+        "name": "london_gl4k1",
+        "beta": 8,
+        "beads": 4,
+        "modes": 1,
+        "rule": "gauss",
+        "sites": 2,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": false
+      },
+      "quantum_energy": 0.5003355752008413,
+      "stationary_residual": 3.428928539383982e-16,
+      "spectral_radius": 0.9996544480378619,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.49554334897258256,
+          "stationary_energy": 0.49555067445899126,
+          "finite_action_relative_error": -0.009578024161753906,
+          "timestep_rel_bias": 1.4782735806795344e-05,
+          "variance": 0.12782498918656698,
+          "asymptotic_variance_per_draw": 0.25523396684675764,
+          "correlation_samples": 1.9967454601089845,
+          "dt_refinement_relative_shift": 1.1087075197258045e-05
+        },
+        "path": {
+          "finite_action_energy": 0.3538965773643108,
+          "stationary_energy": 0.35390309116994256,
+          "finite_action_relative_error": -0.29268156232494147,
+          "timestep_rel_bias": 1.8405958261302757e-05,
+          "variance": 0.05856366050737786,
+          "asymptotic_variance_per_draw": 0.2221939812395509,
+          "correlation_samples": 3.794058966166551,
+          "dt_refinement_relative_shift": 1.3804486423962814e-05
+        }
+      }
+    },
+    "ivanov_p102": {
+      "case": {
+        "name": "ivanov_p102",
+        "beta": 15.8,
+        "beads": 102,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": true
+      },
+      "quantum_energy": 0.5000001374507916,
+      "stationary_residual": 7.108756579743799e-14,
+      "spectral_radius": 0.9992051019286885,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.4985071890469148,
+          "stationary_energy": 0.4985077701455666,
+          "finite_action_relative_error": -0.0029858959869261126,
+          "timestep_rel_bias": 1.1656775760204852e-06,
+          "variance": 0.03173943102556735,
+          "asymptotic_variance_per_draw": 0.22329137751894013,
+          "correlation_samples": 7.035141157353142,
+          "dt_refinement_relative_shift": 8.74258912153536e-07
+        },
+        "path": {
+          "finite_action_energy": 0.4985071890469146,
+          "stationary_energy": 0.49850777014556635,
+          "finite_action_relative_error": -0.0029858959869265567,
+          "timestep_rel_bias": 1.1656775760204852e-06,
+          "variance": 0.031739431025567325,
+          "asymptotic_variance_per_draw": 0.22329137751893996,
+          "correlation_samples": 7.035141157353143,
+          "dt_refinement_relative_shift": 8.74258912153536e-07
+        }
+      }
+    },
+    "ivanov_bf5k2": {
+      "case": {
+        "name": "ivanov_bf5k2",
+        "beta": 15.8,
+        "beads": 5,
+        "modes": 2,
+        "rule": "analytic",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": true
+      },
+      "quantum_energy": 0.5000001374507916,
+      "stationary_residual": 4.72169824254662e-16,
+      "spectral_radius": 0.9994434324157292,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.49392112371994734,
+          "stationary_energy": 0.4939213616300149,
+          "finite_action_relative_error": -0.012158024119428457,
+          "timestep_rel_bias": 4.816762355641657e-07,
+          "variance": 0.09788398331049114,
+          "asymptotic_variance_per_draw": 1.1398919243087497,
+          "correlation_samples": 11.645336507127789,
+          "dt_refinement_relative_shift": 3.612572876399156e-07
+        },
+        "path": {
+          "finite_action_energy": 0.3846930846437764,
+          "stationary_energy": 0.38469329296315014,
+          "finite_action_relative_error": -0.2306140422178652,
+          "timestep_rel_bias": 5.415209736181481e-07,
+          "variance": 0.030727924644980763,
+          "asymptotic_variance_per_draw": 0.3348131436601369,
+          "correlation_samples": 10.89605456692718,
+          "dt_refinement_relative_shift": 4.061409177857911e-07
+        }
+      }
+    },
+    "ivanov_bf5k4": {
+      "case": {
+        "name": "ivanov_bf5k4",
+        "beta": 15.8,
+        "beads": 5,
+        "modes": 4,
+        "rule": "analytic",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": true
+      },
+      "quantum_energy": 0.5000001374507916,
+      "stationary_residual": 1.0470871419708287e-15,
+      "spectral_radius": 0.9995275450948432,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.4988456324548798,
+          "stationary_energy": 0.4988458696318682,
+          "finite_action_relative_error": -0.002309009357073344,
+          "timestep_rel_bias": 4.7545166892426494e-07,
+          "variance": 0.09989064053322035,
+          "asymptotic_variance_per_draw": 1.184116650863358,
+          "correlation_samples": 11.854130122126504,
+          "dt_refinement_relative_shift": 3.5658886510248067e-07
+        },
+        "path": {
+          "finite_action_energy": 0.4313066524566208,
+          "stationary_energy": 0.4313068619236037,
+          "finite_action_relative_error": -0.1373869322204565,
+          "timestep_rel_bias": 4.856567401567702e-07,
+          "variance": 0.0314485755910665,
+          "asymptotic_variance_per_draw": 0.35361205309014854,
+          "correlation_samples": 11.244135750001918,
+          "dt_refinement_relative_shift": 3.642427572891904e-07
+        }
+      }
+    },
+    "ivanov_p39": {
+      "case": {
+        "name": "ivanov_p39",
+        "beta": 15.8,
+        "beads": 39,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": false
+      },
+      "quantum_energy": 0.5000001374507916,
+      "stationary_residual": 2.9464182043224637e-15,
+      "spectral_radius": 0.999205835470152,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.4900473583384214,
+          "stationary_energy": 0.4900479268420361,
+          "finite_action_relative_error": -0.019905552752672473,
+          "timestep_rel_bias": 1.160099335262288e-06,
+          "variance": 0.032238352438144886,
+          "asymptotic_variance_per_draw": 0.22561230307920727,
+          "correlation_samples": 6.998257851795786,
+          "dt_refinement_relative_shift": 8.700747502476958e-07
+        },
+        "path": {
+          "finite_action_energy": 0.49004735833842145,
+          "stationary_energy": 0.4900479268420362,
+          "finite_action_relative_error": -0.019905552752672362,
+          "timestep_rel_bias": 1.1600993354843325e-06,
+          "variance": 0.03223835243814491,
+          "asymptotic_variance_per_draw": 0.22561230307920735,
+          "correlation_samples": 6.998257851795784,
+          "dt_refinement_relative_shift": 8.700747504697404e-07
+        }
+      }
+    },
+    "ivanov_p12_beta2": {
+      "case": {
+        "name": "ivanov_p12_beta2",
+        "beta": 2,
+        "beads": 12,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": false
+      },
+      "quantum_energy": 0.6565176427496657,
+      "stationary_residual": 4.64278708394896e-15,
+      "spectral_radius": 0.9990004998333749,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.6546667737521324,
+          "stationary_energy": 0.6546674766759584,
+          "finite_action_relative_error": -0.002819222023922152,
+          "timestep_rel_bias": 1.0737123894433154e-06,
+          "variance": 0.5099046069387625,
+          "asymptotic_variance_per_draw": 4.02802175938081,
+          "correlation_samples": 7.8995594559602775,
+          "dt_refinement_relative_shift": 8.052846895978405e-07
+        },
+        "path": {
+          "finite_action_energy": 0.6546667737521328,
+          "stationary_energy": 0.6546674766759586,
+          "finite_action_relative_error": -0.002819222023921597,
+          "timestep_rel_bias": 1.0737123892212708e-06,
+          "variance": 0.5099046069387628,
+          "asymptotic_variance_per_draw": 4.028021759380812,
+          "correlation_samples": 7.8995594559602775,
+          "dt_refinement_relative_shift": 8.052846895978405e-07
+        }
+      }
+    },
+    "ivanov_bf3k1_beta2": {
+      "case": {
+        "name": "ivanov_bf3k1_beta2",
+        "beta": 2,
+        "beads": 3,
+        "modes": 1,
+        "rule": "analytic",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": false
+      },
+      "quantum_energy": 0.6565176427496657,
+      "stationary_residual": 5.689820626900963e-16,
+      "spectral_radius": 0.998945480078099,
+      "estimators": {
+        "bead": {
+          "finite_action_energy": 0.6561936300167054,
+          "stationary_energy": 0.6561941827622136,
+          "finite_action_relative_error": -0.0004935324077557368,
+          "timestep_rel_bias": 8.423512252164755e-07,
+          "variance": 0.5559193512846846,
+          "asymptotic_variance_per_draw": 4.413698206745571,
+          "correlation_samples": 7.939457758658467,
+          "dt_refinement_relative_shift": 6.317633405306111e-07
+        },
+        "path": {
+          "finite_action_energy": 0.6140091638111006,
+          "stationary_energy": 0.6140097433530654,
+          "finite_action_relative_error": -0.0647484182763598,
+          "timestep_rel_bias": 9.438653343352144e-07,
+          "variance": 0.5085494578771739,
+          "asymptotic_variance_per_draw": 3.927792650372183,
+          "correlation_samples": 7.723521458007007,
+          "dt_refinement_relative_shift": 7.078988852882162e-07
+        }
+      }
+    }
+  },
+  "md": {
+    "london_p32": {
+      "chains": 32,
+      "equilibration_steps_per_chain": 50000,
+      "production_steps_per_chain": 250000,
+      "readouts": {
+        "bead": {
+          "energy": 0.5042354206696273,
+          "se": 0.0037223910542171306,
+          "ci95_half": 0.007591866607821537,
+          "split_rhat": 1.0075873338279708
+        },
+        "path": {
+          "energy": 0.5042354206696273,
+          "se": 0.0037223910542171306,
+          "ci95_half": 0.007591866607821537,
+          "split_rhat": 1.0075873338279708
+        }
+      },
+      "same_stationary_reference_gate": {
+        "bead": true,
+        "path": true
+      }
+    },
+    "london_bf4k1": {
+      "chains": 32,
+      "equilibration_steps_per_chain": 50000,
+      "production_steps_per_chain": 250000,
+      "readouts": {
+        "bead": {
+          "energy": 0.49425694751911264,
+          "se": 0.0024345308687456022,
+          "ci95_half": 0.0049652584424737835,
+          "split_rhat": 1.0007472129786474
+        },
+        "path": {
+          "energy": 0.3834679583513732,
+          "se": 0.0026889497231559895,
+          "ci95_half": 0.005484149117060538,
+          "split_rhat": 1.0027117663485137
+        }
+      },
+      "same_stationary_reference_gate": {
+        "bead": true,
+        "path": true
+      }
+    },
+    "london_bf4k2": {
+      "chains": 32,
+      "equilibration_steps_per_chain": 50000,
+      "production_steps_per_chain": 250000,
+      "readouts": {
+        "bead": {
+          "energy": 0.5012008353881305,
+          "se": 0.0026377921766896273,
+          "ci95_half": 0.005379812613157744,
+          "split_rhat": 1.0008247889164286
+        },
+        "path": {
+          "energy": 0.4285265300080435,
+          "se": 0.0023516415970571223,
+          "ci95_half": 0.004796204658303124,
+          "split_rhat": 1.0028009284657418
+        }
+      },
+      "same_stationary_reference_gate": {
+        "bead": true,
+        "path": true
+      }
+    },
+    "london_bf32k5": {
+      "chains": 32,
+      "equilibration_steps_per_chain": 50000,
+      "production_steps_per_chain": 250000,
+      "readouts": {
+        "bead": {
+          "energy": 0.49916670209570996,
+          "se": 0.004658259369030903,
+          "ci95_half": 0.009500582619940572,
+          "split_rhat": 1.0076262485553598
+        },
+        "path": {
+          "energy": 0.49442195124049254,
+          "se": 0.004624333839325048,
+          "ci95_half": 0.009431391045929362,
+          "split_rhat": 1.007657344449037
+        }
+      },
+      "same_stationary_reference_gate": {
+        "bead": true,
+        "path": true
+      }
+    },
+    "ivanov_p102": {
+      "chains": 32,
+      "equilibration_steps_per_chain": 50000,
+      "production_steps_per_chain": 250000,
+      "readouts": {
+        "bead": {
+          "energy": 0.4962538232481547,
+          "se": 0.0021042341842960255,
+          "ci95_half": 0.0042916139132387204,
+          "split_rhat": 1.003170662183988
+        },
+        "path": {
+          "energy": 0.4962538232481547,
+          "se": 0.0021042341842960255,
+          "ci95_half": 0.0042916139132387204,
+          "split_rhat": 1.003170662183988
+        }
+      },
+      "same_stationary_reference_gate": {
+        "bead": true,
+        "path": true
+      }
+    },
+    "ivanov_bf5k2": {
+      "chains": 32,
+      "equilibration_steps_per_chain": 50000,
+      "production_steps_per_chain": 250000,
+      "readouts": {
+        "bead": {
+          "energy": 0.4994127363679291,
+          "se": 0.00416359974958937,
+          "ci95_half": 0.008491717674700236,
+          "split_rhat": 1.0046569740843017
+        },
+        "path": {
+          "energy": 0.3878254765750882,
+          "se": 0.002377493888144464,
+          "ci95_half": 0.004848930753595911,
+          "split_rhat": 1.004223894367244
+        }
+      },
+      "same_stationary_reference_gate": {
+        "bead": true,
+        "path": true
+      }
+    },
+    "ivanov_bf5k4": {
+      "chains": 32,
+      "equilibration_steps_per_chain": 50000,
+      "production_steps_per_chain": 250000,
+      "readouts": {
+        "bead": {
+          "energy": 0.4970950238188313,
+          "se": 0.0041623926766734464,
+          "ci95_half": 0.00848925583325743,
+          "split_rhat": 1.0056448831417901
+        },
+        "path": {
+          "energy": 0.43285622540849167,
+          "se": 0.0019442823515350453,
+          "ci95_half": 0.003965389999546952,
+          "split_rhat": 1.0036130871116922
+        }
+      },
+      "same_stationary_reference_gate": {
+        "bead": true,
+        "path": true
+      }
+    }
+  },
+  "timing": {
+    "london_p32": {
+      "case": {
+        "name": "london_p32",
+        "beta": 8,
+        "beads": 32,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": true
+      },
+      "sites_per_path_step": 32,
+      "batches": {
+        "1": [
+          2.1417569230769232e-05,
+          2.1642861538461537e-05,
+          2.1542815384615385e-05,
+          2.1931046153846154e-05,
+          2.1103076923076925e-05
+        ],
+        "32": [
+          4.8207230769230766e-05,
+          4.678993846153846e-05,
+          4.694353846153846e-05,
+          4.774695384615385e-05,
+          4.847301538461539e-05
+        ]
+      },
+      "medians": {
+        "1": 2.1542815384615385e-05,
+        "32": 4.774695384615385e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 208574.27665289928,
+          "wall_seconds": 9.958786360840906,
+          "force_sites": 213580059.29256886
+        },
+        "path": {
+          "batch_steps": 208574.27665289928,
+          "wall_seconds": 9.958786360840906,
+          "force_sites": 213580059.29256886
+        }
+      }
+    },
+    "london_bf4k1": {
+      "case": {
+        "name": "london_bf4k1",
+        "beta": 8,
+        "beads": 4,
+        "modes": 1,
+        "rule": "trapezoid",
+        "sites": 20,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": true
+      },
+      "sites_per_path_step": 80,
+      "batches": {
+        "1": [
+          4.2139153846153845e-05,
+          3.953406153846154e-05,
+          3.9989907692307696e-05,
+          3.8851800000000006e-05,
+          4.1915676923076926e-05
+        ],
+        "32": [
+          6.275147692307693e-05,
+          7.341856923076924e-05,
+          6.764261538461539e-05,
+          6.398421538461539e-05,
+          6.504920000000001e-05
+        ]
+      },
+      "medians": {
+        "1": 3.9989907692307696e-05,
+        "32": 6.504920000000001e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 78303.41987690845,
+          "wall_seconds": 5.093574820256993,
+          "force_sites": 200456754.8848856
+        },
+        "path": {
+          "batch_steps": 113832.35893075014,
+          "wall_seconds": 7.404703882558152,
+          "force_sites": 291410838.8627204
+        }
+      }
+    },
+    "london_bf4k2": {
+      "case": {
+        "name": "london_bf4k2",
+        "beta": 8,
+        "beads": 4,
+        "modes": 2,
+        "rule": "trapezoid",
+        "sites": 20,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": true
+      },
+      "sites_per_path_step": 80,
+      "batches": {
+        "1": [
+          4.1097615384615386e-05,
+          3.9877723076923076e-05,
+          4.2331907692307695e-05,
+          4.23173076923077e-05,
+          4.051606153846154e-05
+        ],
+        "32": [
+          6.780678461538462e-05,
+          6.78565076923077e-05,
+          6.949560000000001e-05,
+          6.687736923076923e-05,
+          7.112850769230771e-05
+        ]
+      },
+      "medians": {
+        "1": 4.1097615384615386e-05,
+        "32": 6.78565076923077e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 77866.6543553056,
+          "wall_seconds": 5.283759230235059,
+          "force_sites": 199338635.14958233
+        },
+        "path": {
+          "batch_steps": 94573.89283299749,
+          "wall_seconds": 6.417454086513779,
+          "force_sites": 242109165.65247357
+        }
+      }
+    },
+    "london_bf2k4": {
+      "case": {
+        "name": "london_bf2k4",
+        "beta": 8,
+        "beads": 2,
+        "modes": 4,
+        "rule": "trapezoid",
+        "sites": 20,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": false
+      },
+      "sites_per_path_step": 40,
+      "batches": {
+        "1": [
+          3.9964000000000006e-05,
+          3.974272307692308e-05,
+          3.873593846153847e-05,
+          3.924035384615385e-05,
+          4.000747692307692e-05
+        ],
+        "32": [
+          6.187038461538461e-05,
+          5.994292307692308e-05,
+          6.12355076923077e-05,
+          6.195244615384616e-05,
+          6.890644615384615e-05
+        ]
+      },
+      "medians": {
+        "1": 3.974272307692308e-05,
+        "32": 6.187038461538461e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 145761.59607213957,
+          "wall_seconds": 9.01832601113561,
+          "force_sites": 186574842.97233865
+        },
+        "path": {
+          "batch_steps": 134628.75029949725,
+          "wall_seconds": 8.329532561318471,
+          "force_sites": 172324800.38335648
+        }
+      }
+    },
+    "london_p29": {
+      "case": {
+        "name": "london_p29",
+        "beta": 8,
+        "beads": 29,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": false
+      },
+      "sites_per_path_step": 29,
+      "batches": {
+        "1": [
+          2.2435015384615387e-05,
+          2.2494292307692308e-05,
+          2.9321507692307695e-05,
+          2.2075738461538465e-05,
+          2.227126153846154e-05
+        ],
+        "32": [
+          4.956796923076923e-05,
+          5.067847692307693e-05,
+          4.963424615384615e-05,
+          4.9417184615384616e-05,
+          5.083798461538462e-05
+        ]
+      },
+      "medians": {
+        "1": 2.2435015384615387e-05,
+        "32": 4.963424615384615e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 209302.78655900861,
+          "wall_seconds": 10.388586028755755,
+          "force_sites": 194232985.92676
+        },
+        "path": {
+          "batch_steps": 209302.7865590084,
+          "wall_seconds": 10.388586028755746,
+          "force_sites": 194232985.9267598
+        }
+      }
+    },
+    "london_bf32k5": {
+      "case": {
+        "name": "london_bf32k5",
+        "beta": 8,
+        "beads": 32,
+        "modes": 5,
+        "rule": "trapezoid",
+        "sites": 20,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": true
+      },
+      "sites_per_path_step": 640,
+      "batches": {
+        "1": [
+          4.589403076923077e-05,
+          5.717853846153847e-05,
+          4.749438461538462e-05,
+          4.9333153846153844e-05,
+          4.7522969230769235e-05
+        ],
+        "32": [
+          0.0002538164153846154,
+          0.0002465921538461539,
+          0.0002571704153846154,
+          0.0002570741230769231,
+          0.00026112086153846155
+        ]
+      },
+      "medians": {
+        "1": 4.7522969230769235e-05,
+        "32": 0.0002570741230769231
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 187313.8470510247,
+          "wall_seconds": 48.153542970807074,
+          "force_sites": 3836187587.6049857
+        },
+        "path": {
+          "batch_steps": 187443.6733588588,
+          "wall_seconds": 48.186917955045836,
+          "force_sites": 3838846430.389428
+        }
+      }
+    },
+    "london_gl4k1": {
+      "case": {
+        "name": "london_gl4k1",
+        "beta": 8,
+        "beads": 4,
+        "modes": 1,
+        "rule": "gauss",
+        "sites": 2,
+        "dt": 0.01,
+        "tau0": 50,
+        "stride": 250,
+        "md": false
+      },
+      "sites_per_path_step": 8,
+      "batches": {
+        "1": [
+          3.999769230769231e-05,
+          3.9479938461538467e-05,
+          3.890353846153846e-05,
+          4.214509230769231e-05,
+          3.9821015384615386e-05
+        ],
+        "32": [
+          5.6103892307692316e-05,
+          5.217606153846154e-05,
+          5.655295384615385e-05,
+          5.5053584615384615e-05,
+          5.5047815384615394e-05
+        ]
+      },
+      "medians": {
+        "1": 3.9821015384615386e-05,
+        "32": 5.5053584615384615e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 81199.31350953798,
+          "wall_seconds": 4.470313277008493,
+          "force_sites": 20787024.258441724
+        },
+        "path": {
+          "batch_steps": 138596.92951629643,
+          "wall_seconds": 7.630257786557923,
+          "force_sites": 35480813.956171885
+        }
+      }
+    },
+    "ivanov_p102": {
+      "case": {
+        "name": "ivanov_p102",
+        "beta": 15.8,
+        "beads": 102,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": true
+      },
+      "sites_per_path_step": 102,
+      "batches": {
+        "1": [
+          2.5699769230769233e-05,
+          2.4587615384615384e-05,
+          2.4704815384615386e-05,
+          2.5058507692307695e-05,
+          2.5358138461538466e-05
+        ],
+        "32": [
+          0.00010219209230769232,
+          0.00010022786153846154,
+          0.00010455518461538462,
+          0.00010169443076923077,
+          0.00010342001538461538
+        ]
+      },
+      "medians": {
+        "1": 2.5058507692307695e-05,
+        "32": 0.00010219209230769232
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 35098.465024733836,
+          "wall_seconds": 3.5867855776659106,
+          "force_sites": 114561389.84073123
+        },
+        "path": {
+          "batch_steps": 35098.46502473385,
+          "wall_seconds": 3.586785577665912,
+          "force_sites": 114561389.8407313
+        }
+      }
+    },
+    "ivanov_bf5k2": {
+      "case": {
+        "name": "ivanov_bf5k2",
+        "beta": 15.8,
+        "beads": 5,
+        "modes": 2,
+        "rule": "analytic",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": true
+      },
+      "sites_per_path_step": 0,
+      "batches": {
+        "1": [
+          2.304615384615385e-05,
+          2.210495384615385e-05,
+          2.1909123076923076e-05,
+          2.312286153846154e-05,
+          2.6569584615384615e-05
+        ],
+        "32": [
+          3.6413153846153846e-05,
+          3.7530292307692315e-05,
+          3.5013000000000005e-05,
+          3.563787692307693e-05,
+          3.7562953846153846e-05
+        ]
+      },
+      "medians": {
+        "1": 2.304615384615385e-05,
+        "32": 3.6413153846153846e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 182519.00508818813,
+          "wall_seconds": 6.646092612123131,
+          "force_sites": 0.0
+        },
+        "path": {
+          "batch_steps": 88375.78902071992,
+          "wall_seconds": 3.2180412018867086,
+          "force_sites": 0.0
+        }
+      }
+    },
+    "ivanov_bf5k4": {
+      "case": {
+        "name": "ivanov_bf5k4",
+        "beta": 15.8,
+        "beads": 5,
+        "modes": 4,
+        "rule": "analytic",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": true
+      },
+      "sites_per_path_step": 0,
+      "batches": {
+        "1": [
+          2.322918461538462e-05,
+          2.302736923076923e-05,
+          2.1963246153846156e-05,
+          2.3448046153846156e-05,
+          2.686206153846154e-05
+        ],
+        "32": [
+          4.36259076923077e-05,
+          4.40283076923077e-05,
+          4.69382e-05,
+          5.4149338461538465e-05,
+          4.63009076923077e-05
+        ]
+      },
+      "medians": {
+        "1": 2.322918461538462e-05,
+        "32": 4.63009076923077e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 185875.33381080173,
+          "wall_seconds": 8.60619667305081,
+          "force_sites": 0.0
+        },
+        "path": {
+          "batch_steps": 74253.06057329607,
+          "wall_seconds": 3.437984103475513,
+          "force_sites": 0.0
+        }
+      }
+    },
+    "ivanov_p39": {
+      "case": {
+        "name": "ivanov_p39",
+        "beta": 15.8,
+        "beads": 39,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": false
+      },
+      "sites_per_path_step": 39,
+      "batches": {
+        "1": [
+          2.263332307692308e-05,
+          2.200369230769231e-05,
+          2.1605292307692307e-05,
+          2.2810738461538464e-05,
+          2.1984384615384617e-05
+        ],
+        "32": [
+          5.4459446153846155e-05,
+          5.7226015384615386e-05,
+          5.4068507692307694e-05,
+          6.0699800000000005e-05,
+          5.483396923076923e-05
+        ]
+      },
+      "medians": {
+        "1": 2.200369230769231e-05,
+        "32": 5.483396923076923e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 36698.27925346155,
+          "wall_seconds": 2.0123123154064877,
+          "force_sites": 45799452.50832002
+        },
+        "path": {
+          "batch_steps": 36698.27925346156,
+          "wall_seconds": 2.012312315406488,
+          "force_sites": 45799452.508320026
+        }
+      }
+    },
+    "ivanov_p12_beta2": {
+      "case": {
+        "name": "ivanov_p12_beta2",
+        "beta": 2,
+        "beads": 12,
+        "modes": 0,
+        "rule": "primitive",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": false
+      },
+      "sites_per_path_step": 12,
+      "batches": {
+        "1": [
+          2.08036e-05,
+          2.1081938461538464e-05,
+          2.1155276923076924e-05,
+          2.177269230769231e-05,
+          2.1599784615384617e-05
+        ],
+        "32": [
+          3.173212307692308e-05,
+          3.3081800000000006e-05,
+          4.245484615384616e-05,
+          3.1446584615384616e-05,
+          3.3564907692307696e-05
+        ]
+      },
+      "medians": {
+        "1": 2.1155276923076924e-05,
+        "32": 3.3081800000000006e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 367121.91533825354,
+          "wall_seconds": 12.145053778837038,
+          "force_sites": 140974815.48988935
+        },
+        "path": {
+          "batch_steps": 367121.9153382535,
+          "wall_seconds": 12.145053778837037,
+          "force_sites": 140974815.48988932
+        }
+      }
+    },
+    "ivanov_bf3k1_beta2": {
+      "case": {
+        "name": "ivanov_bf3k1_beta2",
+        "beta": 2,
+        "beads": 3,
+        "modes": 1,
+        "rule": "analytic",
+        "sites": 0,
+        "dt": 0.002,
+        "tau0": 1,
+        "stride": 125,
+        "md": false
+      },
+      "sites_per_path_step": 0,
+      "batches": {
+        "1": [
+          2.2057661538461542e-05,
+          2.2437107692307693e-05,
+          2.2314523076923078e-05,
+          2.2426446153846156e-05,
+          2.1640661538461543e-05
+        ],
+        "32": [
+          3.100073846153846e-05,
+          3.055341538461539e-05,
+          3.1669200000000005e-05,
+          3.138564615384616e-05,
+          3.1784907692307696e-05
+        ]
+      },
+      "medians": {
+        "1": 2.2314523076923078e-05,
+        "32": 3.138564615384616e-05
+      },
+      "sampling_cost": {
+        "bead": {
+          "batch_steps": 400403.54787514085,
+          "wall_seconds": 12.566924072353771,
+          "force_sites": 0.0
+        },
+        "path": {
+          "batch_steps": 406965.93885658286,
+          "wall_seconds": 12.772888953620502,
+          "force_sites": 0.0
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "london_endpoints": {
+      "left": "london_p32",
+      "right": "london_bf4k2",
+      "relative_discretization_tolerance": 0.01,
+      "readout": "bead",
+      "force_sites_ratio_if_quadrature": 2.5,
+      "serial_step_time_ratio": 1.9077179398735826,
+      "serial_per_round_ratio_range": [
+        1.8425346854461162,
+        1.9650127867009741
+      ],
+      "batch_steps_ratio_at_matched_se": 0.37332817644089483,
+      "stationary_sampling_time_ratio": 0.530562564431687,
+      "stationary_total_force_sites_ratio_if_quadrature": 0.9333204411022371
+    },
+    "london_minimum_force_bf": {
+      "left": "london_p29",
+      "right": "london_bf2k4",
+      "relative_discretization_tolerance": 0.01,
+      "readout": "bead",
+      "force_sites_ratio_if_quadrature": 1.3793103448275863,
+      "serial_step_time_ratio": 1.7714595865254588,
+      "serial_per_round_ratio_range": [
+        1.3210759442530504,
+        1.7963722824585253
+      ],
+      "batch_steps_ratio_at_matched_se": 0.696414980748692,
+      "stationary_sampling_time_ratio": 0.8680994686064835,
+      "stationary_total_force_sites_ratio_if_quadrature": 0.9605723872395752
+    },
+    "london_path": {
+      "left": "london_p32",
+      "right": "london_bf32k5",
+      "relative_discretization_tolerance": 0.01,
+      "readout": "path",
+      "force_sites_ratio_if_quadrature": 20.0,
+      "serial_step_time_ratio": 2.205977648803849,
+      "serial_per_round_ratio_range": [
+        2.142821637447904,
+        2.6419121316248533
+      ],
+      "batch_steps_ratio_at_matched_se": 0.8986902717193398,
+      "stationary_sampling_time_ratio": 4.838633565282849,
+      "stationary_total_force_sites_ratio_if_quadrature": 17.973805434386794
+    },
+    "ivanov_low_temperature": {
+      "left": "ivanov_p102",
+      "right": "ivanov_bf5k4",
+      "relative_discretization_tolerance": 0.003,
+      "readout": "bead",
+      "force_sites_ratio_if_quadrature": null,
+      "serial_step_time_ratio": 0.9269979242425266,
+      "serial_per_round_ratio_range": [
+        0.8890269290384373,
+        1.0593073138710132
+      ],
+      "batch_steps_ratio_at_matched_se": 5.29582515018294,
+      "stationary_sampling_time_ratio": 2.3994176642840372,
+      "stationary_total_force_sites_ratio_if_quadrature": null
+    },
+    "ivanov_low_temperature_loose": {
+      "left": "ivanov_p39",
+      "right": "ivanov_bf5k2",
+      "relative_discretization_tolerance": 0.02,
+      "readout": "bead",
+      "force_sites_ratio_if_quadrature": null,
+      "serial_step_time_ratio": 1.0473766640563822,
+      "serial_per_round_ratio_range": [
+        1.0046020248349927,
+        1.208566220079287
+      ],
+      "batch_steps_ratio_at_matched_se": 4.973503085188173,
+      "stationary_sampling_time_ratio": 3.302714276128961,
+      "stationary_total_force_sites_ratio_if_quadrature": null
+    },
+    "ivanov_table_i": {
+      "left": "ivanov_p12_beta2",
+      "right": "ivanov_bf3k1_beta2",
+      "relative_discretization_tolerance": 0.003,
+      "readout": "bead",
+      "force_sites_ratio_if_quadrature": null,
+      "serial_step_time_ratio": 1.0547970210014885,
+      "serial_per_round_ratio_range": [
+        1.0018924690132238,
+        1.0642810542892713
+      ],
+      "batch_steps_ratio_at_matched_se": 1.090655531981039,
+      "stationary_sampling_time_ratio": 1.0347359757477443,
+      "stationary_total_force_sites_ratio_if_quadrature": null
+    }
+  },
+  "centroid_thermostat_sensitivity": {
+    "london_p32": [
+      {
+        "tau0": 0.5,
+        "relative_asymptotic_variance_per_integration_step": 69.70068007686734
+      },
+      {
+        "tau0": 1.0,
+        "relative_asymptotic_variance_per_integration_step": 64.79462243267946
+      },
+      {
+        "tau0": 2.0,
+        "relative_asymptotic_variance_per_integration_step": 72.00089389230027
+      },
+      {
+        "tau0": 5.0,
+        "relative_asymptotic_variance_per_integration_step": 103.901105721489
+      },
+      {
+        "tau0": 10.0,
+        "relative_asymptotic_variance_per_integration_step": 163.7028587333597
+      },
+      {
+        "tau0": 50.0,
+        "relative_asymptotic_variance_per_integration_step": 667.4376852892777
+      }
+    ],
+    "london_bf4k2": [
+      {
+        "tau0": 0.5,
+        "relative_asymptotic_variance_per_integration_step": 162.4888618094093
+      },
+      {
+        "tau0": 1.0,
+        "relative_asymptotic_variance_per_integration_step": 139.62735642332032
+      },
+      {
+        "tau0": 2.0,
+        "relative_asymptotic_variance_per_integration_step": 135.105786956144
+      },
+      {
+        "tau0": 5.0,
+        "relative_asymptotic_variance_per_integration_step": 148.46290613068211
+      },
+      {
+        "tau0": 10.0,
+        "relative_asymptotic_variance_per_integration_step": 172.72818963042735
+      },
+      {
+        "tau0": 50.0,
+        "relative_asymptotic_variance_per_integration_step": 249.17329393697787
+      }
+    ],
+    "london_bf2k4": [
+      {
+        "tau0": 0.5,
+        "relative_asymptotic_variance_per_integration_step": 538.5390843207077
+      },
+      {
+        "tau0": 1.0,
+        "relative_asymptotic_variance_per_integration_step": 425.95151597419493
+      },
+      {
+        "tau0": 2.0,
+        "relative_asymptotic_variance_per_integration_step": 373.83907534536814
+      },
+      {
+        "tau0": 5.0,
+        "relative_asymptotic_variance_per_integration_step": 357.66707418072457
+      },
+      {
+        "tau0": 10.0,
+        "relative_asymptotic_variance_per_integration_step": 374.191381413684
+      },
+      {
+        "tau0": 50.0,
+        "relative_asymptotic_variance_per_integration_step": 466.4371074308466
+      }
+    ],
+    "london_gl4k1": [
+      {
+        "tau0": 0.5,
+        "relative_asymptotic_variance_per_integration_step": 163.65815809200632
+      },
+      {
+        "tau0": 1.0,
+        "relative_asymptotic_variance_per_integration_step": 140.11639671634998
+      },
+      {
+        "tau0": 2.0,
+        "relative_asymptotic_variance_per_integration_step": 135.3968972052703
+      },
+      {
+        "tau0": 5.0,
+        "relative_asymptotic_variance_per_integration_step": 149.33342866817753
+      },
+      {
+        "tau0": 10.0,
+        "relative_asymptotic_variance_per_integration_step": 175.17517884968848
+      },
+      {
+        "tau0": 50.0,
+        "relative_asymptotic_variance_per_integration_step": 259.83780323052156
+      }
+    ]
+  }
+}
